@@ -15,8 +15,10 @@
   TCut eSip3d = "Electron_sip3d<8.";
   TCut eWPLoose = "HLT_Ele25_eta2p1_WPLoose_Gsf";
 
-  t1->Draw("Electron_pt",
-           ePt && eEta && eDxy && eDz && eMIso && eSip3d && eWPLoose);
+  Int_t count = t1->Draw("Electron_pt",
+                         ePt && eEta && eDxy && eDz
+                         && eMIso && eSip3d && eWPLoose);
+  cout << "Electron preselection events: " << count << endl;
   TH1F *hEle = (TH1F*)gPad->GetPrimitive("htemp");
   hEle->GetXaxis()->SetRangeUser(0.,300.);
   hEle->SetTitle("Electron Pt after Preselection;Pt;Counts");
@@ -29,9 +31,12 @@
   TCut muDz = "Muon_dz<0.1";
   TCut muMIso = "";
   TCut muSip3d = "Muon_sip3d<8.";
+  TCut nMuon = "nMuon>1";
 
-  t1->Draw("Muon_pt",
-           muPt && muEta && muDxy && muDz && muMIso && muSip3d);
+  count = t1->Draw("Muon_pt",
+                   muPt && muEta && muDxy && muDz
+                   && muMIso && muSip3d && nMuon);
+  cout << "Muon preselection events: " << count << endl;
   TH1F *hMu = (TH1F*)gPad->GetPrimitive("htemp");
   hMu->GetXaxis()->SetRangeUser(0.,300.);
   hMu->SetTitle("Muon Pt after Preselection;Pt;Counts");

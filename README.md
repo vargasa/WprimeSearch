@@ -50,20 +50,20 @@
 
 ### How to get a list of files from DAS?
 
-    ```
-    dasgoclient -query "file dataset=/DYJetsToTauTau*/*NanoAODv6*/NANOAODSIM"
-    ```
+```
+dasgoclient -query "file dataset=/DYJetsToTauTau*/*NanoAODv6*/NANOAODSIM"
+```
 
 ### How to open CMS root-like files using root?
 
-    To be able to read CMSSW objects directly from ROOT, we would need
-    to load FWLiteCore:
+To be able to read CMSSW objects directly from ROOT, we would need
+to load FWLiteCore:
 
-    ```
-    gSystem->Load("libFWCoreFWLite.so");
-    FWLiteEnabler::enable();
-    gSystem->Load("libDataFormatsFWLite.so");
-    gSystem->Load("libDataFormatsPatCandidates.so");
-    ```
+```
+gSystem->Load("libFWCoreFWLite.so");
+FWLiteEnabler::enable();
+gSystem->Load("libDataFormatsFWLite.so");
+gSystem->Load("libDataFormatsPatCandidates.so");
+```
 
-    Note: This requires `cmsenv`.
+Note: This requires `cmsenv`.
