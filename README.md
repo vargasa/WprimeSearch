@@ -31,7 +31,7 @@
    Run jupyter (use an available port)
 
    ```
-   jupyter notebook --no-browser --port:5432 &
+   jupyter notebook --no-browser --port=5432 &
    ```
 
 2. Create a ssh local tunnel to lxplus, asuming you were connected to `lxplus749`:
