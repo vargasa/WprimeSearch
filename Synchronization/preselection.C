@@ -4,8 +4,13 @@
   auto t1 = (TTree*)f->Get("Events");
   auto c1 = new TCanvas("c1","c1");
 
-  // Preselection for Muon and Electrons from:
-  // https://gitlab.cern.ch/ttH_leptons/doc/blob/master/Legacy/objects.md#2151-preselection
+  TCut JetMETPOGFlags = "Flag_goodVertices==1"
+    "&&Flag_globalSuperTightHalo2016Filter==1"
+    "&&Flag_HBHENoiseFilter==1"
+    "&&Flag_HBHENoiseIsoFilter==1"
+    "&&Flag_EcalDeadCellTriggerPrimitiveFilter==1"
+    "&&Flag_BadPFMuonFilter==1"
+    "&&Flag_ecalBadCalibReducedMINIAODFilter==1";
 
   TCut ePt = "Electron_pt>7";
   TCut eEta = "abs(Electron_eta)<2.5";
@@ -13,11 +18,10 @@
   TCut eDz = "Electron_dz<0.1";
   TCut eMIso = "Electron_miniPFRelIso_all<0.4";
   TCut eSip3d = "Electron_sip3d<8.";
-  TCut eWPLoose = "HLT_Ele25_eta2p1_WPLoose_Gsf";
 
   Int_t count = t1->Draw("Electron_pt",
                          ePt && eEta && eDxy && eDz
-                         && eMIso && eSip3d && eWPLoose);
+                         && eMIso && eSip3d);
   cout << "Electron preselection events: " << count << endl;
   TH1F *hEle = (TH1F*)gPad->GetPrimitive("htemp");
   hEle->GetXaxis()->SetRangeUser(0.,300.);
