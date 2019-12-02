@@ -1,10 +1,20 @@
-# ttH
+# How-To CMS
 
 
 
 ### How to access a Jupyter Notebook from lxplus?
 
-1. (Optional) Create a virtual environment on lxplus:
+1. Create a ssh local tunnel to lxplus, asuming you were connected to `lxplus749`:
+
+   ```
+   ssh -L 5432:localhost:5432 username@lxplus749.cern.ch
+   ```
+
+   Then, you can access locally by using the link provided by jupyter in your local
+   machine (no need to setup a browser proxy).
+
+
+2. (Optional) Create a virtual environment on lxplus:
 
    ```
    virtualenv jupyter_notebook_env
@@ -22,6 +32,8 @@
    pip install pandas
    ```
 
+3. Set up a proxy and jupyter notebook server
+
    Set up `voms proxy` if needed:
 
    ```
@@ -34,26 +46,24 @@
    jupyter notebook --no-browser --port=5432 &
    ```
 
-2. Create a ssh local tunnel to lxplus, asuming you were connected to `lxplus749`:
+   Now you can access using the link provided by jupyter
 
-   ```
-   ssh -L 5432:localhost:5432 username@lxplus749.cern.ch
-   ```
+### How to get a list of files from DAS?
 
-   Then, you can access locally by using the link provided by jupyter in your local
-   machine (no need to setup a browser proxy).
-
+    ```
+    dasgoclient -query "file dataset=/DYJetsToTauTau*/*NanoAODv6*/NANOAODSIM"
+    ```
 
 ### How to open CMS root-like files using root?
 
-To be able to read CMSSW objects directly from ROOT, we would need
-to load FWLiteCore:
+    To be able to read CMSSW objects directly from ROOT, we would need
+    to load FWLiteCore:
 
-```
-gSystem->Load("libFWCoreFWLite.so");
-FWLiteEnabler::enable();
-gSystem->Load("libDataFormatsFWLite.so");
-gSystem->Load("libDataFormatsPatCandidates.so");
-```
+    ```
+    gSystem->Load("libFWCoreFWLite.so");
+    FWLiteEnabler::enable();
+    gSystem->Load("libDataFormatsFWLite.so");
+    gSystem->Load("libDataFormatsPatCandidates.so");
+    ```
 
-Note: This requires `cmsenv`.
+    Note: This requires `cmsenv`.
