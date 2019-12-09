@@ -2,7 +2,6 @@
 #include "DYPreSelector.h"
 
 DYPreSelector::DYPreSelector(TTree *)
-  : fnMuon(fReader, "nMuon")
 {
   hnMuon=0;
 }
@@ -27,9 +26,18 @@ void DYPreSelector::SlaveBegin(TTree *tree) {
 Bool_t DYPreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
-   Int_t n = *fnMuon;
-   hnMuon->Fill(n);
 
+   if ( /* JetMetFlags */
+       *Flag_goodVertices &
+       *Flag_globalSuperTightHalo2016Filter &
+       *Flag_HBHENoiseFilter &
+       *Flag_HBHENoiseIsoFilter &
+       *Flag_EcalDeadCellTriggerPrimitiveFilter &
+       *Flag_BadPFMuonFilter ) {
+     Int_t n = *nMuon;
+     hnMuon->Fill(n);
+
+   }
    return kTRUE;
 }
 

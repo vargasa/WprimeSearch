@@ -9,10 +9,15 @@ class DYPreSelector : public TSelector {
  private :
 
   TTreeReader fReader;
-  TTreeReaderValue<UInt_t> fnMuon;
+  TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
+  TTreeReaderValue<Bool_t> Flag_goodVertices = {fReader, "Flag_goodVertices"};
+  TTreeReaderValue<Bool_t> Flag_globalSuperTightHalo2016Filter = {fReader, "Flag_globalSuperTightHalo2016Filter"};
+  TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, "Flag_HBHENoiseFilter"};
+  TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, "Flag_HBHENoiseIsoFilter"};
+  TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter =  {fReader, "Flag_EcalDeadCellTriggerPrimitiveFilter"};
+  TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter {fReader, "Flag_BadPFMuonFilter"};
 
   TH1I *hnMuon;
-
   TCanvas *ch;
 
  public :
