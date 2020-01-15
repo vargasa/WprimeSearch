@@ -10,30 +10,87 @@ class DYPreSelector : public TSelector {
  private :
 
   TTreeReader fReader;
-  TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
-  TTreeReaderValue<Bool_t> Flag_goodVertices = {fReader, "Flag_goodVertices"};
-  TTreeReaderValue<Bool_t> Flag_globalSuperTightHalo2016Filter = {fReader, "Flag_globalSuperTightHalo2016Filter"};
+
+  TTreeReaderValue<Bool_t> HLT_DoubleEle33_CaloIdL_MW = {fReader, "HLT_DoubleEle33_CaloIdL_MW"};
+
+  // Beam Halo Filter
+  TTreeReaderValue<Bool_t> Flag_globalTightHalo2016Filter = {fReader, "Flag_globalTightHalo2016Filter"};
+
+  // HCAL laser filter
+  TTreeReaderValue<Bool_t> Flag_hcalLaserEventFilter = {fReader, "Flag_hcalLaserEventFilter"};
+
+  // ECAL dead cell trigger primitive filter
+  TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter = {fReader, "Flag_EcalDeadCellTriggerPrimitiveFilter"};
+
   TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, "Flag_HBHENoiseFilter"};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, "Flag_HBHENoiseIsoFilter"};
-  TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter =  {fReader, "Flag_EcalDeadCellTriggerPrimitiveFilter"};
-  TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter {fReader, "Flag_BadPFMuonFilter"};
+  TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, "Flag_eeBadScFilter"};
+  TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, "Flag_BadPFMuonFilter"};
+  TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, "Flag_BadPFMuonSummer16Filter"};
 
-  TTreeReaderValue<UInt_t> nTau = {fReader, "nTau"};
-  TTreeReaderArray<Float_t> Tau_pt = {fReader, "Tau_pt"};
-  TTreeReaderArray<Float_t> Tau_dxy = {fReader, "Tau_dxy"};
-  TTreeReaderArray<Float_t> Tau_dz = {fReader, "Tau_dz"};
-  TTreeReaderArray<Float_t> Tau_eta = {fReader, "Tau_eta"};
-  TTreeReaderArray<Float_t> Tau_mass = {fReader, "Tau_mass"};
-  TTreeReaderArray<Float_t> Tau_phi = {fReader, "Tau_phi"};
-  TTreeReaderArray<Int_t> Tau_charge = {fReader, "Tau_charge"};
+  // Tracking Failure system ??
+
+  // Bad EE Supercrystal filter ??
+
+  // No scraping
+  TTreeReaderArray<Bool_t> IsoTrack_isHighPurityTrack = {fReader, "IsoTrack_isHighPurityTrack"};
 
 
-  TH1I *hnMuon;
-  TH1F *hTauPt;
-  TH1F *hTauMass;
-  TH1F *hTauMass2;
-  TCanvas *ch;
-  
+  // At least one good primary vertex
+  TTreeReaderValue<Int_t> PV_npvsGood = {fReader, "PV_npvsGood"}; // total number of reconstructed primary vertices
+  TTreeReaderValue<Float_t> PV_ndof = {fReader, "PV_ndof"};
+  TTreeReaderValue<Float_t> PV_x = {fReader, "PV_x"};
+  TTreeReaderValue<Float_t> PV_y = {fReader, "PV_y"};
+  TTreeReaderValue<Float_t> PV_z = {fReader, "PV_z"};
+  TTreeReaderValue<Float_t> PV_chi2 = {fReader, "PV_chi2"};
+  TTreeReaderValue<Float_t> PV_score = {fReader, "PV_score"};
+  TTreeReaderValue<Int_t> PV_npvs = {fReader, "PV_npvs"};
+  TTreeReaderValue<Float_t> PV_ndof = {fReader, "PV_ndof"};
+
+
+  // HBHE event-level noise filtering
+  TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, "Flag_HBHENoiseFilter"};
+  TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, "Flag_HBHENoiseIsoFilter"};
+
+
+  // Muons
+  // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/muons_cff.py
+  TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
+  TTreeReaderArray<Float_t> Muon_pt = {fReader, "Muon_pt"};
+  TTreeReaderArray<Float_t> Muon_eta = {fReader, "Muon_eta"};
+  TTreeReaderArray<Float_t> Muon_mass = {fReader, "Muon_mass"};
+  TTreeReaderArray<Float_t> Muon_phi = {fReader, "Muon_phi"};
+  TTreeReaderArray<Int_t> Muon_charge = {fReader, "Muon_charge"};
+  TTreeReaderArray<Bool_t> Muon_looseId = {fReader, "Muon_looseId"};
+  TTreeReaderArray<Bool_t> Muon_mediumId = {fReader, "Muon_mediumId"};
+  TTreeReaderArray<Bool_t> Muon_tightId = {fReader, "Muon_tightId"};
+  TTreeReaderArray<Float_t> Muon_pfRelIso03_all = {fReader, "Muon_pfRelIso03_all"};
+  TTreeReaderArray<Float_t> Muon_pfRelIso03_chg = {fReader, "Muon_pfRelIso03_chg"};
+  TTreeReaderArray<Float_t> Muon_pfRelIso04_all = {fReader, "Muon_pfRelIso04_all"};
+  TTreeReaderArray<Bool_t> Muon_isGlobal = {fReader, "Muon_isGlobal"};
+  TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
+  TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
+
+  // Electrons
+  // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/electrons_cff.py
+  TTreeReaderValue<UInt_t> nElectron = {fReader, "nElectron"};
+  TTreeReaderArray<Float_t> Electron_pt = {fReader, "Electron_pt"};
+  TTreeReaderArray<Float_t> Electron_eta = {fReader, "Electron_eta"};
+  TTreeReaderArray<Float_t> Electron_mass = {fReader, "Electron_mass"};
+  TTreeReaderArray<Float_t> Electron_phi = {fReader, "Electron_phi"};
+  TTreeReaderArray<Int_t> Electron_charge = {fReader, "Electron_charge"};
+  TTreeReaderArray<Int_t> Electron_cutBased = {fReader, "Electron_cutBased"}; // cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
+  TTreeReaderArray<Float_t> Electron_pfRelIso03_all = {fReader, "Electron_pfRelIso03_all"};
+  TTreeReaderArray<Float_t> Electron_pfRelIso03_chg = {fReader, "Electron_pfRelIso03_chg"};
+  TTreeReaderArray<Float_t> Electron_miniPFRelIso_all = {fReader, "Electron_miniPFRelIso_all"};
+  TTreeReaderArray<Float_t> Electron_miniPFRelIso_chg = {fReader, "Electron_miniPFRelIso_chg"};
+
+  // Neutrinos
+  TTreeReaderArray<Float_t> MET_phi = {fReader, "MET_phi"};
+  TTreeReaderArray<Float_t> MET_pt = {fReader, "MET_pt"};
+  TTreeReaderArray<Float_t> MET_significance = {fReader, "MET_significance"};
+
+
 
  public :
 
