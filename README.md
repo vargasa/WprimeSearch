@@ -67,3 +67,14 @@ gSystem->Load("libDataFormatsPatCandidates.so");
 ```
 
 Note: This requires `cmsenv`.
+
+### How to quickly explore a ROOT TTree?
+
+```
+const char *dasFile = "root://cmsxrootd.fnal.gov//dasUrl.root";
+TFile *f = TFile::Open(dasFile);
+auto t1 = (TTree*)f->Get("Events");
+t1->Print("Tau_*");
+t1->Draw("nJet","nTau>=2&&Tau_charge[0]!=Tau_charge[1]" /*TCut*/);
+t1->Scan("nTau:Tau_pt:Tau_charge","nTau>=2&&Tau_charge[0]!=Tau_charge[1]" /*TCut*/);
+```
