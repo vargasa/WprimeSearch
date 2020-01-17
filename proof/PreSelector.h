@@ -5,7 +5,7 @@
 #include "TCanvas.h"
 #include "TH1I.h"
 
-class DYPreSelector : public TSelector {
+class PreSelector : public TSelector {
 
  private :
 
@@ -22,8 +22,6 @@ class DYPreSelector : public TSelector {
   // ECAL dead cell trigger primitive filter
   TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter = {fReader, "Flag_EcalDeadCellTriggerPrimitiveFilter"};
 
-  TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, "Flag_HBHENoiseFilter"};
-  TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, "Flag_HBHENoiseIsoFilter"};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, "Flag_eeBadScFilter"};
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, "Flag_BadPFMuonFilter"};
   TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, "Flag_BadPFMuonSummer16Filter"};
@@ -45,8 +43,6 @@ class DYPreSelector : public TSelector {
   TTreeReaderValue<Float_t> PV_chi2 = {fReader, "PV_chi2"};
   TTreeReaderValue<Float_t> PV_score = {fReader, "PV_score"};
   TTreeReaderValue<Int_t> PV_npvs = {fReader, "PV_npvs"};
-  TTreeReaderValue<Float_t> PV_ndof = {fReader, "PV_ndof"};
-
 
   // HBHE event-level noise filtering
   TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, "Flag_HBHENoiseFilter"};
@@ -90,12 +86,25 @@ class DYPreSelector : public TSelector {
   TTreeReaderArray<Float_t> MET_pt = {fReader, "MET_pt"};
   TTreeReaderArray<Float_t> MET_significance = {fReader, "MET_significance"};
 
+  TCanvas *ch;
 
+  // THs
+  TH1F *HElectron_ptA;
+  TH1F *HMuon_ptA;
+
+  TH1F *HElectron_ptB;
+  TH1F *HMuon_ptB;
+
+  TH1F *HElectron_ptC;
+  TH1F *HMuon_ptC;
+
+  TH1F *HElectron_ptD;
+  TH1F *HMuon_ptD;
 
  public :
 
-  DYPreSelector(TTree * = 0);
-  virtual ~DYPreSelector() { }
+  PreSelector(TTree * = 0);
+  virtual ~PreSelector() { }
   virtual void    Begin(TTree *tree);
   virtual void    Init(TTree *tree);
   virtual void    SlaveBegin(TTree *tree);
@@ -103,6 +112,6 @@ class DYPreSelector : public TSelector {
   virtual void    Terminate();
   virtual Int_t   Version() const { return 2; }
 
-  ClassDef(DYPreSelector,0);
+  ClassDef(PreSelector,0);
 };
 

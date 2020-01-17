@@ -17,7 +17,7 @@ Int_t Selector(TString rootfile = "", Int_t fWorkers = 4){
   fProof->SetProgressDialog(false);
 
   fChain->SetProof();
-  fChain->Process("DYPreSelector.C+");
+  fChain->Process("PreSelector.C+");
 
   return 0;
 }
