@@ -87,11 +87,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
        HMuon_ptA->Fill(Muon_pt[0]);
        // Z-> Mu+Mu candidate
        if(Muon_looseId[0] && Muon_looseId[1] &&
+          Muon_charge[0] != Muon_charge[1] &&
           Muon_pt[0]>25. && Muon_pt[1]>10.){
 
        }
        // W -> Mu+MET candidate
-       if(Muon_looseId[0] && Muon_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
+       if(Muon_looseId[2] && Muon_pt[2]>20. && *MET_pt>30. /*add MET_significance cut */){
          HMetZA->Fill(*MET_pt);
        }
      }
@@ -102,6 +103,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        HMuon_ptB->Fill(Muon_pt[0]);
        // Z-> Mu+Mu candidate
        if(Muon_looseId[0] && Muon_looseId[1] &&
+          Muon_charge[0] != Muon_charge[1] &&
           Muon_pt[0]>25. && Muon_pt[1]>10.){
 
        }
@@ -119,6 +121,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
       // Z-> e+e candidate
        if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
+          Electron_charge[0]!=Electron_charge[1] &&
           Electron_pt[0]>35. && Electron_pt[1]>35.){
 
        }
@@ -137,12 +140,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
         // Z-> e+e candidate
        if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
+          Electron_charge[0]!=Electron_charge[1] &&
           Electron_pt[0]>35. && Electron_pt[1]>35.){
 
        }
 
        // W-> e+Met candidate
-       if(Electron_cutBased[0]>=1 && Electron_pt[0]>20. && *MET_pt>30.){
+       if(Electron_cutBased[2]>=1 && Electron_pt[2]>20. && *MET_pt>30.){
          if(*MET_pt>30. /*add MET_significance cut */){
            HMetZB->Fill(*MET_pt);
          }
@@ -184,8 +188,6 @@ void PreSelector::Terminate() {
   HMuon_ptD->Draw();
   ch->Print("LeadingMuonPt.png");
 
-  ch->cd(0);
-  ch->Divide(1,2);
   ch->cd(1);
   HMetZA->Draw();
   ch->cd(2);
