@@ -90,11 +90,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
           Muon_charge[0] != Muon_charge[1] &&
           Muon_pt[0]>25. && Muon_pt[1]>10.){
 
+         // W -> Mu+MET candidate
+         if(Muon_looseId[2] && Muon_pt[2]>20. && *MET_pt>30. /*add MET_significance cut */){
+           HMetZA->Fill(*MET_pt);
+         }
        }
-       // W -> Mu+MET candidate
-       if(Muon_looseId[2] && Muon_pt[2]>20. && *MET_pt>30. /*add MET_significance cut */){
-         HMetZA->Fill(*MET_pt);
-       }
+
      }
 
      // 1e2Mu
@@ -106,10 +107,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
           Muon_charge[0] != Muon_charge[1] &&
           Muon_pt[0]>25. && Muon_pt[1]>10.){
 
-       }
-       // W-> e+MET candidate
-       if(Electron_cutBased[0]>=1 && Electron_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
-         HMetZA->Fill(*MET_pt);
+         // W-> e+MET candidate
+         if(Electron_cutBased[0]>=1 && Electron_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
+           HMetZA->Fill(*MET_pt);
+         }
        }
 
      }
@@ -124,13 +125,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
           Electron_charge[0]!=Electron_charge[1] &&
           Electron_pt[0]>35. && Electron_pt[1]>35.){
 
+                // W -> Mu+MET candidate
+         if(Muon_looseId[0] && Muon_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
+           HMetZA->Fill(*MET_pt);
+         }
        }
-
-       // W -> Mu+MET candidate
-       if(Muon_looseId[0] && Muon_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
-         HMetZA->Fill(*MET_pt);
-       }
-
      }
 
      // 3e0Mu
@@ -143,12 +142,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
           Electron_charge[0]!=Electron_charge[1] &&
           Electron_pt[0]>35. && Electron_pt[1]>35.){
 
-       }
-
-       // W-> e+Met candidate
-       if(Electron_cutBased[2]>=1 && Electron_pt[2]>20. && *MET_pt>30.){
-         if(*MET_pt>30. /*add MET_significance cut */){
-           HMetZB->Fill(*MET_pt);
+         // W-> e+Met candidate
+         if(Electron_cutBased[2]>=1 && Electron_pt[2]>20. && *MET_pt>30.){
+           if(*MET_pt>30. /*add MET_significance cut */){
+             HMetZB->Fill(*MET_pt);
+           }
          }
        }
      }
