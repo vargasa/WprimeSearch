@@ -15,6 +15,9 @@ PreSelector::PreSelector(TTree *)
   HMuon_ptD=0;
   HElectron_ptD=0;
 
+  HMetZA=0;
+  HMetZB=0;
+
 }
 
 void PreSelector::Init(TTree *tree)
@@ -41,6 +44,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMuon_ptD = new TH1F("HMuon_ptD","",250,0,1200);
   HElectron_ptD = new TH1F("HElectron_ptD","",250,0,1200);
 
+  HMetZA = new TH1F("HMetZA","",50,0,500);
+  HMetZB = new TH1F("HMetZB","",50,0,500);
+
   fOutput->Add(HMuon_ptA);
   fOutput->Add(HElectron_ptA);
 
@@ -52,6 +58,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   fOutput->Add(HMuon_ptD);
   fOutput->Add(HElectron_ptD);
+
+  fOutput->Add(HMetZA);
+  fOutput->Add(HMetZB);
+
 }
 
 
@@ -72,33 +82,78 @@ Bool_t PreSelector::Process(Long64_t entry) {
         *PV_ndof > 4
         ) {
 
-     //hTauMass->Fill(m);
-
      // 0e3Mu
-     if(*nElectron>0 && *nMuon>=3){
-       float pt;
-       HElectron_ptA->Fill(Electron_pt[0]);
+     if(*nMuon>=3){
        HMuon_ptA->Fill(Muon_pt[0]);
+       // Z-> Mu+Mu candidate
+       if(Muon_looseId[0] && Muon_looseId[1] &&
+          Muon_pt[0]>25. && Muon_pt[1]>10.){
+
+       }
+       // W -> Mu+MET candidate
+       if(Muon_looseId[0] && Muon_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
+         HMetZA->Fill(*MET_pt);
+       }
      }
 
      // 1e2Mu
      if(*nElectron!=0 && *nMuon>=2){
        HElectron_ptB->Fill(Electron_pt[0]);
        HMuon_ptB->Fill(Muon_pt[0]);
+       // Z-> Mu+Mu candidate
+       if(Muon_looseId[0] && Muon_looseId[1] &&
+          Muon_pt[0]>25. && Muon_pt[1]>10.){
+
+       }
+       // W-> e+MET candidate
+       if(Electron_cutBased[0]>=1 && Electron_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
+         HMetZA->Fill(*MET_pt);
+       }
+
      }
 
      // 2e1Mu
      if(*nElectron>=2 && *nMuon>=1){
        HElectron_ptC->Fill(Electron_pt[0]);
        HMuon_ptC->Fill(Muon_pt[0]);
+
+      // Z-> e+e candidate
+       if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
+          Electron_pt[0]>35. && Electron_pt[1]>35.){
+
+       }
+
+       // W -> Mu+MET candidate
+       if(Muon_looseId[0] && Muon_pt[0]>20. && *MET_pt>30. /*add MET_significance cut */){
+         HMetZA->Fill(*MET_pt);
+       }
+
      }
 
      // 3e0Mu
-     if(*nElectron>=3 && *nMuon>0){
+     if(*nElectron>=3){
        HElectron_ptD->Fill(Electron_pt[0]);
        HMuon_ptD->Fill(Muon_pt[0]);
+
+        // Z-> e+e candidate
+       if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
+          Electron_pt[0]>35. && Electron_pt[1]>35.){
+
+       }
+
+       // W-> e+Met candidate
+       if(Electron_cutBased[0]>=1 && Electron_pt[0]>20. && *MET_pt>30.){
+         if(*MET_pt>30. /*add MET_significance cut */){
+           HMetZB->Fill(*MET_pt);
+         }
+       }
      }
 
+     // 3leptons
+
+     if( (*nElectron + *nMuon) >=3){
+
+     }
    }
 
    return kTRUE;
@@ -129,4 +184,11 @@ void PreSelector::Terminate() {
   HMuon_ptD->Draw();
   ch->Print("LeadingMuonPt.png");
 
+  ch->cd(0);
+  ch->Divide(1,2);
+  ch->cd(1);
+  HMetZA->Draw();
+  ch->cd(2);
+  HMetZB->Draw();
+  ch->Print("HMetZ.png");
 }

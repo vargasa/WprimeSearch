@@ -82,9 +82,9 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_chg = {fReader, "Electron_miniPFRelIso_chg"};
 
   // Neutrinos
-  TTreeReaderArray<Float_t> MET_phi = {fReader, "MET_phi"};
-  TTreeReaderArray<Float_t> MET_pt = {fReader, "MET_pt"};
-  TTreeReaderArray<Float_t> MET_significance = {fReader, "MET_significance"};
+  TTreeReaderValue<Float_t> MET_phi = {fReader, "MET_phi"};
+  TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
+  TTreeReaderValue<Float_t> MET_significance = {fReader, "MET_significance"};
 
   TCanvas *ch;
 
@@ -100,6 +100,10 @@ class PreSelector : public TSelector {
 
   TH1F *HElectron_ptD;
   TH1F *HMuon_ptD;
+
+  TH1F *HMetZA;
+  TH1F *HMetZB;
+
 
  public :
 
