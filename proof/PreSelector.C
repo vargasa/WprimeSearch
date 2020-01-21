@@ -152,9 +152,22 @@ Bool_t PreSelector::Process(Long64_t entry) {
      }
 
      // 3leptons
-
-     if( (*nElectron + *nMuon) >=3){
-
+     
+     if( (*nElectron + *nMuon) == 3){
+       if (*nMuon!=0 &&
+	   Muon_isGlobal[0] &&
+	   Muon_dxy[0] < 0.2 &&
+	   Muon_dz[0] < 0.5 &&
+	   abs(Muon_eta[0])<2.4 ){
+	 HMuon_ptA->Fill(Muon_pt[0]);
+       }
+       if (*nElectron!=0 &&
+	   Electron_cutBased[0] > 1 &&
+	   abs(Electron_eta[0])<2.5 &&
+	   Electron_miniPFRelIso_all[0]<0.15 )
+	 {
+	   HElectron_ptA->Fill(Electron_pt[0]);
+	 }
      }
    }
 
@@ -163,28 +176,22 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
-  ch = new TCanvas("ch");
-  ch->Divide(2,2);
+  ch = new TCanvas("ch","ch",1200,600);
+  ch->Divide(3,1);
 
   ch->cd(1);
   HElectron_ptA->Draw();
   ch->cd(2);
-  HElectron_ptB->Draw();
-  ch->cd(3);
-  HElectron_ptC->Draw();
-  ch->cd(4);
-  HElectron_ptD->Draw();
-  ch->Print("LeadingElectronPt.png");
-
-  ch->cd(1);
   HMuon_ptA->Draw();
-  ch->cd(2);
-  HMuon_ptB->Draw();
+  
   ch->cd(3);
-  HMuon_ptC->Draw();
-  ch->cd(4);
-  HMuon_ptD->Draw();
-  ch->Print("LeadingMuonPt.png");
+  HElectron_ptB->Add(HElectron_ptA);
+  HElectron_ptB->Add(HMuon_ptA);
+  HElectron_ptB->Draw();
+  
+  ch->Print("LeadingLeptonPt.png");
+
+  
 
   ch->cd(1);
   HMetZA->Draw();
