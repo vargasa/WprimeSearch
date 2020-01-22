@@ -101,10 +101,10 @@ class PreSelector : public TSelector {
   TH1F *HElectron_ptD;
   TH1F *HMuon_ptD;
 
-  TH1F *HMetZA;
-  TH1F *HMetZB;
-  TH1F *HMetZC;
-  TH1F *HMetZD;
+  TH1F *HMetA;
+  TH1F *HMetB;
+  TH1F *HMetC;
+  TH1F *HMetD;
 
 
  public :

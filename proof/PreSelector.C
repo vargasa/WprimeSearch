@@ -15,10 +15,10 @@ PreSelector::PreSelector(TTree *)
   HMuon_ptD=0;
   HElectron_ptD=0;
 
-  HMetZA=0;
-  HMetZB=0;
-  HMetZC=0;
-  HMetZD=0;
+  HMetA=0;
+  HMetB=0;
+  HMetC=0;
+  HMetD=0;
 
 }
 
@@ -46,10 +46,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMuon_ptD = new TH1F("HMuon_ptD","",250,0,1200);
   HElectron_ptD = new TH1F("HElectron_ptD","",250,0,1200);
 
-  HMetZA = new TH1F("HMetZA","",50,0,500);
-  HMetZB = new TH1F("HMetZB","",50,0,500);
-  HMetZC = new TH1F("HMetZC","",50,0,500);
-  HMetZD = new TH1F("HMetZD","",50,0,500);
+  HMetA = new TH1F("HMetA","",50,0,500);
+  HMetB = new TH1F("HMetB","",50,0,500);
+  HMetC = new TH1F("HMetC","",50,0,500);
+  HMetD = new TH1F("HMetD","",50,0,500);
 
   fOutput->Add(HMuon_ptA);
   fOutput->Add(HElectron_ptA);
@@ -63,10 +63,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMuon_ptD);
   fOutput->Add(HElectron_ptD);
 
-  fOutput->Add(HMetZA);
-  fOutput->Add(HMetZB);
-  fOutput->Add(HMetZC);
-  fOutput->Add(HMetZD);
+  fOutput->Add(HMetA);
+  fOutput->Add(HMetB);
+  fOutput->Add(HMetC);
+  fOutput->Add(HMetD);
 
 }
 
@@ -83,6 +83,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
      TTreeReaderArray<Float_t> &pt;
      TTreeReaderArray<Float_t> &eta;
      TTreeReaderArray<Float_t> &phi;
+     TTreeReaderArray<Bool_t> &isGlobal;
+     TTreeReaderArray<Float_t> &dxy;
+     TTreeReaderArray<Float_t> &dz;
    };
 
    struct Electrons{
@@ -91,6 +94,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
      TTreeReaderArray<Float_t> &pt;
      TTreeReaderArray<Float_t> &eta;
      TTreeReaderArray<Float_t> &phi;
+     TTreeReaderArray<Float_t> &miniPFRelIso_all;
    };
 
    // Event Selection
@@ -105,56 +109,68 @@ Bool_t PreSelector::Process(Long64_t entry) {
         ) {
 
      Muons Mus{nMuon,Muon_looseId,
-         Muon_pt,Muon_eta,Muon_phi};
+         Muon_pt,Muon_eta,Muon_phi,
+         Muon_isGlobal,Muon_dxy,Muon_dz};
 
      Electrons Els{nElectron,Electron_cutBased,
-         Electron_pt,Electron_eta,Electron_phi};
+         Electron_pt,Electron_eta,Electron_phi,
+         Electron_miniPFRelIso_all};
 
-     auto GetLooseMuon = [](Muons Mu){
-       std::vector<UInt_t> LooseIndex = {};
+     auto GetGoodMuon = [](Muons Mu){
+       std::vector<UInt_t> GoodIndex = {};
+       const Float_t MaxEta = 2.4;
+       const Float_t MinPt = 10.;
+       const Float_t MaxDxy = 0.2; // 2mm
+       const Float_t MaxDz = 0.5; // 5mm
        UInt_t index = 0;
-       for (const auto loose: Mu.looseId){
-         if(loose) LooseIndex.emplace_back(index);
+       for (UInt_t i=0; i<*Mu.n;i++){
+         if(Mu.isGlobal[i] && Mu.looseId[i] && Mu.eta[i]<MaxEta &&
+            Mu.pt[i]>MinPt && Mu.dxy[i]<MaxDxy && Mu.dz[i]<MaxDz)
+           GoodIndex.emplace_back(index);
          index++;
        }
-       return LooseIndex;
+       return GoodIndex;
      };
 
-     auto GetLooseElectron = [](Electrons El){
-       std::vector<UInt_t> LooseIndex = {};
+     auto GetGoodElectron = [](Electrons El){
+       const Float_t MaxEta = 2.5;
+       const Float_t MinPt = 20.;
+       const Float_t MaxRelIso = 0.15;
+       std::vector<UInt_t> GoodIndex = {};
        UInt_t index = 0;
-       for (const auto id: El.cutBased){
-         if(id>=1) LooseIndex.emplace_back(index);
-         index++;
+       for (UInt_t i = 0; i< *El.n; i++){
+         if(El.cutBased[i]>=1 && El.eta[i]<MaxEta && El.pt[i]>MinPt &&
+            El.miniPFRelIso_all[i]<MaxRelIso)
+           GoodIndex.emplace_back(i);
        }
-       return LooseIndex;
+       return GoodIndex;
      };
 
-     std::vector<UInt_t> LooseElectron = GetLooseElectron(Els);
-     std::vector<UInt_t> LooseMuon = GetLooseMuon(Mus);
+     std::vector<UInt_t> GoodElectron = GetGoodElectron(Els);
+     std::vector<UInt_t> GoodMuon = GetGoodMuon(Mus);
 
      // 0e3Mu
-     if(*nMuon>=3 && LooseMuon.size()>=3){
-       HMetZA->Fill(*MET_pt);
+     if(*nMuon>=3 && GoodMuon.size()>=3){
+       HMetA->Fill(*MET_pt);
      }
 
      // 1e2Mu
      if(*nElectron!=0 && *nMuon>=2 &&
-        LooseElectron.size()>=1 &&
-        LooseMuon.size()>=2){
-       HMetZB->Fill(*MET_pt);
+        GoodElectron.size()>=1 &&
+        GoodMuon.size()>=2){
+       HMetB->Fill(*MET_pt);
      }
 
      // 2e1Mu
      if(*nElectron>=2 && *nMuon>=1 &&
-        LooseElectron.size()>=2 &&
-        LooseMuon.size()>=1){
-       HMetZC->Fill(*MET_pt);
+        GoodElectron.size()>=2 &&
+        GoodMuon.size()>=1){
+       HMetC->Fill(*MET_pt);
      }
 
      // 3e0Mu
-     if(*nElectron>=3 && LooseElectron.size()>=3){
-       HMetZD->Fill(*MET_pt);
+     if(*nElectron>=3 && GoodElectron.size()>=3){
+       HMetD->Fill(*MET_pt);
      }
 
      // 3leptons
@@ -172,17 +188,28 @@ void PreSelector::Terminate() {
   ch = new TCanvas("ch","ch",1200,600);
   ch->Divide(2,2);
 
+  auto SetStyle = [](TH1 *h) {
+    gPad->SetGrid();
+    gPad-> SetLogy();
+    h->SetFillColor(16);
+    h->SetFillStyle(4050);
+  };
+
   ch->cd(1);
-  HMetZA->SetTitle("0e3Mu;MET_pt;Event count");
-  HMetZA->Draw();
+  HMetA->SetTitle("0e3Mu;MET_pt;Event count");
+  SetStyle(HMetA);
+  HMetA->Draw();
   ch->cd(2);
-  HMetZB->SetTitle("1e2Mu;MET_pt;Event count");
-  HMetZB->Draw();
+  HMetB->SetTitle("1e2Mu;MET_pt;Event count");
+  SetStyle(HMetB);
+  HMetB->Draw();
   ch->cd(3);
-  HMetZC->SetTitle("2e1Mu;MET_pt;Event count");
-  HMetZC->Draw();
+  HMetC->SetTitle("2e1Mu;MET_pt;Event count");
+  SetStyle(HMetC);
+  HMetC->Draw();
   ch->cd(4);
-  HMetZD->SetTitle("3e0Mu;MET_pt;Event count");
-  HMetZD->Draw();
+  HMetD->SetTitle("3e0Mu;MET_pt;Event count");
+  SetStyle(HMetD);
+  HMetD->Draw();
   ch->Print("PlotMet.png");
 }
