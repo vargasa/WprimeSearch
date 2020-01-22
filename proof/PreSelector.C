@@ -84,91 +84,28 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 0e3Mu
      if(*nMuon>=3){
-       // Z-> Mu+Mu candidate
-       if(Muon_looseId[0] && Muon_looseId[1] &&
-          Muon_charge[0] != Muon_charge[1] &&
-	  abs(Muon_eta[0]) < 2.4 &&
-          Muon_pt[0]>25. && Muon_pt[1]>10.){
-
-         // W -> Mu+MET candidate
-         if(Muon_looseId[2] && Muon_pt[2]>20. &&
-	    *MET_pt>30. && /*add MET_significance cut */
-	    abs(Muon_eta[2]) < 2.4){
-           HMetZA->Fill(*MET_pt);
-         }
-       }
 
      }
 
      // 1e2Mu
      if(*nElectron!=0 && *nMuon>=2){
-       // Z-> Mu+Mu candidate
-       if(Muon_looseId[0] && Muon_looseId[1] &&
-          Muon_charge[0] != Muon_charge[1] &&
-	  abs(Muon_eta[0])<2.4 && abs(Muon_eta[1])<2.4 &&
-          Muon_pt[0]>25. && Muon_pt[1]>10.){
-
-         // W-> e+MET candidate
-         if(Electron_cutBased[0]>=1 && Electron_pt[0]>20. &&
-	    abs(Electron_eta[0])<2.5 &&
-	    *MET_pt>30. /*add MET_significance cut */){
-           //HMetZA->Fill(*MET_pt);
-         }
-       }
 
      }
 
      // 2e1Mu
      if(*nElectron>=2 && *nMuon>=1){
-      // Z-> e+e candidate
-       if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
-          Electron_charge[0]!=Electron_charge[1] &&
-          Electron_pt[0]>35. && Electron_pt[1]>35. &&
-	  abs(Electron_eta[0])<2.5 && abs(Electron_eta[1])<2.5){
 
-                // W -> Mu+MET candidate
-         if(Muon_looseId[0] && Muon_pt[0]>20. &&
-	    *MET_pt>30. && abs(Muon_pt[0])<2.4 /*add MET_significance cut */){
-           //HMetZA->Fill(*MET_pt);
-         }
-       }
      }
 
      // 3e0Mu
      if(*nElectron>=3){
-       // Z-> e+e candidate
-       if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
-          Electron_charge[0]!=Electron_charge[1] &&
-          Electron_pt[0]>35. && Electron_pt[1]>35. &&
-	  abs(Electron_eta[0])<2.5 && abs(Electron_eta[1])<2.5 ){
 
-         // W-> e+Met candidate
-         if(Electron_cutBased[2]>=1 && Electron_pt[2]>20. && *MET_pt>30. &&
-	    abs(Electron_eta[2])<2.5){
-           if(*MET_pt>30. /*add MET_significance cut */){
-             HMetZB->Fill(*MET_pt);
-           }
-         }
-       }
      }
 
      // 3leptons
-     
+
      if( (*nElectron + *nMuon) == 3){
-       if (*nMuon!=0 &&
-	   Muon_isGlobal[0] &&
-	   Muon_dxy[0] < 0.2 &&
-	   Muon_dz[0] < 0.5 &&
-	   abs(Muon_eta[0])<2.4 ){
-	 HMuon_ptA->Fill(Muon_pt[0]);
-       }
-       if (*nElectron!=0 &&
-	   Electron_cutBased[0] > 1 &&
-	   abs(Electron_eta[0])<2.5 &&
-	   Electron_miniPFRelIso_all[0]<0.15 )
-	 {
-	   HElectron_ptA->Fill(Electron_pt[0]);
-	 }
+
      }
 
    }
