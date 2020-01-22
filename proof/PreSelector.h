@@ -103,6 +103,8 @@ class PreSelector : public TSelector {
 
   TH1F *HMetZA;
   TH1F *HMetZB;
+  TH1F *HMetZC;
+  TH1F *HMetZD;
 
 
  public :
