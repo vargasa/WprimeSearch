@@ -84,7 +84,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 0e3Mu
      if(*nMuon>=3){
-       HMuon_ptA->Fill(Muon_pt[0]);
        // Z-> Mu+Mu candidate
        if(Muon_looseId[0] && Muon_looseId[1] &&
           Muon_charge[0] != Muon_charge[1] &&
@@ -103,8 +102,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 1e2Mu
      if(*nElectron!=0 && *nMuon>=2){
-       HElectron_ptB->Fill(Electron_pt[0]);
-       HMuon_ptB->Fill(Muon_pt[0]);
        // Z-> Mu+Mu candidate
        if(Muon_looseId[0] && Muon_looseId[1] &&
           Muon_charge[0] != Muon_charge[1] &&
@@ -123,9 +120,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 2e1Mu
      if(*nElectron>=2 && *nMuon>=1){
-       HElectron_ptC->Fill(Electron_pt[0]);
-       HMuon_ptC->Fill(Muon_pt[0]);
-
       // Z-> e+e candidate
        if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
           Electron_charge[0]!=Electron_charge[1] &&
@@ -142,10 +136,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 3e0Mu
      if(*nElectron>=3){
-       HElectron_ptD->Fill(Electron_pt[0]);
-       HMuon_ptD->Fill(Muon_pt[0]);
-
-        // Z-> e+e candidate
+       // Z-> e+e candidate
        if(Electron_cutBased[0]>=1 && Electron_cutBased[1]>=1 &&
           Electron_charge[0]!=Electron_charge[1] &&
           Electron_pt[0]>35. && Electron_pt[1]>35. &&
