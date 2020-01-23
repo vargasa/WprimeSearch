@@ -20,6 +20,15 @@ PreSelector::PreSelector(TTree *)
   HMetC=0;
   HMetD=0;
 
+  HnElA=0;
+  HnElB=0;
+  HnElC=0;
+  HnElD=0;
+
+  HnMuA=0;
+  HnMuB=0;
+  HnMuC=0;
+  HnMuD=0;
 }
 
 void PreSelector::Init(TTree *tree)
@@ -46,10 +55,28 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMuon_ptD = new TH1F("HMuon_ptD","",250,0,1200);
   HElectron_ptD = new TH1F("HElectron_ptD","",250,0,1200);
 
-  HMetA = new TH1F("HMetA","",100,0,1000);
-  HMetB = new TH1F("HMetB","",100,0,1000);
-  HMetC = new TH1F("HMetC","",100,0,1000);
-  HMetD = new TH1F("HMetD","",100,0,1000);
+  const Double_t MaxMet = 1000.;
+  const Double_t MinMet = 0.;
+  const Int_t MetBins = 100;
+
+  HMetA = new TH1F("HMetA","",MetBins,MinMet,MaxMet);
+  HMetB = new TH1F("HMetB","",MetBins,MinMet,MaxMet);
+  HMetC = new TH1F("HMetC","",MetBins,MinMet,MaxMet);
+  HMetD = new TH1F("HMetD","",MetBins,MinMet,MaxMet);
+
+  const Double_t MaxnLep = 7;
+  const Double_t MinnLep = 0;
+  const Int_t nLepBins = 7;
+
+  HnElA = new TH1I("HnElA","",nLepBins,MinnLep,MaxnLep);
+  HnElB = new TH1I("HnElB","",nLepBins,MinnLep,MaxnLep);
+  HnElC = new TH1I("HnElC","",nLepBins,MinnLep,MaxnLep);
+  HnElD = new TH1I("HnElD","",nLepBins,MinnLep,MaxnLep);
+
+  HnMuA = new TH1I("HnMuA","",nLepBins,MinnLep,MaxnLep);
+  HnMuB = new TH1I("HnMuB","",nLepBins,MinnLep,MaxnLep);
+  HnMuC = new TH1I("HnMuC","",nLepBins,MinnLep,MaxnLep);
+  HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
   fOutput->Add(HMuon_ptA);
   fOutput->Add(HElectron_ptA);
@@ -67,6 +94,16 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMetB);
   fOutput->Add(HMetC);
   fOutput->Add(HMetD);
+
+  fOutput->Add(HnElA);
+  fOutput->Add(HnElB);
+  fOutput->Add(HnElC);
+  fOutput->Add(HnElD);
+
+  fOutput->Add(HnMuA);
+  fOutput->Add(HnMuB);
+  fOutput->Add(HnMuC);
+  fOutput->Add(HnMuD);
 
 }
 
@@ -152,6 +189,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
      // 0e3Mu
      if(*nMuon>=3 && GoodMuon.size()>=3){
        HMetA->Fill(*MET_pt);
+       HnElA->Fill(GoodElectron.size());
+       HnMuA->Fill(GoodMuon.size());
      }
 
      // 1e2Mu
@@ -159,6 +198,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodElectron.size()>=1 &&
         GoodMuon.size()>=2){
        HMetB->Fill(*MET_pt);
+       HnElB->Fill(GoodElectron.size());
+       HnMuB->Fill(GoodMuon.size());
      }
 
      // 2e1Mu
@@ -166,11 +207,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodElectron.size()>=2 &&
         GoodMuon.size()>=1){
        HMetC->Fill(*MET_pt);
+       HnElC->Fill(GoodElectron.size());
+       HnMuC->Fill(GoodMuon.size());
      }
 
      // 3e0Mu
      if(*nElectron>=3 && GoodElectron.size()>=3){
        HMetD->Fill(*MET_pt);
+       HnElD->Fill(GoodElectron.size());
+       HnMuD->Fill(GoodMuon.size());
      }
 
      // 3leptons
@@ -188,7 +233,13 @@ void PreSelector::Terminate() {
   ch = new TCanvas("ch","ch",1200,600);
   ch->Divide(2,2);
 
+  THStack *hsA = new THStack("hsA","");
+  THStack *hsB = new THStack("hsB","");
+  THStack *hsC = new THStack("hsC","");
+  THStack *hsD = new THStack("hsD","");
+
   auto SetStyle = [](TH1 *h) {
+    gStyle->SetOptStat(1111111);
     gPad->SetGrid();
     gPad-> SetLogy();
     h->SetFillColor(16);
@@ -212,4 +263,36 @@ void PreSelector::Terminate() {
   SetStyle(HMetD);
   HMetD->Draw();
   ch->Print("PlotMet.png");
+
+  ch->cd(1);
+  gStyle->SetOptStat(1111111);
+  HnElA->SetFillColor(kGreen);
+  HnMuA->SetFillColor(kBlue);
+  hsA->Add(HnMuA);
+  hsA->Add(HnElA);
+  hsA->SetTitle("0e3Mu;n;Event count");
+  hsA->Draw();
+  gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+  ch->cd(2);
+  HnElB->SetFillColor(kGreen);
+  HnMuB->SetFillColor(kBlue);
+  hsB->Add(HnMuB);
+  hsB->Add(HnElB);
+  hsB->SetTitle("1e2Mu;n;Event count");
+  hsB->Draw();
+  ch->cd(3);
+  HnElC->SetFillColor(kGreen);
+  HnMuC->SetFillColor(kBlue);
+  hsC->Add(HnMuC);
+  hsC->Add(HnElC);
+  hsC->SetTitle("2e1Mu;n;Event count");
+  hsC->Draw();
+  ch->cd(4);
+  HnElD->SetFillColor(kGreen);
+  HnMuD->SetFillColor(kBlue);
+  hsD->Add(HnMuD);
+  hsD->Add(HnElD);
+  hsD->SetTitle("3e0Mu;n;Event count");
+  hsD->Draw();
+  ch->Print("nGoodLeptons.png");
 }

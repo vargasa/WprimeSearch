@@ -4,6 +4,8 @@
 #include "TTreeReaderArray.h"
 #include "TCanvas.h"
 #include "TH1I.h"
+#include "TStyle.h"
+#include "THStack.h"
 
 class PreSelector : public TSelector {
 
@@ -107,6 +109,16 @@ class PreSelector : public TSelector {
   TH1F *HMetC;
   TH1F *HMetD;
 
+  TH1I *HnElA;
+  TH1I *HnElB;
+  TH1I *HnElC;
+  TH1I *HnElD;
+
+  TH1I *HnMuA;
+  TH1I *HnMuB;
+  TH1I *HnMuC;
+  TH1I *HnMuD;
+  
 
  public :
 
