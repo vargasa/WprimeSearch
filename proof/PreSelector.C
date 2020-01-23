@@ -46,10 +46,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMuon_ptD = new TH1F("HMuon_ptD","",250,0,1200);
   HElectron_ptD = new TH1F("HElectron_ptD","",250,0,1200);
 
-  HMetA = new TH1F("HMetA","",50,0,500);
-  HMetB = new TH1F("HMetB","",50,0,500);
-  HMetC = new TH1F("HMetC","",50,0,500);
-  HMetD = new TH1F("HMetD","",50,0,500);
+  HMetA = new TH1F("HMetA","",100,0,1000);
+  HMetB = new TH1F("HMetB","",100,0,1000);
+  HMetC = new TH1F("HMetC","",100,0,1000);
+  HMetD = new TH1F("HMetD","",100,0,1000);
 
   fOutput->Add(HMuon_ptA);
   fOutput->Add(HElectron_ptA);
@@ -98,7 +98,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
    };
 
    // Event Selection
-   if ( *HLT_DoubleEle33_CaloIdL_MW &&
+   if ( (*HLT_DoubleEle33_CaloIdL_MW || *HLT_IsoMu20) &&
         *Flag_HBHENoiseFilter &&
         *Flag_HBHENoiseIsoFilter &&
         *Flag_EcalDeadCellTriggerPrimitiveFilter &&
