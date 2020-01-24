@@ -1,5 +1,8 @@
 #include "TFile.h"
 #include "PreSelector.h"
+#include "Math/Vector4D.h"
+#include "Math/Vector4Dfwd.h"
+
 
 PreSelector::PreSelector(TTree *)
 {
@@ -29,6 +32,12 @@ PreSelector::PreSelector(TTree *)
   HnMuB=0;
   HnMuC=0;
   HnMuD=0;
+
+  HMassA=0;
+  HMassB=0;
+  HMassC=0;
+  HMassD=0;
+
 }
 
 void PreSelector::Init(TTree *tree)
@@ -77,6 +86,20 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuB = new TH1I("HnMuB","",nLepBins,MinnLep,MaxnLep);
   HnMuC = new TH1I("HnMuC","",nLepBins,MinnLep,MaxnLep);
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
+
+  const Double_t MinMass = 0.;
+  const Double_t MaxMass = 150.;
+  const Int_t MassBins = 60;
+
+  HMassA = new TH1F("HMassA","",MassBins,MinMass,MaxMass);
+  HMassB = new TH1F("HMassB","",MassBins,MinMass,MaxMass);
+  HMassC = new TH1F("HMassC","",MassBins,MinMass,MaxMass);
+  HMassD = new TH1F("HMassD","",MassBins,MinMass,MaxMass);
+
+  fOutput->Add(HMassA);
+  fOutput->Add(HMassB);
+  fOutput->Add(HMassC);
+  fOutput->Add(HMassD);
 
   fOutput->Add(HMuon_ptA);
   fOutput->Add(HElectron_ptA);
@@ -183,14 +206,35 @@ Bool_t PreSelector::Process(Long64_t entry) {
        return GoodIndex;
      };
 
+     auto MassReco = [](Double_t pt1, Double_t eta1, Double_t phi1, Double_t m1,
+                        Double_t pt2, Double_t eta2, Double_t phi2, Double_t m2){
+
+       ROOT::Math::PtEtaPhiMVector l1(pt1, eta1, phi1, m1);
+       ROOT::Math::PtEtaPhiMVector l2(pt2, eta2, phi2, m2);
+
+       return (l1+l2).M();
+
+     };
+
      std::vector<UInt_t> GoodElectron = GetGoodElectron(Els);
      std::vector<UInt_t> GoodMuon = GetGoodMuon(Mus);
+
+     const Double_t Electron_mass = 0.510998950;
+     const Double_t Muon_mass = 0.105658755;
 
      // 0e3Mu
      if(*nMuon>=3 && GoodMuon.size()>=3){
        HMetA->Fill(*MET_pt);
        HnElA->Fill(GoodElectron.size());
        HnMuA->Fill(GoodMuon.size());
+
+       UInt_t i = GoodMuon[0];
+       UInt_t j = GoodMuon[1];
+       if(Muon_charge[i] != Muon_charge[j]){
+         Double_t m = MassReco(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
+                               Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
+         HMassA->Fill(m);
+       }
      }
 
      // 1e2Mu
@@ -200,6 +244,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
        HMetB->Fill(*MET_pt);
        HnElB->Fill(GoodElectron.size());
        HnMuB->Fill(GoodMuon.size());
+
+       UInt_t i = GoodMuon[0];
+       UInt_t j = GoodMuon[1];
+       if(Muon_charge[i] != Muon_charge[j]){
+         Double_t m = MassReco(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
+                      Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
+         HMassB->Fill(m);
+       }
      }
 
      // 2e1Mu
@@ -209,6 +261,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
        HMetC->Fill(*MET_pt);
        HnElC->Fill(GoodElectron.size());
        HnMuC->Fill(GoodMuon.size());
+
+       UInt_t i = GoodElectron[0];
+       UInt_t j = GoodElectron[1];
+       if(Electron_charge[i] != Electron_charge[j]){
+         Double_t m = MassReco(Electron_pt[i],Electron_eta[i], Electron_phi[i],Electron_mass,
+                               Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
+         HMassC->Fill(m);
+       }
      }
 
      // 3e0Mu
@@ -216,6 +276,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
        HMetD->Fill(*MET_pt);
        HnElD->Fill(GoodElectron.size());
        HnMuD->Fill(GoodMuon.size());
+
+       UInt_t i = GoodElectron[0];
+       UInt_t j = GoodElectron[1];
+       if(Electron_charge[i] != Electron_charge[j]){
+         Double_t m = MassReco(Electron_pt[i],Electron_eta[i],Electron_phi[i],Electron_mass,
+                               Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
+         HMassD->Fill(m);
+       }
      }
 
      // 3leptons
@@ -295,4 +363,15 @@ void PreSelector::Terminate() {
   hsD->SetTitle("3e0Mu;n;Event count");
   hsD->Draw();
   ch->Print("nGoodLeptons.png");
+
+  ch->cd(1);
+  HMassA->Draw();
+  ch->cd(2);
+  HMassB->Draw();
+  ch->cd(3);
+  HMassC->Draw();
+  ch->cd(4);
+  HMassD->Draw();
+  ch->Print("HMass.png");
+
 }
