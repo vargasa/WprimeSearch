@@ -224,16 +224,16 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 0e3Mu
      if(*nMuon>=3 && GoodMuon.size()>=3){
-       HMetA->Fill(*MET_pt);
-       HnElA->Fill(GoodElectron.size());
-       HnMuA->Fill(GoodMuon.size());
+       HMetD->Fill(*MET_pt);
+       HnElD->Fill(GoodElectron.size());
+       HnMuD->Fill(GoodMuon.size());
 
        UInt_t i = GoodMuon[0];
        UInt_t j = GoodMuon[1];
        if(Muon_charge[i] != Muon_charge[j]){
          Double_t m = MassReco(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
                                Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
-         HMassA->Fill(m);
+         HMassD->Fill(m);
        }
      }
 
@@ -241,16 +241,16 @@ Bool_t PreSelector::Process(Long64_t entry) {
      if(*nElectron!=0 && *nMuon>=2 &&
         GoodElectron.size()>=1 &&
         GoodMuon.size()>=2){
-       HMetB->Fill(*MET_pt);
-       HnElB->Fill(GoodElectron.size());
-       HnMuB->Fill(GoodMuon.size());
+       HMetC->Fill(*MET_pt);
+       HnElC->Fill(GoodElectron.size());
+       HnMuC->Fill(GoodMuon.size());
 
        UInt_t i = GoodMuon[0];
        UInt_t j = GoodMuon[1];
        if(Muon_charge[i] != Muon_charge[j]){
          Double_t m = MassReco(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
                       Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
-         HMassB->Fill(m);
+         HMassC->Fill(m);
        }
      }
 
@@ -258,31 +258,31 @@ Bool_t PreSelector::Process(Long64_t entry) {
      if(*nElectron>=2 && *nMuon>=1 &&
         GoodElectron.size()>=2 &&
         GoodMuon.size()>=1){
-       HMetC->Fill(*MET_pt);
-       HnElC->Fill(GoodElectron.size());
-       HnMuC->Fill(GoodMuon.size());
+       HMetB->Fill(*MET_pt);
+       HnElB->Fill(GoodElectron.size());
+       HnMuB->Fill(GoodMuon.size());
 
        UInt_t i = GoodElectron[0];
        UInt_t j = GoodElectron[1];
        if(Electron_charge[i] != Electron_charge[j]){
          Double_t m = MassReco(Electron_pt[i],Electron_eta[i], Electron_phi[i],Electron_mass,
                                Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
-         HMassC->Fill(m);
+         HMassB->Fill(m);
        }
      }
 
      // 3e0Mu
      if(*nElectron>=3 && GoodElectron.size()>=3){
-       HMetD->Fill(*MET_pt);
-       HnElD->Fill(GoodElectron.size());
-       HnMuD->Fill(GoodMuon.size());
+       HMetA->Fill(*MET_pt);
+       HnElA->Fill(GoodElectron.size());
+       HnMuA->Fill(GoodMuon.size());
 
        UInt_t i = GoodElectron[0];
        UInt_t j = GoodElectron[1];
        if(Electron_charge[i] != Electron_charge[j]){
          Double_t m = MassReco(Electron_pt[i],Electron_eta[i],Electron_phi[i],Electron_mass,
                                Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
-         HMassD->Fill(m);
+         HMassA->Fill(m);
        }
      }
 
@@ -315,19 +315,19 @@ void PreSelector::Terminate() {
   };
 
   ch->cd(1);
-  HMetA->SetTitle("0e3Mu;MET_pt;Event count");
+  HMetA->SetTitle("3e0Mu;MET_pt;Event count");
   SetStyle(HMetA);
   HMetA->Draw();
   ch->cd(2);
-  HMetB->SetTitle("1e2Mu;MET_pt;Event count");
+  HMetB->SetTitle("2e1Mu;MET_pt;Event count");
   SetStyle(HMetB);
   HMetB->Draw();
   ch->cd(3);
-  HMetC->SetTitle("2e1Mu;MET_pt;Event count");
+  HMetC->SetTitle("1e2Mu;MET_pt;Event count");
   SetStyle(HMetC);
   HMetC->Draw();
   ch->cd(4);
-  HMetD->SetTitle("3e0Mu;MET_pt;Event count");
+  HMetD->SetTitle("0e3Mu;MET_pt;Event count");
   SetStyle(HMetD);
   HMetD->Draw();
   ch->Print("PlotMet.png");
@@ -338,7 +338,7 @@ void PreSelector::Terminate() {
   HnMuA->SetFillColor(kBlue);
   hsA->Add(HnMuA);
   hsA->Add(HnElA);
-  hsA->SetTitle("0e3Mu;n;Event count");
+  hsA->SetTitle("3e0Mu;n;Event count");
   hsA->Draw();
   gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
   ch->cd(2);
@@ -346,21 +346,21 @@ void PreSelector::Terminate() {
   HnMuB->SetFillColor(kBlue);
   hsB->Add(HnMuB);
   hsB->Add(HnElB);
-  hsB->SetTitle("1e2Mu;n;Event count");
+  hsB->SetTitle("2e1Mu;n;Event count");
   hsB->Draw();
   ch->cd(3);
   HnElC->SetFillColor(kGreen);
   HnMuC->SetFillColor(kBlue);
   hsC->Add(HnMuC);
   hsC->Add(HnElC);
-  hsC->SetTitle("2e1Mu;n;Event count");
+  hsC->SetTitle("1e2Mu;n;Event count");
   hsC->Draw();
   ch->cd(4);
   HnElD->SetFillColor(kGreen);
   HnMuD->SetFillColor(kBlue);
   hsD->Add(HnMuD);
   hsD->Add(HnElD);
-  hsD->SetTitle("3e0Mu;n;Event count");
+  hsD->SetTitle("0e3Mu;n;Event count");
   hsD->Draw();
   ch->Print("nGoodLeptons.png");
 
