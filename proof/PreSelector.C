@@ -54,18 +54,6 @@ void PreSelector::Begin(TTree *tree) {
 
 void PreSelector::SlaveBegin(TTree *tree) {
 
-  HMuon_ptA = new TH1F("HMuon_ptA","",250,0,1200);
-  HElectron_ptA = new TH1F("HElectron_ptA","",250,0,1200);
-
-  HMuon_ptB = new TH1F("HMuon_ptB","",250,0,1200);
-  HElectron_ptB = new TH1F("HElectron_ptB","",250,0,1200);
-
-  HMuon_ptC = new TH1F("HMuon_ptC","",250,0,1200);
-  HElectron_ptC = new TH1F("HElectron_ptC","",250,0,1200);
-
-  HMuon_ptD = new TH1F("HMuon_ptD","",250,0,1200);
-  HElectron_ptD = new TH1F("HElectron_ptD","",250,0,1200);
-
   const Double_t MaxMet = 1000.;
   const Double_t MinMet = 0.;
   const Int_t MetBins = 100;
@@ -106,18 +94,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMassB);
   fOutput->Add(HMassC);
   fOutput->Add(HMassD);
-
-  fOutput->Add(HMuon_ptA);
-  fOutput->Add(HElectron_ptA);
-
-  fOutput->Add(HMuon_ptB);
-  fOutput->Add(HElectron_ptB);
-
-  fOutput->Add(HMuon_ptC);
-  fOutput->Add(HElectron_ptC);
-
-  fOutput->Add(HMuon_ptD);
-  fOutput->Add(HElectron_ptD);
 
   fOutput->Add(HMetA);
   fOutput->Add(HMetB);
