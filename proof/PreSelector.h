@@ -124,6 +124,8 @@ class PreSelector : public TSelector {
   TH1F *HMassC;
   TH1F *HMassD;
 
+  TH1I *HOverlap;
+
  public :
 
   PreSelector(TTree * = 0);

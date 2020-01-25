@@ -38,6 +38,8 @@ PreSelector::PreSelector(TTree *)
   HMassC=0;
   HMassD=0;
 
+  HOverlap=0;
+
 }
 
 void PreSelector::Init(TTree *tree)
@@ -95,6 +97,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMassB = new TH1F("HMassB","",MassBins,MinMass,MaxMass);
   HMassC = new TH1F("HMassC","",MassBins,MinMass,MaxMass);
   HMassD = new TH1F("HMassD","",MassBins,MinMass,MaxMass);
+
+  HOverlap = new TH1I("HOverlap","Overlapping events."
+                      " -1: l<3 0:None 1: NoOverlap",6,-1,5);
+  fOutput->Add(HOverlap);
 
   fOutput->Add(HMassA);
   fOutput->Add(HMassB);
@@ -222,8 +228,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
      const Double_t Electron_mass = 0.510998950;
      const Double_t Muon_mass = 0.105658755;
 
+     Bool_t IsA{},IsB{},IsC{},IsD{};
+
      // 0e3Mu
      if(*nMuon>=3 && GoodMuon.size()>=3){
+       IsD = true;
        HMetD->Fill(*MET_pt);
        HnElD->Fill(GoodElectron.size());
        HnMuD->Fill(GoodMuon.size());
@@ -241,6 +250,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
      if(*nElectron!=0 && *nMuon>=2 &&
         GoodElectron.size()>=1 &&
         GoodMuon.size()>=2){
+       IsC = true;
        HMetC->Fill(*MET_pt);
        HnElC->Fill(GoodElectron.size());
        HnMuC->Fill(GoodMuon.size());
@@ -258,6 +268,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
      if(*nElectron>=2 && *nMuon>=1 &&
         GoodElectron.size()>=2 &&
         GoodMuon.size()>=1){
+       IsB = true;
        HMetB->Fill(*MET_pt);
        HnElB->Fill(GoodElectron.size());
        HnMuB->Fill(GoodMuon.size());
@@ -273,6 +284,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 3e0Mu
      if(*nElectron>=3 && GoodElectron.size()>=3){
+       IsA = true;
        HMetA->Fill(*MET_pt);
        HnElA->Fill(GoodElectron.size());
        HnMuA->Fill(GoodMuon.size());
@@ -288,8 +300,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      // 3leptons
 
-     if( (*nElectron + *nMuon) == 3){
-
+     if( (*nElectron + *nMuon) >= 3){
+       HOverlap->Fill(IsA+IsB+IsC+IsD);
+     } else {
+       HOverlap->Fill(-1);
      }
 
    }
@@ -298,7 +312,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
-  ch = new TCanvas("ch","ch",1200,600);
+  ch = new TCanvas("ch","ch",1200,800);
   ch->Divide(2,2);
 
   THStack *hsA = new THStack("hsA","");
@@ -306,28 +320,28 @@ void PreSelector::Terminate() {
   THStack *hsC = new THStack("hsC","");
   THStack *hsD = new THStack("hsD","");
 
+  gStyle->SetOptStat(1111111);
   auto SetStyle = [](TH1 *h) {
-    gStyle->SetOptStat(1111111);
     gPad->SetGrid();
-    gPad-> SetLogy();
+    gPad->SetLogy();
     h->SetFillColor(16);
     h->SetFillStyle(4050);
   };
 
   ch->cd(1);
-  HMetA->SetTitle("3e0Mu;MET_pt;Event count");
+  HMetA->SetTitle("3e0#mu;#slash{M}^{3e0#mu}_{T};Event count");
   SetStyle(HMetA);
   HMetA->Draw();
   ch->cd(2);
-  HMetB->SetTitle("2e1Mu;MET_pt;Event count");
+  HMetB->SetTitle("2e1#mu;#slash{M}^{2e1#mu}_{T};Event count");
   SetStyle(HMetB);
   HMetB->Draw();
   ch->cd(3);
-  HMetC->SetTitle("1e2Mu;MET_pt;Event count");
+  HMetC->SetTitle("1e2#mu;#slash{M}^{1e2#mu}_{T};Event count");
   SetStyle(HMetC);
   HMetC->Draw();
   ch->cd(4);
-  HMetD->SetTitle("0e3Mu;MET_pt;Event count");
+  HMetD->SetTitle("0e3#mu;#slash{M}^{0e3#mu}_{T};Event count");
   SetStyle(HMetD);
   HMetD->Draw();
   ch->Print("PlotMet.png");
@@ -338,40 +352,47 @@ void PreSelector::Terminate() {
   HnMuA->SetFillColor(kBlue);
   hsA->Add(HnMuA);
   hsA->Add(HnElA);
-  hsA->SetTitle("3e0Mu;n;Event count");
+  hsA->SetTitle("3e0#mu;n;Event count");
   hsA->Draw();
-  gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
   ch->cd(2);
   HnElB->SetFillColor(kGreen);
   HnMuB->SetFillColor(kBlue);
   hsB->Add(HnMuB);
   hsB->Add(HnElB);
-  hsB->SetTitle("2e1Mu;n;Event count");
+  hsB->SetTitle("2e1#mu;n;Event count");
   hsB->Draw();
   ch->cd(3);
   HnElC->SetFillColor(kGreen);
   HnMuC->SetFillColor(kBlue);
   hsC->Add(HnMuC);
   hsC->Add(HnElC);
-  hsC->SetTitle("1e2Mu;n;Event count");
+  hsC->SetTitle("1e2#mu;n;Event count");
   hsC->Draw();
   ch->cd(4);
   HnElD->SetFillColor(kGreen);
   HnMuD->SetFillColor(kBlue);
   hsD->Add(HnMuD);
   hsD->Add(HnElD);
-  hsD->SetTitle("0e3Mu;n;Event count");
+  hsD->SetTitle("0e3#mu;n;Event count");
   hsD->Draw();
   ch->Print("nGoodLeptons.png");
 
   ch->cd(1);
+  HMassA->SetTitle("Z Mass;M_{Z}^{3e0#mu};Event count");
   HMassA->Draw();
   ch->cd(2);
+  HMassB->SetTitle("Z Mass;M_{Z}^{2e1#mu};Event count");
   HMassB->Draw();
   ch->cd(3);
+  HMassC->SetTitle("Z Mass;M_{Z}^{1e2#mu};Event count");
   HMassC->Draw();
   ch->cd(4);
+  HMassD->SetTitle("Z Mass;M_{Z}^{0e3#mu};Event count");
   HMassD->Draw();
   ch->Print("HMass.png");
+
+  ch->cd(0);
+  HOverlap->Draw();
+  ch->Print("Overlap.png");
 
 }
