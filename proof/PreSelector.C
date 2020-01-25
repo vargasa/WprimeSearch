@@ -50,6 +50,11 @@ void PreSelector::Init(TTree *tree)
 }
 void PreSelector::Begin(TTree *tree) {
 
+  if (fInput->FindObject("Mass")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Mass"));
+    Mass = p->GetVal();
+  }
+
 }
 
 void PreSelector::SlaveBegin(TTree *tree) {
@@ -320,7 +325,7 @@ void PreSelector::Terminate() {
   HMetD->SetTitle("0e3#mu;#slash{M}^{0e3#mu}_{T};Event count");
   SetStyle(HMetD);
   HMetD->Draw();
-  ch->Print("PlotMet.png");
+  ch->Print(Form("PlotMet_%d.png",Mass));
 
   ch->cd(1);
   gStyle->SetOptStat(1111111);
@@ -351,7 +356,7 @@ void PreSelector::Terminate() {
   hsD->Add(HnElD);
   hsD->SetTitle("0e3#mu;n;Event count");
   hsD->Draw();
-  ch->Print("nGoodLeptons.png");
+  ch->Print(Form("nGoodLeptons_%d.png",Mass));
 
   ch->cd(1);
   HMassA->SetTitle("Z Mass;M_{Z}^{3e0#mu};Event count");
@@ -365,10 +370,10 @@ void PreSelector::Terminate() {
   ch->cd(4);
   HMassD->SetTitle("Z Mass;M_{Z}^{0e3#mu};Event count");
   HMassD->Draw();
-  ch->Print("HMass.png");
+  ch->Print(Form("HMass_%d.png",Mass));
 
   ch->cd(0);
   HOverlap->Draw();
-  ch->Print("Overlap.png");
+  ch->Print(Form("Overlap_%d.png",Mass));
 
 }

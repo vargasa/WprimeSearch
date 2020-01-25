@@ -3,6 +3,7 @@
 #include "TTreeReaderValue.h"
 #include "TTreeReaderArray.h"
 #include "TCanvas.h"
+#include "TParameter.h"
 #include "TH1I.h"
 #include "TStyle.h"
 #include "THStack.h"
@@ -127,6 +128,8 @@ class PreSelector : public TSelector {
   TH1I *HOverlap;
 
  public :
+
+  Int_t Mass;
 
   PreSelector(TTree * = 0);
   virtual ~PreSelector() { }

@@ -15,6 +15,7 @@ Int_t Selector(TString rootfile = "", Int_t fWorkers = 4){
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
+  fProof->SetParameter("Mass",(Int_t)mass);
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+");
