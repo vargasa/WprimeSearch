@@ -169,12 +169,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
        const Float_t MinPt = 10.;
        const Float_t MaxDxy = 0.2; // 2mm
        const Float_t MaxDz = 0.5; // 5mm
-       UInt_t index = 0;
        for (UInt_t i=0; i<*Mu.n;i++){
          if(Mu.isGlobal[i] && Mu.looseId[i] && Mu.eta[i]<MaxEta &&
             Mu.pt[i]>MinPt && Mu.dxy[i]<MaxDxy && Mu.dz[i]<MaxDz)
-           GoodIndex.emplace_back(index);
-         index++;
+           GoodIndex.emplace_back(i);
        }
        return GoodIndex;
      };
