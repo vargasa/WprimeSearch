@@ -2,6 +2,7 @@
 #include "PreSelector.h"
 #include "Math/Vector4D.h"
 #include "Math/Vector4Dfwd.h"
+#include "TMath.h"
 
 
 PreSelector::PreSelector(TTree *)
@@ -37,6 +38,11 @@ PreSelector::PreSelector(TTree *)
   HMassB=0;
   HMassC=0;
   HMassD=0;
+
+  HMassWA=0;
+  HMassWB=0;
+  HMassWC=0;
+  HMassWD=0;
 
   HOverlap=0;
 
@@ -83,13 +89,23 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
   const Double_t MinMass = 0.;
-  const Double_t MaxMass = 150.;
-  const Int_t MassBins = 60;
+  const Double_t MaxMass = 200.;
+  const Int_t MassBins = 50;
 
   HMassA = new TH1F("HMassA","",MassBins,MinMass,MaxMass);
   HMassB = new TH1F("HMassB","",MassBins,MinMass,MaxMass);
   HMassC = new TH1F("HMassC","",MassBins,MinMass,MaxMass);
   HMassD = new TH1F("HMassD","",MassBins,MinMass,MaxMass);
+
+  HMassWA = new TH1F("HMassWA","",MassBins,MinMass,MaxMass);
+  HMassWB = new TH1F("HMassWB","",MassBins,MinMass,MaxMass);
+  HMassWC = new TH1F("HMassWC","",MassBins,MinMass,MaxMass);
+  HMassWD = new TH1F("HMassWD","",MassBins,MinMass,MaxMass);
+
+  fOutput->Add(HMassWA);
+  fOutput->Add(HMassWB);
+  fOutput->Add(HMassWC);
+  fOutput->Add(HMassWD);
 
   HOverlap = new TH1I("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
@@ -191,7 +207,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        return GoodIndex;
      };
 
-     auto MassReco = [](Double_t pt1, Double_t eta1, Double_t phi1, Double_t m1,
+     auto MassRecoZ = [](Double_t pt1, Double_t eta1, Double_t phi1, Double_t m1,
                         Double_t pt2, Double_t eta2, Double_t phi2, Double_t m2){
 
        ROOT::Math::PtEtaPhiMVector l1(pt1, eta1, phi1, m1);
@@ -201,11 +217,17 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      };
 
+     auto MassRecoW = [](Double_t ptl, Double_t etal, Double_t phil, Double_t ml,
+                         Double_t ptmet, Double_t phimet){
+       return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
+     };
+
      std::vector<UInt_t> GoodElectron = GetGoodElectron(Els);
      std::vector<UInt_t> GoodMuon = GetGoodMuon(Mus);
 
      const Double_t Electron_mass = 0.510998950;
      const Double_t Muon_mass = 0.105658755;
+     const Double Float MinRemPt = 20.;
 
      Bool_t IsA{},IsB{},IsC{},IsD{};
 
@@ -219,9 +241,17 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodMuon[0];
        UInt_t j = GoodMuon[1];
        if(Muon_charge[i] != Muon_charge[j]){
-         Double_t m = MassReco(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
+         Double_t m = MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
                                Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
+
+         UInt_t k = j+1;
+         if(Muon_pt[k]>MinRemPt){
+           Double_t mt = MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muon_mass,
+                                   *MET_pt,*MET_phi);
+           HMassWD->Fill(mt);
+         }
          HMassD->Fill(m);
+
        }
      }
 
@@ -237,10 +267,17 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodMuon[0];
        UInt_t j = GoodMuon[1];
        if(Muon_charge[i] != Muon_charge[j]){
-         Double_t m = MassReco(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
+         Double_t m = MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
                       Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
+         UInt_t k = 0;
+         if(Electron_pt[k]>MinRemPt){
+           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],Electron_mass,
+                                   *MET_pt,*MET_phi);
+           HMassWC->Fill(mt);
+         }
          HMassC->Fill(m);
        }
+
      }
 
      // 2e1Mu
@@ -255,8 +292,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodElectron[0];
        UInt_t j = GoodElectron[1];
        if(Electron_charge[i] != Electron_charge[j]){
-         Double_t m = MassReco(Electron_pt[i],Electron_eta[i], Electron_phi[i],Electron_mass,
+         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i], Electron_phi[i],Electron_mass,
                                Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
+         UInt_t k = 0;
+         if(Muon_pt[k]>MinRemPt){
+           Double_t mt = MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muon_mass,
+                                   *MET_pt,*MET_phi);
+           HMassWB->Fill(mt);
+         }
          HMassB->Fill(m);
        }
      }
@@ -271,10 +314,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodElectron[0];
        UInt_t j = GoodElectron[1];
        if(Electron_charge[i] != Electron_charge[j]){
-         Double_t m = MassReco(Electron_pt[i],Electron_eta[i],Electron_phi[i],Electron_mass,
+         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i],Electron_phi[i],Electron_mass,
                                Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
+         UInt_t k = j+1;
+         if(Electron_pt[k]>MinRemPt){
+           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],Electron_mass,
+                                   *MET_pt,*MET_phi);
+           HMassWA->Fill(mt);
+         }
          HMassA->Fill(m);
        }
+
+
      }
 
      // 3leptons
@@ -369,6 +420,20 @@ void PreSelector::Terminate() {
   HMassD->SetTitle("Z Mass;M_{Z}^{0e3#mu};Event count");
   HMassD->Draw();
   ch->Print(Form("HMass_%d.png",Mass));
+
+  ch->cd(1);
+  HMassWA->SetTitle("M_{T}^{W};M_{WT}^{3e0#mu};Event count");
+  HMassWA->Draw();
+  ch->cd(2);
+  HMassWB->SetTitle("M_{T}^{W};M_{WT}^{2e1#mu};Event count");
+  HMassWB->Draw();
+  ch->cd(3);
+  HMassWC->SetTitle("M_{T}^{W};M_{WT}^{1e2#mu};Event count");
+  HMassWC->Draw();
+  ch->cd(4);
+  HMassWD->SetTitle("M_{T}^{W};M_{WT}^{0e3#mu};Event count");
+  HMassWD->Draw();
+  ch->Print(Form("HMassWT_%d.png",Mass));
 
   ch->cd(0);
   HOverlap->Draw();
