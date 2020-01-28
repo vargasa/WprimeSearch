@@ -177,6 +177,32 @@ Double_t PreSelector::MassRecoW(Double_t ptl, Double_t etal, Double_t phil, Doub
 };
 
 
+std::vector<std::pair<Int_t,Int_t>> GetElectronPairs(Electrons El, std::vector<UInt_t> GoodIndex){
+
+  std::vector<UInt_t> positive;
+  std::vector<UInt_t> negative;
+
+  for(UInt_t i=0; i< GoodIndex.size(); i++){
+    if (El.charge[GoodIndex[i]] == 1){
+      positive.emplace_back(GoodIndex[i]);
+    } else {
+      negative.emplace_back(GoodIndex[i]);
+    }
+  }
+
+  std::vector<std::pair<Int_t,Int_t>> couples;
+
+  for(UInt_t i=0; i< positive.size(); i++){
+    for(UInt_t j=0; j< negative.size();j++){
+      couples.emplace_back(std::make_pair(positive[i],negative[j]));
+    }
+  }
+
+  return couples;
+
+}
+
+
 Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);

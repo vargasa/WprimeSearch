@@ -19,6 +19,7 @@ Int_t Selector(TString rootfile = "", Int_t fWorkers = 4){
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+");
+  fProof->Print("a");
 
   return 0;
 }

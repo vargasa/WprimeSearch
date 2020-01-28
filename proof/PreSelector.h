@@ -155,6 +155,8 @@ class PreSelector : public TSelector {
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t);
 
+  std::vector<std::pair<Int_t,Int_t>> GetElectronPairs(Electrons, std::vector<UInt_t>);
+
   ClassDef(PreSelector,0);
 };
 
