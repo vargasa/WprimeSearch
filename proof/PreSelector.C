@@ -171,19 +171,24 @@ Double_t PreSelector::MassRecoZ(Double_t pt1, Double_t eta1, Double_t phi1, Doub
   return (l1+l2).M();
 };
 
+// Double_t PreSelector::MassFromPair(std::pair<UInt_t,UInt_t> p){
+
+
+// };
+
 Double_t PreSelector::MassRecoW(Double_t ptl, Double_t etal, Double_t phil, Double_t ml,
                                 Double_t ptmet, Double_t phimet){
   return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
 };
 
 
-std::vector<std::pair<Int_t,Int_t>> GetElectronPairs(Electrons El, std::vector<UInt_t> GoodIndex){
+std::vector<std::pair<Int_t,Int_t>> PreSelector::GetLeptonPairs(Leptons l, std::vector<UInt_t> GoodIndex){
 
   std::vector<UInt_t> positive;
   std::vector<UInt_t> negative;
 
   for(UInt_t i=0; i< GoodIndex.size(); i++){
-    if (El.charge[GoodIndex[i]] == 1){
+    if (l.charge[GoodIndex[i]] == 1){
       positive.emplace_back(GoodIndex[i]);
     } else {
       negative.emplace_back(GoodIndex[i]);
@@ -218,19 +223,17 @@ Bool_t PreSelector::Process(Long64_t entry) {
         *PV_ndof > 4
         ) {
 
-     Muons Mus{nMuon,Muon_looseId,
-         Muon_pt,Muon_eta,Muon_phi,
-         Muon_isGlobal,Muon_dxy,Muon_dz};
+     Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+               Muon_charge,Muon_dxy,Muon_dz,
+               Muon_looseId,Muon_isGlobal);
 
-     Electrons Els{nElectron,Electron_cutBased,
-         Electron_pt,Electron_eta,Electron_phi,
-         Electron_charge,Electron_miniPFRelIso_all};
+     Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
+                   Electron_charge,Electron_dxy,Electron_dz,
+                   Electron_cutBased,Electron_miniPFRelIso_all);
 
      std::vector<UInt_t> GoodElectron = PreSelector::GetGoodElectron(Els);
      std::vector<UInt_t> GoodMuon = PreSelector::GetGoodMuon(Mus);
 
-     const Double_t Electron_mass = 0.510998950;
-     const Double_t Muon_mass = 0.105658755;
      const Double_t MinRemPt = 20.;
 
      Bool_t IsA{},IsB{},IsC{},IsD{};
@@ -245,12 +248,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodMuon[0];
        UInt_t j = GoodMuon[1];
        if(Muon_charge[i] != Muon_charge[j]){
-         Double_t m = PreSelector::MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
-                               Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
+         Double_t m = PreSelector::MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muons::Mass,
+                               Muon_pt[j],Muon_eta[j],Muon_phi[j],Muons::Mass);
 
          UInt_t k = j+1;
          if(Muon_pt[k]>MinRemPt){
-           Double_t mt = PreSelector::MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muon_mass,
+           Double_t mt = PreSelector::MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muons::Mass,
                                    *MET_pt,*MET_phi);
            HMassWD->Fill(mt);
          }
@@ -271,12 +274,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodMuon[0];
        UInt_t j = GoodMuon[1];
        if(Muon_charge[i] != Muon_charge[j]){
-         Double_t m = MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
-                      Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
+         Double_t m = MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muons::Mass,
+                                Muon_pt[j],Muon_eta[j],Muon_phi[j],Muons::Mass);
          UInt_t k = 0;
          if(Electron_pt[k]>MinRemPt){
-           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],Electron_mass,
-                                   *MET_pt,*MET_phi);
+           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],
+                                   Electrons::Mass,*MET_pt,*MET_phi);
            HMassWC->Fill(mt);
          }
          HMassC->Fill(m);
@@ -296,11 +299,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodElectron[0];
        UInt_t j = GoodElectron[1];
        if(Electron_charge[i] != Electron_charge[j]){
-         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i], Electron_phi[i],Electron_mass,
-                               Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
+         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i], Electron_phi[i],Electrons::Mass,
+                                Electron_pt[j],Electron_eta[j],Electron_phi[j],Electrons::Mass);
          UInt_t k = 0;
          if(Muon_pt[k]>MinRemPt){
-           Double_t mt = MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muon_mass,
+           Double_t mt = MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muons::Mass,
                                    *MET_pt,*MET_phi);
            HMassWB->Fill(mt);
          }
@@ -318,11 +321,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodElectron[0];
        UInt_t j = GoodElectron[1];
        if(Electron_charge[i] != Electron_charge[j]){
-         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i],Electron_phi[i],Electron_mass,
-                               Electron_pt[j],Electron_eta[j],Electron_phi[j],Electron_mass);
+         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i],Electron_phi[i],Electrons::Mass,
+                               Electron_pt[j],Electron_eta[j],Electron_phi[j],Electrons::Mass);
          UInt_t k = j+1;
          if(Electron_pt[k]>MinRemPt){
-           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],Electron_mass,
+           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],Electrons::Mass,
                                    *MET_pt,*MET_phi);
            HMassWA->Fill(mt);
          }

@@ -9,6 +9,7 @@
 #include "THStack.h"
 #include "Electrons.h"
 #include "Muons.h"
+#include "Leptons.h"
 
 class PreSelector : public TSelector {
 
@@ -80,6 +81,8 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Electron_eta = {fReader, "Electron_eta"};
   TTreeReaderArray<Float_t> Electron_mass = {fReader, "Electron_mass"};
   TTreeReaderArray<Float_t> Electron_phi = {fReader, "Electron_phi"};
+  TTreeReaderArray<Float_t> Electron_dxy = {fReader, "Electron_dxy"};
+  TTreeReaderArray<Float_t> Electron_dz = {fReader, "Electron_dz"};
   TTreeReaderArray<Int_t> Electron_charge = {fReader, "Electron_charge"};
   TTreeReaderArray<Int_t> Electron_cutBased = {fReader, "Electron_cutBased"}; // cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
   TTreeReaderArray<Float_t> Electron_pfRelIso03_all = {fReader, "Electron_pfRelIso03_all"};
@@ -155,7 +158,7 @@ class PreSelector : public TSelector {
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t);
 
-  std::vector<std::pair<Int_t,Int_t>> GetElectronPairs(Electrons, std::vector<UInt_t>);
+  std::vector<std::pair<Int_t,Int_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
 
   ClassDef(PreSelector,0);
 };

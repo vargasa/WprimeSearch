@@ -1,9 +1,25 @@
-struct Electrons{
-  TTreeReaderValue<UInt_t> &n;
-  TTreeReaderArray<Int_t> &cutBased;
-  TTreeReaderArray<Float_t> &pt;
-  TTreeReaderArray<Float_t> &eta;
-  TTreeReaderArray<Float_t> &phi;
-  TTreeReaderArray<Int_t> &charge;
-  TTreeReaderArray<Float_t> &miniPFRelIso_all;
+#ifndef Leptons_h
+#include "Leptons.h"
+#endif
+
+using RVUI = TTreeReaderValue<UInt_t>&;
+using RAF = TTreeReaderArray<Float_t>&;
+using RAI = TTreeReaderArray<Int_t>&;
+
+class Electrons : public Leptons{
+ public:
+  Electrons(RVUI, RAF, RAF, RAF, RAI, RAF,
+            RAF, RAI, RAF);
+  ~Electrons() {};
+  RAI cutBased;
+  RAF miniPFRelIso_all;
+  static constexpr Double_t Mass = 0.510998950;
 };
+
+Electrons::Electrons(RVUI n, RAF pt, RAF eta, RAF phi,
+                     RAI charge, RAF dxy, RAF dz, RAI cutBased,
+                     RAF miniPFRelIso_all) :
+Leptons(n,Mass,pt,eta,phi,charge,dxy,dz), cutBased(cutBased), miniPFRelIso_all(miniPFRelIso_all)
+{
+
+}
