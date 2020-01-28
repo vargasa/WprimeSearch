@@ -7,6 +7,8 @@
 #include "TH1I.h"
 #include "TStyle.h"
 #include "THStack.h"
+#include "Electrons.h"
+#include "Muons.h"
 
 class PreSelector : public TSelector {
 
@@ -144,6 +146,14 @@ class PreSelector : public TSelector {
   virtual Bool_t  Process(Long64_t entry);
   virtual void    Terminate();
   virtual Int_t   Version() const { return 2; }
+
+  std::vector<UInt_t> GetGoodMuon(Muons);
+  std::vector<UInt_t> GetGoodElectron(Electrons);
+
+  Double_t MassRecoZ(Double_t,Double_t,Double_t,Double_t,
+                     Double_t,Double_t,Double_t,Double_t);
+  Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
+                     Double_t,Double_t);
 
   ClassDef(PreSelector,0);
 };

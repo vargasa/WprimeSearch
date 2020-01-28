@@ -134,31 +134,52 @@ void PreSelector::SlaveBegin(TTree *tree) {
 }
 
 
+std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
+  std::vector<UInt_t> GoodIndex = {};
+  const Float_t MaxEta = 2.4;
+  const Float_t MinPt = 10.;
+  const Float_t MaxDxy = 0.2; // 2mm
+  const Float_t MaxDz = 0.5; // 5mm
+  for (UInt_t i=0; i<*Mu.n;i++){
+    if(Mu.isGlobal[i] && Mu.looseId[i] && Mu.eta[i]<MaxEta &&
+       Mu.pt[i]>MinPt && Mu.dxy[i]<MaxDxy && Mu.dz[i]<MaxDz)
+      GoodIndex.emplace_back(i);
+  }
+  return GoodIndex;
+};
+
+std::vector<UInt_t> PreSelector::GetGoodElectron(Electrons El){
+  const Float_t MaxEta = 2.5;
+  const Float_t MinPt = 20.;
+  const Float_t MaxRelIso = 0.15;
+  std::vector<UInt_t> GoodIndex = {};
+  UInt_t index = 0;
+  for (UInt_t i = 0; i< *El.n; i++){
+    if(El.cutBased[i]>=1 && El.eta[i]<MaxEta && El.pt[i]>MinPt &&
+       El.miniPFRelIso_all[i]<MaxRelIso)
+      GoodIndex.emplace_back(i);
+  }
+  return GoodIndex;
+};
+
+Double_t PreSelector::MassRecoZ(Double_t pt1, Double_t eta1, Double_t phi1, Double_t m1,
+                                Double_t pt2, Double_t eta2, Double_t phi2, Double_t m2){
+
+  ROOT::Math::PtEtaPhiMVector l1(pt1, eta1, phi1, m1);
+  ROOT::Math::PtEtaPhiMVector l2(pt2, eta2, phi2, m2);
+
+  return (l1+l2).M();
+};
+
+Double_t PreSelector::MassRecoW(Double_t ptl, Double_t etal, Double_t phil, Double_t ml,
+                                Double_t ptmet, Double_t phimet){
+  return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
+};
 
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
-
-   struct Muons{
-     TTreeReaderValue<UInt_t> &n;
-     TTreeReaderArray<Bool_t> &looseId;
-     TTreeReaderArray<Float_t> &pt;
-     TTreeReaderArray<Float_t> &eta;
-     TTreeReaderArray<Float_t> &phi;
-     TTreeReaderArray<Bool_t> &isGlobal;
-     TTreeReaderArray<Float_t> &dxy;
-     TTreeReaderArray<Float_t> &dz;
-   };
-
-   struct Electrons{
-     TTreeReaderValue<UInt_t> &n;
-     TTreeReaderArray<Int_t> &cutBased;
-     TTreeReaderArray<Float_t> &pt;
-     TTreeReaderArray<Float_t> &eta;
-     TTreeReaderArray<Float_t> &phi;
-     TTreeReaderArray<Float_t> &miniPFRelIso_all;
-   };
 
    // Event Selection
    if ( (*HLT_DoubleEle33_CaloIdL_MW || *HLT_IsoMu20) &&
@@ -177,57 +198,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      Electrons Els{nElectron,Electron_cutBased,
          Electron_pt,Electron_eta,Electron_phi,
-         Electron_miniPFRelIso_all};
+         Electron_charge,Electron_miniPFRelIso_all};
 
-     auto GetGoodMuon = [](Muons Mu){
-       std::vector<UInt_t> GoodIndex = {};
-       const Float_t MaxEta = 2.4;
-       const Float_t MinPt = 10.;
-       const Float_t MaxDxy = 0.2; // 2mm
-       const Float_t MaxDz = 0.5; // 5mm
-       for (UInt_t i=0; i<*Mu.n;i++){
-         if(Mu.isGlobal[i] && Mu.looseId[i] && Mu.eta[i]<MaxEta &&
-            Mu.pt[i]>MinPt && Mu.dxy[i]<MaxDxy && Mu.dz[i]<MaxDz)
-           GoodIndex.emplace_back(i);
-       }
-       return GoodIndex;
-     };
-
-     auto GetGoodElectron = [](Electrons El){
-       const Float_t MaxEta = 2.5;
-       const Float_t MinPt = 20.;
-       const Float_t MaxRelIso = 0.15;
-       std::vector<UInt_t> GoodIndex = {};
-       UInt_t index = 0;
-       for (UInt_t i = 0; i< *El.n; i++){
-         if(El.cutBased[i]>=1 && El.eta[i]<MaxEta && El.pt[i]>MinPt &&
-            El.miniPFRelIso_all[i]<MaxRelIso)
-           GoodIndex.emplace_back(i);
-       }
-       return GoodIndex;
-     };
-
-     auto MassRecoZ = [](Double_t pt1, Double_t eta1, Double_t phi1, Double_t m1,
-                        Double_t pt2, Double_t eta2, Double_t phi2, Double_t m2){
-
-       ROOT::Math::PtEtaPhiMVector l1(pt1, eta1, phi1, m1);
-       ROOT::Math::PtEtaPhiMVector l2(pt2, eta2, phi2, m2);
-
-       return (l1+l2).M();
-
-     };
-
-     auto MassRecoW = [](Double_t ptl, Double_t etal, Double_t phil, Double_t ml,
-                         Double_t ptmet, Double_t phimet){
-       return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
-     };
-
-     std::vector<UInt_t> GoodElectron = GetGoodElectron(Els);
-     std::vector<UInt_t> GoodMuon = GetGoodMuon(Mus);
+     std::vector<UInt_t> GoodElectron = PreSelector::GetGoodElectron(Els);
+     std::vector<UInt_t> GoodMuon = PreSelector::GetGoodMuon(Mus);
 
      const Double_t Electron_mass = 0.510998950;
      const Double_t Muon_mass = 0.105658755;
-     const Double Float MinRemPt = 20.;
+     const Double_t MinRemPt = 20.;
 
      Bool_t IsA{},IsB{},IsC{},IsD{};
 
@@ -241,12 +219,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
        UInt_t i = GoodMuon[0];
        UInt_t j = GoodMuon[1];
        if(Muon_charge[i] != Muon_charge[j]){
-         Double_t m = MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
+         Double_t m = PreSelector::MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muon_mass,
                                Muon_pt[j],Muon_eta[j],Muon_phi[j],Muon_mass);
 
          UInt_t k = j+1;
          if(Muon_pt[k]>MinRemPt){
-           Double_t mt = MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muon_mass,
+           Double_t mt = PreSelector::MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muon_mass,
                                    *MET_pt,*MET_phi);
            HMassWD->Fill(mt);
          }
