@@ -204,13 +204,12 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(Leptons l, std
 
 }
 
-
-std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZMassElectronPairs(Electrons Els,std::vector<UInt_t> GoodElectron){
+std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZ(Leptons l,std::vector<UInt_t> GoodLepton){
 
   std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
 
   try {
-    Pairs = PreSelector::GetLeptonPairs(Els,GoodElectron);
+    Pairs = PreSelector::GetLeptonPairs(l,GoodLepton);
   } catch (const std::exception& e){
     throw std::range_error("No pairs found!");
   }
@@ -222,35 +221,8 @@ std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector:
   for(UInt_t k = 0; k< Pairs.size(); k++){
     UInt_t i = Pairs[k].first;
     UInt_t j = Pairs[k].second;
-    Double_t m = PreSelector::MassRecoZ(Electron_pt[i],Electron_eta[i],Electron_phi[i],Muons::Mass,
-                                        Electron_pt[j],Electron_eta[j],Electron_phi[j],Muons::Mass);
-    ZMassTuple.emplace_back(std::make_tuple(abs(ZNominalMass-m),m,std::make_pair(i,j)));
-  }
-
-  std::sort(ZMassTuple.begin(),ZMassTuple.end()); //By ZMassDistance
-  return ZMassTuple;
-
-}
-
-std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZMassMuonPairs(Muons Mus,std::vector<UInt_t> GoodMuon){
-
-  std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
-
-  try {
-    Pairs = PreSelector::GetLeptonPairs(Mus,GoodMuon);
-  } catch (const std::exception& e){
-    throw std::range_error("No pairs found!");
-  }
-
-  // ZMassDistance, ZMass, Pair
-  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ZMassTuple;
-  const Double_t ZNominalMass = 91.1876;
-
-  for(UInt_t k = 0; k< Pairs.size(); k++){
-    UInt_t i = Pairs[k].first;
-    UInt_t j = Pairs[k].second;
-    Double_t m = PreSelector::MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muons::Mass,
-                                        Muon_pt[j],Muon_eta[j],Muon_phi[j],Muons::Mass);
+    Double_t m = PreSelector::MassRecoZ(l.pt[i],l.eta[i],l.phi[i],l.mass,
+                                        l.pt[j],l.eta[j],l.phi[j],l.mass);
     ZMassTuple.emplace_back(std::make_tuple(abs(ZNominalMass-m),m,std::make_pair(i,j)));
   }
 
@@ -300,7 +272,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
        try {
-         zt = PreSelector::FindZMassMuonPairs(Mus,GoodMuon);
+         zt = PreSelector::FindZ(Mus,GoodMuon);
        } catch (const std::exception& e) {
          NoPairs = true;
        }
@@ -324,7 +296,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
        try {
-         zt = PreSelector::FindZMassMuonPairs(Mus,GoodMuon);
+         zt = PreSelector::FindZ(Mus,GoodMuon);
        } catch (const std::exception& e) {
          NoPairs = true;
        }
@@ -348,7 +320,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
        try {
-         zt = PreSelector::FindZMassElectronPairs(Els,GoodElectron);
+         zt = PreSelector::FindZ(Els,GoodElectron);
        } catch (const std::exception& e) {
          NoPairs = true;
        }
@@ -370,7 +342,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
        try {
-         zt = PreSelector::FindZMassElectronPairs(Els,GoodElectron);
+         zt = PreSelector::FindZ(Els,GoodElectron);
        } catch (const std::exception& e) {
          NoPairs = true;
        }
