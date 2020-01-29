@@ -171,18 +171,13 @@ Double_t PreSelector::MassRecoZ(Double_t pt1, Double_t eta1, Double_t phi1, Doub
   return (l1+l2).M();
 };
 
-// Double_t PreSelector::MassFromPair(std::pair<UInt_t,UInt_t> p){
-
-
-// };
-
 Double_t PreSelector::MassRecoW(Double_t ptl, Double_t etal, Double_t phil, Double_t ml,
                                 Double_t ptmet, Double_t phimet){
   return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
 };
 
 
-std::vector<std::pair<Int_t,Int_t>> PreSelector::GetLeptonPairs(Leptons l, std::vector<UInt_t> GoodIndex){
+std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(Leptons l, std::vector<UInt_t> GoodIndex){
 
   std::vector<UInt_t> positive;
   std::vector<UInt_t> negative;
@@ -195,7 +190,9 @@ std::vector<std::pair<Int_t,Int_t>> PreSelector::GetLeptonPairs(Leptons l, std::
     }
   }
 
-  std::vector<std::pair<Int_t,Int_t>> couples;
+  if(positive.size() == 0 || negative.size() == 0) throw std::range_error("No pairs found");
+
+  std::vector<std::pair<UInt_t,UInt_t>> couples;
 
   for(UInt_t i=0; i< positive.size(); i++){
     for(UInt_t j=0; j< negative.size();j++){
@@ -207,6 +204,60 @@ std::vector<std::pair<Int_t,Int_t>> PreSelector::GetLeptonPairs(Leptons l, std::
 
 }
 
+
+std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZMassElectronPairs(Electrons Els,std::vector<UInt_t> GoodElectron){
+
+  std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
+
+  try {
+    Pairs = PreSelector::GetLeptonPairs(Els,GoodElectron);
+  } catch (const std::exception& e){
+    throw std::range_error("No pairs found!");
+  }
+
+  // ZMassDistance, ZMass, Pair
+  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ZMassTuple;
+  const Double_t ZNominalMass = 91.1876;
+
+  for(UInt_t k = 0; k< Pairs.size(); k++){
+    UInt_t i = Pairs[k].first;
+    UInt_t j = Pairs[k].second;
+    Double_t m = PreSelector::MassRecoZ(Electron_pt[i],Electron_eta[i],Electron_phi[i],Muons::Mass,
+                                        Electron_pt[j],Electron_eta[j],Electron_phi[j],Muons::Mass);
+    ZMassTuple.emplace_back(std::make_tuple(abs(ZNominalMass-m),m,std::make_pair(i,j)));
+  }
+
+  std::sort(ZMassTuple.begin(),ZMassTuple.end()); //By ZMassDistance
+  return ZMassTuple;
+
+}
+
+std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZMassMuonPairs(Muons Mus,std::vector<UInt_t> GoodMuon){
+
+  std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
+
+  try {
+    Pairs = PreSelector::GetLeptonPairs(Mus,GoodMuon);
+  } catch (const std::exception& e){
+    throw std::range_error("No pairs found!");
+  }
+
+  // ZMassDistance, ZMass, Pair
+  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ZMassTuple;
+  const Double_t ZNominalMass = 91.1876;
+
+  for(UInt_t k = 0; k< Pairs.size(); k++){
+    UInt_t i = Pairs[k].first;
+    UInt_t j = Pairs[k].second;
+    Double_t m = PreSelector::MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muons::Mass,
+                                        Muon_pt[j],Muon_eta[j],Muon_phi[j],Muons::Mass);
+    ZMassTuple.emplace_back(std::make_tuple(abs(ZNominalMass-m),m,std::make_pair(i,j)));
+  }
+
+  std::sort(ZMassTuple.begin(),ZMassTuple.end()); //By ZMassDistance
+  return ZMassTuple;
+
+}
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
@@ -241,25 +292,24 @@ Bool_t PreSelector::Process(Long64_t entry) {
      // 0e3Mu
      if(*nMuon>=3 && GoodMuon.size()>=3){
        IsD = true;
+       Bool_t NoPairs{};
        HMetD->Fill(*MET_pt);
        HnElD->Fill(GoodElectron.size());
        HnMuD->Fill(GoodMuon.size());
 
-       UInt_t i = GoodMuon[0];
-       UInt_t j = GoodMuon[1];
-       if(Muon_charge[i] != Muon_charge[j]){
-         Double_t m = PreSelector::MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muons::Mass,
-                               Muon_pt[j],Muon_eta[j],Muon_phi[j],Muons::Mass);
+       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
-         UInt_t k = j+1;
-         if(Muon_pt[k]>MinRemPt){
-           Double_t mt = PreSelector::MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muons::Mass,
-                                   *MET_pt,*MET_phi);
-           HMassWD->Fill(mt);
-         }
-         HMassD->Fill(m);
-
+       try {
+         zt = PreSelector::FindZMassMuonPairs(Mus,GoodMuon);
+       } catch (const std::exception& e) {
+         NoPairs = true;
        }
+
+       if (!NoPairs){
+         Double_t BestMass = std::get<1>(zt[0]);
+         HMassD->Fill(BestMass);
+       }
+
      }
 
      // 1e2Mu
@@ -267,24 +317,22 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodElectron.size()>=1 &&
         GoodMuon.size()>=2){
        IsC = true;
+       Bool_t NoPairs{};
        HMetC->Fill(*MET_pt);
        HnElC->Fill(GoodElectron.size());
        HnMuC->Fill(GoodMuon.size());
+       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
-       UInt_t i = GoodMuon[0];
-       UInt_t j = GoodMuon[1];
-       if(Muon_charge[i] != Muon_charge[j]){
-         Double_t m = MassRecoZ(Muon_pt[i],Muon_eta[i],Muon_phi[i],Muons::Mass,
-                                Muon_pt[j],Muon_eta[j],Muon_phi[j],Muons::Mass);
-         UInt_t k = 0;
-         if(Electron_pt[k]>MinRemPt){
-           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],
-                                   Electrons::Mass,*MET_pt,*MET_phi);
-           HMassWC->Fill(mt);
-         }
-         HMassC->Fill(m);
+       try {
+         zt = PreSelector::FindZMassMuonPairs(Mus,GoodMuon);
+       } catch (const std::exception& e) {
+         NoPairs = true;
        }
 
+       if (!NoPairs){
+         Double_t BestMass = std::get<1>(zt[0]);
+         HMassC->Fill(BestMass);
+       }
      }
 
      // 2e1Mu
@@ -292,47 +340,45 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodElectron.size()>=2 &&
         GoodMuon.size()>=1){
        IsB = true;
+       Bool_t NoPairs{};
        HMetB->Fill(*MET_pt);
        HnElB->Fill(GoodElectron.size());
        HnMuB->Fill(GoodMuon.size());
 
-       UInt_t i = GoodElectron[0];
-       UInt_t j = GoodElectron[1];
-       if(Electron_charge[i] != Electron_charge[j]){
-         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i], Electron_phi[i],Electrons::Mass,
-                                Electron_pt[j],Electron_eta[j],Electron_phi[j],Electrons::Mass);
-         UInt_t k = 0;
-         if(Muon_pt[k]>MinRemPt){
-           Double_t mt = MassRecoW(Muon_pt[k],Muon_eta[k],Muon_phi[k],Muons::Mass,
-                                   *MET_pt,*MET_phi);
-           HMassWB->Fill(mt);
-         }
-         HMassB->Fill(m);
+       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
+
+       try {
+         zt = PreSelector::FindZMassElectronPairs(Els,GoodElectron);
+       } catch (const std::exception& e) {
+         NoPairs = true;
+       }
+
+       if (!NoPairs){
+         Double_t BestMass = std::get<1>(zt[0]);
+         HMassB->Fill(BestMass);
        }
      }
 
      // 3e0Mu
      if(*nElectron>=3 && GoodElectron.size()>=3){
        IsA = true;
+       Bool_t NoPairs{};
        HMetA->Fill(*MET_pt);
        HnElA->Fill(GoodElectron.size());
        HnMuA->Fill(GoodMuon.size());
 
-       UInt_t i = GoodElectron[0];
-       UInt_t j = GoodElectron[1];
-       if(Electron_charge[i] != Electron_charge[j]){
-         Double_t m = MassRecoZ(Electron_pt[i],Electron_eta[i],Electron_phi[i],Electrons::Mass,
-                               Electron_pt[j],Electron_eta[j],Electron_phi[j],Electrons::Mass);
-         UInt_t k = j+1;
-         if(Electron_pt[k]>MinRemPt){
-           Double_t mt = MassRecoW(Electron_pt[k],Electron_eta[k],Electron_phi[k],Electrons::Mass,
-                                   *MET_pt,*MET_phi);
-           HMassWA->Fill(mt);
-         }
-         HMassA->Fill(m);
+       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
+
+       try {
+         zt = PreSelector::FindZMassElectronPairs(Els,GoodElectron);
+       } catch (const std::exception& e) {
+         NoPairs = true;
        }
 
-
+       if (!NoPairs){
+         Double_t BestMass = std::get<1>(zt[0]);
+         HMassA->Fill(BestMass);
+       }
      }
 
      // 3leptons

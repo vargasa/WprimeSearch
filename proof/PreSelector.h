@@ -153,12 +153,15 @@ class PreSelector : public TSelector {
   std::vector<UInt_t> GetGoodMuon(Muons);
   std::vector<UInt_t> GetGoodElectron(Electrons);
 
+  Double_t GetMassFromPair(std::pair<Int_t,Int_t>);
   Double_t MassRecoZ(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t);
 
-  std::vector<std::pair<Int_t,Int_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
+  std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
+  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZMassMuonPairs(Muons,std::vector<UInt_t>);
+  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZMassElectronPairs(Electrons,std::vector<UInt_t>);
 
   ClassDef(PreSelector,0);
 };
