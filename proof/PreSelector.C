@@ -280,8 +280,23 @@ Bool_t PreSelector::Process(Long64_t entry) {
        if (!NoPairs){
          Double_t BestMass = std::get<1>(zt[0]);
          HMassD->Fill(BestMass);
-       }
+         UInt_t l1 = (std::get<2>(zt[0])).first;
+         UInt_t l2 = (std::get<2>(zt[0])).second;
 
+         std::vector<UInt_t> WCand;
+         for(auto i: GoodMuon){
+           if(i!=l1 && i!=l2) WCand.emplace_back(i);
+         }
+
+         UInt_t lead = WCand[0];
+         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+           Double_t wm =
+             PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
+                                    Mus.phi[lead], Mus.mass,
+                                    *MET_pt, *MET_phi);
+           HMassWD->Fill(wm);
+         }
+       }
      }
 
      // 1e2Mu
@@ -304,6 +319,16 @@ Bool_t PreSelector::Process(Long64_t entry) {
        if (!NoPairs){
          Double_t BestMass = std::get<1>(zt[0]);
          HMassC->Fill(BestMass);
+
+
+         UInt_t lead = GoodElectron[0];
+         if(Els.pt[lead]>MinRemPt){
+           Double_t wm =
+             PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
+                                    Els.phi[lead], Els.mass,
+                                    *MET_pt, *MET_phi);
+           HMassWC->Fill(wm);
+         }
        }
      }
 
@@ -328,7 +353,20 @@ Bool_t PreSelector::Process(Long64_t entry) {
        if (!NoPairs){
          Double_t BestMass = std::get<1>(zt[0]);
          HMassB->Fill(BestMass);
+
+         UInt_t lead = GoodMuon[0];
+         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+           Double_t wm =
+             PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
+                                    Mus.phi[lead], Mus.mass,
+                                    *MET_pt, *MET_phi);
+           HMassWB->Fill(wm);
+         }
+
        }
+
+
+
      }
 
      // 3e0Mu
@@ -350,6 +388,23 @@ Bool_t PreSelector::Process(Long64_t entry) {
        if (!NoPairs){
          Double_t BestMass = std::get<1>(zt[0]);
          HMassA->Fill(BestMass);
+
+         UInt_t l1 = (std::get<2>(zt[0])).first;
+         UInt_t l2 = (std::get<2>(zt[0])).second;
+
+         std::vector<UInt_t> WCand;
+         for(auto i: GoodElectron){
+           if(i!=l1 && i!=l2) WCand.emplace_back(i);
+         }
+
+         UInt_t lead = WCand[0];
+         if(Els.pt[lead]>MinRemPt){
+           Double_t wm =
+             PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
+                                    Els.phi[lead], Els.mass,
+                                    *MET_pt, *MET_phi);
+           HMassWA->Fill(wm);
+         }
        }
      }
 

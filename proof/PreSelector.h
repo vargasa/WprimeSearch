@@ -73,6 +73,8 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Bool_t> Muon_isGlobal = {fReader, "Muon_isGlobal"};
   TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
   TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
+  TTreeReaderArray<UChar_t> Muon_highPtId = {fReader, "Muon_highPtId"};
+
 
   // Electrons
   // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/electrons_cff.py
