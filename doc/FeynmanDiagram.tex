@@ -12,17 +12,20 @@
 
 \begin{document}
 
+\section{Signal}
 \begin{fmffile}{wprimefd}
   \begin{fmfgraph*}(150,150)
     \fmfleft{i0,i1}
     \fmfright{o0,o1,o2,o3}
-    \fmf{fermion,label=$\text{q'}$}{i0,v1}
-    \fmf{fermion,label=$\overline{q}$}{i1,v1}
-    \fmf{boson,label=$W'$}{v1,v2}
+    \fmf{fermion}{i0,v1,i1}
+    \fmflabel{$q$}{i0}
+    \fmflabel{$\overline{q}$}{i1}
+    \fmf{boson,label=$W\prime$}{v1,v2}
     \fmf{boson,label=$W\pm$,label.side=left}{v2,v21}
     \fmf{boson,label=$Z^{0}$,label.side=left}{v2,v22}
-    \fmf{fermion}{o0,v21,o1}
     \fmf{fermion}{o2,v22,o3}
+    \fmf{fermion}{v21,o1}
+    \fmf{fermion}{v21,o0}
     \fmf{phantom}{i0,v21}
     \fmf{phantom,tension=0.8}{v21,v22}
     \fmf{phantom}{i1,v22}
@@ -30,6 +33,20 @@
     \fmflabel{$\nu$}{o1}
     \fmflabel{$l\pm$}{o2}
     \fmflabel{$l\mp$}{o3}
+  \end{fmfgraph*}
+\end{fmffile}
+
+\section{Background}
+\begin{fmffile}{wzprod}
+  \begin{fmfgraph*}(150,150)
+    \fmfleft{i1,i2}
+    \fmfright{o1,o2}
+    \fmf{fermion}{i1,v1,i2}
+    \fmflabel{$q$}{i1}
+    \fmflabel{$\overline{q}$}{i2}
+    \fmf{boson,label=$W\pm$}{v1,v2}
+    \fmf{boson,label=$W\pm$}{v2,o2}
+    \fmf{boson,label=$Z^{0}$}{v2,o1}
   \end{fmfgraph*}
 \end{fmffile}
 
