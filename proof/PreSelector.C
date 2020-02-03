@@ -265,9 +265,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
      if(*nMuon>=3 && GoodMuon.size()>=3){
        IsD = true;
        Bool_t NoPairs{};
-       HMetD->Fill(*MET_pt);
-       HnElD->Fill(GoodElectron.size());
-       HnMuD->Fill(GoodMuon.size());
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
@@ -278,8 +275,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
+         HMetD->Fill(*MET_pt);
+         HnElD->Fill(GoodElectron.size());
+         HnMuD->Fill(GoodMuon.size());
+
          Double_t BestMass = std::get<1>(zt[0]);
          HMassD->Fill(BestMass);
+
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
 
@@ -305,9 +307,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodMuon.size()>=2){
        IsC = true;
        Bool_t NoPairs{};
-       HMetC->Fill(*MET_pt);
-       HnElC->Fill(GoodElectron.size());
-       HnMuC->Fill(GoodMuon.size());
+
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
        try {
@@ -317,9 +317,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
+         HMetC->Fill(*MET_pt);
+         HnElC->Fill(GoodElectron.size());
+         HnMuC->Fill(GoodMuon.size());
+
          Double_t BestMass = std::get<1>(zt[0]);
          HMassC->Fill(BestMass);
-
 
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
@@ -338,9 +341,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodMuon.size()>=1){
        IsB = true;
        Bool_t NoPairs{};
-       HMetB->Fill(*MET_pt);
-       HnElB->Fill(GoodElectron.size());
-       HnMuB->Fill(GoodMuon.size());
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
@@ -351,6 +351,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
+         HMetB->Fill(*MET_pt);
+         HnElB->Fill(GoodElectron.size());
+         HnMuB->Fill(GoodMuon.size());
+
          Double_t BestMass = std::get<1>(zt[0]);
          HMassB->Fill(BestMass);
 
@@ -373,9 +377,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
      if(*nElectron>=3 && GoodElectron.size()>=3){
        IsA = true;
        Bool_t NoPairs{};
-       HMetA->Fill(*MET_pt);
-       HnElA->Fill(GoodElectron.size());
-       HnMuA->Fill(GoodMuon.size());
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
@@ -386,6 +387,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
+         HMetA->Fill(*MET_pt);
+         HnElA->Fill(GoodElectron.size());
+         HnMuA->Fill(GoodMuon.size());
+
          Double_t BestMass = std::get<1>(zt[0]);
          HMassA->Fill(BestMass);
 
