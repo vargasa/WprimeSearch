@@ -1,17 +1,20 @@
 #include "TProof.h"
 #include <array>
 #include <string>
+#include <fstream>
 
-Int_t Selector(TString rootfile = "", Int_t fWorkers = 4){
+Int_t Selector(TString rootlist = "", Int_t fWorkers = 4){
 
-  TString filename = "/store/mc/RunIISummer16NanoAODv6/WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/270000/825800D8-EB97-004F-AC28-39739C59C975.root";
-
-
-
+  std::ifstream infile(rootlist);
 
   TChain* fChain = new TChain("Events");
 
-  fChain->AddFile("root://cmsxrootd.fnal.gov//"+ filename);
+  std::string line;
+  while(std::getline(infile, line)){
+    line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
+    std::cout << "Chaining " << line << std::endl;
+    fChain->AddFile(line.c_str());
+  }
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
