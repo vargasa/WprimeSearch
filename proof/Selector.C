@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 
-Int_t Selector(TString rootlist = "", Int_t fWorkers = 4){
+Int_t Selector(std::string rootlist = "", Int_t fWorkers = 4){
 
   std::ifstream infile(rootlist);
 
@@ -15,10 +15,12 @@ Int_t Selector(TString rootlist = "", Int_t fWorkers = 4){
     std::cout << "Chaining " << line << std::endl;
     fChain->AddFile(line.c_str());
   }
+  std::string sample = rootlist.substr(rootlist.rfind("/")+1);
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
   fProof->SetParameter("Mass",(Int_t)mass);
+  fProof->SetParameter("SampleName",sample.c_str());
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+");

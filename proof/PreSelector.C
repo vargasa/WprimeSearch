@@ -61,6 +61,11 @@ void PreSelector::Begin(TTree *tree) {
     Mass = p->GetVal();
   }
 
+  if (fInput->FindObject("SampleName")) {
+    // Lesson: TString can't be in TCollection
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
+    SampleName = p->GetTitle();
+  }
 }
 
 void PreSelector::SlaveBegin(TTree *tree) {
@@ -429,6 +434,10 @@ void PreSelector::Terminate() {
   ch = new TCanvas("ch","ch",1200,800);
   ch->Divide(2,2);
 
+  TFile *fOut = new TFile("WprimeHistos.root","UPDATE");
+  fOut->mkdir(SampleName);
+  fOut->cd(SampleName);
+
   THStack *hsA = new THStack("hsA","");
   THStack *hsB = new THStack("hsB","");
   THStack *hsC = new THStack("hsC","");
@@ -446,19 +455,23 @@ void PreSelector::Terminate() {
   HMetA->SetTitle("3e0#mu;#slash{M}^{3e0#mu}_{T};Event count");
   SetStyle(HMetA);
   HMetA->Draw();
+  HMetA->Write("HMetA");
   ch->cd(2);
   HMetB->SetTitle("2e1#mu;#slash{M}^{2e1#mu}_{T};Event count");
   SetStyle(HMetB);
   HMetB->Draw();
+  HMetB->Write("HMetB");
   ch->cd(3);
   HMetC->SetTitle("1e2#mu;#slash{M}^{1e2#mu}_{T};Event count");
   SetStyle(HMetC);
   HMetC->Draw();
+  HMetC->Write("HMetC");
   ch->cd(4);
   HMetD->SetTitle("0e3#mu;#slash{M}^{0e3#mu}_{T};Event count");
   SetStyle(HMetD);
   HMetD->Draw();
-  ch->Print(Form("PlotMet_%d.png",Mass));
+  HMetD->Write("HMetD");
+  ch->Print(Form("%s_PlotMet_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
   gStyle->SetOptStat(1111111);
@@ -489,38 +502,50 @@ void PreSelector::Terminate() {
   hsD->Add(HnElD);
   hsD->SetTitle("0e3#mu;n;Event count");
   hsD->Draw();
-  ch->Print(Form("nGoodLeptons_%d.png",Mass));
+  ch->Print(Form("%s_nGoodLeptons_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
   HMassA->SetTitle("Z Mass;M_{Z}^{3e0#mu};Event count");
   HMassA->Draw();
+  HMassA->Write("HMassA");
   ch->cd(2);
   HMassB->SetTitle("Z Mass;M_{Z}^{2e1#mu};Event count");
   HMassB->Draw();
+  HMassB->Write("HMassB");
   ch->cd(3);
   HMassC->SetTitle("Z Mass;M_{Z}^{1e2#mu};Event count");
   HMassC->Draw();
+  HMassC->Write("HMassC");
   ch->cd(4);
   HMassD->SetTitle("Z Mass;M_{Z}^{0e3#mu};Event count");
   HMassD->Draw();
-  ch->Print(Form("HMass_%d.png",Mass));
+  HMassD->Write("HMassD");
+  ch->Print(Form("%s_HMass_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
   HMassWA->SetTitle("M_{T}^{W};M_{WT}^{3e0#mu};Event count");
   HMassWA->Draw();
+  HMassWA->Write("HMassWA");
   ch->cd(2);
   HMassWB->SetTitle("M_{T}^{W};M_{WT}^{2e1#mu};Event count");
   HMassWB->Draw();
+  HMassWB->Write("HMassWB");
   ch->cd(3);
   HMassWC->SetTitle("M_{T}^{W};M_{WT}^{1e2#mu};Event count");
   HMassWC->Draw();
+  HMassWC->Write("HMassWC");
   ch->cd(4);
   HMassWD->SetTitle("M_{T}^{W};M_{WT}^{0e3#mu};Event count");
   HMassWD->Draw();
-  ch->Print(Form("HMassWT_%d.png",Mass));
+  HMassWD->Write("HMassWD");
+  ch->Print(Form("%s_HMassWT_%d.png",SampleName.Data(),Mass));
 
   ch->cd(0);
   HOverlap->Draw();
-  ch->Print(Form("Overlap_%d.png",Mass));
+  HOverlap->Write("HOverlap");
+  ch->Print(Form("%s_Overlap_%d.png",SampleName.Data(),Mass));
+
+  fOut->Write();
+  fOut->Close();
 
 }
