@@ -284,7 +284,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
          HnMuD->Fill(GoodMuon.size());
 
          Double_t BestMass = std::get<1>(zt[0]);
-         HMassD->Fill(BestMass);
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
@@ -300,6 +299,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
+           HMassD->Fill(BestMass);
            HMassWD->Fill(wm);
          }
        }
@@ -326,7 +326,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
          HnMuC->Fill(GoodMuon.size());
 
          Double_t BestMass = std::get<1>(zt[0]);
-         HMassC->Fill(BestMass);
 
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
@@ -334,6 +333,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
+           HMassC->Fill(BestMass);
            HMassWC->Fill(wm);
          }
        }
@@ -360,7 +360,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
          HnMuB->Fill(GoodMuon.size());
 
          Double_t BestMass = std::get<1>(zt[0]);
-         HMassB->Fill(BestMass);
 
          UInt_t lead = GoodMuon[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
@@ -368,6 +367,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
+           HMassB->Fill(BestMass);
            HMassWB->Fill(wm);
          }
 
@@ -396,7 +396,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
          HnMuA->Fill(GoodMuon.size());
 
          Double_t BestMass = std::get<1>(zt[0]);
-         HMassA->Fill(BestMass);
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
@@ -412,6 +411,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
+           HMassA->Fill(BestMass);
            HMassWA->Fill(wm);
          }
        }
@@ -505,37 +505,37 @@ void PreSelector::Terminate() {
   ch->Print(Form("%s_nGoodLeptons_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
-  HMassA->SetTitle("Z Mass;M_{Z}^{3e0#mu};Event count");
+  HMassA->SetTitle("Z Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
   HMassA->Draw();
   HMassA->Write("HMassA");
   ch->cd(2);
-  HMassB->SetTitle("Z Mass;M_{Z}^{2e1#mu};Event count");
+  HMassB->SetTitle("Z Mass (2e1#mu);M_{Z}^{2e1#mu};Event count");
   HMassB->Draw();
   HMassB->Write("HMassB");
   ch->cd(3);
-  HMassC->SetTitle("Z Mass;M_{Z}^{1e2#mu};Event count");
+  HMassC->SetTitle("Z Mass (1e2#mu);M_{Z}^{1e2#mu};Event count");
   HMassC->Draw();
   HMassC->Write("HMassC");
   ch->cd(4);
-  HMassD->SetTitle("Z Mass;M_{Z}^{0e3#mu};Event count");
+  HMassD->SetTitle("Z Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
   HMassD->Draw();
   HMassD->Write("HMassD");
   ch->Print(Form("%s_HMass_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
-  HMassWA->SetTitle("M_{T}^{W};M_{WT}^{3e0#mu};Event count");
+  HMassWA->SetTitle("M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count");
   HMassWA->Draw();
   HMassWA->Write("HMassWA");
   ch->cd(2);
-  HMassWB->SetTitle("M_{T}^{W};M_{WT}^{2e1#mu};Event count");
+  HMassWB->SetTitle("M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count");
   HMassWB->Draw();
   HMassWB->Write("HMassWB");
   ch->cd(3);
-  HMassWC->SetTitle("M_{T}^{W};M_{WT}^{1e2#mu};Event count");
+  HMassWC->SetTitle("M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count");
   HMassWC->Draw();
   HMassWC->Write("HMassWC");
   ch->cd(4);
-  HMassWD->SetTitle("M_{T}^{W};M_{WT}^{0e3#mu};Event count");
+  HMassWD->SetTitle("M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count");
   HMassWD->Draw();
   HMassWD->Write("HMassWD");
   ch->Print(Form("%s_HMassWT_%d.png",SampleName.Data(),Mass));
