@@ -146,8 +146,9 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   const Float_t MaxDxy = 0.2; // 2mm
   const Float_t MaxDz = 0.5; // 5mm
   for (UInt_t i=0; i<*Mu.n;i++){
-    if(Mu.isGlobal[i] && Mu.looseId[i] && Mu.eta[i]<MaxEta &&
-       Mu.pt[i]>MinPt && Mu.dxy[i]<MaxDxy && Mu.dz[i]<MaxDz)
+    if(Mu.isGlobal[i] && Mu.looseId[i] &&
+       Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta &&
+       abs(Mu.dxy[i])<MaxDxy && abs(Mu.dz[i])<MaxDz)
       GoodIndex.emplace_back(i);
   }
   return GoodIndex;
@@ -160,7 +161,8 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(Electrons El){
   std::vector<UInt_t> GoodIndex = {};
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
-    if(El.cutBased[i]>=1 && El.eta[i]<MaxEta && El.pt[i]>MinPt &&
+    if(El.cutBased[i]>=1 && El.pt[i]>MinPt &&
+       abs(El.eta[i])<MaxEta &&
        El.miniPFRelIso_all[i]<MaxRelIso)
       GoodIndex.emplace_back(i);
   }
