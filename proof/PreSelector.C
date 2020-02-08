@@ -7,18 +7,6 @@
 
 PreSelector::PreSelector(TTree *)
 {
-  HMuon_ptA=0;
-  HElectron_ptA=0;
-
-  HMuon_ptB=0;
-  HElectron_ptB=0;
-
-  HMuon_ptC=0;
-  HElectron_ptC=0;
-
-  HMuon_ptD=0;
-  HElectron_ptD=0;
-
   HMetA=0;
   HMetB=0;
   HMetC=0;
@@ -434,10 +422,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
-  ch = new TCanvas("ch","ch",1200,800);
+  std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
 
-  TFile *fOut = new TFile("WprimeHistos.root","UPDATE");
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
 

@@ -10,6 +10,7 @@
 #include "Electrons.h"
 #include "Muons.h"
 #include "Leptons.h"
+#include <memory>
 
 class PreSelector : public TSelector {
 
@@ -97,21 +98,7 @@ class PreSelector : public TSelector {
   TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
   TTreeReaderValue<Float_t> MET_significance = {fReader, "MET_significance"};
 
-  TCanvas *ch;
-
   // THs
-  TH1F *HElectron_ptA;
-  TH1F *HMuon_ptA;
-
-  TH1F *HElectron_ptB;
-  TH1F *HMuon_ptB;
-
-  TH1F *HElectron_ptC;
-  TH1F *HMuon_ptC;
-
-  TH1F *HElectron_ptD;
-  TH1F *HMuon_ptD;
-
   TH1F *HMetA;
   TH1F *HMetB;
   TH1F *HMetC;
