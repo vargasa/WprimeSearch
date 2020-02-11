@@ -75,6 +75,7 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
   TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
   TTreeReaderArray<UChar_t> Muon_highPtId = {fReader, "Muon_highPtId"};
+  TTreeReaderArray<Int_t> Muon_genPartIdx = {fReader, "Muon_genPartIdx"};
 
 
   // Electrons
@@ -92,6 +93,17 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Electron_pfRelIso03_chg = {fReader, "Electron_pfRelIso03_chg"};
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_all = {fReader, "Electron_miniPFRelIso_all"};
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_chg = {fReader, "Electron_miniPFRelIso_chg"};
+  TTreeReaderArray<Int_t> Electron_genPartIdx = {fReader, "Electron_genPartIdx"};
+
+  // GenPart
+  TTreeReaderArray<Float_t> GenPart_eta = {fReader, "GenPart_eta"};
+  TTreeReaderArray<Float_t> GenPart_mass = {fReader, "GenPart_mass"};
+  TTreeReaderArray<Float_t> GenPart_phi = {fReader, "GenPart_phi"};
+  TTreeReaderArray<Float_t> GenPart_pt = {fReader, "GenPart_pt"};
+  TTreeReaderArray<Int_t> GenPart_genPartIdxMother = {fReader, "GenPart_genPartIdxMother"};
+  TTreeReaderArray<Int_t> GenPart_pdgId = {fReader, "GenPart_pdgId"};
+  TTreeReaderArray<Int_t> GenPart_status = {fReader, "GenPart_status"};
+  TTreeReaderArray<Int_t> GenPart_statusFlags = {fReader, "GenPart_statusFlags"};
 
   // Neutrinos
   TTreeReaderValue<Float_t> MET_phi = {fReader, "MET_phi"};
@@ -125,6 +137,11 @@ class PreSelector : public TSelector {
   TH1F *HMassWD;
 
   TH1I *HOverlap;
+
+  TH1I *HGenPartA;
+  TH1I *HGenPartB;
+  TH1I *HGenPartC;
+  TH1I *HGenPartD;
 
  public :
 

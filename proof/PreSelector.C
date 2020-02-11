@@ -34,6 +34,11 @@ PreSelector::PreSelector(TTree *)
 
   HOverlap=0;
 
+  HGenPartA=0;
+  HGenPartB=0;
+  HGenPartC=0;
+  HGenPartD=0;
+
 }
 
 void PreSelector::Init(TTree *tree)
@@ -103,6 +108,20 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HOverlap = new TH1I("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
   fOutput->Add(HOverlap);
+
+  const UInt_t BinsPdgId = 51;
+  const Float_t PdgIdMin = -25.;
+  const Float_t PdgIdMax = 25.;
+
+  HGenPartA = new TH1I("HGenPartA","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartB = new TH1I("HGenPartB","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartC = new TH1I("HGenPartC","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartD = new TH1I("HGenPartD","",BinsPdgId,PdgIdMin,PdgIdMax);
+
+  fOutput->Add(HGenPartA);
+  fOutput->Add(HGenPartB);
+  fOutput->Add(HGenPartC);
+  fOutput->Add(HGenPartD);
 
   fOutput->Add(HMassA);
   fOutput->Add(HMassB);
@@ -290,6 +309,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
+           HGenPartD->Fill(GenPart_pdgId[Muon_genPartIdx[l1]]);
+           HGenPartD->Fill(GenPart_pdgId[Muon_genPartIdx[l2]]);
+           HGenPartD->Fill(GenPart_pdgId[Muon_genPartIdx[lead]]);
            HMassD->Fill(BestMass);
            HMassWD->Fill(wm);
          }
@@ -318,12 +340,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          Double_t BestMass = std::get<1>(zt[0]);
 
+         UInt_t l1 = (std::get<2>(zt[0])).first;
+         UInt_t l2 = (std::get<2>(zt[0])).second;
+
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
            Double_t wm =
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
+           HGenPartC->Fill(GenPart_pdgId[Muon_genPartIdx[l1]]);
+           HGenPartC->Fill(GenPart_pdgId[Muon_genPartIdx[l2]]);
+           HGenPartC->Fill(GenPart_pdgId[Electron_genPartIdx[lead]]);
            HMassC->Fill(BestMass);
            HMassWC->Fill(wm);
          }
@@ -352,12 +380,19 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          Double_t BestMass = std::get<1>(zt[0]);
 
+         UInt_t l1 = (std::get<2>(zt[0])).first;
+         UInt_t l2 = (std::get<2>(zt[0])).second;
+
          UInt_t lead = GoodMuon[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
            Double_t wm =
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
+           HGenPartB->Fill(GenPart_pdgId[Electron_genPartIdx[l1]]);
+           HGenPartB->Fill(GenPart_pdgId[Electron_genPartIdx[l2]]);
+           HGenPartB->Fill(GenPart_pdgId[Muon_genPartIdx[lead]]);
+
            HMassB->Fill(BestMass);
            HMassWB->Fill(wm);
          }
@@ -402,6 +437,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
+           HGenPartA->Fill(GenPart_pdgId[Electron_genPartIdx[l1]]);
+           HGenPartA->Fill(GenPart_pdgId[Electron_genPartIdx[l2]]);
+           HGenPartA->Fill(GenPart_pdgId[Electron_genPartIdx[lead]]);
            HMassA->Fill(BestMass);
            HMassWA->Fill(wm);
          }
@@ -530,6 +568,22 @@ void PreSelector::Terminate() {
   HMassWD->Draw();
   HMassWD->Write("HMassWD");
   ch->Print(Form("%s_HMassWT_%d.png",SampleName.Data(),Mass));
+
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HGenPartA->SetTitle("PdgId (3e0#mu); PdgId; Event count");
+  HGenPartA->Draw();
+  ch->cd(2);
+  HGenPartB->SetTitle("PdgId (2e1#mu); PdgId; Event count");
+  HGenPartB->Draw();
+  ch->cd(3);
+  HGenPartC->SetTitle("PdgId (1e2#mu); PdgId; Event count");
+  HGenPartC->Draw();
+  ch->cd(4);
+  HGenPartD->SetTitle("PdgId (0e3#mu); PdgId; Event count");
+  HGenPartD->Draw();
+  ch->Print(Form("%s_GenPart_%d.png",SampleName.Data(),Mass));
 
   ch->cd(0);
   HOverlap->Draw();
