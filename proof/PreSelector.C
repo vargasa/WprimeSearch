@@ -249,7 +249,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
         *Flag_EcalDeadCellTriggerPrimitiveFilter &&
         *Flag_globalTightHalo2016Filter &&
         *Flag_BadPFMuonSummer16Filter &&
-        *PV_npvsGood > 0
+        *PV_npvsGood > 0 &&
+        *MET_pt > 30
         ) {
 
      Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
