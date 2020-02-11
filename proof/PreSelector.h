@@ -65,6 +65,7 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Muon_mass = {fReader, "Muon_mass"};
   TTreeReaderArray<Float_t> Muon_phi = {fReader, "Muon_phi"};
   TTreeReaderArray<Int_t> Muon_charge = {fReader, "Muon_charge"};
+  TTreeReaderArray<Int_t> Muon_pdgId = {fReader, "Muon_pdgId"};
   TTreeReaderArray<Bool_t> Muon_looseId = {fReader, "Muon_looseId"};
   TTreeReaderArray<Bool_t> Muon_mediumId = {fReader, "Muon_mediumId"};
   TTreeReaderArray<Bool_t> Muon_tightId = {fReader, "Muon_tightId"};
@@ -88,6 +89,7 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Electron_dxy = {fReader, "Electron_dxy"};
   TTreeReaderArray<Float_t> Electron_dz = {fReader, "Electron_dz"};
   TTreeReaderArray<Int_t> Electron_charge = {fReader, "Electron_charge"};
+  TTreeReaderArray<Int_t> Electron_pdgId = {fReader, "Electron_pdgId"};
   TTreeReaderArray<Int_t> Electron_cutBased = {fReader, "Electron_cutBased"}; // cut-based ID Fall17 V2 (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
   TTreeReaderArray<Float_t> Electron_pfRelIso03_all = {fReader, "Electron_pfRelIso03_all"};
   TTreeReaderArray<Float_t> Electron_pfRelIso03_chg = {fReader, "Electron_pfRelIso03_chg"};
@@ -165,6 +167,8 @@ class PreSelector : public TSelector {
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t);
+  Int_t GetPdgIdMother(Int_t,Int_t);
+
 
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);
