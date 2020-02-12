@@ -140,10 +140,15 @@ class PreSelector : public TSelector {
 
   TH1I *HOverlap;
 
-  TH1I *HGenPartA;
-  TH1I *HGenPartB;
-  TH1I *HGenPartC;
-  TH1I *HGenPartD;
+  TH1F *HGenPartZA;
+  TH1F *HGenPartZB;
+  TH1F *HGenPartZC;
+  TH1F *HGenPartZD;
+
+  TH1F *HGenPartWA;
+  TH1F *HGenPartWB;
+  TH1F *HGenPartWC;
+  TH1F *HGenPartWD;
 
  public :
 

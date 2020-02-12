@@ -3,6 +3,7 @@
 #include "Math/Vector4D.h"
 #include "Math/Vector4Dfwd.h"
 #include "TMath.h"
+#include "TLegend.h"
 
 
 PreSelector::PreSelector(TTree *)
@@ -34,10 +35,15 @@ PreSelector::PreSelector(TTree *)
 
   HOverlap=0;
 
-  HGenPartA=0;
-  HGenPartB=0;
-  HGenPartC=0;
-  HGenPartD=0;
+  HGenPartZA=0;
+  HGenPartZB=0;
+  HGenPartZC=0;
+  HGenPartZD=0;
+
+  HGenPartWA=0;
+  HGenPartWB=0;
+  HGenPartWC=0;
+  HGenPartWD=0;
 
 }
 
@@ -113,15 +119,25 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t PdgIdMin = -50.;
   const Float_t PdgIdMax = 50.;
 
-  HGenPartA = new TH1I("HGenPartA","",BinsPdgId,PdgIdMin,PdgIdMax);
-  HGenPartB = new TH1I("HGenPartB","",BinsPdgId,PdgIdMin,PdgIdMax);
-  HGenPartC = new TH1I("HGenPartC","",BinsPdgId,PdgIdMin,PdgIdMax);
-  HGenPartD = new TH1I("HGenPartD","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartZA = new TH1F("HGenPartZA","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartZB = new TH1F("HGenPartZB","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartZC = new TH1F("HGenPartZC","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartZD = new TH1F("HGenPartZD","",BinsPdgId,PdgIdMin,PdgIdMax);
 
-  fOutput->Add(HGenPartA);
-  fOutput->Add(HGenPartB);
-  fOutput->Add(HGenPartC);
-  fOutput->Add(HGenPartD);
+  fOutput->Add(HGenPartZA);
+  fOutput->Add(HGenPartZB);
+  fOutput->Add(HGenPartZC);
+  fOutput->Add(HGenPartZD);
+
+  HGenPartWA = new TH1F("HGenPartWA","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartWB = new TH1F("HGenPartWB","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartWC = new TH1F("HGenPartWC","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HGenPartWD = new TH1F("HGenPartWD","",BinsPdgId,PdgIdMin,PdgIdMax);
+
+  fOutput->Add(HGenPartWA);
+  fOutput->Add(HGenPartWB);
+  fOutput->Add(HGenPartWC);
+  fOutput->Add(HGenPartWD);
 
   fOutput->Add(HMassA);
   fOutput->Add(HMassB);
@@ -291,6 +307,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
      std::vector<UInt_t> GoodMuon = PreSelector::GetGoodMuon(Mus);
 
      const Double_t MinRemPt = 20.;
+     const Float_t w = 1.;
 
      Bool_t IsA{},IsB{},IsC{},IsD{};
 
@@ -329,12 +346,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
 
-           HGenPartD->Fill(PreSelector::GetMother(Muon_genPartIdx[l1],
-                                                  Muon_pdgId[l1]).second);
-           HGenPartD->Fill(PreSelector::GetMother(Muon_genPartIdx[l2],
-                                                  Muon_pdgId[l2]).second);
-           HGenPartD->Fill(PreSelector::GetMother(Muon_genPartIdx[lead],
-                                                  Muon_pdgId[lead]).second);
+           HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
+                                               Muon_pdgId[l1]).second),w);
+           HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
+                                               Muon_pdgId[l2]).second),w);
+           HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
+                                               Muon_pdgId[lead]).second),w);
            HMassD->Fill(BestMass);
            HMassWD->Fill(wm);
          }
@@ -372,12 +389,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
-           HGenPartC->Fill(PreSelector::GetMother(Muon_genPartIdx[l1],
-                                                  Muon_pdgId[l1]).second);
-           HGenPartC->Fill(PreSelector::GetMother(Muon_genPartIdx[l2],
-                                                  Muon_pdgId[l2]).second);
-           HGenPartC->Fill(PreSelector::GetMother(Electron_genPartIdx[lead],
-                                                  Electron_pdgId[lead]).second);
+           HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
+                                               Muon_pdgId[l1]).second),w);
+           HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
+                                               Muon_pdgId[l2]).second),w);
+           HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
+                                               Electron_pdgId[lead]).second),w); 
            HMassC->Fill(BestMass);
            HMassWC->Fill(wm);
          }
@@ -415,12 +432,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
-           HGenPartB->Fill(PreSelector::GetMother(Electron_genPartIdx[l1],
-                                                  Electron_pdgId[l1]).second);
-           HGenPartB->Fill(PreSelector::GetMother(Electron_genPartIdx[l2],
-                                                  Electron_pdgId[l2]).second);
-           HGenPartB->Fill(PreSelector::GetMother(Muon_genPartIdx[lead],
-                                                  Muon_pdgId[lead]).second);
+           HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
+                                               Electron_pdgId[l1]).second),w);
+           HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
+                                               Electron_pdgId[l2]).second),w);
+           HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
+                                               Muon_pdgId[lead]).second),w);
+
            HMassB->Fill(BestMass);
            HMassWB->Fill(wm);
          }
@@ -465,12 +483,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
-           HGenPartA->Fill(PreSelector::GetMother(Electron_genPartIdx[l1],
-                                                  Electron_pdgId[l1]).second);
-           HGenPartA->Fill(PreSelector::GetMother(Electron_genPartIdx[l2],
-                                                  Electron_pdgId[l2]).second);
-           HGenPartA->Fill(PreSelector::GetMother(Electron_genPartIdx[lead],
-                                                  Electron_pdgId[lead]).second);
+           HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
+                                               Electron_pdgId[l1]).second),w);
+           HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
+                                               Electron_pdgId[l2]).second),w);
+           HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
+                                               Electron_pdgId[lead]).second),w);
            HMassA->Fill(BestMass);
            HMassWA->Fill(wm);
          }
@@ -600,20 +618,37 @@ void PreSelector::Terminate() {
   HMassWD->Write("HMassWD");
   ch->Print(Form("%s_HMassWT_%d.png",SampleName.Data(),Mass));
 
+  auto DrawPdgIdHisto = [](TH1F* hz, TH1F* hw){
+    hz->LabelsDeflate();
+    hz->SetBarWidth(0.4);
+    hz->SetBarOffset(0.55);
+    hz->SetFillColor(50);
+    hz->Draw("BAR1");
+    hw->LabelsDeflate();
+    hw->SetBarWidth(0.4);
+    hw->SetBarOffset(0.1);
+    hw->SetFillColor(49);
+    hw->Draw("BAR2,SAME");
+    TLegend *legend = new TLegend(0.55,0.65,0.76,0.82);
+    legend->AddEntry(hz,"Z pair","f");
+    legend->AddEntry(hw,"W lepton","f");
+    legend->Draw();
+  };
+
   ch->Clear();
   ch->Divide(2,2);
   ch->cd(1);
-  HGenPartA->SetTitle("PdgId (3e0#mu); PdgId; Event count");
-  HGenPartA->Draw();
+  HGenPartZA->SetTitle("PdgId (3e0#mu); PdgId; Event count");
+  DrawPdgIdHisto(HGenPartZA,HGenPartWA);
   ch->cd(2);
-  HGenPartB->SetTitle("PdgId (2e1#mu); PdgId; Event count");
-  HGenPartB->Draw();
+  HGenPartZB->SetTitle("PdgId (2e1#mu); PdgId; Event count");
+  DrawPdgIdHisto(HGenPartZB,HGenPartWB);
   ch->cd(3);
-  HGenPartC->SetTitle("PdgId (1e2#mu); PdgId; Event count");
-  HGenPartC->Draw();
+  HGenPartZC->SetTitle("PdgId (1e2#mu); PdgId; Event count");
+  DrawPdgIdHisto(HGenPartZC,HGenPartWC);
   ch->cd(4);
-  HGenPartD->SetTitle("PdgId (0e3#mu); PdgId; Event count");
-  HGenPartD->Draw();
+  HGenPartZD->SetTitle("PdgId (0e3#mu); PdgId; Event count");
+  DrawPdgIdHisto(HGenPartZD,HGenPartWD);
   ch->Print(Form("%s_GenPartMother_%d.png",SampleName.Data(),Mass));
 
   ch->cd(0);
