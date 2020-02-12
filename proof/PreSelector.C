@@ -245,17 +245,22 @@ std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector:
 
 }
 
-Int_t PreSelector::GetPdgIdMother(Int_t GenPartIdx, Int_t PdgId /*\Mu or e*/){
+std::pair<Int_t,Int_t> PreSelector::GetMother(std::pair<Int_t,Int_t> Daughter){
+  return PreSelector::GetMother(Daughter.first,Daughter.second);
+}
 
-  if(GenPartIdx == -1 ) return 9999;
+std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\Mu or e*/){
 
-  Int_t Mother;
-  Mother = GenPart_pdgId[GenPart_genPartIdxMother[GenPartIdx]];
+  if(GenPartIdx == -1 ) return std::make_pair(GenPartIdx,9999);
 
-  if(Mother == PdgId){
-    GenPartIdx = GenPart_genPartIdxMother[GenPartIdx];
-    Mother = PreSelector::GetPdgIdMother(GenPartIdx,PdgId);
+  std::pair<Int_t,Int_t> Mother;
+  Mother.first = GenPart_genPartIdxMother[GenPartIdx];
+  Mother.second = GenPart_pdgId[Mother.first];
+
+  if(Mother.second == PdgId){
+    Mother = PreSelector::GetMother(Mother);
   }
+
   return Mother;
 }
 
@@ -324,12 +329,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
 
-           HGenPartD->Fill(PreSelector::GetPdgIdMother(Muon_genPartIdx[l1],
-                                                       Muon_pdgId[l1]));
-           HGenPartD->Fill(PreSelector::GetPdgIdMother(Muon_genPartIdx[l2],
-                                                       Muon_pdgId[l2]));
-           HGenPartD->Fill(PreSelector::GetPdgIdMother(Muon_genPartIdx[lead],
-                                                       Muon_pdgId[lead]));
+           HGenPartD->Fill(PreSelector::GetMother(Muon_genPartIdx[l1],
+                                                  Muon_pdgId[l1]).second);
+           HGenPartD->Fill(PreSelector::GetMother(Muon_genPartIdx[l2],
+                                                  Muon_pdgId[l2]).second);
+           HGenPartD->Fill(PreSelector::GetMother(Muon_genPartIdx[lead],
+                                                  Muon_pdgId[lead]).second);
            HMassD->Fill(BestMass);
            HMassWD->Fill(wm);
          }
@@ -367,12 +372,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
-           HGenPartC->Fill(PreSelector::GetPdgIdMother(Muon_genPartIdx[l1],
-                                                       Muon_pdgId[l1]));
-           HGenPartC->Fill(PreSelector::GetPdgIdMother(Muon_genPartIdx[l2],
-                                                       Muon_pdgId[l2]));
-           HGenPartC->Fill(PreSelector::GetPdgIdMother(Electron_genPartIdx[lead],
-                                                       Electron_pdgId[lead]));
+           HGenPartC->Fill(PreSelector::GetMother(Muon_genPartIdx[l1],
+                                                  Muon_pdgId[l1]).second);
+           HGenPartC->Fill(PreSelector::GetMother(Muon_genPartIdx[l2],
+                                                  Muon_pdgId[l2]).second);
+           HGenPartC->Fill(PreSelector::GetMother(Electron_genPartIdx[lead],
+                                                  Electron_pdgId[lead]).second);
            HMassC->Fill(BestMass);
            HMassWC->Fill(wm);
          }
@@ -410,12 +415,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
-           HGenPartB->Fill(PreSelector::GetPdgIdMother(Electron_genPartIdx[l1],
-                                                       Electron_pdgId[l1]));
-           HGenPartB->Fill(PreSelector::GetPdgIdMother(Electron_genPartIdx[l2],
-                                                       Electron_pdgId[l2]));
-           HGenPartB->Fill(PreSelector::GetPdgIdMother(Muon_genPartIdx[lead],
-                                                       Muon_pdgId[lead]));
+           HGenPartB->Fill(PreSelector::GetMother(Electron_genPartIdx[l1],
+                                                  Electron_pdgId[l1]).second);
+           HGenPartB->Fill(PreSelector::GetMother(Electron_genPartIdx[l2],
+                                                  Electron_pdgId[l2]).second);
+           HGenPartB->Fill(PreSelector::GetMother(Muon_genPartIdx[lead],
+                                                  Muon_pdgId[lead]).second);
            HMassB->Fill(BestMass);
            HMassWB->Fill(wm);
          }
@@ -460,12 +465,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
-           HGenPartA->Fill(PreSelector::GetPdgIdMother(Electron_genPartIdx[l1],
-                                                       Electron_pdgId[l1]));
-           HGenPartA->Fill(PreSelector::GetPdgIdMother(Electron_genPartIdx[l2],
-                                                       Electron_pdgId[l2]));
-           HGenPartA->Fill(PreSelector::GetPdgIdMother(Electron_genPartIdx[lead],
-                                                       Electron_pdgId[lead]));
+           HGenPartA->Fill(PreSelector::GetMother(Electron_genPartIdx[l1],
+                                                  Electron_pdgId[l1]).second);
+           HGenPartA->Fill(PreSelector::GetMother(Electron_genPartIdx[l2],
+                                                  Electron_pdgId[l2]).second);
+           HGenPartA->Fill(PreSelector::GetMother(Electron_genPartIdx[lead],
+                                                  Electron_pdgId[lead]).second);
            HMassA->Fill(BestMass);
            HMassWA->Fill(wm);
          }

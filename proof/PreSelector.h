@@ -167,7 +167,9 @@ class PreSelector : public TSelector {
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t);
-  Int_t GetPdgIdMother(Int_t,Int_t);
+  std::pair<Int_t,Int_t> GetMother(Int_t,Int_t);
+  std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter);
+
 
 
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
