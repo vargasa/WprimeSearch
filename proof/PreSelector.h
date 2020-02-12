@@ -128,10 +128,10 @@ class PreSelector : public TSelector {
   TH1I *HnMuC;
   TH1I *HnMuD;
 
-  TH1F *HMassA;
-  TH1F *HMassB;
-  TH1F *HMassC;
-  TH1F *HMassD;
+  TH1F *HMassZA;
+  TH1F *HMassZB;
+  TH1F *HMassZC;
+  TH1F *HMassZD;
 
   TH1F *HMassWA;
   TH1F *HMassWB;
@@ -172,10 +172,9 @@ class PreSelector : public TSelector {
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t);
+
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t);
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter);
-
-
 
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);
