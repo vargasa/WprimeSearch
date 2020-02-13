@@ -11,6 +11,9 @@
 #include "Muons.h"
 #include "Leptons.h"
 #include <memory>
+#include "Math/Vector4D.h"
+#include "Math/Vector4Dfwd.h"
+
 
 class PreSelector : public TSelector {
 
@@ -172,12 +175,15 @@ class PreSelector : public TSelector {
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t);
+  Double_t MassRecoW(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
 
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t);
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter);
 
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);
+  std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
+
 
   ClassDef(PreSelector,0);
 };

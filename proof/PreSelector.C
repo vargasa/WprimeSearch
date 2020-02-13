@@ -1,7 +1,5 @@
 #include "TFile.h"
 #include "PreSelector.h"
-#include "Math/Vector4D.h"
-#include "Math/Vector4Dfwd.h"
 #include "TMath.h"
 #include "TLegend.h"
 
@@ -51,7 +49,6 @@ void PreSelector::Init(TTree *tree)
 {
   //Called every time a new TTree is attached.
   fReader.SetTree(tree);
-
 }
 void PreSelector::Begin(TTree *tree) {
 
@@ -201,6 +198,13 @@ Double_t PreSelector::MassRecoZ(Double_t pt1, Double_t eta1, Double_t phi1, Doub
   return (l1+l2).M();
 };
 
+Double_t PreSelector::MassRecoW(ROOT::Math::PtEtaPhiMVector lep, Float_t MetPt, Float_t MetPhi){
+
+  return PreSelector::MassRecoW(lep.Pt(),lep.Eta(),lep.Phi(),lep.M(),MetPt,MetPhi);
+
+};
+
+
 Double_t PreSelector::MassRecoW(Double_t ptl, Double_t etal, Double_t phil, Double_t ml,
                                 Double_t ptmet, Double_t phimet){
   return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
@@ -278,6 +282,55 @@ std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\M
   }
 
   return Mother;
+}
+
+std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhiMVector lep,
+                                          Float_t MetPt, Float_t MetPhi){
+  Float_t Mw = 80.379;
+  const Float_t MNu = 0.;
+
+  Float_t dphi = MetPhi-lep.Phi();
+  Float_t a,b;
+
+  Float_t pz = 0;
+
+  std::vector<ROOT::Math::PxPyPzMVector> s;
+
+  auto getA = [&]() {
+    return pow(Mw,2) + 2.*lep.Pt()*MetPt*TMath::Cos(dphi);
+  };
+
+  auto getB = [&]() {
+    return pow(a,2) - 4*pow(lep.Pt(),2)*pow(MetPt,2);
+  };
+
+  a = getA();
+  b = getB();
+
+  if (b < 0) return s;
+
+  pz = lep.Pz()*a + lep.P()*TMath::Sqrt(b);
+  pz = pz/(2*pow(lep.Pt(),2));
+
+
+  ROOT::Math::PxPyPzMVector s1(MetPt*TMath::Cos(MetPhi),
+                               MetPt*TMath::Sin(MetPhi),
+                               pz,MNu);
+
+  s.emplace_back(s1);
+
+  pz = lep.Pz()*a - lep.P()*TMath::Sqrt(b);
+  pz = pz/(2*pow(lep.Pt(),2));
+
+  ROOT::Math::PxPyPzMVector s2(MetPt*TMath::Cos(MetPhi),
+                               MetPt*TMath::Sin(MetPhi),
+                               pz,MNu);
+
+
+  s.emplace_back(s2);
+
+  return s;
+
 }
 
 Bool_t PreSelector::Process(Long64_t entry) {
