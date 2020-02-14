@@ -154,6 +154,11 @@ class PreSelector : public TSelector {
   TH1F *HGenPartWC;
   TH1F *HGenPartWD;
 
+  TH1F *HGenPartFA;
+  TH1F *HGenPartFB;
+  TH1F *HGenPartFC;
+  TH1F *HGenPartFD;
+
   TH2I *HNLepA;
   TH2I *HNLepB;
   TH2I *HNLepC;
