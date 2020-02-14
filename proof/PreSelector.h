@@ -159,6 +159,9 @@ class PreSelector : public TSelector {
   TH2I *HNLepC;
   TH2I *HNLepD;
 
+  TH2I *HNEl;
+  TH2I *HNMu;
+
  public :
 
   Int_t Mass;

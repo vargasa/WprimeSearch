@@ -47,6 +47,9 @@ PreSelector::PreSelector(TTree *)
   HNLepB=0;
   HNLepC=0;
   HNLepD=0;
+
+  HNEl = 0;
+  HNMu = 0;
 }
 
 void PreSelector::Init(TTree *tree)
@@ -177,6 +180,14 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HNLepB);
   fOutput->Add(HNLepC);
   fOutput->Add(HNLepD);
+
+  HNEl = new TH2I("HNEl","",BinsLep,MinLep,MaxLep,
+                  BinsLep,MinLep,MaxLep);
+  HNMu = new TH2I("HNMu","",BinsLep,MinLep,MaxLep,
+                  BinsLep,MinLep,MaxLep);
+
+  fOutput->Add(HNEl);
+  fOutput->Add(HNMu);
 }
 
 
@@ -379,6 +390,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      std::vector<UInt_t> GoodElectron = PreSelector::GetGoodElectron(Els);
      std::vector<UInt_t> GoodMuon = PreSelector::GetGoodMuon(Mus);
+
+     HNEl->Fill(*nElectron,GoodElectron.size());
+     HNMu->Fill(*nMuon,GoodMuon.size());
 
      const Double_t MinRemPt = 20.;
      const Float_t w = 1.;
@@ -759,6 +773,19 @@ void PreSelector::Terminate() {
   HOverlap->Draw();
   HOverlap->Write("HOverlap");
   ch->Print(Form("%s_Overlap_%d.png",SampleName.Data(),Mass));
+
+  ch->Clear();
+  gStyle->SetOptStat(0);
+  ch->Divide(2,1);
+  ch->cd(1);
+  gPad->SetLogz();
+  HNEl->SetTitle("nElectron vs size(GoodElectron); nElectron; size(GoodElectron)");
+  HNEl->Draw("COL,TEXT");
+  ch->cd(2);
+  gPad->SetLogz();
+  HNMu->SetTitle("nMuon vs size(GoodMuon); nElectron; size(GoodMuon)");
+  HNMu->Draw("COL,TEXT");
+  ch->Print(Form("%s_CheckGoodLeptons_%d.png",SampleName.Data(),Mass));
 
   fOut->Write();
   fOut->Close();
