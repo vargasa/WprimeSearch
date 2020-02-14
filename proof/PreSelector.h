@@ -5,6 +5,7 @@
 #include "TCanvas.h"
 #include "TParameter.h"
 #include "TH1I.h"
+#include "TH2I.h"
 #include "TStyle.h"
 #include "THStack.h"
 #include "Electrons.h"
@@ -152,6 +153,11 @@ class PreSelector : public TSelector {
   TH1F *HGenPartWB;
   TH1F *HGenPartWC;
   TH1F *HGenPartWD;
+
+  TH2I *HNLepA;
+  TH2I *HNLepB;
+  TH2I *HNLepC;
+  TH2I *HNLepD;
 
  public :
 

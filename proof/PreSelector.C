@@ -43,6 +43,10 @@ PreSelector::PreSelector(TTree *)
   HGenPartWC=0;
   HGenPartWD=0;
 
+  HNLepA=0;
+  HNLepB=0;
+  HNLepC=0;
+  HNLepD=0;
 }
 
 void PreSelector::Init(TTree *tree)
@@ -156,6 +160,23 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HnMuC);
   fOutput->Add(HnMuD);
 
+  const Int_t BinsLep = 7;
+  const Float_t MinLep = 0.;
+  const Float_t MaxLep = 7.;
+
+  HNLepA = new TH2I("HNLepA","",BinsLep,MinLep,MaxLep,
+                    BinsLep,MinLep,MaxLep);
+  HNLepB = new TH2I("HNLepB","",BinsLep,MinLep,MaxLep,
+                    BinsLep,MinLep,MaxLep);
+  HNLepC = new TH2I("HNLepC","",BinsLep,MinLep,MaxLep,
+                    BinsLep,MinLep,MaxLep);
+  HNLepD = new TH2I("HNLepD","",BinsLep,MinLep,MaxLep,
+                    BinsLep,MinLep,MaxLep);
+
+  fOutput->Add(HNLepA);
+  fOutput->Add(HNLepB);
+  fOutput->Add(HNLepC);
+  fOutput->Add(HNLepD);
 }
 
 
@@ -367,6 +388,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
      // 0e3Mu
      if(*nMuon>=3 && GoodMuon.size()>=3){
        IsD = true;
+       HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
        Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
@@ -416,6 +438,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodElectron.size()>=1 &&
         GoodMuon.size()>=2){
        IsC = true;
+       HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
        Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
@@ -459,6 +482,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodElectron.size()>=2 &&
         GoodMuon.size()>=1){
        IsB = true;
+       HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
        Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
@@ -505,6 +529,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
      // 3e0Mu
      if(*nElectron>=3 && GoodElectron.size()>=3){
        IsA = true;
+       HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
        Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
@@ -693,16 +718,42 @@ void PreSelector::Terminate() {
   ch->cd(1);
   HGenPartZA->SetTitle("PdgId (3e0#mu); PdgId; Event count");
   DrawPdgIdHisto(HGenPartZA,HGenPartWA);
+  HGenPartZA->Write("HGenPartZA");
+  HGenPartWA->Write("HGenPartWA");
   ch->cd(2);
   HGenPartZB->SetTitle("PdgId (2e1#mu); PdgId; Event count");
   DrawPdgIdHisto(HGenPartZB,HGenPartWB);
+  HGenPartZB->Write("HGenPartZB");
+  HGenPartWB->Write("HGenPartWB");
   ch->cd(3);
   HGenPartZC->SetTitle("PdgId (1e2#mu); PdgId; Event count");
   DrawPdgIdHisto(HGenPartZC,HGenPartWC);
+  HGenPartZC->Write("HGenPartZC");
+  HGenPartWC->Write("HGenPartWC");
   ch->cd(4);
   HGenPartZD->SetTitle("PdgId (0e3#mu); PdgId; Event count");
   DrawPdgIdHisto(HGenPartZD,HGenPartWD);
+  HGenPartZD->Write("HGenPartZD");
+  HGenPartWD->Write("HGenPartWD");
   ch->Print(Form("%s_GenPartMother_%d.png",SampleName.Data(),Mass));
+
+  ch->cd(1);
+  gPad->SetLogz();
+  HNLepA->SetTitle("# Leptons (3e0#mu); GoodMuon Size; GoodElectron Size");
+  HNLepA->Draw("COLZ");
+  ch->cd(2);
+  gPad->SetLogz();
+  HNLepB->SetTitle("# Leptons (2e1#mu); GoodMuon Size; GoodElectron Size");
+  HNLepB->Draw("COLZ");
+  ch->cd(3);
+  gPad->SetLogz();
+  HNLepC->SetTitle("# Leptons (1e2#mu); GoodMuon Size; GoodElectron Size");
+  HNLepC->Draw("COLZ");
+  ch->cd(4);
+  gPad->SetLogz();
+  HNLepD->SetTitle("# Leptons (0e3#mu); GoodMuon Size; GoodElectron Size");
+  HNLepD->Draw("COLZ");
+  ch->Print(Form("%s_NGoodLeptons_%d.png",SampleName.Data(),Mass));
 
   ch->cd(0);
   HOverlap->Draw();
