@@ -13,7 +13,7 @@ class Electrons : public Leptons{
   ~Electrons() {};
   RAI cutBased;
   RAF miniPFRelIso_all;
-  static constexpr Double_t mass = 0.510998950;
+  static constexpr Float_t mass = 0.510998950;
 };
 
 Electrons::Electrons(RVUI n, RAF pt, RAF eta, RAF phi,

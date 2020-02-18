@@ -18,7 +18,7 @@ class Muons : public Leptons{
   RAB looseId;
   RAB isGlobal;
 
-  static constexpr Double_t mass = 0.105658755;
+  static constexpr Float_t mass = 0.105658755;
 };
 
 Muons::Muons(TTreeReaderValue<UInt_t>& n, RAF pt, RAF eta,

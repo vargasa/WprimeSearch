@@ -132,6 +132,11 @@ class PreSelector : public TSelector {
   TH1I *HnMuC;
   TH1I *HnMuD;
 
+  TH1F *HMassTWA;
+  TH1F *HMassTWB;
+  TH1F *HMassTWC;
+  TH1F *HMassTWD;
+
   TH1F *HMassZA;
   TH1F *HMassZB;
   TH1F *HMassZC;

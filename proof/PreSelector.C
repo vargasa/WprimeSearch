@@ -26,10 +26,10 @@ PreSelector::PreSelector(TTree *)
   HMassZC=0;
   HMassZD=0;
 
-  HMassWA=0;
-  HMassWB=0;
-  HMassWC=0;
-  HMassWD=0;
+  HMassTWA=0;
+  HMassTWB=0;
+  HMassTWC=0;
+  HMassTWD=0;
 
   HOverlap=0;
 
@@ -45,8 +45,8 @@ PreSelector::PreSelector(TTree *)
 
   HGenPartFA=0;
   HGenPartFB=0;
-  HGenPartFB=0;
-  HGenPartFB=0;
+  HGenPartFC=0;
+  HGenPartFD=0;
 
   HNLepA=0;
   HNLepB=0;
@@ -110,15 +110,17 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMassZC = new TH1F("HMassZC","",MassBins,MinMass,MaxMass);
   HMassZD = new TH1F("HMassZD","",MassBins,MinMass,MaxMass);
 
-  HMassWA = new TH1F("HMassWA","",MassBins,MinMass,MaxMass);
-  HMassWB = new TH1F("HMassWB","",MassBins,MinMass,MaxMass);
-  HMassWC = new TH1F("HMassWC","",MassBins,MinMass,MaxMass);
-  HMassWD = new TH1F("HMassWD","",MassBins,MinMass,MaxMass);
+  HMassTWA = new TH1F("HMassTWA","",MassBins,MinMass,MaxMass);
+  HMassTWB = new TH1F("HMassTWB","",MassBins,MinMass,MaxMass);
+  HMassTWC = new TH1F("HMassTWC","",MassBins,MinMass,MaxMass);
+  HMassTWD = new TH1F("HMassTWD","",MassBins,MinMass,MaxMass);
 
-  fOutput->Add(HMassWA);
-  fOutput->Add(HMassWB);
-  fOutput->Add(HMassWC);
-  fOutput->Add(HMassWD);
+  fOutput->Add(HMassTWA);
+  fOutput->Add(HMassTWB);
+  fOutput->Add(HMassTWC);
+  fOutput->Add(HMassTWD);
+
+
 
   HOverlap = new TH1I("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
@@ -357,7 +359,7 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhi
   if (b < 0) return s;
 
   pz = lep.Pz()*a + lep.P()*TMath::Sqrt(b);
-  pz = pz/(2*pow(lep.Pt(),2));
+  pz = pz/(2.*pow(lep.Pt(),2.));
 
 
   ROOT::Math::PxPyPzMVector s1(MetPt*TMath::Cos(MetPhi),
@@ -445,7 +447,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = WCand[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
-           Double_t wm =
+           Double_t wmt =
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
@@ -461,7 +463,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
                                                Muon_pdgId[lead]).second),w);
            HMassZD->Fill(BestMass);
-           HMassWD->Fill(wm);
+           HMassTWD->Fill(wmt);
          }
        }
      }
@@ -494,7 +496,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
-           Double_t wm =
+           Double_t wmt =
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
@@ -510,7 +512,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
                                                Electron_pdgId[lead]).second),w); 
            HMassZC->Fill(BestMass);
-           HMassWC->Fill(wm);
+           HMassTWC->Fill(wmt);
          }
        }
      }
@@ -543,7 +545,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = GoodMuon[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
-           Double_t wm =
+           Double_t wmt =
              PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
                                     Mus.phi[lead], Mus.mass,
                                     *MET_pt, *MET_phi);
@@ -560,7 +562,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                                Muon_pdgId[lead]).second),w);
 
            HMassZB->Fill(BestMass);
-           HMassWB->Fill(wm);
+           HMassTWB->Fill(wmt);
          }
 
        }
@@ -600,12 +602,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = WCand[0];
          if(Els.pt[lead]>MinRemPt){
-           Double_t wm =
+           Double_t wmt =
              PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
                                     Els.phi[lead], Els.mass,
                                     *MET_pt, *MET_phi);
 
-           HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
+           HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
            HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
            HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
 
@@ -616,7 +618,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
                                                Electron_pdgId[lead]).second),w);
            HMassZA->Fill(BestMass);
-           HMassWA->Fill(wm);
+           HMassTWA->Fill(wmt);
          }
        }
      }
@@ -727,22 +729,22 @@ void PreSelector::Terminate() {
   ch->Print(Form("%s_HMassZ_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
-  HMassWA->SetTitle("M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count");
-  HMassWA->Draw();
-  HMassWA->Write("HMassWA");
+  HMassTWA->SetTitle("M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count");
+  HMassTWA->Draw();
+  HMassTWA->Write("HMassTWA");
   ch->cd(2);
-  HMassWB->SetTitle("M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count");
-  HMassWB->Draw();
-  HMassWB->Write("HMassWB");
+  HMassTWB->SetTitle("M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count");
+  HMassTWB->Draw();
+  HMassTWB->Write("HMassTWB");
   ch->cd(3);
-  HMassWC->SetTitle("M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count");
-  HMassWC->Draw();
-  HMassWC->Write("HMassWC");
+  HMassTWC->SetTitle("M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count");
+  HMassTWC->Draw();
+  HMassTWC->Write("HMassTWC");
   ch->cd(4);
-  HMassWD->SetTitle("M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count");
-  HMassWD->Draw();
-  HMassWD->Write("HMassWD");
-  ch->Print(Form("%s_HMassWT_%d.png",SampleName.Data(),Mass));
+  HMassTWD->SetTitle("M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count");
+  HMassTWD->Draw();
+  HMassTWD->Write("HMassTWD");
+  ch->Print(Form("%s_HMassTWT_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
   HGenPartFA->SetTitle("PdgId Final State (3e0#mu); PdgId; Event count");
