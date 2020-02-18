@@ -3,6 +3,7 @@
 #include "TMath.h"
 #include "TLegend.h"
 
+using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
 PreSelector::PreSelector(TTree *)
 {
@@ -21,6 +22,11 @@ PreSelector::PreSelector(TTree *)
   HnMuC=0;
   HnMuD=0;
 
+  HMassWA=0;
+  HMassWB=0;
+  HMassWC=0;
+  HMassWD=0;
+
   HMassZA=0;
   HMassZB=0;
   HMassZC=0;
@@ -30,6 +36,11 @@ PreSelector::PreSelector(TTree *)
   HMassTWB=0;
   HMassTWC=0;
   HMassTWD=0;
+
+  HMassWZA=0;
+  HMassWZB=0;
+  HMassWZC=0;
+  HMassWZD=0;
 
   HOverlap=0;
 
@@ -101,9 +112,19 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuC = new TH1I("HnMuC","",nLepBins,MinnLep,MaxnLep);
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
-  const Double_t MinMass = 0.;
-  const Double_t MaxMass = 200.;
+  const Double_t MinMass = -1.;
+  const Double_t MaxMass = 2000.;
   const Int_t MassBins = 50;
+
+  HMassWA = new TH1F("HMassWA","",MassBins,MinMass,MaxMass);
+  HMassWB = new TH1F("HMassWB","",MassBins,MinMass,MaxMass);
+  HMassWC = new TH1F("HMassWC","",MassBins,MinMass,MaxMass);
+  HMassWD = new TH1F("HMassWD","",MassBins,MinMass,MaxMass);
+
+  fOutput->Add(HMassWA);
+  fOutput->Add(HMassWB);
+  fOutput->Add(HMassWC);
+  fOutput->Add(HMassWD);
 
   HMassZA = new TH1F("HMassZA","",MassBins,MinMass,MaxMass);
   HMassZB = new TH1F("HMassZB","",MassBins,MinMass,MaxMass);
@@ -120,7 +141,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMassTWC);
   fOutput->Add(HMassTWD);
 
+  HMassWZA = new TH1F("HMassWZA","",MassBins,MinMass,MaxMass);
+  HMassWZB = new TH1F("HMassWZB","",MassBins,MinMass,MaxMass);
+  HMassWZC = new TH1F("HMassWZC","",MassBins,MinMass,MaxMass);
+  HMassWZD = new TH1F("HMassWZD","",MassBins,MinMass,MaxMass);
 
+  fOutput->Add(HMassWZA);
+  fOutput->Add(HMassWZB);
+  fOutput->Add(HMassWZC);
+  fOutput->Add(HMassWZD);
 
   HOverlap = new TH1I("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
@@ -445,6 +474,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
            if(i!=l1 && i!=l2) WCand.emplace_back(i);
          }
 
+         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+         std::vector<ROOT::Math::PxPyPzMVector> nu;
+
          UInt_t lead = WCand[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
            Double_t wmt =
@@ -462,6 +494,28 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                                Muon_pdgId[l2]).second),w);
            HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
                                                Muon_pdgId[lead]).second),w);
+
+           lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
+                                  Mus.phi[l1],Mus.mass);
+           lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
+                                  Mus.phi[l2],Mus.mass);
+           zb   = lep1 + lep2;
+           lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
+                                  Mus.phi[lead],Mus.mass);
+
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+
+           Float_t wzm = -1.;
+           Float_t wm;
+           Bool_t isNu = nu.size()>0;
+
+           if(isNu){
+             wb = (lep3 + nu[0]);
+             wm = wb.M(); // Forcing nominal value
+             wzm = (zb+wb).M();
+           }
+           HMassWD->Fill( isNu ? wm : wmt);
+           HMassWZD->Fill(wzm);
            HMassZD->Fill(BestMass);
            HMassTWD->Fill(wmt);
          }
@@ -494,6 +548,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
 
+         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+         std::vector<ROOT::Math::PxPyPzMVector> nu;
+
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
            Double_t wmt =
@@ -510,7 +567,28 @@ Bool_t PreSelector::Process(Long64_t entry) {
            HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
                                                Muon_pdgId[l2]).second),w);
            HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
-                                               Electron_pdgId[lead]).second),w); 
+                                               Electron_pdgId[lead]).second),w);
+
+           lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
+                                  Mus.phi[l1],Mus.mass);
+           lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
+                                  Mus.phi[l2],Mus.mass);
+           zb   = lep1 + lep2;
+           lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
+                                  Els.phi[lead],Els.mass);
+
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+
+           Double_t wzm = -1.;
+           Float_t wm;
+           Bool_t isNu = nu.size()>0;
+           if(isNu){
+             wb = (lep3 + nu[0]);
+             wm = wb.M(); // Forcing nominal value
+             wzm = (zb+wb).M();
+           }
+           HMassWC->Fill( isNu ? wm : wmt);
+           HMassWZC->Fill(wzm);
            HMassZC->Fill(BestMass);
            HMassTWC->Fill(wmt);
          }
@@ -543,6 +621,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
 
+         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+         std::vector<ROOT::Math::PxPyPzMVector> nu;
+
          UInt_t lead = GoodMuon[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
            Double_t wmt =
@@ -561,6 +642,27 @@ Bool_t PreSelector::Process(Long64_t entry) {
            HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
                                                Muon_pdgId[lead]).second),w);
 
+
+           lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
+                                  Els.phi[l1],Els.mass);
+           lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
+                                  Els.phi[l2],Els.mass);
+           zb   = lep1 + lep2;
+           lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
+                                  Mus.phi[lead],Mus.mass);
+
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+
+           Double_t wzm = -1.;
+           Float_t wm;
+           Bool_t isNu = nu.size()>0;
+           if(isNu){
+             wb = (lep3 + nu[0]);
+             wm = wb.M(); // Forcing nominal value
+             wzm = (zb+wb).M();
+           }
+           HMassWB->Fill(isNu? wm: wmt);
+           HMassWZB->Fill(wzm);
            HMassZB->Fill(BestMass);
            HMassTWB->Fill(wmt);
          }
@@ -600,6 +702,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
            if(i!=l1 && i!=l2) WCand.emplace_back(i);
          }
 
+         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+         std::vector<ROOT::Math::PxPyPzMVector> nu;
+
          UInt_t lead = WCand[0];
          if(Els.pt[lead]>MinRemPt){
            Double_t wmt =
@@ -617,6 +722,27 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                                Electron_pdgId[l2]).second),w);
            HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
                                                Electron_pdgId[lead]).second),w);
+
+           lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
+                                  Els.phi[l1],Els.mass);
+           lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
+                                  Els.phi[l2],Els.mass);
+           zb   = lep1 + lep2;
+           lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
+                                  Els.phi[lead],Els.mass);
+
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+
+           Double_t wzm = -1.;
+           Float_t wm;
+           Bool_t isNu = nu.size()>0;
+           if( isNu ){
+             wb = (lep3 + nu[0]);
+             wm = wb.M(); // Forcing nominal value
+             wzm = (zb+wb).M();
+           }
+           HMassWA->Fill(isNu? wm: wmt);
+           HMassWZA->Fill(wzm);
            HMassZA->Fill(BestMass);
            HMassTWA->Fill(wmt);
          }
@@ -711,6 +837,24 @@ void PreSelector::Terminate() {
   ch->Print(Form("%s_nGoodLeptons_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
+  HMassWA->SetTitle("W Mass (3e0#mu);M_{W}^{3e0#mu};Event count");
+  HMassWA->Draw();
+  HMassWA->Write("HMassWA");
+  ch->cd(2);
+  HMassWB->SetTitle("W Mass (2e1#mu);M_{W}^{2e1#mu};Event count");
+  HMassWB->Draw();
+  HMassWB->Write("HMassWB");
+  ch->cd(3);
+  HMassWC->SetTitle("W Mass (1e2#mu);M_{W}^{1e2#mu};Event count");
+  HMassWC->Draw();
+  HMassWC->Write("HMassWC");
+  ch->cd(4);
+  HMassWD->SetTitle("W Mass (0e3#mu);M_{W}^{0e3#mu};Event count");
+  HMassWD->Draw();
+  HMassWD->Write("HMassWD");
+  ch->Print(Form("%s_HMassW_%d.png",SampleName.Data(),Mass));
+
+  ch->cd(1);
   HMassZA->SetTitle("Z Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
   HMassZA->Draw();
   HMassZA->Write("HMassZA");
@@ -763,6 +907,24 @@ void PreSelector::Terminate() {
   HGenPartFA->LabelsDeflate();
   HGenPartFA->Draw();
   ch->Print(Form("%s_PdgIdFinal_%d.png",SampleName.Data(),Mass));
+
+  ch->cd(1);
+  HMassWZA->SetTitle("WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
+  HMassWZA->Draw();
+  HMassWZA->Write("HMassZA");
+  ch->cd(2);
+  HMassWZB->SetTitle("WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count");
+  HMassWZB->Draw();
+  HMassWZB->Write("HMassZB");
+  ch->cd(3);
+  HMassWZC->SetTitle("WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count");
+  HMassWZC->Draw();
+  HMassWZC->Write("HMassZC");
+  ch->cd(4);
+  HMassWZD->SetTitle("WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
+  HMassWZD->Draw();
+  HMassWZD->Write("HMassZD");
+  ch->Print(Form("%s_HMassWZ_%d.png",SampleName.Data(),Mass));
 
   auto DrawPdgIdHisto = [](TH1F* hz, TH1F* hw){
     hz->LabelsDeflate();
