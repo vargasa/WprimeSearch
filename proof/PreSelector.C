@@ -362,8 +362,30 @@ std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\M
   return Mother;
 }
 
+std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(ROOT::Math::PtEtaPhiMVector lep,
+                                                               Float_t MetPt, Float_t MetPhi, Float_t Wmt){
+
+  std::vector<ROOT::Math::PxPyPzMVector> s;
+  Float_t pz = (lep.Pz()/lep.Pt())*MetPt;
+  s.emplace_back(Get4V(MetPt,MetPhi,pz));
+  return s;
+
+}
+
+ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz){
+
+  const Float_t MNu = 0.;
+
+  ROOT::Math::PxPyPzMVector s(MetPt*TMath::Cos(MetPhi),
+                              MetPt*TMath::Sin(MetPhi),
+                              Pz,MNu);
+
+  return s;
+
+}
+
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhiMVector lep,
-                                          Float_t MetPt, Float_t MetPhi){
+                                                            Float_t MetPt, Float_t MetPhi, Float_t Wmt){
   Float_t Mw = 80.379;
   const Float_t MNu = 0.;
 
@@ -385,27 +407,18 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhi
   a = getA();
   b = getB();
 
-  if (b < 0) return s;
+  if (b < 0) return GetNu4VFix(lep, MetPt, MetPhi, Wmt);
 
   pz = lep.Pz()*a + lep.P()*TMath::Sqrt(b);
   pz = pz/(2.*pow(lep.Pt(),2.));
 
-
-  ROOT::Math::PxPyPzMVector s1(MetPt*TMath::Cos(MetPhi),
-                               MetPt*TMath::Sin(MetPhi),
-                               pz,MNu);
-
-  s.emplace_back(s1);
+  s.emplace_back(PreSelector::Get4V(MetPt,MetPhi,pz));
 
   pz = lep.Pz()*a - lep.P()*TMath::Sqrt(b);
-  pz = pz/(2*pow(lep.Pt(),2));
+  pz = pz/(2.*pow(lep.Pt(),2));
 
-  ROOT::Math::PxPyPzMVector s2(MetPt*TMath::Cos(MetPhi),
-                               MetPt*TMath::Sin(MetPhi),
-                               pz,MNu);
+  s.emplace_back(PreSelector::Get4V(MetPt,MetPhi,pz));
 
-
-  s.emplace_back(s2);
 
   return s;
 
@@ -503,7 +516,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
                                   Mus.phi[lead],Mus.mass);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
            Float_t wzm = -1.;
            Float_t wm;
@@ -577,7 +590,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
                                   Els.phi[lead],Els.mass);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
            Double_t wzm = -1.;
            Float_t wm;
@@ -651,7 +664,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
                                   Mus.phi[lead],Mus.mass);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
            Double_t wzm = -1.;
            Float_t wm;
@@ -731,7 +744,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
                                   Els.phi[lead],Els.mass);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi);
+           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
            Double_t wzm = -1.;
            Float_t wm;

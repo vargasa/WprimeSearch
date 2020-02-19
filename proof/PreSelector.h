@@ -206,8 +206,10 @@ class PreSelector : public TSelector {
 
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
-
+  std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t,Float_t);
+  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(ROOT::Math::PtEtaPhiMVector lep,
+                                                                 Float_t MetPt, Float_t MetPhi, Float_t Wmt);
+  ROOT::Math::PxPyPzMVector Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz);
 
   ClassDef(PreSelector,0);
 };
