@@ -197,8 +197,7 @@ class PreSelector : public TSelector {
   Double_t GetMassFromPair(std::pair<Int_t,Int_t>);
   Double_t MassRecoZ(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t,Double_t,Double_t);
-  Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t,
-                     Double_t,Double_t);
+  Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
 
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t);

@@ -278,12 +278,12 @@ Double_t PreSelector::MassRecoZ(Double_t pt1, Double_t eta1, Double_t phi1, Doub
 
 Double_t PreSelector::MassRecoW(ROOT::Math::PtEtaPhiMVector lep, Float_t MetPt, Float_t MetPhi){
 
-  return PreSelector::MassRecoW(lep.Pt(),lep.Eta(),lep.Phi(),lep.M(),MetPt,MetPhi);
+  return PreSelector::MassRecoW(lep.Pt(),lep.Phi(),MetPt,MetPhi);
 
 };
 
 
-Double_t PreSelector::MassRecoW(Double_t ptl, Double_t etal, Double_t phil, Double_t ml,
+Double_t PreSelector::MassRecoW(Double_t ptl, Double_t phil,
                                 Double_t ptmet, Double_t phimet){
   return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
 };
@@ -386,26 +386,18 @@ ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Floa
 
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhiMVector lep,
                                                             Float_t MetPt, Float_t MetPhi, Float_t Wmt){
-  Float_t Mw = 80.379;
+  const Float_t Mw = 80.379;
   const Float_t MNu = 0.;
 
   Float_t dphi = MetPhi-lep.Phi();
   Float_t a,b;
 
-  Float_t pz = 0;
+  Float_t pz = 0.;
 
   std::vector<ROOT::Math::PxPyPzMVector> s;
 
-  auto getA = [&]() {
-    return pow(Mw,2) + 2.*lep.Pt()*MetPt*TMath::Cos(dphi);
-  };
-
-  auto getB = [&]() {
-    return pow(a,2) - 4*pow(lep.Pt(),2)*pow(MetPt,2);
-  };
-
-  a = getA();
-  b = getB();
+  a = pow(Mw,2) + 2.*lep.Pt()*MetPt*TMath::Cos(dphi);
+  b = pow(a,2) - 4*pow(lep.Pt(),2)*pow(MetPt,2);
 
   if (b < 0) return GetNu4VFix(lep, MetPt, MetPhi, Wmt);
 
@@ -493,8 +485,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
          UInt_t lead = WCand[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
            Double_t wmt =
-             PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
-                                    Mus.phi[lead], Mus.mass,
+             PreSelector::MassRecoW(Mus.pt[lead],
+                                    Mus.phi[lead],
                                     *MET_pt, *MET_phi);
 
            HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
@@ -567,8 +559,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
            Double_t wmt =
-             PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
-                                    Els.phi[lead], Els.mass,
+             PreSelector::MassRecoW(Els.pt[lead],
+                                    Els.phi[lead],
                                     *MET_pt, *MET_phi);
 
            HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
@@ -640,8 +632,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
          UInt_t lead = GoodMuon[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
            Double_t wmt =
-             PreSelector::MassRecoW(Mus.pt[lead], Mus.eta[lead],
-                                    Mus.phi[lead], Mus.mass,
+             PreSelector::MassRecoW(Mus.pt[lead],
+                                    Mus.phi[lead],
                                     *MET_pt, *MET_phi);
 
            HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
@@ -721,8 +713,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
          UInt_t lead = WCand[0];
          if(Els.pt[lead]>MinRemPt){
            Double_t wmt =
-             PreSelector::MassRecoW(Els.pt[lead], Els.eta[lead],
-                                    Els.phi[lead], Els.mass,
+             PreSelector::MassRecoW(Els.pt[lead],
+                                    Els.phi[lead],
                                     *MET_pt, *MET_phi);
 
            HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
