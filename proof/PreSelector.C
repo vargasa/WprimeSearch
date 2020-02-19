@@ -372,6 +372,26 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(ROOT::Math::PtEta
 
 }
 
+std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhiMVector lep,
+                                                               Float_t MetPt, Float_t MetPhi, Float_t Wmt){
+
+  std::vector<ROOT::Math::PxPyPzMVector> s;
+  Float_t NuPz = 0.;
+  const Float_t Mw = 80.379;
+  Float_t a = 2.*lep.Pt()*MetPt;
+  Float_t k = Mw*Mw - Wmt*Wmt;
+  Float_t b = (k + a);
+  Float_t c = k*(k + 4.*lep.Pt()*MetPt);
+  if (c<0) return GetNu4VFix(lep,MetPt,MetPhi,Wmt);
+  Float_t d = lep.P()*TMath::Sqrt(c);
+  NuPz = (lep.Pz()*b + d)/(2.*lep.Pt()*lep.Pt());
+  s.emplace_back(Get4V(MetPt,MetPhi,NuPz));
+  NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt());
+  s.emplace_back(Get4V(MetPt,MetPhi,NuPz));
+  return s;
+
+}
+
 ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz){
 
   const Float_t MNu = 0.;
@@ -384,7 +404,7 @@ ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Floa
 
 }
 
-std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhiMVector lep,
+std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEtaPhiMVector lep,
                                                             Float_t MetPt, Float_t MetPhi, Float_t Wmt){
   const Float_t Mw = 80.379;
   const Float_t MNu = 0.;
