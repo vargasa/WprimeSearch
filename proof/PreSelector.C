@@ -488,9 +488,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
-         HMetD->Fill(*MET_pt);
-         HnElD->Fill(GoodElectron.size());
-         HnMuD->Fill(GoodMuon.size());
 
          Double_t BestMass = std::get<1>(zt[0]);
 
@@ -505,6 +502,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = WCand[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+           HMetD->Fill(*MET_pt);
+           HnElD->Fill(GoodElectron.size());
+           HnMuD->Fill(GoodMuon.size());
+
            Double_t wmt =
              PreSelector::MassRecoW(Mus.pt[lead],
                                     Mus.phi[lead],
@@ -565,9 +566,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
-         HMetC->Fill(*MET_pt);
-         HnElC->Fill(GoodElectron.size());
-         HnMuC->Fill(GoodMuon.size());
 
          Double_t BestMass = std::get<1>(zt[0]);
 
@@ -576,6 +574,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
+           HMetC->Fill(*MET_pt);
+           HnElC->Fill(GoodElectron.size());
+           HnMuC->Fill(GoodMuon.size());
+
            Double_t wmt =
              PreSelector::MassRecoW(Els.pt[lead],
                                     Els.phi[lead],
@@ -635,9 +637,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
-         HMetB->Fill(*MET_pt);
-         HnElB->Fill(GoodElectron.size());
-         HnMuB->Fill(GoodMuon.size());
 
          Double_t BestMass = std::get<1>(zt[0]);
 
@@ -646,6 +645,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = GoodMuon[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+           HMetB->Fill(*MET_pt);
+           HnElB->Fill(GoodElectron.size());
+           HnMuB->Fill(GoodMuon.size());
            Double_t wmt =
              PreSelector::MassRecoW(Mus.pt[lead],
                                     Mus.phi[lead],
@@ -708,10 +710,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
-         HMetA->Fill(*MET_pt);
-         HnElA->Fill(GoodElectron.size());
-         HnMuA->Fill(GoodMuon.size());
-
          Double_t BestMass = std::get<1>(zt[0]);
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
@@ -724,6 +722,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t lead = WCand[0];
          if(Els.pt[lead]>MinRemPt){
+           HMetA->Fill(*MET_pt);
+           HnElA->Fill(GoodElectron.size());
+           HnMuA->Fill(GoodMuon.size());
+
            Double_t wmt =
              PreSelector::MassRecoW(Els.pt[lead],
                                     Els.phi[lead],
