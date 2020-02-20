@@ -465,6 +465,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
      HNEl->Fill(*nElectron,GoodElectron.size());
      HNMu->Fill(*nMuon,GoodMuon.size());
 
+     PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+     std::vector<ROOT::Math::PxPyPzMVector> nu;
+
      const Double_t MinRemPt = 20.;
      const Float_t w = 1.;
 
@@ -499,8 +502,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
            if(i!=l1 && i!=l2) WCand.emplace_back(i);
          }
 
-         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-         std::vector<ROOT::Math::PxPyPzMVector> nu;
 
          UInt_t lead = WCand[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
@@ -573,9 +574,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
 
-         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-         std::vector<ROOT::Math::PxPyPzMVector> nu;
-
          UInt_t lead = GoodElectron[0];
          if(Els.pt[lead]>MinRemPt){
            Double_t wmt =
@@ -645,9 +643,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
-
-         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-         std::vector<ROOT::Math::PxPyPzMVector> nu;
 
          UInt_t lead = GoodMuon[0];
          if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
@@ -726,9 +721,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
          for(auto i: GoodElectron){
            if(i!=l1 && i!=l2) WCand.emplace_back(i);
          }
-
-         PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-         std::vector<ROOT::Math::PxPyPzMVector> nu;
 
          UInt_t lead = WCand[0];
          if(Els.pt[lead]>MinRemPt){
