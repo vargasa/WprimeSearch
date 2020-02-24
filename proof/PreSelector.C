@@ -441,7 +441,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
    fReader.SetEntry(entry);
 
    // Event Selection
-   if ( (*HLT_DoubleEle33_CaloIdL_MW || *HLT_IsoMu20) &&
+   if ( ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
+        (*HLT_IsoMu20||*HLT_Mu55)) &&
         *Flag_HBHENoiseFilter &&
         *Flag_HBHENoiseIsoFilter &&
         *Flag_EcalDeadCellTriggerPrimitiveFilter &&
