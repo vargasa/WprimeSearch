@@ -3,14 +3,14 @@
 void Stack(){
 
   std::string FileName = "WprimeHistos_all.root";
-  std::vector<std::string> DirNames = {
-    "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
-    "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-    "ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-    "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-    "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-    "ZZTo4L_13TeV_powheg_pythia8",
-    "DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"
+  std::map<std::string,std::pair<std::string,int>> BgNames = {
+    {"DYJetsToLL",{"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",kYellow}},
+    {"TTJets_DiLept",{"TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kGreen}},
+    {"ZGToLLG",{"ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",kOrange}},
+    {"DYJetsToLL_Zpt-100to200",{"DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kRed}},
+    {"WZTo3LNu",{"WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",kMagenta}},
+    {"ZZTo4L",{"ZZTo4L_13TeV_powheg_pythia8",kBlue}},
+    {"DYJetsToLL",{"DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kCyan}}
   };
 
   auto f1 = TFile::Open(FileName.c_str());
@@ -27,14 +27,12 @@ void Stack(){
 
 
   for (auto HN : HistNames){
-    Int_t color = 5;
     THStack *hs = new THStack("hs","");
-    for (auto DN: DirNames) {
-      auto h = (TH1F*)f1->Get(Form("%s/%s",DN.c_str(),HN.c_str()));
-      h->SetTitle(DN.c_str());
-      h->SetFillColor(color);
+    for (auto BGN: BgNames) {
+      auto h = (TH1F*)f1->Get(Form("%s/%s",BGN.second.first.c_str(),HN.c_str()));
+      h->SetTitle(BGN.first.c_str());
+      h->SetFillColor(BGN.second.second);
       hs->Add(h);
-      ++color;
     }
     hs->SetTitle(HN.c_str());
     hs->Draw();
@@ -42,9 +40,4 @@ void Stack(){
     c1->Print(Form("Stack_%s.png",HN.c_str()));
     delete hs;
   }
-
-
-
-
-
 }
