@@ -923,9 +923,9 @@ void PreSelector::Terminate() {
   HGenPartFC->LabelsDeflate();
   HGenPartFC->Draw();
   ch->cd(4);
-  HGenPartFA->SetTitle("PdgId Final State (0e3#mu); PdgId; Event count");
-  HGenPartFA->LabelsDeflate();
-  HGenPartFA->Draw();
+  HGenPartFD->SetTitle("PdgId Final State (0e3#mu); PdgId; Event count");
+  HGenPartFD->LabelsDeflate();
+  HGenPartFD->Draw();
   ch->Print(Form("%s_PdgIdFinal_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
