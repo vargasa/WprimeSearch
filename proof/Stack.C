@@ -5,13 +5,13 @@ void Stack(){
   std::string FileName = "WprimeHistos_all.root";
   // ShortName, DasName, kColor, XSection
   std::vector<std::tuple<std::string,std::string,Int_t,Float_t>> BgNames = {
-    std::make_tuple("DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",kYellow,0.1),
-    std::make_tuple("TTJets_DiLept","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kGreen,0.2),
-    std::make_tuple("ZGToLLG","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",kOrange,0.3),
-    std::make_tuple("DYJetsToLL_Zpt-100to200","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kRed,0.4),
-    std::make_tuple("WZTo3LNu","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",kMagenta,0.5),
-    std::make_tuple("ZZTo4L","ZZTo4L_13TeV_powheg_pythia8",kBlue,0.6),
-    std::make_tuple("DYJetsToLL","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kCyan,0.7)
+    std::make_tuple("DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",kYellow,1.),
+    std::make_tuple("TTJets_DiLept","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kGreen,2.412e02),
+    std::make_tuple("ZGToLLG","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",kOrange,7.564e01),
+    std::make_tuple("DYJetsToLL_Zpt-100to200","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kRed,4.102),
+    std::make_tuple("WZTo3LNu","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",kMagenta,4.102),
+    std::make_tuple("ZZTo4L","ZZTo4L_13TeV_powheg_pythia8",kBlue,1.256),
+    std::make_tuple("DYJetsToLL","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kCyan,1.030e+02)
   };
 
   auto f1 = TFile::Open(FileName.c_str());
