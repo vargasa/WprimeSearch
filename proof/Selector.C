@@ -16,6 +16,7 @@ Int_t Selector(std::string rootlist = "", Int_t fWorkers = 4){
     fChain->AddFile(line.c_str());
   }
   std::string sample = rootlist.substr(rootlist.rfind("/")+1);
+  sample.resize(sample.size()-4);
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
