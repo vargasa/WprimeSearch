@@ -931,19 +931,19 @@ void PreSelector::Terminate() {
   ch->cd(1);
   HMassWZA->SetTitle("WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
   HMassWZA->Draw();
-  HMassWZA->Write("HMassZA");
+  HMassWZA->Write("HMassWZA");
   ch->cd(2);
   HMassWZB->SetTitle("WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count");
   HMassWZB->Draw();
-  HMassWZB->Write("HMassZB");
+  HMassWZB->Write("HMassWZB");
   ch->cd(3);
   HMassWZC->SetTitle("WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count");
   HMassWZC->Draw();
-  HMassWZC->Write("HMassZC");
+  HMassWZC->Write("HMassWZC");
   ch->cd(4);
   HMassWZD->SetTitle("WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
   HMassWZD->Draw();
-  HMassWZD->Write("HMassZD");
+  HMassWZD->Write("HMassWZD");
   ch->Print(Form("%s_HMassWZ_%d.png",SampleName.Data(),Mass));
 
   auto DrawPdgIdHisto = [](TH1F* hz, TH1F* hw){
