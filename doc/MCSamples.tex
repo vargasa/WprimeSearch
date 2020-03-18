@@ -1,26 +1,34 @@
+
 \section{Monte Carlo Samples}
 
 \verb|Summer16| production
 
 \subsection{Backgrounds}
 
-\begin{table}[h!]
+
+\begin{table}
   \begin{center}
-    \begin{tabular}{ | c | c| c | }
-      \hline
-      Process & DAS Name & $\sigma$ \\
-      \hline
-      $WZ \rightarrow 3l + \nu $ & \verb|WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8| &  \\
-      \hline
-      $DY \rightarrow 2l + Jets $ & \verb|DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8| & \\
-      \hline
-      $Z\gamma \rightarrow 2l + \gamma $ & \verb|ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8| & \\
-      \hline
-      $ZZ \rightarrow 4l $ & \verb|ZZTo4L_13TeV_powheg_pythia8| & \\
-      \hline
-    \end{tabular}
-    \caption{List of Background samples and cross sections}
+    \begin{adjustbox}{width=1\textwidth} 
+      \begin{tabular}{ | c | c| c | }
+        \hline
+        Process & DAS Name & $\sigma [pb]$ \\
+        \hline
+        $WZ \rightarrow 3l + \nu $ & \verb|WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8| &  $4.102 \pm 7.419e-03$  \\
+        \hline
+        $t\overline{t} \rightarrow 2l + Jets$ & \verb|TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8| & $2.412e02 \pm 3.488e-03$ \\
+        \hline
+        $DY \rightarrow 2l + Jets $ & \verb|DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8| & $5.795e02 \pm 1.873e-02$  \\
+        \hline
+        $DY \rightarrow 2l + Jets $ & \verb|DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8| & $1.030e02 \pm 3.034e-03$ \\
+        \hlinex
+        $Z\gamma \rightarrow 2l + \gamma $ & \verb|ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8| & $7.564e01 \pm 1.114e-01$ \\
+        \hline
+        $ZZ \rightarrow 4l $ & \verb|ZZTo4L_13TeV_powheg_pythia8| & $1.256 \pm 2.271e-03$ \\
+        \hline
+      \end{tabular}
+    \end{adjustbox}
   \end{center}
+  \caption{List of Background samples and cross sections}
 \end{table}
 
 The neutrino's 4-Vector can be reconstructed from the information available and
