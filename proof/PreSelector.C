@@ -112,29 +112,35 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuC = new TH1I("HnMuC","",nLepBins,MinnLep,MaxnLep);
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
-  const Double_t MinMass = -1.;
-  const Double_t MaxMass = 2000.;
+  const Float_t MinMass = -1.;
+  const Float_t MaxMass = 2000.;
   const Int_t MassBins = 50;
 
-  HMassWA = new TH1F("HMassWA","",MassBins,MinMass,MaxMass);
-  HMassWB = new TH1F("HMassWB","",MassBins,MinMass,MaxMass);
-  HMassWC = new TH1F("HMassWC","",MassBins,MinMass,MaxMass);
-  HMassWD = new TH1F("HMassWD","",MassBins,MinMass,MaxMass);
+  const Float_t MinWMass = 0.;
+  const Float_t MaxWMass = 1e3;
+
+  HMassWA = new TH1F("HMassWA","",MassBins,MinWMass,MaxWMass);
+  HMassWB = new TH1F("HMassWB","",MassBins,MinWMass,MaxWMass);
+  HMassWC = new TH1F("HMassWC","",MassBins,MinWMass,MaxWMass);
+  HMassWD = new TH1F("HMassWD","",MassBins,MinWMass,MaxWMass);
 
   fOutput->Add(HMassWA);
   fOutput->Add(HMassWB);
   fOutput->Add(HMassWC);
   fOutput->Add(HMassWD);
 
-  HMassZA = new TH1F("HMassZA","",MassBins,MinMass,MaxMass);
-  HMassZB = new TH1F("HMassZB","",MassBins,MinMass,MaxMass);
-  HMassZC = new TH1F("HMassZC","",MassBins,MinMass,MaxMass);
-  HMassZD = new TH1F("HMassZD","",MassBins,MinMass,MaxMass);
+  const Float_t HMaxZMass = 120.;
+  const Float_t HMinZMass = 60.;
 
-  HMassTWA = new TH1F("HMassTWA","",MassBins,MinMass,MaxMass);
-  HMassTWB = new TH1F("HMassTWB","",MassBins,MinMass,MaxMass);
-  HMassTWC = new TH1F("HMassTWC","",MassBins,MinMass,MaxMass);
-  HMassTWD = new TH1F("HMassTWD","",MassBins,MinMass,MaxMass);
+  HMassZA = new TH1F("HMassZA","",MassBins,HMinZMass,HMaxZMass);
+  HMassZB = new TH1F("HMassZB","",MassBins,HMinZMass,HMaxZMass);
+  HMassZC = new TH1F("HMassZC","",MassBins,HMinZMass,HMaxZMass);
+  HMassZD = new TH1F("HMassZD","",MassBins,HMinZMass,HMaxZMass);
+
+  HMassTWA = new TH1F("HMassTWA","",MassBins,MinMass,HMaxZMass);
+  HMassTWB = new TH1F("HMassTWB","",MassBins,MinMass,HMaxZMass);
+  HMassTWC = new TH1F("HMassTWC","",MassBins,MinMass,HMaxZMass);
+  HMassTWD = new TH1F("HMassTWD","",MassBins,MinMass,HMaxZMass);
 
   fOutput->Add(HMassTWA);
   fOutput->Add(HMassTWB);
@@ -473,12 +479,17 @@ Bool_t PreSelector::Process(Long64_t entry) {
      const Float_t w = 1.;
 
      Bool_t IsA{},IsB{},IsC{},IsD{};
+     Bool_t NoPairs{};
+
+     Float_t BestZMass;
+     Float_t MinZMass = 70.;
+     Float_t MaxZMass = 111.;
+
 
      // 0e3Mu
      if(*nMuon>=3 && GoodMuon.size()>=3){
        IsD = true;
        HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
-       Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
@@ -490,7 +501,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
        if (!NoPairs){
 
-         Double_t BestMass = std::get<1>(zt[0]);
+         BestZMass = std::get<1>(zt[0]);
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
@@ -501,8 +512,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
          }
 
 
+
          UInt_t lead = WCand[0];
-         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
+            BestZMass > MinZMass && BestZMass < MaxZMass){
            HMetD->Fill(*MET_pt);
            HnElD->Fill(GoodElectron.size());
            HnMuD->Fill(GoodMuon.size());
@@ -544,7 +557,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            }
            HMassWD->Fill( isNu ? wm : wmt);
            HMassWZD->Fill(wzm);
-           HMassZD->Fill(BestMass);
+           HMassZD->Fill(BestZMass);
            HMassTWD->Fill(wmt);
          }
        }
@@ -556,7 +569,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodMuon.size()>=2){
        IsC = true;
        HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
-       Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
@@ -568,13 +580,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
        if (!NoPairs){
 
-         Double_t BestMass = std::get<1>(zt[0]);
+         BestZMass = std::get<1>(zt[0]);
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
 
          UInt_t lead = GoodElectron[0];
-         if(Els.pt[lead]>MinRemPt){
+         if(Els.pt[lead]>MinRemPt &&
+            BestZMass > MinZMass && BestZMass < MaxZMass ){
            HMetC->Fill(*MET_pt);
            HnElC->Fill(GoodElectron.size());
            HnMuC->Fill(GoodMuon.size());
@@ -615,7 +628,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            }
            HMassWC->Fill( isNu ? wm : wmt);
            HMassWZC->Fill(wzm);
-           HMassZC->Fill(BestMass);
+           HMassZC->Fill(BestZMass);
            HMassTWC->Fill(wmt);
          }
        }
@@ -627,7 +640,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
         GoodMuon.size()>=1){
        IsB = true;
        HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
-       Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
@@ -639,13 +651,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
        if (!NoPairs){
 
-         Double_t BestMass = std::get<1>(zt[0]);
+         BestZMass = std::get<1>(zt[0]);
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
 
          UInt_t lead = GoodMuon[0];
-         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
+            BestZMass > MinZMass && BestZMass < MaxZMass){
            HMetB->Fill(*MET_pt);
            HnElB->Fill(GoodElectron.size());
            HnMuB->Fill(GoodMuon.size());
@@ -686,7 +699,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            }
            HMassWB->Fill(isNu? wm: wmt);
            HMassWZB->Fill(wzm);
-           HMassZB->Fill(BestMass);
+           HMassZB->Fill(BestZMass);
            HMassTWB->Fill(wmt);
          }
 
@@ -700,7 +713,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
      if(*nElectron>=3 && GoodElectron.size()>=3){
        IsA = true;
        HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
-       Bool_t NoPairs{};
 
        std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
@@ -711,7 +723,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
 
        if (!NoPairs){
-         Double_t BestMass = std::get<1>(zt[0]);
+         BestZMass = std::get<1>(zt[0]);
 
          UInt_t l1 = (std::get<2>(zt[0])).first;
          UInt_t l2 = (std::get<2>(zt[0])).second;
@@ -722,7 +734,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
          }
 
          UInt_t lead = WCand[0];
-         if(Els.pt[lead]>MinRemPt){
+         if(Els.pt[lead]>MinRemPt &&
+            BestZMass > MinZMass && BestZMass < MaxZMass){
            HMetA->Fill(*MET_pt);
            HnElA->Fill(GoodElectron.size());
            HnMuA->Fill(GoodMuon.size());
@@ -763,7 +776,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
            }
            HMassWA->Fill(isNu? wm: wmt);
            HMassWZA->Fill(wzm);
-           HMassZA->Fill(BestMass);
+           HMassZA->Fill(BestZMass);
            HMassTWA->Fill(wmt);
          }
        }
