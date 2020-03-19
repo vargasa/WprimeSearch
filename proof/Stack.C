@@ -1,8 +1,7 @@
 #include "THStack.h"
 
-void Stack(){
+void Stack(std::string FileName = "WprimeHistos_all.root"){
 
-  std::string FileName = "WprimeHistos_all.root";
   const Int_t FillStyle = 1001;
   // ShortName, DasName, kColor, Style, isSignal?, XSection
   std::vector<std::tuple<std::string,std::string,Int_t,Int_t,Bool_t,Float_t>> BgNames = {
