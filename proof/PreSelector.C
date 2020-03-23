@@ -799,6 +799,8 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
 
+  std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
+
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
@@ -837,6 +839,12 @@ void PreSelector::Terminate() {
   HMetD->Draw();
   HMetD->Write("HMetD");
   ch->Print(Form("%s_PlotMet_%d.png",SampleName.Data(),Mass));
+  chc->cd();
+  TH1F HMet = *HMetA + *HMetB + *HMetC + *HMetD;
+  HMet.SetTitle("MET;#slash{M}_{T};Event count");
+  HMet.Write("HMet");
+  HMet.Draw();
+  chc->Print(Form("%s_HMet.png",SampleName.Data()));
 
   ch->cd(1);
   gStyle->SetOptStat(1111111);
@@ -886,6 +894,13 @@ void PreSelector::Terminate() {
   HMassWD->Draw();
   HMassWD->Write("HMassWD");
   ch->Print(Form("%s_HMassW_%d.png",SampleName.Data(),Mass));
+  chc->cd();
+  TH1F HMassW = *HMassWA + *HMassWB + *HMassWC + *HMassWD;
+  HMassW.SetTitle("MassW;#slash{M}_{W};Event count");
+  HMassW.Write("HMassW");
+  HMassW.Draw();
+  chc->Print(Form("%s_HMassW.png",SampleName.Data()));
+
 
   ch->cd(1);
   HMassZA->SetTitle("Z Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
@@ -904,6 +919,11 @@ void PreSelector::Terminate() {
   HMassZD->Draw();
   HMassZD->Write("HMassZD");
   ch->Print(Form("%s_HMassZ_%d.png",SampleName.Data(),Mass));
+  TH1F HMassZ = *HMassZA + *HMassZB + *HMassZC + *HMassZD;
+  HMassZ.SetTitle("MassZ;#slash{M}_{Z};Event count");
+  HMassZ.Write("HMassZ");
+  HMassZ.Draw();
+  chc->Print(Form("%s_HMassZ.png",SampleName.Data()));
 
   ch->cd(1);
   HMassTWA->SetTitle("M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count");
@@ -922,6 +942,11 @@ void PreSelector::Terminate() {
   HMassTWD->Draw();
   HMassTWD->Write("HMassTWD");
   ch->Print(Form("%s_HMassTWT_%d.png",SampleName.Data(),Mass));
+  TH1F HMassTW = *HMassTWA + *HMassTWB + *HMassTWC + *HMassTWD;
+  HMassTW.SetTitle("MassTW;#slash{M}_{WT};Event count");
+  HMassTW.Draw();
+  HMassTW.Write("HMassTW");
+  chc->Print(Form("%s_HMassTW.png",SampleName.Data()));
 
   ch->cd(1);
   HGenPartFA->SetTitle("PdgId Final State (3e0#mu); PdgId; Event count");
@@ -942,22 +967,27 @@ void PreSelector::Terminate() {
   ch->Print(Form("%s_PdgIdFinal_%d.png",SampleName.Data(),Mass));
 
   ch->cd(1);
-  HMassWZA->SetTitle("WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
+  HMassWZA->SetTitle("WZ Mass (3e0#mu);M_{WZ}^{3e0#mu};Event count");
   HMassWZA->Draw();
   HMassWZA->Write("HMassWZA");
   ch->cd(2);
-  HMassWZB->SetTitle("WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count");
+  HMassWZB->SetTitle("WZ Mass (2e1#mu);M_{WZ}^{2e1#mu};Event count");
   HMassWZB->Draw();
   HMassWZB->Write("HMassWZB");
   ch->cd(3);
-  HMassWZC->SetTitle("WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count");
+  HMassWZC->SetTitle("WZ Mass (1e2#mu);M_{WZ}^{1e2#mu};Event count");
   HMassWZC->Draw();
   HMassWZC->Write("HMassWZC");
   ch->cd(4);
-  HMassWZD->SetTitle("WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
+  HMassWZD->SetTitle("WZ Mass (0e3#mu);M_{WZ}^{0e3#mu};Event count");
   HMassWZD->Draw();
   HMassWZD->Write("HMassWZD");
   ch->Print(Form("%s_HMassWZ_%d.png",SampleName.Data(),Mass));
+  TH1F HMassWZ = *HMassWZA + *HMassWZB + *HMassWZC + *HMassWZD;
+  HMassWZ.SetTitle("MassWZ;#slash{M}_{WZ};Event count");
+  HMassWZ.Write("HMassWZ");
+  HMassWZ.Draw();
+  chc->Print(Form("%s_HMassWZ.png",SampleName.Data()));
 
   auto DrawPdgIdHisto = [](TH1F* hz, TH1F* hw){
     hz->LabelsDeflate();
