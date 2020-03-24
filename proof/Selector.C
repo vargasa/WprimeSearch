@@ -20,7 +20,6 @@ Int_t Selector(std::string rootlist = "", Int_t fWorkers = 4){
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
-  fProof->SetParameter("Mass",(Int_t)mass);
   fProof->SetParameter("SampleName",sample.c_str());
 
   fChain->SetProof();

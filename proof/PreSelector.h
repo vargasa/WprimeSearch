@@ -181,7 +181,6 @@ class PreSelector : public TSelector {
 
  public :
 
-  Int_t Mass;
   TString SampleName;
 
   PreSelector(TTree * = 0);

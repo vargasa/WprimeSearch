@@ -75,11 +75,6 @@ void PreSelector::Init(TTree *tree)
 }
 void PreSelector::Begin(TTree *tree) {
 
-  if (fInput->FindObject("Mass")) {
-    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Mass"));
-    Mass = p->GetVal();
-  }
-
   if (fInput->FindObject("SampleName")) {
     // Lesson: TString can't be in TCollection
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
@@ -838,7 +833,7 @@ void PreSelector::Terminate() {
   SetStyle(HMetD);
   HMetD->Draw();
   HMetD->Write("HMetD");
-  ch->Print(Form("%s_PlotMet_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_PlotMet.png",SampleName.Data()));
   chc->cd();
   TH1F HMet = *HMetA + *HMetB + *HMetC + *HMetD;
   HMet.SetTitle("MET;#slash{M}_{T};Event count");
@@ -875,7 +870,7 @@ void PreSelector::Terminate() {
   hsD->Add(HnElD);
   hsD->SetTitle("0e3#mu;n;Event count");
   hsD->Draw();
-  ch->Print(Form("%s_nGoodLeptons_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_nGoodLeptons.png",SampleName.Data()));
 
   ch->cd(1);
   HMassWA->SetTitle("W Mass (3e0#mu);M_{W}^{3e0#mu};Event count");
@@ -893,7 +888,7 @@ void PreSelector::Terminate() {
   HMassWD->SetTitle("W Mass (0e3#mu);M_{W}^{0e3#mu};Event count");
   HMassWD->Draw();
   HMassWD->Write("HMassWD");
-  ch->Print(Form("%s_HMassW_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_HMassW.png",SampleName.Data()));
   chc->cd();
   TH1F HMassW = *HMassWA + *HMassWB + *HMassWC + *HMassWD;
   HMassW.SetTitle("MassW;#slash{M}_{W};Event count");
@@ -918,7 +913,7 @@ void PreSelector::Terminate() {
   HMassZD->SetTitle("Z Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
   HMassZD->Draw();
   HMassZD->Write("HMassZD");
-  ch->Print(Form("%s_HMassZ_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_HMassZ.png",SampleName.Data()));
   TH1F HMassZ = *HMassZA + *HMassZB + *HMassZC + *HMassZD;
   HMassZ.SetTitle("MassZ;#slash{M}_{Z};Event count");
   HMassZ.Write("HMassZ");
@@ -941,7 +936,7 @@ void PreSelector::Terminate() {
   HMassTWD->SetTitle("M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count");
   HMassTWD->Draw();
   HMassTWD->Write("HMassTWD");
-  ch->Print(Form("%s_HMassTWT_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_HMassTWT.png",SampleName.Data()));
   TH1F HMassTW = *HMassTWA + *HMassTWB + *HMassTWC + *HMassTWD;
   HMassTW.SetTitle("MassTW;#slash{M}_{WT};Event count");
   HMassTW.Draw();
@@ -964,7 +959,7 @@ void PreSelector::Terminate() {
   HGenPartFD->SetTitle("PdgId Final State (0e3#mu); PdgId; Event count");
   HGenPartFD->LabelsDeflate();
   HGenPartFD->Draw();
-  ch->Print(Form("%s_PdgIdFinal_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_PdgIdFinal.png",SampleName.Data()));
 
   ch->cd(1);
   HMassWZA->SetTitle("WZ Mass (3e0#mu);M_{WZ}^{3e0#mu};Event count");
@@ -982,7 +977,7 @@ void PreSelector::Terminate() {
   HMassWZD->SetTitle("WZ Mass (0e3#mu);M_{WZ}^{0e3#mu};Event count");
   HMassWZD->Draw();
   HMassWZD->Write("HMassWZD");
-  ch->Print(Form("%s_HMassWZ_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_HMassWZ.png",SampleName.Data()));
   TH1F HMassWZ = *HMassWZA + *HMassWZB + *HMassWZC + *HMassWZD;
   HMassWZ.SetTitle("MassWZ;#slash{M}_{WZ};Event count");
   HMassWZ.Write("HMassWZ");
@@ -1028,7 +1023,7 @@ void PreSelector::Terminate() {
   DrawPdgIdHisto(HGenPartZD,HGenPartWD);
   HGenPartZD->Write("HGenPartZD");
   HGenPartWD->Write("HGenPartWD");
-  ch->Print(Form("%s_GenPartMother_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_GenPartMother.png",SampleName.Data()));
 
   ch->cd(1);
   gPad->SetLogz();
@@ -1046,12 +1041,12 @@ void PreSelector::Terminate() {
   gPad->SetLogz();
   HNLepD->SetTitle("# Leptons (0e3#mu); GoodMuon Size; GoodElectron Size");
   HNLepD->Draw("COLZ");
-  ch->Print(Form("%s_NGoodLeptons_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_NGoodLeptons.png",SampleName.Data()));
 
   ch->cd(0);
   HOverlap->Draw();
   HOverlap->Write("HOverlap");
-  ch->Print(Form("%s_Overlap_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_Overlap.png",SampleName.Data()));
 
   ch->Clear();
   gStyle->SetOptStat(0);
@@ -1064,7 +1059,7 @@ void PreSelector::Terminate() {
   gPad->SetLogz();
   HNMu->SetTitle("nMuon vs size(GoodMuon); nElectron; size(GoodMuon)");
   HNMu->Draw("COL,TEXT");
-  ch->Print(Form("%s_CheckGoodLeptons_%d.png",SampleName.Data(),Mass));
+  ch->Print(Form("%s_CheckGoodLeptons.png",SampleName.Data()));
 
   fOut->Write();
   fOut->Close();
