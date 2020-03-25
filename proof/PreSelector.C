@@ -814,22 +814,22 @@ void PreSelector::Terminate() {
   };
 
   ch->cd(1);
-  HMetA->SetTitle("3e0#mu;#slash{M}^{3e0#mu}_{T};Event count");
+  HMetA->SetTitle("3e0#mu;#slash{E}^{3e0#mu}_{T};Event count");
   SetStyle(HMetA);
   HMetA->Draw();
   HMetA->Write("HMetA");
   ch->cd(2);
-  HMetB->SetTitle("2e1#mu;#slash{M}^{2e1#mu}_{T};Event count");
+  HMetB->SetTitle("2e1#mu;#slash{E}^{2e1#mu}_{T};Event count");
   SetStyle(HMetB);
   HMetB->Draw();
   HMetB->Write("HMetB");
   ch->cd(3);
-  HMetC->SetTitle("1e2#mu;#slash{M}^{1e2#mu}_{T};Event count");
+  HMetC->SetTitle("1e2#mu;#slash{E}^{1e2#mu}_{T};Event count");
   SetStyle(HMetC);
   HMetC->Draw();
   HMetC->Write("HMetC");
   ch->cd(4);
-  HMetD->SetTitle("0e3#mu;#slash{M}^{0e3#mu}_{T};Event count");
+  HMetD->SetTitle("0e3#mu;#slash{E}^{0e3#mu}_{T};Event count");
   SetStyle(HMetD);
   HMetD->Draw();
   HMetD->Write("HMetD");
