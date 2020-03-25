@@ -14,6 +14,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",kBlack,0,true,3.196e02)
   };
 
+  std::vector<std::string> DataNames = {
+    "DoubleEG",
+    "SingleMuon"
+  };
+
   auto f1 = TFile::Open(FileName.c_str());
 
   std::vector<std::tuple<std::string,std::string>> HistNames = {
@@ -46,8 +51,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     Int_t r = (j-1)%4;
     c1->cd(r+1);
     THStack *hs = new THStack("hs","");
+    THStack *hsdata = new THStack("hsdata","");
     auto legend = new TLegend(0.3, 0.66, .89, .89);
     legend->SetNColumns(2);
+    for (auto DN: DataNames){
+      auto h = (TH1F*)f1->Get(Form("%s/%s",DN.c_str(),(std::get<0>(HN).c_str())));
+      hsdata->Add(h);
+    }
     for (auto BGN: BgNames) {
       Bool_t IsSignal = std::get<4>(BGN);
       auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
@@ -69,6 +79,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     legend->SetBorderSize(0);
     hs->SetMaximum(MaxY);
     hs->Draw("HIST");
+    auto hdata = (TH1F*)hsdata->GetStack()->Last();
+    hdata->SetMarkerStyle(kFullCircle);
+    hdata->Draw("HIST SAME P");
+
     ++j;
     legend->Draw();
     if( r+1 == 4 ){
