@@ -2,6 +2,9 @@
 
 void Stack(std::string FileName = "WprimeHistos_all.root"){
 
+  const Float_t luminosity = 35.9e15; /* 35.9fb^-1 2016 */
+  const Float_t pbFactor = 1e-12; /*pico prefix*/
+
   const Int_t FillStyle = 1001;
   // ShortName, DasName, kColor, Style, isSignal?, XSection
   std::vector<std::tuple<std::string,std::string,Int_t,Int_t,Bool_t,Float_t>> BgNames = {
@@ -64,7 +67,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->SetFillStyle(std::get<3>(BGN));
       h->SetTitle((std::get<0>(BGN)).c_str());
       h->SetFillColor(std::get<2>(BGN));
-      h->Scale(std::get<5>(BGN));
+      h->Scale(luminosity*std::get<5>(BGN)*pbFactor);
       if(!IsSignal) h->SetLineWidth(0);
       hs->Add(h);
       legend->AddEntry(h,(std::get<0>(BGN)).c_str(),IsSignal? "L":"F");
