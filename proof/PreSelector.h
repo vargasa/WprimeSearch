@@ -1,3 +1,5 @@
+#include "IsData.h"
+
 #include "TSelector.h"
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
@@ -82,7 +84,6 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
   TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
   TTreeReaderArray<UChar_t> Muon_highPtId = {fReader, "Muon_highPtId"};
-  TTreeReaderArray<Int_t> Muon_genPartIdx = {fReader, "Muon_genPartIdx"};
 
 
   // Electrons
@@ -101,9 +102,11 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Float_t> Electron_pfRelIso03_chg = {fReader, "Electron_pfRelIso03_chg"};
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_all = {fReader, "Electron_miniPFRelIso_all"};
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_chg = {fReader, "Electron_miniPFRelIso_chg"};
-  TTreeReaderArray<Int_t> Electron_genPartIdx = {fReader, "Electron_genPartIdx"};
 
   // GenPart
+#ifndef CMSDATA
+  TTreeReaderArray<Int_t> Electron_genPartIdx = {fReader, "Electron_genPartIdx"};
+  TTreeReaderArray<Int_t> Muon_genPartIdx = {fReader, "Muon_genPartIdx"};
   TTreeReaderArray<Float_t> GenPart_eta = {fReader, "GenPart_eta"};
   TTreeReaderArray<Float_t> GenPart_mass = {fReader, "GenPart_mass"};
   TTreeReaderArray<Float_t> GenPart_phi = {fReader, "GenPart_phi"};
@@ -112,7 +115,7 @@ class PreSelector : public TSelector {
   TTreeReaderArray<Int_t> GenPart_pdgId = {fReader, "GenPart_pdgId"};
   TTreeReaderArray<Int_t> GenPart_status = {fReader, "GenPart_status"};
   TTreeReaderArray<Int_t> GenPart_statusFlags = {fReader, "GenPart_statusFlags"};
-
+#endif
   // Neutrinos
   TTreeReaderValue<Float_t> MET_phi = {fReader, "MET_phi"};
   TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
@@ -156,6 +159,7 @@ class PreSelector : public TSelector {
 
   TH1I *HOverlap;
 
+#ifndef CMSDATA
   TH1F *HGenPartZA;
   TH1F *HGenPartZB;
   TH1F *HGenPartZC;
@@ -170,6 +174,7 @@ class PreSelector : public TSelector {
   TH1F *HGenPartFB;
   TH1F *HGenPartFC;
   TH1F *HGenPartFD;
+#endif
 
   TH2I *HNLepA;
   TH2I *HNLepB;
@@ -201,8 +206,10 @@ class PreSelector : public TSelector {
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
 
+#ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t);
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter);
+#endif
 
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);

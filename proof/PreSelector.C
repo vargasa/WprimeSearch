@@ -44,6 +44,7 @@ PreSelector::PreSelector(TTree *)
 
   HOverlap=0;
 
+#ifndef CMSDATA
   HGenPartZA=0;
   HGenPartZB=0;
   HGenPartZC=0;
@@ -58,6 +59,7 @@ PreSelector::PreSelector(TTree *)
   HGenPartFB=0;
   HGenPartFC=0;
   HGenPartFD=0;
+#endif
 
   HNLepA=0;
   HNLepB=0;
@@ -156,6 +158,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
   fOutput->Add(HOverlap);
 
+#ifndef CMSDATA
   const UInt_t BinsPdgId = 100;
   const Float_t PdgIdMin = -50.;
   const Float_t PdgIdMax = 50.;
@@ -189,6 +192,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HGenPartFB);
   fOutput->Add(HGenPartFC);
   fOutput->Add(HGenPartFD);
+#endif
 
   fOutput->Add(HMassZA);
   fOutput->Add(HMassZB);
@@ -344,10 +348,12 @@ std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector:
 
 }
 
+#ifndef CMSDATA
 std::pair<Int_t,Int_t> PreSelector::GetMother(std::pair<Int_t,Int_t> Daughter){
   return PreSelector::GetMother(Daughter.first,Daughter.second);
 }
-
+#endif
+#ifndef CMSDATA
 std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\Mu or e*/){
 
   if(GenPartIdx == -1 ) return std::make_pair(GenPartIdx,9999);
@@ -362,6 +368,7 @@ std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\M
 
   return Mother;
 }
+#endif
 
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(ROOT::Math::PtEtaPhiMVector lep,
                                                                Float_t MetPt, Float_t MetPhi, Float_t Wmt){
@@ -520,6 +527,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                     Mus.phi[lead],
                                     *MET_pt, *MET_phi);
 
+#ifndef CMSDATA
            HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
            HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
            HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
@@ -530,6 +538,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                                Muon_pdgId[l2]).second),w);
            HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
                                                Muon_pdgId[lead]).second),w);
+#endif
 
            lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
                                   Mus.phi[l1],Mus.mass);
@@ -591,7 +600,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead],
                                     Els.phi[lead],
                                     *MET_pt, *MET_phi);
-
+#ifndef CMSDATA
            HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
            HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
            HGenPartFC->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
@@ -602,7 +611,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                                Muon_pdgId[l2]).second),w);
            HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
                                                Electron_pdgId[lead]).second),w);
-
+#endif
            lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
                                   Mus.phi[l1],Mus.mass);
            lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
@@ -661,7 +670,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Mus.pt[lead],
                                     Mus.phi[lead],
                                     *MET_pt, *MET_phi);
-
+#ifndef CMSDATA
            HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
            HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
            HGenPartFB->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
@@ -672,7 +681,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                                Electron_pdgId[l2]).second),w);
            HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
                                                Muon_pdgId[lead]).second),w);
-
+#endif
 
            lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
                                   Els.phi[l1],Els.mass);
@@ -739,7 +748,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
              PreSelector::MassRecoW(Els.pt[lead],
                                     Els.phi[lead],
                                     *MET_pt, *MET_phi);
-
+#ifndef CMSDATA
            HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
            HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
            HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
@@ -750,7 +759,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                                Electron_pdgId[l2]).second),w);
            HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
                                                Electron_pdgId[lead]).second),w);
-
+#endif
            lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
                                   Els.phi[l1],Els.mass);
            lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
@@ -943,6 +952,7 @@ void PreSelector::Terminate() {
   HMassTW.Write("HMassTW");
   chc->Print(Form("%s_HMassTW.png",SampleName.Data()));
 
+#ifndef CMSDATA
   ch->cd(1);
   HGenPartFA->SetTitle("PdgId Final State (3e0#mu); PdgId; Event count");
   HGenPartFA->LabelsDeflate();
@@ -960,6 +970,7 @@ void PreSelector::Terminate() {
   HGenPartFD->LabelsDeflate();
   HGenPartFD->Draw();
   ch->Print(Form("%s_PdgIdFinal.png",SampleName.Data()));
+#endif
 
   ch->cd(1);
   HMassWZA->SetTitle("WZ Mass (3e0#mu);M_{WZ}^{3e0#mu};Event count");
@@ -1001,6 +1012,7 @@ void PreSelector::Terminate() {
     legend->Draw();
   };
 
+#ifndef CMSDATA
   ch->Clear();
   ch->Divide(2,2);
   ch->cd(1);
@@ -1024,6 +1036,7 @@ void PreSelector::Terminate() {
   HGenPartZD->Write("HGenPartZD");
   HGenPartWD->Write("HGenPartWD");
   ch->Print(Form("%s_GenPartMother.png",SampleName.Data()));
+#endif
 
   ch->cd(1);
   gPad->SetLogz();
