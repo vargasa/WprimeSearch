@@ -61,6 +61,7 @@ PreSelector::PreSelector(TTree *)
   HGenPartFD=0;
 #endif
 
+  HRunLumi=0;
   HNLepA=0;
   HNLepB=0;
   HNLepC=0;
@@ -239,6 +240,14 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   fOutput->Add(HNEl);
   fOutput->Add(HNMu);
+
+  const Float_t MinRun = 280000;
+  const Float_t MaxRun = 285000;
+  const Float_t MaxLumi = 2400;
+  HRunLumi = new TH2I("HRunLumi","",
+                      (Int_t)(MaxRun-MinRun),MinRun,MaxRun,
+                      (Int_t)MaxLumi,0.,MaxLumi);
+  fOutput->Add(HRunLumi);
 }
 
 
@@ -447,6 +456,8 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
+
+   HRunLumi->Fill(*run,*luminosityBlock);
 
    // Event Selection
    if ( ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
@@ -804,6 +815,8 @@ void PreSelector::Terminate() {
   ch->Divide(2,2);
 
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
+  HRunLumi->Draw("COLZ");
+  chc->Print("HRunLumi.png");
 
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(SampleName);

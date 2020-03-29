@@ -24,6 +24,9 @@ class PreSelector : public TSelector {
 
   TTreeReader fReader;
 
+  TTreeReaderValue<UInt_t> run = {fReader, "run"};
+  TTreeReaderValue<UInt_t> luminosityBlock = {fReader, "luminosityBlock"};
+
   TTreeReaderValue<Bool_t> HLT_DoubleEle33_CaloIdL_MW = {fReader, "HLT_DoubleEle33_CaloIdL_MW"};
   TTreeReaderValue<Bool_t> HLT_Ele115_CaloIdVT_GsfTrkIdT = {fReader, "HLT_Ele115_CaloIdVT_GsfTrkIdT"};
   TTreeReaderValue<Bool_t> HLT_IsoMu20 = {fReader, "HLT_IsoMu20"};
@@ -175,7 +178,7 @@ class PreSelector : public TSelector {
   TH1F *HGenPartFC;
   TH1F *HGenPartFD;
 #endif
-
+  TH2I *HRunLumi;
   TH2I *HNLepA;
   TH2I *HNLepB;
   TH2I *HNLepC;
