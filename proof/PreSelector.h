@@ -179,6 +179,9 @@ class PreSelector : public TSelector {
   TH1F *HGenPartFD;
 #endif
   TH2I *HRunLumi;
+  TH1I *HRun;
+  TH1I *HLumi;
+
   TH2I *HNLepA;
   TH2I *HNLepB;
   TH2I *HNLepC;

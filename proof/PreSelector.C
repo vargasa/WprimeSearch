@@ -62,6 +62,8 @@ PreSelector::PreSelector(TTree *)
 #endif
 
   HRunLumi=0;
+  HRun = 0;
+  HLumi = 0;
   HNLepA=0;
   HNLepB=0;
   HNLepC=0;
@@ -242,12 +244,18 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HNMu);
 
   const Float_t MinRun = 280000;
-  const Float_t MaxRun = 285000;
-  const Float_t MaxLumi = 2400;
+  const Float_t MaxRun = 290000;
+  const Float_t MaxLumi = 2500;
   HRunLumi = new TH2I("HRunLumi","",
                       (Int_t)(MaxRun-MinRun),MinRun,MaxRun,
                       (Int_t)MaxLumi,0.,MaxLumi);
   fOutput->Add(HRunLumi);
+
+  HRun = new TH1I("HRun","",(MaxRun-MinRun),MinRun,MaxRun);
+  HLumi = new TH1I("HLumi","",MaxLumi,0.,MaxLumi);
+
+  fOutput->Add(HRun);
+  fOutput->Add(HLumi);
 }
 
 
@@ -458,6 +466,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
    fReader.SetEntry(entry);
 
    HRunLumi->Fill(*run,*luminosityBlock);
+
+   HRun->Fill(*run);
+   HLumi->Fill(*luminosityBlock);
 
    // Event Selection
    if ( ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
@@ -813,10 +824,20 @@ void PreSelector::Terminate() {
 
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
+  gStyle->SetOptStat(1111111);
+
+  ch->cd(1);
+  HRun->SetTitle("HRun");
+  HRun->Draw();
+  ch->cd(2);
+  HLumi->SetTitle("HLumi");
+  HLumi->Draw();
+  ch->cd(3);
+  HRunLumi->SetTitle("Run and Lumi Range;Run;LumosityBlock");
+  HRunLumi->Draw("COLZ");
+  ch->Print(Form("%s_HRunLumi.png",SampleName.Data()));
 
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
-  HRunLumi->Draw("COLZ");
-  chc->Print("HRunLumi.png");
 
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(SampleName);
@@ -827,7 +848,6 @@ void PreSelector::Terminate() {
   THStack *hsC = new THStack("hsC","");
   THStack *hsD = new THStack("hsD","");
 
-  gStyle->SetOptStat(1111111);
   auto SetStyle = [](TH1 *h) {
     gPad->SetGrid();
     gPad->SetLogy();
