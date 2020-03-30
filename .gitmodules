@@ -1,3 +1,6 @@
 [submodule "utils"]
 	path = utils
 	url = ssh://git@gitlab.cern.ch:7999/tdr/utils.git
+[submodule "proof/json"]
+	path = proof/json
+	url = ssh://git@github.com/nlohmann/json.git
