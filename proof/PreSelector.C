@@ -2,11 +2,14 @@
 #include "PreSelector.h"
 #include "TMath.h"
 #include "TLegend.h"
+#include "TError.h"
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
 PreSelector::PreSelector(TTree *)
 {
+
+  gErrorIgnoreLevel = kError;
   HMetA=0;
   HMetB=0;
   HMetC=0;
