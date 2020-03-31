@@ -190,6 +190,9 @@ class PreSelector : public TSelector {
   TH2I *HNEl;
   TH2I *HNMu;
 
+  TFile *GoldenJson;
+  TTree *GoldenTree;
+
  public :
 
   TString SampleName;
@@ -224,6 +227,10 @@ class PreSelector : public TSelector {
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(ROOT::Math::PtEtaPhiMVector lep,
                                                                  Float_t MetPt, Float_t MetPhi, Float_t Wmt);
   ROOT::Math::PxPyPzMVector Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz);
+
+#ifdef CMSDATA
+  Bool_t IsGold(UInt_t Run, UInt_t LuminosityBlock);
+#endif
 
   ClassDef(PreSelector,0);
 };

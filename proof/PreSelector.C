@@ -71,6 +71,10 @@ PreSelector::PreSelector(TTree *)
 
   HNEl = 0;
   HNMu = 0;
+
+#ifdef CMSDATA
+  GoldenTree = 0;
+#endif
 }
 
 void PreSelector::Init(TTree *tree)
@@ -256,8 +260,26 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   fOutput->Add(HRun);
   fOutput->Add(HLumi);
+
+#ifdef CMSDATA
+  TNamed *gtn = dynamic_cast<TNamed *>(fInput->FindObject("GoldenTreeName"));
+  GoldenTree = dynamic_cast<TTree *>(fInput->FindObject(gtn->GetTitle()));
+  fOutput->Add(GoldenTree);
+#endif
 }
 
+#ifdef CMSDATA
+Bool_t PreSelector::IsGold(UInt_t Run, UInt_t LuminosityBlock){
+
+  Int_t count = GoldenTree->Draw("run",
+                                 Form("run == %d && %d >= lumiStart && %d <=lumiEnd",
+                                      Run,LuminosityBlock,LuminosityBlock),"goff");
+
+  Bool_t ok = count > 0 ? true: false;
+  return ok;
+
+};
+#endif
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   std::vector<UInt_t> GoodIndex = {};
@@ -471,7 +493,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
    HLumi->Fill(*luminosityBlock);
 
    // Event Selection
-   if ( ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
+   if ( IsGold(*run,*luminosityBlock) &&
+        ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
         (*HLT_IsoMu20||*HLT_Mu55)) &&
         *Flag_HBHENoiseFilter &&
         *Flag_HBHENoiseIsoFilter &&

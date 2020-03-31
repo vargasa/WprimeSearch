@@ -22,6 +22,12 @@ Int_t Selector(std::string rootlist = "", Int_t fWorkers = 4){
   fProof->SetProgressDialog(false);
   fProof->SetParameter("SampleName",sample.c_str());
 
+  const char *fGoldenTreeName = "goldenTree";
+  TFile *GoldenJson = TFile::Open("GoldenJson.root","READ");
+  TTree *GoldenTree = (TTree*)GoldenJson->Get(fGoldenTreeName);
+  fProof->SetParameter("GoldenTreeName",fGoldenTreeName);
+  fProof->AddInputData(GoldenTree);
+
   fChain->SetProof();
   fChain->Process("PreSelector.C+");
   fProof->Print("a");

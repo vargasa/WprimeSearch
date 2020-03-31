@@ -12,8 +12,13 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4){
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
-  fProof->SetParameter("Mass",1400);
   fProof->SetParameter("SampleName",rootfile.Data());
+
+  const char *fGoldenTreeName = "goldenTree";
+  TFile *GoldenJson = TFile::Open("GoldenJson.root","READ");
+  TTree *GoldenTree = (TTree*)GoldenJson->Get(fGoldenTreeName);
+  fProof->SetParameter("GoldenTreeName",fGoldenTreeName);
+  fProof->AddInputData(GoldenTree);
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+");
