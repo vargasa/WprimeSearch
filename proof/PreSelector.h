@@ -190,8 +190,9 @@ class PreSelector : public TSelector {
   TH2I *HNEl;
   TH2I *HNMu;
 
-  TFile *GoldenJson;
-  TTree *GoldenTree;
+#ifdef CMSDATA
+  std::unordered_map<Int_t, std::vector<std::pair<UInt_t,UInt_t>>> GoldenJson;
+#endif
 
  public :
 
@@ -229,6 +230,7 @@ class PreSelector : public TSelector {
   ROOT::Math::PxPyPzMVector Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz);
 
 #ifdef CMSDATA
+  void BuildGoldenJson();
   Bool_t IsGold(UInt_t Run, UInt_t LuminosityBlock);
 #endif
 

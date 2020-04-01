@@ -3,6 +3,7 @@
 #include "TMath.h"
 #include "TLegend.h"
 #include "TError.h"
+#include "BuildGoldenJson.hxx"
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
@@ -74,10 +75,6 @@ PreSelector::PreSelector(TTree *)
 
   HNEl = 0;
   HNMu = 0;
-
-#ifdef CMSDATA
-  GoldenTree = 0;
-#endif
 }
 
 void PreSelector::Init(TTree *tree)
@@ -265,22 +262,16 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HLumi);
 
 #ifdef CMSDATA
-  TNamed *gtn = dynamic_cast<TNamed *>(fInput->FindObject("GoldenTreeName"));
-  GoldenTree = dynamic_cast<TTree *>(fInput->FindObject(gtn->GetTitle()));
-  fOutput->Add(GoldenTree);
+  BuildGoldenJson();
 #endif
 }
 
 #ifdef CMSDATA
 Bool_t PreSelector::IsGold(UInt_t Run, UInt_t LuminosityBlock){
-
-  Int_t count = GoldenTree->Draw("run",
-                                 Form("run == %d && %d >= lumiStart && %d <=lumiEnd",
-                                      Run,LuminosityBlock,LuminosityBlock),"goff");
-
-  Bool_t ok = count > 0 ? true: false;
-  return ok;
-
+  for (auto LumiRange: GoldenJson[Run]) {
+    if (LuminosityBlock >= LumiRange.first && LuminosityBlock <= LumiRange.second) return true;
+  }
+  return false;
 };
 #endif
 
