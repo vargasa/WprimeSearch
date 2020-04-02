@@ -1,3 +1,4 @@
+#ifdef CMSDATA // Shouldn't I use a parser instead?
 void PreSelector::BuildGoldenJson(){
 
     std::vector<std::pair<UInt_t,UInt_t>> vv1;
@@ -1419,3 +1420,4 @@ void PreSelector::BuildGoldenJson(){
     GoldenJson[275920] = vv1;
     vv1 = {};
 }
+#endif

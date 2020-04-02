@@ -231,8 +231,9 @@ class PreSelector : public TSelector {
 
 #ifdef CMSDATA
   void BuildGoldenJson();
-  Bool_t IsGold(UInt_t Run, UInt_t LuminosityBlock);
 #endif
+
+  Bool_t IsGold(UInt_t Run, UInt_t LuminosityBlock);
 
   ClassDef(PreSelector,0);
 };

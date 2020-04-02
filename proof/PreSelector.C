@@ -266,14 +266,17 @@ void PreSelector::SlaveBegin(TTree *tree) {
 #endif
 }
 
-#ifdef CMSDATA
 Bool_t PreSelector::IsGold(UInt_t Run, UInt_t LuminosityBlock){
+#ifdef CMSDATA
   for (auto LumiRange: GoldenJson[Run]) {
     if (LuminosityBlock >= LumiRange.first && LuminosityBlock <= LumiRange.second) return true;
   }
   return false;
-};
+#else
+  return true; // MC
 #endif
+};
+
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   std::vector<UInt_t> GoodIndex = {};
@@ -841,19 +844,6 @@ void PreSelector::Terminate() {
 
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
-  gStyle->SetOptStat(1111111);
-
-  ch->cd(1);
-  HRun->SetTitle("HRun");
-  HRun->Draw();
-  ch->cd(2);
-  HLumi->SetTitle("HLumi");
-  HLumi->Draw();
-  ch->cd(3);
-  HRunLumi->SetTitle("Run and Lumi Range;Run;LumosityBlock");
-  HRunLumi->Draw("COLZ");
-  ch->Print(Form("%s_HRunLumi.png",SampleName.Data()));
-
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
@@ -865,12 +855,28 @@ void PreSelector::Terminate() {
   THStack *hsC = new THStack("hsC","");
   THStack *hsD = new THStack("hsD","");
 
+  gStyle->SetOptStat(1111111);
   auto SetStyle = [](TH1 *h) {
     gPad->SetGrid();
     gPad->SetLogy();
     h->SetFillColor(16);
     h->SetFillStyle(4050);
   };
+
+  ch->cd(1);
+  HRun->SetTitle("HRun");
+  HRun->Draw();
+  HRun->Write("HRun");
+  ch->cd(2);
+  HLumi->SetTitle("HLumi");
+  HLumi->Draw();
+  HLumi->Write("HLumi");
+  ch->cd(3);
+  HRunLumi->SetTitle("Run and Lumi Range;Run;LumosityBlock");
+  HRunLumi->Draw("COLZ");
+  HRunLumi->Write("HRunLumi");
+  ch->Print(Form("%s_HRunLumi.png",SampleName.Data()));
+
 
   ch->cd(1);
   HMetA->SetTitle("3e0#mu;#slash{E}^{3e0#mu}_{T};Event count");
