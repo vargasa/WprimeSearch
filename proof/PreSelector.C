@@ -903,13 +903,13 @@ void PreSelector::Terminate() {
   SetStyle(HMetD);
   HMetD->Draw();
   HMetD->Write("HMetD");
-  ch->Print(Form("%s_PlotMet.png",SampleName.Data()));
+  ch->Print(Form("%s_HMet.png",SampleName.Data()));
   chc->cd();
   TH1F HMet = *HMetA + *HMetB + *HMetC + *HMetD;
   HMet.SetTitle("MET;#slash{M}_{T};Event count");
   HMet.Write("HMet");
   HMet.Draw();
-  chc->Print(Form("%s_HMet.png",SampleName.Data()));
+  chc->Print(Form("%s_HMet_SUM.png",SampleName.Data()));
 
   ch->cd(1);
   gStyle->SetOptStat(1111111);
@@ -964,7 +964,7 @@ void PreSelector::Terminate() {
   HMassW.SetTitle("MassW;#slash{M}_{W};Event count");
   HMassW.Write("HMassW");
   HMassW.Draw();
-  chc->Print(Form("%s_HMassW.png",SampleName.Data()));
+  chc->Print(Form("%s_HMassW_SUM.png",SampleName.Data()));
 
 
   ch->cd(1);
@@ -988,7 +988,7 @@ void PreSelector::Terminate() {
   HMassZ.SetTitle("MassZ;#slash{M}_{Z};Event count");
   HMassZ.Write("HMassZ");
   HMassZ.Draw();
-  chc->Print(Form("%s_HMassZ.png",SampleName.Data()));
+  chc->Print(Form("%s_HMassZ_SUM.png",SampleName.Data()));
 
   ch->cd(1);
   HMassTWA->SetTitle("M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count");
@@ -1006,12 +1006,12 @@ void PreSelector::Terminate() {
   HMassTWD->SetTitle("M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count");
   HMassTWD->Draw();
   HMassTWD->Write("HMassTWD");
-  ch->Print(Form("%s_HMassTWT.png",SampleName.Data()));
+  ch->Print(Form("%s_HMassTW.png",SampleName.Data()));
   TH1F HMassTW = *HMassTWA + *HMassTWB + *HMassTWC + *HMassTWD;
   HMassTW.SetTitle("MassTW;#slash{M}_{WT};Event count");
   HMassTW.Draw();
   HMassTW.Write("HMassTW");
-  chc->Print(Form("%s_HMassTW.png",SampleName.Data()));
+  chc->Print(Form("%s_HMassTW_SUM.png",SampleName.Data()));
 
 #ifndef CMSDATA
   ch->cd(1);
@@ -1054,7 +1054,7 @@ void PreSelector::Terminate() {
   HMassWZ.SetTitle("MassWZ;#slash{M}_{WZ};Event count");
   HMassWZ.Write("HMassWZ");
   HMassWZ.Draw();
-  chc->Print(Form("%s_HMassWZ.png",SampleName.Data()));
+  chc->Print(Form("%s_HMassWZ_SUM.png",SampleName.Data()));
 
   auto DrawPdgIdHisto = [](TH1F* hz, TH1F* hw){
     hz->LabelsDeflate();
