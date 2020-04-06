@@ -277,6 +277,10 @@ Bool_t PreSelector::IsGold(UInt_t Run, UInt_t LuminosityBlock){
 #endif
 };
 
+Bool_t PreSelector::WasAnalyzed(ULong64_t nEvent){
+  if(EventSet.find(nEvent) == EventSet.end()) return false;
+  return true;
+};
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   std::vector<UInt_t> GoodIndex = {};
@@ -484,14 +488,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
 
-   HRunLumi->Fill(*run,*luminosityBlock);
+   if (WasAnalyzed(*event) || !IsGold(*run,*luminosityBlock)) return kFALSE;
+   EventSet.insert(*event);
 
+   HRunLumi->Fill(*run,*luminosityBlock);
    HRun->Fill(*run);
    HLumi->Fill(*luminosityBlock);
 
    // Event Selection
-   if ( IsGold(*run,*luminosityBlock) &&
-        ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
+   if ( ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
         (*HLT_IsoMu20||*HLT_Mu55)) &&
         *Flag_HBHENoiseFilter &&
         *Flag_HBHENoiseIsoFilter &&

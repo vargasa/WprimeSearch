@@ -3,20 +3,25 @@
 #include <string>
 #include <fstream>
 
-Int_t Selector(std::string rootlist = "", Int_t fWorkers = 4){
-
-  std::ifstream infile(rootlist);
+Int_t Selector(std::string files = "", Int_t fWorkers = 4){
 
   TChain* fChain = new TChain("Events");
 
-  std::string line;
-  while(std::getline(infile, line)){
-    line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
-    std::cout << "Chaining " << line << std::endl;
-    fChain->AddFile(line.c_str());
+  istringstream f(files);
+  std::string file;
+  std::string sample;
+
+  while(std::getline(f,file,'+')){
+    std::ifstream infile(file);
+    std::string line;
+    while(std::getline(infile, line)){
+      line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
+      std::cout << "Chaining " << line << std::endl;
+      fChain->AddFile(line.c_str());
+    }
+    sample += file.substr(file.rfind("/")+1);
+    sample.resize(sample.size()-4);
   }
-  std::string sample = rootlist.substr(rootlist.rfind("/")+1);
-  sample.resize(sample.size()-4);
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
