@@ -277,11 +277,6 @@ Bool_t PreSelector::IsGold(UInt_t Run, UInt_t LuminosityBlock){
 #endif
 };
 
-Bool_t PreSelector::WasAnalyzed(ULong64_t nEvent){
-  if(EventSet.find(nEvent) == EventSet.end()) return false;
-  return true;
-};
-
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   std::vector<UInt_t> GoodIndex = {};
   const Float_t MaxEta = 2.4;
@@ -488,9 +483,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
 
-   if (WasAnalyzed(*event) || !IsGold(*run,*luminosityBlock)) return kFALSE;
-   EventSet.insert(*event);
-
+   if (!IsGold(*run,*luminosityBlock)) return kFALSE;
+   
    HRunLumi->Fill(*run,*luminosityBlock);
    HRun->Fill(*run);
    HLumi->Fill(*luminosityBlock);

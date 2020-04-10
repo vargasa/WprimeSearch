@@ -191,8 +191,6 @@ class PreSelector : public TSelector {
   TH2I *HNEl;
   TH2I *HNMu;
 
-  std::unordered_set<ULong64_t> EventSet;
-
 #ifdef CMSDATA
   std::unordered_map<Int_t, std::vector<std::pair<UInt_t,UInt_t>>> GoldenJson;
 #endif
@@ -218,7 +216,6 @@ class PreSelector : public TSelector {
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
-  Bool_t WasAnalyzed(ULong64_t nEvent);
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t);
