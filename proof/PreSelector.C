@@ -89,6 +89,12 @@ void PreSelector::Begin(TTree *tree) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
     SampleName = p->GetTitle();
   }
+  if (fInput){
+    EntryList = new TEntryList("EntryList","Entry Number");
+    EventList = new TEntryList("EventList","Event Number");
+    fInput->Add(EntryList);
+    fInput->Add(EventList);
+  }
 }
 
 void PreSelector::SlaveBegin(TTree *tree) {
@@ -263,6 +269,17 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #ifdef CMSDATA
   BuildGoldenJson();
+
+  if(fInput){
+    if((EntryList = (TEntryList*) fInput->FindObject("EntryList")))
+      EntryList = (TEntryList *) EntryList->Clone();
+    if(EntryList)
+      fOutput->Add(EntryList);
+    if ((Eventlist = (TEntryList *) fInput->FindObject("EventList")))
+      EventList = (TEntryList *) EventList->Clone();
+    if(EventList)
+      fOutput->Add(EventList);
+  }
 #endif
 }
 
@@ -482,6 +499,9 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
+
+   EntryList->Enter(entry);
+   EventList->Enter(*event,fChain->GetTree());
 
    if (!IsGold(*run,*luminosityBlock)) return kFALSE;
    
@@ -841,11 +861,19 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
+
+  EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
+  EventList = dynamic_cast<TEntryList*>(fOutput->FindObject("EventList"));
+
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
+
+  EntryList->Write();
+  EventList->Write();
+  
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
 

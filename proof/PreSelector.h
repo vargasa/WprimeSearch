@@ -16,7 +16,7 @@
 #include <memory>
 #include "Math/Vector4D.h"
 #include "Math/Vector4Dfwd.h"
-
+#include "TEntryList.h"
 
 class PreSelector : public TSelector {
 
@@ -193,6 +193,8 @@ class PreSelector : public TSelector {
 
 #ifdef CMSDATA
   std::unordered_map<Int_t, std::vector<std::pair<UInt_t,UInt_t>>> GoldenJson;
+  TEntryList *EntryList;
+  TEntryList *EventList;
 #endif
 
  public :
