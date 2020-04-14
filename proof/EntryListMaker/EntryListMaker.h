@@ -13,6 +13,8 @@ class EntryListMaker : public TSelector {
   TTreeReaderValue<ULong64_t> event = {fReader, "event"};
 
   TTree *eTree;
+  TString SampleName;
+
 
   UInt_t eRun;
   UInt_t eLumi;

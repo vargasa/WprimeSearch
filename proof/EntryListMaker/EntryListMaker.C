@@ -11,6 +11,12 @@ void EntryListMaker::Init(TTree *tree){
 
 void EntryListMaker::Begin(TTree *tree){
 
+  if (fInput->FindObject("SampleName")) {
+    // Lesson: TString can't be in TCollection
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
+    SampleName = p->GetTitle();
+  }
+
 }
 
 void EntryListMaker::SlaveBegin(TTree *tree){
@@ -43,6 +49,8 @@ Bool_t EntryListMaker::Process(Long64_t entry){
 void EntryListMaker::Terminate(){
 
   TFile *f1 = TFile::Open("eListRunEventNumber.root","RECREATE");
+  f1->mkdir(SampleName);
+  f1->cd(SampleName);
   eTree->Write();
   f1->Close();
 }
