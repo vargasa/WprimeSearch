@@ -12,17 +12,10 @@ class EntryListMaker : public TSelector {
   TTreeReaderValue<UInt_t> luminosityBlock = {fReader, "luminosityBlock"};
   TTreeReaderValue<ULong64_t> event = {fReader, "event"};
 
-  TTree *eTree;
-  TString SampleName;
-
-
-  UInt_t eRun;
-  UInt_t eLumi;
-  ULong64_t eEvent;
-  TObjString eTreeName;
+  TBits *EventBitmap;
 
  public:
-
+  UInt_t FindIndex(long double run, long double event);
   EntryListMaker(TTree * = 0);
   virtual ~EntryListMaker() {}
   virtual void Begin(TTree *tree);

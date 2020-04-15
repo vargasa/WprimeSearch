@@ -1,8 +1,9 @@
 #include "EntryListMaker.h"
 #include "TFile.h"
+#define MAX_EVENTS 4294967295
 
 EntryListMaker::EntryListMaker(TTree *){
-  eTree = 0;
+
 }
 
 void EntryListMaker::Init(TTree *tree){
@@ -11,46 +12,38 @@ void EntryListMaker::Init(TTree *tree){
 
 void EntryListMaker::Begin(TTree *tree){
 
-  if (fInput->FindObject("SampleName")) {
-    // Lesson: TString can't be in TCollection
-    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
-    SampleName = p->GetTitle();
+  if(fInput){
+    EventBitmap = new TBits(MAX_EVENTS);
+    fInput->Add(EventBitmap);
   }
 
 }
 
 void EntryListMaker::SlaveBegin(TTree *tree){
+  if(fInput){
+    if((EventBitmap = (TBits*) fInput->FindObject("TBits")))
+      EventBitmap = (TBits *) EventBitmap->Clone();
+    if(EventBitmap)
+      fOutput->Add(EventBitmap);
+  }
+}
 
-  eTree = new TTree("eTree","eTree");
-  eTree->Branch("eTreeName",&eTreeName);
-  eTree->Branch("eRun",&eRun);
-  eTree->Branch("eEvent",&eEvent);
-  eTree->Branch("eLumi",&eLumi);
-
-  fOutput->Add(eTree);
-
+UInt_t EntryListMaker::FindIndex(long double run, long double event){
+  return (UInt_t)((run/event)*MAX_EVENTS);
 }
 
 Bool_t EntryListMaker::Process(Long64_t entry){
 
   fReader.SetEntry(entry);
 
-  eRun = *run;
-  eEvent = *event;
-  eLumi = *luminosityBlock;
-  TTree *thisTree = fReader.GetTree();
-  eTreeName = TString::Format("%s/%s",thisTree->GetDirectory()->GetName(),thisTree->GetName()).Data();
-
-  eTree->Fill();
-
+  EventBitmap->SetBitNumber(FindIndex(*run,*event));
+  
   return kTRUE;
 }
 
 void EntryListMaker::Terminate(){
 
   TFile *f1 = TFile::Open("eListRunEventNumber.root","RECREATE");
-  f1->mkdir(SampleName);
-  f1->cd(SampleName);
-  eTree->Write();
+  EventBitmap->Write("test");
   f1->Close();
 }
