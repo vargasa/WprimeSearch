@@ -464,6 +464,12 @@ ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Floa
 
 }
 
+#ifdef CMSDATA
+Long64_t PreSelector::GetEventIndex(UInt_t run,ULong64_t event) {
+  return std::stol(std::to_string(run)+std::to_string(event));
+}
+#endif
+
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEtaPhiMVector lep,
                                                             Float_t MetPt, Float_t MetPhi, Float_t Wmt){
   const Float_t Mw = 80.379;
@@ -500,11 +506,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
 
-   EntryList->Enter(entry);
-   EventList->Enter(*event,fChain->GetTree());
-
    if (!IsGold(*run,*luminosityBlock)) return kFALSE;
-   
+
    HRunLumi->Fill(*run,*luminosityBlock);
    HRun->Fill(*run);
    HLumi->Fill(*luminosityBlock);
@@ -520,6 +523,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
         *PV_npvsGood > 0 &&
         *MET_pt > 30
         ) {
+
+     EntryList->Enter(entry);
+     EventList->Enter(GetEventIndex(*run,*event),fReader.GetTree());
 
      Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
                Muon_charge,Muon_dxy,Muon_dz,
@@ -869,13 +875,17 @@ void PreSelector::Terminate() {
   ch->Divide(2,2);
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
-
+  std::unique_ptr<TFile> fEntryLits(TFile::Open("EntryLists.root","UPDATE"));
+  fEntryList->mkdir(SampleName);
+  fEntryList->cd(SampleName);
   EntryList->Write();
   EventList->Write();
-  
+  fEntryList->Close();
+
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
+
 
   THStack *hsA = new THStack("hsA","");
   THStack *hsB = new THStack("hsB","");
