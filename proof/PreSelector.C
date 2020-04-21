@@ -92,6 +92,8 @@ void PreSelector::Begin(TTree *tree) {
   if (fInput){
     EntryList = new TEntryList("EntryList","Entry Number");
     fInput->Add(EntryList);
+    eTree = new TTree("eTree","eTree");
+    fInput->Add(eTree);
   }
 }
 
@@ -273,7 +275,17 @@ void PreSelector::SlaveBegin(TTree *tree) {
       EntryList = (TEntryList *) EntryList->Clone();
     if(EntryList)
       fOutput->Add(EntryList);
+    if((eTree = (TTree*) fInput->FindObject("eTree"))){
+      eTree = (TTree*) eTree->Clone();
+      eTree->Branch("RunID",&RunID);
+      eTree->Branch("EventID",&EventID);
+      eTree->Branch("EntryID",&EntryID);
+      eTree->Branch("TreeName",&TreeName);
+    }
+    if(eTree)
+      fOutput->Add(eTree);
   }
+
 #endif
 }
 
@@ -519,6 +531,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
         ) {
 
      EntryList->Enter(entry);
+     
+     EventID = *event;
+     RunID = *run;
+     EntryID = entry;
+     auto thisTree = (TTree*)fReader.GetTree();
+     TreeName = TString::Format("%s/%s",thisTree->GetDirectory()->GetName(),thisTree->GetName()).Data();
+     eTree->Fill();
 
      Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
                Muon_charge,Muon_dxy,Muon_dz,
@@ -862,6 +881,7 @@ void PreSelector::Terminate() {
 
 
   EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
+  eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
 
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
@@ -870,6 +890,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
   fEntryList->mkdir(SampleName);
   fEntryList->cd(SampleName);
+  eTree->Write();
   EntryList->Write();
   fEntryList->Close();
 

@@ -195,6 +195,12 @@ class PreSelector : public TSelector {
   std::unordered_map<Int_t, std::vector<std::pair<UInt_t,UInt_t>>> GoldenJson;
   Long64_t GetEventIndex(UInt_t run,ULong64_t event);
   TEntryList *EntryList;
+
+  TTree *eTree;
+  std::string TreeName;
+  UInt_t RunID;
+  ULong64_t EventID;
+  UInt_t EntryID;
 #endif
 
  public :
