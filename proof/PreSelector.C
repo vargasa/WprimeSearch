@@ -277,10 +277,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
       fOutput->Add(EntryList);
     if((eTree = (TTree*) fInput->FindObject("eTree"))){
       eTree = (TTree*) eTree->Clone();
-      eTree->Branch("RunID",&RunID);
       eTree->Branch("EventID",&EventID);
-      eTree->Branch("EntryID",&EntryID);
-      eTree->Branch("TreeName",&TreeName);
     }
     if(eTree)
       fOutput->Add(eTree);
@@ -472,6 +469,7 @@ ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Floa
 
 #ifdef CMSDATA
 Long64_t PreSelector::GetEventIndex(UInt_t run,ULong64_t event) {
+  // run < 285500 && event < 5e9
   return std::stol(std::to_string(run)+std::to_string(event));
 }
 #endif
@@ -532,11 +530,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
      EntryList->Enter(entry);
      
-     EventID = *event;
-     RunID = *run;
-     EntryID = entry;
-     auto thisTree = (TTree*)fReader.GetTree();
-     TreeName = TString::Format("%s/%s",thisTree->GetDirectory()->GetName(),thisTree->GetName()).Data();
+     EventID = GetEventIndex(*run,*event);
      eTree->Fill();
 
      Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
@@ -879,9 +873,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
+  std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
+  fEventIDTree->mkdir(SampleName);
+  fEventIDTree->cd(SampleName);
+  eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
+  eTree->Write();
+  fEventIDTree->Close();
 
   EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
-  eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
 
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
@@ -890,7 +889,6 @@ void PreSelector::Terminate() {
   std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
   fEntryList->mkdir(SampleName);
   fEntryList->cd(SampleName);
-  eTree->Write();
   EntryList->Write();
   fEntryList->Close();
 
