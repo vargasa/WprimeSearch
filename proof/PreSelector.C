@@ -89,9 +89,20 @@ void PreSelector::Begin(TTree *tree) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
     SampleName = p->GetTitle();
   }
-  if (fInput){
+
+  if (!fInput->FindObject("EntryListSet")){
+    MakeEntryList = kTRUE;
+  }
+
+  if(fInput->FindObject("MakeEventIDTree")){
+    MakeEventIDTree = kTRUE;
+  }
+
+  if (fInput && MakeEntryList){
     EntryList = new TEntryList("EntryList","Entry Number");
     fInput->Add(EntryList);
+  }
+  if (fInput && MakeEventIDTree){
     eTree = new TTree("eTree","eTree");
     fInput->Add(eTree);
   }
@@ -271,16 +282,25 @@ void PreSelector::SlaveBegin(TTree *tree) {
   BuildGoldenJson();
 
   if(fInput){
-    if((EntryList = (TEntryList*) fInput->FindObject("EntryList")))
+
+    if (!fInput->FindObject("EntryListSet")){
+      MakeEntryList = kTRUE;
+    }
+
+    if(MakeEntryList && (EntryList = (TEntryList*) fInput->FindObject("EntryList")))
       EntryList = (TEntryList *) EntryList->Clone();
+
     if(EntryList)
       fOutput->Add(EntryList);
-    if((eTree = (TTree*) fInput->FindObject("eTree"))){
+
+    if(MakeEventIDTree && (eTree = (TTree*) fInput->FindObject("eTree"))){
       eTree = (TTree*) eTree->Clone();
       eTree->Branch("EventID",&EventID);
     }
+
     if(eTree)
       fOutput->Add(eTree);
+
   }
 
 #endif
@@ -528,10 +548,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
         *MET_pt > 30
         ) {
 
-     EntryList->Enter(entry);
+     if(MakeEntryList) EntryList->Enter(entry);
      
      EventID = GetEventIndex(*run,*event);
-     eTree->Fill();
+     if(MakeEventIDTree) eTree->Fill();
 
      Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
                Muon_charge,Muon_dxy,Muon_dz,
@@ -873,24 +893,29 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
-  std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
-  fEventIDTree->mkdir(SampleName);
-  fEventIDTree->cd(SampleName);
-  eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
-  eTree->Write();
-  fEventIDTree->Close();
+  if(MakeEventIDTree){
+    std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
+    fEventIDTree->mkdir(SampleName);
+    fEventIDTree->cd(SampleName);
+    eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
+    eTree->Write();
+    fEventIDTree->Close();
+  }
 
-  EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
+  if(MakeEntryList){
+    EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
+    std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
+    fEntryList->mkdir(SampleName);
+    fEntryList->cd(SampleName);
+    EntryList->Write();
+    fEntryList->Close();
+  }
+
 
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
-  fEntryList->mkdir(SampleName);
-  fEntryList->cd(SampleName);
-  EntryList->Write();
-  fEntryList->Close();
 
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(SampleName);

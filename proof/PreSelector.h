@@ -193,6 +193,8 @@ class PreSelector : public TSelector {
 
 #ifdef CMSDATA
   std::unordered_map<Int_t, std::vector<std::pair<UInt_t,UInt_t>>> GoldenJson;
+  Bool_t MakeEntryList;
+  Bool_t MakeEventIDTree;
   Long64_t GetEventIndex(UInt_t run,ULong64_t event);
   TEntryList *EntryList;
   TTree *eTree;

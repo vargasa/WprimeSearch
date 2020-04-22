@@ -25,15 +25,17 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
 
   TEntryList *EList;
   TFile *FileEList;
+  TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
 
   if(!elistfile.empty()){
+    fProof->SetParameter("EntryListSet",1);
+    fProof->SetParameter("MakeEventIDTree",1);
     FileEList = TFile::Open(elistfile.c_str(),"READ");
     EList = (TEntryList*)FileEList->Get(Form("%s/EntryList",sample.c_str()));
     std::cout << Form("Info: Using EntryList from %s\n",elistfile.c_str());
     fChain->SetEntryList(EList);
   }
 
-  TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
   fProof->SetParameter("SampleName",sample.c_str());
 
