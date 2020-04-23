@@ -39,6 +39,17 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   fProof->SetProgressDialog(false);
   fProof->SetParameter("SampleName",sample.c_str());
 
+  // Send TTrees to build EventIndex
+  // Order taken DoubleEG -> SingleElectron -> SingleMuon
+  // Takes sizeof(tree) memory PER worker
+  TFile *f1 = TFile::Open("EventIDTree.root","READ");
+  TTree *EventTree = (TTree*)f1->Get("DoubleEG/eTree;1");
+  TTree *EventTree2 = (TTree*)f1->Get("SingleElectron/eTree;1");
+  EventTree->SetName("EventIndexTree1");
+  EventTree2->SetName("EventIndexTree2");
+  fProof->AddInput(EventTree);
+  fProof->AddInput(EventTree2);
+
   fChain->SetProof();
   fChain->Process("PreSelector.C+");
   fProof->Print("a");

@@ -301,10 +301,28 @@ void PreSelector::SlaveBegin(TTree *tree) {
     if(eTree)
       fOutput->Add(eTree);
 
+    if (MakeEntryList){
+      if (fInput->FindObject("EventIndexTree1"))
+	AddTreeToEventIndex("EventIndexTree1");
+      if (fInput->FindObject("EventIndexTree2"))
+	AddTreeToEventIndex("EventIndexTree2");
+    }
   }
 
 #endif
 }
+
+#ifdef CMSDATA
+void PreSelector::AddTreeToEventIndex(std::string treeName){
+  EventIndexTree = dynamic_cast<TTree *>(fInput->FindObject(treeName.c_str()));
+  TTreeReader fReader(EventIndexTree);
+  TTreeReaderValue<Long64_t> EvID(fReader,"EventID");
+    
+  while(fReader.Next()){
+    EventIndex.insert(*EvID);
+  }
+}
+#endif
 
 Bool_t PreSelector::IsGold(UInt_t Run, UInt_t LuminosityBlock){
 #ifdef CMSDATA
@@ -548,9 +566,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
         *MET_pt > 30
         ) {
 
-     if(MakeEntryList) EntryList->Enter(entry);
-     
      EventID = GetEventIndex(*run,*event);
+     if(MakeEntryList && (EventIndex.find(EventID) == EventIndex.end())) {
+       EntryList->Enter(entry);
+       return kTRUE;
+     }
+
      if(MakeEventIDTree) eTree->Fill();
 
      Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
