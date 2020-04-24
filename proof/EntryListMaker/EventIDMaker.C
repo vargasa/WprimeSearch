@@ -48,23 +48,8 @@ void EventIDMaker::SlaveBegin(TTree *tree) {
 
   if(eTree)
     fOutput->Add(eTree);
-
-  if (fInput->FindObject("EventIndexTree1"))
-    AddTreeToEventIndex("EventIndexTree1");
-  if (fInput->FindObject("EventIndexTree2"))
-    AddTreeToEventIndex("EventIndexTree2");
   
 } 
-
-void EventIDMaker::AddTreeToEventIndex(std::string treeName){
-  EventIndexTree = dynamic_cast<TTree *>(fInput->FindObject(treeName.c_str()));
-  TTreeReader fReader1(EventIndexTree);
-  TTreeReaderValue<Long64_t> EvID(fReader1,"EventID");
-    
-  while(fReader1.Next()){
-    EventIndex.insert(*EvID);
-  }
-}
 
 Bool_t EventIDMaker::IsGold(UInt_t Run, UInt_t LuminosityBlock){
   for (auto LumiRange: GoldenJson[Run]) {

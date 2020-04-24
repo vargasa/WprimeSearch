@@ -47,7 +47,6 @@ class EventIDMaker : public TSelector {
   Long64_t EventID;
   TTree *EventIndexTree;
   std::unordered_set<Long64_t> EventIndex;
-  void AddTreeToEventIndex(std::string treeName);
 
  public :
 
