@@ -3,7 +3,6 @@
 #include "TMath.h"
 #include "TLegend.h"
 #include "TError.h"
-#include "BuildGoldenJson.hxx"
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
@@ -90,22 +89,6 @@ void PreSelector::Begin(TTree *tree) {
     SampleName = p->GetTitle();
   }
 
-  if (!fInput->FindObject("EntryListSet")){
-    MakeEntryList = kTRUE;
-  }
-
-  if(fInput->FindObject("MakeEventIDTree")){
-    MakeEventIDTree = kTRUE;
-  }
-
-  if (fInput && MakeEntryList){
-    EntryList = new TEntryList("EntryList","Entry Number");
-    fInput->Add(EntryList);
-  }
-  if (fInput && MakeEventIDTree){
-    eTree = new TTree("eTree","eTree");
-    fInput->Add(eTree);
-  }
 }
 
 void PreSelector::SlaveBegin(TTree *tree) {
@@ -278,62 +261,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HRun);
   fOutput->Add(HLumi);
 
-#ifdef CMSDATA
-  BuildGoldenJson();
-
-  if(fInput){
-
-    if (!fInput->FindObject("EntryListSet")){
-      MakeEntryList = kTRUE;
-    }
-
-    if(MakeEntryList && (EntryList = (TEntryList*) fInput->FindObject("EntryList")))
-      EntryList = (TEntryList *) EntryList->Clone();
-
-    if(EntryList)
-      fOutput->Add(EntryList);
-
-    if(MakeEventIDTree && (eTree = (TTree*) fInput->FindObject("eTree"))){
-      eTree = (TTree*) eTree->Clone();
-      eTree->Branch("EventID",&EventID);
-    }
-
-    if(eTree)
-      fOutput->Add(eTree);
-
-    if (MakeEntryList){
-      if (fInput->FindObject("EventIndexTree1"))
-	AddTreeToEventIndex("EventIndexTree1");
-      if (fInput->FindObject("EventIndexTree2"))
-	AddTreeToEventIndex("EventIndexTree2");
-    }
-  }
-
-#endif
 }
-
-#ifdef CMSDATA
-void PreSelector::AddTreeToEventIndex(std::string treeName){
-  EventIndexTree = dynamic_cast<TTree *>(fInput->FindObject(treeName.c_str()));
-  TTreeReader fReader(EventIndexTree);
-  TTreeReaderValue<Long64_t> EvID(fReader,"EventID");
-    
-  while(fReader.Next()){
-    EventIndex.insert(*EvID);
-  }
-}
-#endif
-
-Bool_t PreSelector::IsGold(UInt_t Run, UInt_t LuminosityBlock){
-#ifdef CMSDATA
-  for (auto LumiRange: GoldenJson[Run]) {
-    if (LuminosityBlock >= LumiRange.first && LuminosityBlock <= LumiRange.second) return true;
-  }
-  return false;
-#else
-  return true; // MC
-#endif
-};
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   std::vector<UInt_t> GoodIndex = {};
@@ -548,31 +476,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    fReader.SetEntry(entry);
 
-   if (!IsGold(*run,*luminosityBlock)) return kFALSE;
 
    HRunLumi->Fill(*run,*luminosityBlock);
    HRun->Fill(*run);
    HLumi->Fill(*luminosityBlock);
 
-   // Event Selection
-   if ( ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
-        (*HLT_IsoMu20||*HLT_Mu55)) &&
-        *Flag_HBHENoiseFilter &&
-        *Flag_HBHENoiseIsoFilter &&
-        *Flag_EcalDeadCellTriggerPrimitiveFilter &&
-        *Flag_globalTightHalo2016Filter &&
-        *Flag_BadPFMuonSummer16Filter &&
-        *PV_npvsGood > 0 &&
-        *MET_pt > 30
-        ) {
-
-     EventID = GetEventIndex(*run,*event);
-     if(MakeEntryList && (EventIndex.find(EventID) == EventIndex.end())) {
-       EntryList->Enter(entry);
-       return kTRUE;
-     }
-
-     if(MakeEventIDTree) eTree->Fill();
 
      Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
                Muon_charge,Muon_dxy,Muon_dz,
@@ -908,30 +816,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
        HOverlap->Fill(-1);
      }
 
-   }
    return kTRUE;
 }
 
 void PreSelector::Terminate() {
-
-  if(MakeEventIDTree){
-    std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
-    fEventIDTree->mkdir(SampleName);
-    fEventIDTree->cd(SampleName);
-    eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
-    eTree->Write();
-    fEventIDTree->Close();
-  }
-
-  if(MakeEntryList){
-    EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
-    std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
-    fEntryList->mkdir(SampleName);
-    fEntryList->cd(SampleName);
-    EntryList->Write();
-    fEntryList->Close();
-  }
-
 
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   ch->Divide(2,2);

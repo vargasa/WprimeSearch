@@ -192,16 +192,7 @@ class PreSelector : public TSelector {
   TH2I *HNMu;
 
 #ifdef CMSDATA
-  std::unordered_map<Int_t, std::vector<std::pair<UInt_t,UInt_t>>> GoldenJson;
-  Bool_t MakeEntryList;
-  Bool_t MakeEventIDTree;
-  Long64_t GetEventIndex(UInt_t run,ULong64_t event);
   TEntryList *EntryList;
-  TTree *eTree;
-  Long64_t EventID;
-  TTree *EventIndexTree;
-  std::unordered_set<Long64_t> EventIndex;
-  void AddTreeToEventIndex(std::string treeName);
 #endif
 
  public :
@@ -238,12 +229,6 @@ class PreSelector : public TSelector {
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(ROOT::Math::PtEtaPhiMVector lep,
                                                                  Float_t MetPt, Float_t MetPhi, Float_t Wmt);
   ROOT::Math::PxPyPzMVector Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz);
-
-#ifdef CMSDATA
-  void BuildGoldenJson();
-#endif
-
-  Bool_t IsGold(UInt_t Run, UInt_t LuminosityBlock);
 
   ClassDef(PreSelector,0);
 };
