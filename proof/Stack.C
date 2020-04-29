@@ -17,10 +17,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",kBlack,0,true,3.196e02)
   };
 
-  std::vector<std::string> DataNames = {
-    "DoubleEG",
-    "SingleMuon"
-  };
+  std::string DataName = "DoubleEGSingleElectronSingleMuon";
 
   auto f1 = TFile::Open(FileName.c_str());
 
@@ -57,10 +54,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     THStack *hsdata = new THStack("hsdata","");
     auto legend = new TLegend(0.3, 0.66, .89, .89);
     legend->SetNColumns(2);
-    for (auto DN: DataNames){
-      auto h = (TH1F*)f1->Get(Form("%s/%s",DN.c_str(),(std::get<0>(HN).c_str())));
-      hsdata->Add(h);
-    }
+    auto h = (TH1F*)f1->Get(Form("%s/%s",DataName.c_str(),(std::get<0>(HN).c_str())));
+    hsdata->Add(h);
     for (auto BGN: BgNames) {
       Bool_t IsSignal = std::get<4>(BGN);
       auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
