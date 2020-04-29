@@ -883,7 +883,8 @@ void PreSelector::Terminate() {
   chc->cd();
   TH1F HMet = *HMetA + *HMetB + *HMetC + *HMetD;
   HMet.SetTitle("MET;#slash{M}_{T};Event count");
-  HMet.Write("HMet");
+  HMet.SetName("HMet");
+  HMet.Write();
   HMet.Draw();
   chc->Print(Form("%s_HMet_SUM.png",SampleName.Data()));
 
@@ -938,7 +939,8 @@ void PreSelector::Terminate() {
   chc->cd();
   TH1F HMassW = *HMassWA + *HMassWB + *HMassWC + *HMassWD;
   HMassW.SetTitle("MassW;#slash{M}_{W};Event count");
-  HMassW.Write("HMassW");
+  HMassW.SetName("HMassW");
+  HMassW.Write();
   HMassW.Draw();
   chc->Print(Form("%s_HMassW_SUM.png",SampleName.Data()));
 
@@ -962,7 +964,8 @@ void PreSelector::Terminate() {
   ch->Print(Form("%s_HMassZ.png",SampleName.Data()));
   TH1F HMassZ = *HMassZA + *HMassZB + *HMassZC + *HMassZD;
   HMassZ.SetTitle("MassZ;#slash{M}_{Z};Event count");
-  HMassZ.Write("HMassZ");
+  HMassZ.SetName("HMassZ");
+  HMassZ.Write();
   HMassZ.Draw();
   chc->Print(Form("%s_HMassZ_SUM.png",SampleName.Data()));
 
@@ -986,7 +989,8 @@ void PreSelector::Terminate() {
   TH1F HMassTW = *HMassTWA + *HMassTWB + *HMassTWC + *HMassTWD;
   HMassTW.SetTitle("MassTW;#slash{M}_{WT};Event count");
   HMassTW.Draw();
-  HMassTW.Write("HMassTW");
+  HMassTW.SetName("HMassTW");
+  HMassTW.Write();
   chc->Print(Form("%s_HMassTW_SUM.png",SampleName.Data()));
 
 #ifndef CMSDATA
@@ -1028,7 +1032,8 @@ void PreSelector::Terminate() {
   ch->Print(Form("%s_HMassWZ.png",SampleName.Data()));
   TH1F HMassWZ = *HMassWZA + *HMassWZB + *HMassWZC + *HMassWZD;
   HMassWZ.SetTitle("MassWZ;#slash{M}_{WZ};Event count");
-  HMassWZ.Write("HMassWZ");
+  HMassWZ.SetName("HMassWZ");
+  HMassWZ.Write();
   HMassWZ.Draw();
   chc->Print(Form("%s_HMassWZ_SUM.png",SampleName.Data()));
 
