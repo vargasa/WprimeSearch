@@ -474,349 +474,355 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
-   fReader.SetEntry(entry);
-
-
-   HRunLumi->Fill(*run,*luminosityBlock);
-   HRun->Fill(*run);
-   HLumi->Fill(*luminosityBlock);
-
-
-     Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
-               Muon_charge,Muon_dxy,Muon_dz,
-               Muon_looseId,Muon_isGlobal);
-
-     Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
-                   Electron_charge,Electron_dxy,Electron_dz,
-                   Electron_cutBased,Electron_miniPFRelIso_all);
-
-     std::vector<UInt_t> GoodElectron = PreSelector::GetGoodElectron(Els);
-     std::vector<UInt_t> GoodMuon = PreSelector::GetGoodMuon(Mus);
-
-     HNEl->Fill(*nElectron,GoodElectron.size());
-     HNMu->Fill(*nMuon,GoodMuon.size());
-
-     PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-     std::vector<ROOT::Math::PxPyPzMVector> nu;
-
-     const Double_t MinRemPt = 20.;
-     const Float_t w = 1.;
-
-     Bool_t IsA{},IsB{},IsC{},IsD{};
-     Bool_t NoPairs{};
-
-     Float_t BestZMass;
-     Float_t MinZMass = 70.;
-     Float_t MaxZMass = 111.;
-
-
-     // 0e3Mu
-     if(*nMuon>=3 && GoodMuon.size()>=3){
-       IsD = true;
-       HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
-
-       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
-
-       try {
-         zt = PreSelector::FindZ(Mus,GoodMuon);
-       } catch (const std::exception& e) {
-         NoPairs = true;
-       }
-
-       if (!NoPairs){
-
-         BestZMass = std::get<1>(zt[0]);
-
-         UInt_t l1 = (std::get<2>(zt[0])).first;
-         UInt_t l2 = (std::get<2>(zt[0])).second;
-
-         std::vector<UInt_t> WCand;
-         for(auto i: GoodMuon){
-           if(i!=l1 && i!=l2) WCand.emplace_back(i);
-         }
-
-
-
-         UInt_t lead = WCand[0];
-         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
-            BestZMass > MinZMass && BestZMass < MaxZMass){
-           HMetD->Fill(*MET_pt);
-           HnElD->Fill(GoodElectron.size());
-           HnMuD->Fill(GoodMuon.size());
-
-           Double_t wmt =
-             PreSelector::MassRecoW(Mus.pt[lead],
-                                    Mus.phi[lead],
-                                    *MET_pt, *MET_phi);
+  fReader.SetEntry(entry);
 
 #ifndef CMSDATA
-           HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
-           HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
-           HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
-
-           HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
-                                               Muon_pdgId[l1]).second),w);
-           HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
-                                               Muon_pdgId[l2]).second),w);
-           HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
-                                               Muon_pdgId[lead]).second),w);
+  if (!((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) || (*HLT_IsoMu20||*HLT_Mu55)) &&
+      !(*Flag_HBHENoiseFilter && *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
+        *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter && *PV_npvsGood > 0 && *MET_pt > 30))
+    return kFALSE;
 #endif
 
-           lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
-                                  Mus.phi[l1],Mus.mass);
-           lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
-                                  Mus.phi[l2],Mus.mass);
-           zb   = lep1 + lep2;
-           lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
-                                  Mus.phi[lead],Mus.mass);
+  HRunLumi->Fill(*run,*luminosityBlock);
+  HRun->Fill(*run);
+  HLumi->Fill(*luminosityBlock);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
-           Float_t wzm = -1.;
-           Float_t wm;
-           Bool_t isNu = nu.size()>0;
+  Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+            Muon_charge,Muon_dxy,Muon_dz,
+            Muon_looseId,Muon_isGlobal);
 
-           if(isNu){
-             wb = (lep3 + nu[0]);
-             wm = wb.M(); // Forcing nominal value
-             wzm = (zb+wb).M();
-           }
-           HMassWD->Fill( isNu ? wm : wmt);
-           HMassWZD->Fill(wzm);
-           HMassZD->Fill(BestZMass);
-           HMassTWD->Fill(wmt);
-         }
-       }
-     }
+  Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
+                Electron_charge,Electron_dxy,Electron_dz,
+                Electron_cutBased,Electron_miniPFRelIso_all);
 
-     // 1e2Mu
-     if(*nElectron!=0 && *nMuon>=2 &&
-        GoodElectron.size()>=1 &&
-        GoodMuon.size()>=2){
-       IsC = true;
-       HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
+  std::vector<UInt_t> GoodElectron = PreSelector::GetGoodElectron(Els);
+  std::vector<UInt_t> GoodMuon = PreSelector::GetGoodMuon(Mus);
 
-       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
+  HNEl->Fill(*nElectron,GoodElectron.size());
+  HNMu->Fill(*nMuon,GoodMuon.size());
 
-       try {
-         zt = PreSelector::FindZ(Mus,GoodMuon);
-       } catch (const std::exception& e) {
-         NoPairs = true;
-       }
+  PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+  std::vector<ROOT::Math::PxPyPzMVector> nu;
 
-       if (!NoPairs){
+  const Double_t MinRemPt = 20.;
+  const Float_t w = 1.;
 
-         BestZMass = std::get<1>(zt[0]);
+  Bool_t IsA{},IsB{},IsC{},IsD{};
+  Bool_t NoPairs{};
 
-         UInt_t l1 = (std::get<2>(zt[0])).first;
-         UInt_t l2 = (std::get<2>(zt[0])).second;
+  Float_t BestZMass;
+  Float_t MinZMass = 70.;
+  Float_t MaxZMass = 111.;
 
-         UInt_t lead = GoodElectron[0];
-         if(Els.pt[lead]>MinRemPt &&
-            BestZMass > MinZMass && BestZMass < MaxZMass ){
-           HMetC->Fill(*MET_pt);
-           HnElC->Fill(GoodElectron.size());
-           HnMuC->Fill(GoodMuon.size());
 
-           Double_t wmt =
-             PreSelector::MassRecoW(Els.pt[lead],
-                                    Els.phi[lead],
-                                    *MET_pt, *MET_phi);
+  // 0e3Mu
+  if(*nMuon>=3 && GoodMuon.size()>=3){
+    IsD = true;
+    HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
+
+    std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
+
+    try {
+      zt = PreSelector::FindZ(Mus,GoodMuon);
+    } catch (const std::exception& e) {
+      NoPairs = true;
+    }
+
+    if (!NoPairs){
+
+      BestZMass = std::get<1>(zt[0]);
+
+      UInt_t l1 = (std::get<2>(zt[0])).first;
+      UInt_t l2 = (std::get<2>(zt[0])).second;
+
+      std::vector<UInt_t> WCand;
+      for(auto i: GoodMuon){
+        if(i!=l1 && i!=l2) WCand.emplace_back(i);
+      }
+
+
+
+      UInt_t lead = WCand[0];
+      if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
+         BestZMass > MinZMass && BestZMass < MaxZMass){
+        HMetD->Fill(*MET_pt);
+        HnElD->Fill(GoodElectron.size());
+        HnMuD->Fill(GoodMuon.size());
+
+        Double_t wmt =
+          PreSelector::MassRecoW(Mus.pt[lead],
+                                 Mus.phi[lead],
+                                 *MET_pt, *MET_phi);
+
 #ifndef CMSDATA
-           HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
-           HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
-           HGenPartFC->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
+        HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
+        HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
+        HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
 
-           HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
-                                               Muon_pdgId[l1]).second),w);
-           HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
-                                               Muon_pdgId[l2]).second),w);
-           HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
-                                               Electron_pdgId[lead]).second),w);
+        HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
+                                             Muon_pdgId[l1]).second),w);
+        HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
+                                             Muon_pdgId[l2]).second),w);
+        HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
+                                             Muon_pdgId[lead]).second),w);
 #endif
-           lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
-                                  Mus.phi[l1],Mus.mass);
-           lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
-                                  Mus.phi[l2],Mus.mass);
-           zb   = lep1 + lep2;
-           lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
-                                  Els.phi[lead],Els.mass);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
+        lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
+                               Mus.phi[l1],Mus.mass);
+        lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
+                               Mus.phi[l2],Mus.mass);
+        zb   = lep1 + lep2;
+        lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
+                               Mus.phi[lead],Mus.mass);
 
-           Double_t wzm = -1.;
-           Float_t wm;
-           Bool_t isNu = nu.size()>0;
-           if(isNu){
-             wb = (lep3 + nu[0]);
-             wm = wb.M(); // Forcing nominal value
-             wzm = (zb+wb).M();
-           }
-           HMassWC->Fill( isNu ? wm : wmt);
-           HMassWZC->Fill(wzm);
-           HMassZC->Fill(BestZMass);
-           HMassTWC->Fill(wmt);
-         }
-       }
-     }
+        nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
-     // 2e1Mu
-     if(*nElectron>=2 && *nMuon>=1 &&
-        GoodElectron.size()>=2 &&
-        GoodMuon.size()>=1){
-       IsB = true;
-       HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
+        Float_t wzm = -1.;
+        Float_t wm;
+        Bool_t isNu = nu.size()>0;
 
-       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
+        if(isNu){
+          wb = (lep3 + nu[0]);
+          wm = wb.M(); // Forcing nominal value
+          wzm = (zb+wb).M();
+        }
+        HMassWD->Fill( isNu ? wm : wmt);
+        HMassWZD->Fill(wzm);
+        HMassZD->Fill(BestZMass);
+        HMassTWD->Fill(wmt);
+      }
+    }
+  }
 
-       try {
-         zt = PreSelector::FindZ(Els,GoodElectron);
-       } catch (const std::exception& e) {
-         NoPairs = true;
-       }
+  // 1e2Mu
+  if(*nElectron!=0 && *nMuon>=2 &&
+     GoodElectron.size()>=1 &&
+     GoodMuon.size()>=2){
+    IsC = true;
+    HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
 
-       if (!NoPairs){
+    std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
-         BestZMass = std::get<1>(zt[0]);
+    try {
+      zt = PreSelector::FindZ(Mus,GoodMuon);
+    } catch (const std::exception& e) {
+      NoPairs = true;
+    }
 
-         UInt_t l1 = (std::get<2>(zt[0])).first;
-         UInt_t l2 = (std::get<2>(zt[0])).second;
+    if (!NoPairs){
 
-         UInt_t lead = GoodMuon[0];
-         if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
-            BestZMass > MinZMass && BestZMass < MaxZMass){
-           HMetB->Fill(*MET_pt);
-           HnElB->Fill(GoodElectron.size());
-           HnMuB->Fill(GoodMuon.size());
-           Double_t wmt =
-             PreSelector::MassRecoW(Mus.pt[lead],
-                                    Mus.phi[lead],
-                                    *MET_pt, *MET_phi);
+      BestZMass = std::get<1>(zt[0]);
+
+      UInt_t l1 = (std::get<2>(zt[0])).first;
+      UInt_t l2 = (std::get<2>(zt[0])).second;
+
+      UInt_t lead = GoodElectron[0];
+      if(Els.pt[lead]>MinRemPt &&
+         BestZMass > MinZMass && BestZMass < MaxZMass ){
+        HMetC->Fill(*MET_pt);
+        HnElC->Fill(GoodElectron.size());
+        HnMuC->Fill(GoodMuon.size());
+
+        Double_t wmt =
+          PreSelector::MassRecoW(Els.pt[lead],
+                                 Els.phi[lead],
+                                 *MET_pt, *MET_phi);
 #ifndef CMSDATA
-           HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
-           HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
-           HGenPartFB->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
+        HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
+        HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
+        HGenPartFC->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
 
-           HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
-                                               Electron_pdgId[l1]).second),w);
-           HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
-                                               Electron_pdgId[l2]).second),w);
-           HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
-                                               Muon_pdgId[lead]).second),w);
+        HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
+                                             Muon_pdgId[l1]).second),w);
+        HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
+                                             Muon_pdgId[l2]).second),w);
+        HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
+                                             Electron_pdgId[lead]).second),w);
 #endif
+        lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
+                               Mus.phi[l1],Mus.mass);
+        lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
+                               Mus.phi[l2],Mus.mass);
+        zb   = lep1 + lep2;
+        lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
+                               Els.phi[lead],Els.mass);
 
-           lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
-                                  Els.phi[l1],Els.mass);
-           lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
-                                  Els.phi[l2],Els.mass);
-           zb   = lep1 + lep2;
-           lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
-                                  Mus.phi[lead],Mus.mass);
+        nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
+        Double_t wzm = -1.;
+        Float_t wm;
+        Bool_t isNu = nu.size()>0;
+        if(isNu){
+          wb = (lep3 + nu[0]);
+          wm = wb.M(); // Forcing nominal value
+          wzm = (zb+wb).M();
+        }
+        HMassWC->Fill( isNu ? wm : wmt);
+        HMassWZC->Fill(wzm);
+        HMassZC->Fill(BestZMass);
+        HMassTWC->Fill(wmt);
+      }
+    }
+  }
 
-           Double_t wzm = -1.;
-           Float_t wm;
-           Bool_t isNu = nu.size()>0;
-           if(isNu){
-             wb = (lep3 + nu[0]);
-             wm = wb.M(); // Forcing nominal value
-             wzm = (zb+wb).M();
-           }
-           HMassWB->Fill(isNu? wm: wmt);
-           HMassWZB->Fill(wzm);
-           HMassZB->Fill(BestZMass);
-           HMassTWB->Fill(wmt);
-         }
+  // 2e1Mu
+  if(*nElectron>=2 && *nMuon>=1 &&
+     GoodElectron.size()>=2 &&
+     GoodMuon.size()>=1){
+    IsB = true;
+    HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
 
-       }
+    std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
 
+    try {
+      zt = PreSelector::FindZ(Els,GoodElectron);
+    } catch (const std::exception& e) {
+      NoPairs = true;
+    }
 
+    if (!NoPairs){
 
-     }
+      BestZMass = std::get<1>(zt[0]);
 
-     // 3e0Mu
-     if(*nElectron>=3 && GoodElectron.size()>=3){
-       IsA = true;
-       HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
+      UInt_t l1 = (std::get<2>(zt[0])).first;
+      UInt_t l2 = (std::get<2>(zt[0])).second;
 
-       std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
-
-       try {
-         zt = PreSelector::FindZ(Els,GoodElectron);
-       } catch (const std::exception& e) {
-         NoPairs = true;
-       }
-
-       if (!NoPairs){
-         BestZMass = std::get<1>(zt[0]);
-
-         UInt_t l1 = (std::get<2>(zt[0])).first;
-         UInt_t l2 = (std::get<2>(zt[0])).second;
-
-         std::vector<UInt_t> WCand;
-         for(auto i: GoodElectron){
-           if(i!=l1 && i!=l2) WCand.emplace_back(i);
-         }
-
-         UInt_t lead = WCand[0];
-         if(Els.pt[lead]>MinRemPt &&
-            BestZMass > MinZMass && BestZMass < MaxZMass){
-           HMetA->Fill(*MET_pt);
-           HnElA->Fill(GoodElectron.size());
-           HnMuA->Fill(GoodMuon.size());
-
-           Double_t wmt =
-             PreSelector::MassRecoW(Els.pt[lead],
-                                    Els.phi[lead],
-                                    *MET_pt, *MET_phi);
+      UInt_t lead = GoodMuon[0];
+      if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
+         BestZMass > MinZMass && BestZMass < MaxZMass){
+        HMetB->Fill(*MET_pt);
+        HnElB->Fill(GoodElectron.size());
+        HnMuB->Fill(GoodMuon.size());
+        Double_t wmt =
+          PreSelector::MassRecoW(Mus.pt[lead],
+                                 Mus.phi[lead],
+                                 *MET_pt, *MET_phi);
 #ifndef CMSDATA
-           HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
-           HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
-           HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
+        HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
+        HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
+        HGenPartFB->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
 
-           HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
-                                               Electron_pdgId[l1]).second),w);
-           HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
-                                               Electron_pdgId[l2]).second),w);
-           HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
-                                               Electron_pdgId[lead]).second),w);
+        HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
+                                             Electron_pdgId[l1]).second),w);
+        HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
+                                             Electron_pdgId[l2]).second),w);
+        HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
+                                             Muon_pdgId[lead]).second),w);
 #endif
-           lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
-                                  Els.phi[l1],Els.mass);
-           lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
-                                  Els.phi[l2],Els.mass);
-           zb   = lep1 + lep2;
-           lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
-                                  Els.phi[lead],Els.mass);
 
-           nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
+        lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
+                               Els.phi[l1],Els.mass);
+        lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
+                               Els.phi[l2],Els.mass);
+        zb   = lep1 + lep2;
+        lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
+                               Mus.phi[lead],Mus.mass);
 
-           Double_t wzm = -1.;
-           Float_t wm;
-           Bool_t isNu = nu.size()>0;
-           if( isNu ){
-             wb = (lep3 + nu[0]);
-             wm = wb.M(); // Forcing nominal value
-             wzm = (zb+wb).M();
-           }
-           HMassWA->Fill(isNu? wm: wmt);
-           HMassWZA->Fill(wzm);
-           HMassZA->Fill(BestZMass);
-           HMassTWA->Fill(wmt);
-         }
-       }
-     }
+        nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
-     // 3leptons
+        Double_t wzm = -1.;
+        Float_t wm;
+        Bool_t isNu = nu.size()>0;
+        if(isNu){
+          wb = (lep3 + nu[0]);
+          wm = wb.M(); // Forcing nominal value
+          wzm = (zb+wb).M();
+        }
+        HMassWB->Fill(isNu? wm: wmt);
+        HMassWZB->Fill(wzm);
+        HMassZB->Fill(BestZMass);
+        HMassTWB->Fill(wmt);
+      }
 
-     if( (*nElectron + *nMuon) >= 3){
-       HOverlap->Fill(IsA+IsB+IsC+IsD);
-     } else {
-       HOverlap->Fill(-1);
-     }
+    }
 
-   return kTRUE;
+
+
+  }
+
+  // 3e0Mu
+  if(*nElectron>=3 && GoodElectron.size()>=3){
+    IsA = true;
+    HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
+
+    std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> zt;
+
+    try {
+      zt = PreSelector::FindZ(Els,GoodElectron);
+    } catch (const std::exception& e) {
+      NoPairs = true;
+    }
+
+    if (!NoPairs){
+      BestZMass = std::get<1>(zt[0]);
+
+      UInt_t l1 = (std::get<2>(zt[0])).first;
+      UInt_t l2 = (std::get<2>(zt[0])).second;
+
+      std::vector<UInt_t> WCand;
+      for(auto i: GoodElectron){
+        if(i!=l1 && i!=l2) WCand.emplace_back(i);
+      }
+
+      UInt_t lead = WCand[0];
+      if(Els.pt[lead]>MinRemPt &&
+         BestZMass > MinZMass && BestZMass < MaxZMass){
+        HMetA->Fill(*MET_pt);
+        HnElA->Fill(GoodElectron.size());
+        HnMuA->Fill(GoodMuon.size());
+
+        Double_t wmt =
+          PreSelector::MassRecoW(Els.pt[lead],
+                                 Els.phi[lead],
+                                 *MET_pt, *MET_phi);
+#ifndef CMSDATA
+        HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
+        HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
+        HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
+
+        HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
+                                             Electron_pdgId[l1]).second),w);
+        HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
+                                             Electron_pdgId[l2]).second),w);
+        HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
+                                             Electron_pdgId[lead]).second),w);
+#endif
+        lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
+                               Els.phi[l1],Els.mass);
+        lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
+                               Els.phi[l2],Els.mass);
+        zb   = lep1 + lep2;
+        lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
+                               Els.phi[lead],Els.mass);
+
+        nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
+
+        Double_t wzm = -1.;
+        Float_t wm;
+        Bool_t isNu = nu.size()>0;
+        if( isNu ){
+          wb = (lep3 + nu[0]);
+          wm = wb.M(); // Forcing nominal value
+          wzm = (zb+wb).M();
+        }
+        HMassWA->Fill(isNu? wm: wmt);
+        HMassWZA->Fill(wzm);
+        HMassZA->Fill(BestZMass);
+        HMassTWA->Fill(wmt);
+      }
+    }
+  }
+
+  // 3leptons
+
+  if( (*nElectron + *nMuon) >= 3){
+    HOverlap->Fill(IsA+IsB+IsC+IsD);
+  } else {
+    HOverlap->Fill(-1);
+  }
+
+  return kTRUE;
 }
 
 void PreSelector::Terminate() {
