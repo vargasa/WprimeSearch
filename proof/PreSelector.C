@@ -516,7 +516,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
   Float_t MinZMass = 70.;
   Float_t MaxZMass = 111.;
 
-  UInt_t l1, l2;
 
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> *zt = nullptr;
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ztel;
@@ -553,17 +552,20 @@ Bool_t PreSelector::Process(Long64_t entry) {
     zt = &ztmu;
   }
 
+  std::vector<UInt_t> WCand;
+
+  BestZMass = std::get<1>((*zt)[0]);
+
+  UInt_t l1, l2; // Lepton pair index
+  l1 = (std::get<2>((*zt)[0])).first;
+  l2 = (std::get<2>((*zt)[0])).second;
+
   // 0e3Mu
   if(PairMu && *nMuon>=3 && GoodMuon.size()>=3){
     IsD = true;
     HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
 
-    BestZMass = std::get<1>((*zt)[0]);
 
-    l1 = (std::get<2>((*zt)[0])).first;
-    l2 = (std::get<2>((*zt)[0])).second;
-
-    std::vector<UInt_t> WCand;
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);
     }
@@ -627,11 +629,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     IsC = true;
     HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
 
-    BestZMass = std::get<1>((*zt)[0]);
-
-    l1 = (std::get<2>((*zt)[0])).first;
-    l2 = (std::get<2>((*zt)[0])).second;
-
     UInt_t lead = GoodElectron[0];
     if(Els.pt[lead]>MinRemPt &&
        BestZMass > MinZMass && BestZMass < MaxZMass ){
@@ -688,11 +685,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     IsB = true;
     HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
 
-    BestZMass = std::get<1>((*zt)[0]);
-
-    l1 = (std::get<2>((*zt)[0])).first;
-    l2 = (std::get<2>((*zt)[0])).second;
-
     UInt_t lead = GoodMuon[0];
     if(Mus.pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
        BestZMass > MinZMass && BestZMass < MaxZMass){
@@ -747,12 +739,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     IsA = true;
     HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
 
-    BestZMass = std::get<1>((*zt)[0]);
-
-    l1 = (std::get<2>((*zt)[0])).first;
-    l2 = (std::get<2>((*zt)[0])).second;
-
-    std::vector<UInt_t> WCand;
     for(auto i: GoodElectron){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);
     }
