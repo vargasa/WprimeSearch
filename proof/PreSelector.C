@@ -731,75 +731,102 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   if(PairMu){
-    //3mu0e
-    if(GoodMuon.size()>=3){
-      IsD = true;
-      HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
 
-      for(auto i: GoodMuon){
-        if(i!=l1 && i!=l2) WCand.emplace_back(i);
+    for(auto i: GoodMuon){
+      if(i!=l1 && i!=l2) WCand.emplace_back(i);
+    }
+
+    if(WCand.size() > 0) {
+      if(GoodElectron.size() > 0){
+        if(Muon_pt[WCand[0]] > Electron_pt[GoodElectron[0]]){
+          IsD = true;
+          lead = WCand[0];
+        } else {
+          IsC = true;
+          lead = GoodElectron[0];
+        }
+      } else {
+        IsD = true;
+        lead = WCand[0];
       }
+    } else if (GoodElectron.size()>0) {
+      IsC = true;
+      lead = GoodElectron[0];
+    }
 
-      lead = WCand[0];
+    // 0e3mu
+    if(IsD){
+      HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
       if(Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
-         BestZMass > MinZMass && BestZMass < MaxZMass){
+        BestZMass > MinZMass && BestZMass < MaxZMass){
         FillD();
+      } else {
+        IsD = false;
       }
     }
 
     // 1e2Mu
-    if(GoodElectron.size()>=1 &&
-       GoodMuon.size()>=2){
-      IsC = true;
+    if(IsC){
       HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
-
-      lead = GoodElectron[0];
       if(Electron_pt[lead]>MinRemPt &&
          BestZMass > MinZMass && BestZMass < MaxZMass ){
-	FillC();
+        FillC();
+      } else {
+        IsC = false;
       }
     }
   }
 
 
   if(PairEl){
-    // 2e1mu
-    if(GoodElectron.size()>=2 &&
-       GoodMuon.size()>=1){
-      IsB = true;
-      HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
 
+    for(auto i: GoodElectron){
+      if(i!=l1 && i!=l2) WCand.emplace_back(i);
+    }
+
+    if(WCand.size() > 0){
+      if(GoodMuon.size() > 0){
+        if(Muon_pt[GoodMuon[0]] > Electron_pt[WCand[0]] ){
+          IsB = true;
+          lead = GoodMuon[0];
+        } else {
+          IsA = true;
+          lead = WCand[0];
+        }
+      } else {
+        IsA = true;
+        lead = WCand[0];
+      }
+    } else if (GoodMuon.size()>0) {
+      IsB = true;
       lead = GoodMuon[0];
+    }
+
+    // 2e1mu
+    if(IsB){
+      HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
       if(Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
          BestZMass > MinZMass && BestZMass < MaxZMass){
-	FillB();
+        FillB();
+      } else {
+        IsB = false;
       }
     }
 
     //3e0mu
-    if(GoodElectron.size()>=3){
-      IsA = true;
+    if(IsA){
       HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
-
-      for(auto i: GoodElectron){
-        if(i!=l1 && i!=l2) WCand.emplace_back(i);
-      }
-
-      lead = WCand[0];
       if(Electron_pt[lead]>MinRemPt &&
          BestZMass > MinZMass && BestZMass < MaxZMass){
-	FillA();
+        FillA();
+      } else {
+        IsA = false;
       }
     }
   }
 
   // 3leptons
-
-  if( (*nElectron + *nMuon) >= 3){
-    HOverlap->Fill(IsA+IsB+IsC+IsD);
-  } else {
-    HOverlap->Fill(-1);
-  }
+  HOverlap->Fill(IsA+IsB+IsC+IsD);
 
   return kTRUE;
 }
