@@ -326,7 +326,8 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(Leptons l, std
     }
   }
 
-  if(positive.size() == 0 || negative.size() == 0) throw std::range_error("No pairs found");
+  if(positive.size() == 0 || negative.size() == 0)
+    return std::vector<std::pair<UInt_t,UInt_t>>();
 
   std::vector<std::pair<UInt_t,UInt_t>> couples;
 
@@ -344,11 +345,10 @@ std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector:
 
   std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
 
-  try {
-    Pairs = PreSelector::GetLeptonPairs(l,GoodLepton);
-  } catch (const std::exception& e){
-    throw std::range_error("No pairs found!");
-  }
+  Pairs = PreSelector::GetLeptonPairs(l,GoodLepton);
+
+  if(Pairs.empty())
+    return std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>>();
 
   // ZMassDistance, ZMass, Pair
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ZMassTuple;
@@ -678,17 +678,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ztel;
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ztmu;
 
-  try {
-    ztmu = PreSelector::FindZ(Mus,GoodMuon);
-    PairMu = true;
-  } catch (const std::exception& e){
-    /*FIX ME: No exceptions please*/
-  }
+  ztmu = PreSelector::FindZ(Mus,GoodMuon);
+  if(!ztmu.empty()) PairMu = true;
 
-  try{
-    ztel = PreSelector::FindZ(Els,GoodElectron);
-    PairEl = true;
-  } catch (const std::exception& e){}
+  ztel = PreSelector::FindZ(Els,GoodElectron);
+  if(!ztel.empty()) PairEl = true;
+
 
   if (!PairEl && !PairMu) return kFALSE;
 
