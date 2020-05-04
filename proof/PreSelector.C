@@ -503,9 +503,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
   HNEl->Fill(*nElectron,GoodElectron.size());
   HNMu->Fill(*nMuon,GoodMuon.size());
 
-  PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-  std::vector<ROOT::Math::PxPyPzMVector> nu;
-
   const Double_t MinRemPt = 20.;
   const Float_t w = 1.;
 
@@ -559,12 +556,27 @@ Bool_t PreSelector::Process(Long64_t entry) {
   UInt_t l1, l2; // Lepton pair index
   l1 = (std::get<2>((*zt)[0])).first;
   l2 = (std::get<2>((*zt)[0])).second;
+  PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+  std::vector<ROOT::Math::PxPyPzMVector> nu;
+
+  if(PairEl){
+    lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
+                           Els.phi[l1],Els.mass);
+    lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
+                           Els.phi[l2],Els.mass);
+    zb   = lep1 + lep2;
+  } else { //PairMu
+    lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
+                           Mus.phi[l1],Mus.mass);
+    lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
+                           Mus.phi[l2],Mus.mass);
+    zb   = lep1 + lep2;
+  }
 
   // 0e3Mu
-  if(PairMu && *nMuon>=3 && GoodMuon.size()>=3){
+  if(PairMu && GoodMuon.size()>=3){
     IsD = true;
     HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
-
 
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);
@@ -595,11 +607,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                            Muon_pdgId[lead]).second),w);
 #endif
 
-      lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
-                             Mus.phi[l1],Mus.mass);
-      lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
-                             Mus.phi[l2],Mus.mass);
-      zb   = lep1 + lep2;
       lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
                              Mus.phi[lead],Mus.mass);
 
@@ -623,8 +630,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   // 1e2Mu
-  if( PairMu && *nElectron!=0 && *nMuon>=2 &&
-     GoodElectron.size()>=1 &&
+  if( PairMu && GoodElectron.size()>=1 &&
      GoodMuon.size()>=2){
     IsC = true;
     HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
@@ -652,11 +658,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
       HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
                                            Electron_pdgId[lead]).second),w);
 #endif
-      lep1 = PtEtaPhiMVector(Mus.pt[l1],Mus.eta[l1],
-                             Mus.phi[l1],Mus.mass);
-      lep2 = PtEtaPhiMVector(Mus.pt[l2],Mus.eta[l2],
-                             Mus.phi[l2],Mus.mass);
-      zb   = lep1 + lep2;
       lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
                              Els.phi[lead],Els.mass);
 
@@ -679,8 +680,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   // 2e1Mu
-  if(PairEl && *nElectron>=2 && *nMuon>=1 &&
-     GoodElectron.size()>=2 &&
+  if(PairEl && GoodElectron.size()>=2 &&
      GoodMuon.size()>=1){
     IsB = true;
     HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
@@ -708,11 +708,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
                                            Muon_pdgId[lead]).second),w);
 #endif
 
-      lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
-                             Els.phi[l1],Els.mass);
-      lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
-                               Els.phi[l2],Els.mass);
-      zb   = lep1 + lep2;
       lep3 = PtEtaPhiMVector(Mus.pt[lead],Mus.eta[lead],
                              Mus.phi[lead],Mus.mass);
 
@@ -735,7 +730,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   // 3e0Mu
-  if( PairEl && *nElectron>=3 && GoodElectron.size()>=3){
+  if( PairEl && GoodElectron.size()>=3){
     IsA = true;
     HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
 
@@ -766,11 +761,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
       HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
                                            Electron_pdgId[lead]).second),w);
 #endif
-      lep1 = PtEtaPhiMVector(Els.pt[l1],Els.eta[l1],
-                             Els.phi[l1],Els.mass);
-      lep2 = PtEtaPhiMVector(Els.pt[l2],Els.eta[l2],
-                             Els.phi[l2],Els.mass);
-      zb   = lep1 + lep2;
       lep3 = PtEtaPhiMVector(Els.pt[lead],Els.eta[lead],
                              Els.phi[lead],Els.mass);
 
