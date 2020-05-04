@@ -18,6 +18,8 @@
 #include "Math/Vector4Dfwd.h"
 #include "TEntryList.h"
 
+using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
+
 class PreSelector : public TSelector {
 
  private :
@@ -191,6 +193,15 @@ class PreSelector : public TSelector {
   TH2I *HNEl;
   TH2I *HNMu;
 
+  UInt_t l1, l2, lead; // Lepton pair index and lead remaining
+  std::vector<UInt_t> GoodElectron;
+  std::vector<UInt_t> GoodMuon;
+  PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
+  std::vector<ROOT::Math::PxPyPzMVector> nu;
+
+  Float_t BestZMass;
+  const Float_t w = 1.;
+
 #ifdef CMSDATA
   TEntryList *EntryList;
 #endif
@@ -216,6 +227,10 @@ class PreSelector : public TSelector {
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
+  void FillA();
+  void FillB();
+  void FillC();
+  void FillD();
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t);
