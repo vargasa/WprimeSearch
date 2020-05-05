@@ -237,6 +237,10 @@ class PreSelector : public TSelector {
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter);
 #endif
 
+#ifdef CMSDATA
+  Long64_t GetEventIndex(UInt_t run,ULong64_t event);
+#endif
+  std::vector<Float_t> GetWWZWTMass(Float_t lPt, Float_t lEta, Float_t lPhi, Float_t lMass);
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t,Float_t);
