@@ -685,6 +685,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
   std::vector<UInt_t> WCand;
 
   BestZMass = std::get<1>((*zt)[0]);
+  Bool_t IsZMassOk = (BestZMass > MinZMass) && (BestZMass < MaxZMass);
+  if(!IsZMassOk) return kFALSE;
 
   l1 = (std::get<2>((*zt)[0])).first;
   l2 = (std::get<2>((*zt)[0])).second;
@@ -729,8 +731,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 0e3mu
     if(IsD){
-      if(Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
-        BestZMass > MinZMass && BestZMass < MaxZMass){
+      if(IsZMassOk && Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
         FillD();
       } else {
         IsD = false;
@@ -739,8 +740,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 1e2Mu
     if(IsC){
-      if(Electron_pt[lead]>MinRemPt &&
-         BestZMass > MinZMass && BestZMass < MaxZMass ){
+      if(IsZMassOk && Electron_pt[lead]>MinRemPt){
         FillC();
       } else {
         IsC = false;
@@ -775,8 +775,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 2e1mu
     if(IsB){
-      if(Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2 &&
-         BestZMass > MinZMass && BestZMass < MaxZMass){
+      if(IsZMassOk && Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
         FillB();
       } else {
         IsB = false;
@@ -785,8 +784,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     //3e0mu
     if(IsA){
-      if(Electron_pt[lead]>MinRemPt &&
-         BestZMass > MinZMass && BestZMass < MaxZMass){
+      if(IsZMassOk && Electron_pt[lead]>MinRemPt){
         FillA();
       } else {
         IsA = false;
@@ -974,7 +972,7 @@ void PreSelector::Terminate() {
   HMassTW.Write();
   chc->Print(Form("%s_HMassTW_SUM.png",SampleName.Data()));
 
-#ifndef CMSDATA;
+#ifndef CMSDATA
   HNCounter->Write("HNCounter");
   ch->cd(1);
   HGenPartFA->SetTitle("PdgId Final State (3e0#mu); PdgId; Event count");
