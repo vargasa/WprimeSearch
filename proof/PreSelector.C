@@ -46,6 +46,7 @@ PreSelector::PreSelector(TTree *)
   HOverlap=0;
 
 #ifndef CMSDATA
+  HNCounter=0;
   HGenPartZA=0;
   HGenPartZB=0;
   HGenPartZC=0;
@@ -164,6 +165,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HOverlap);
 
 #ifndef CMSDATA
+  HNCounter = new TH1I("HNCounter","HNCounter",2,0,2);
+  fOutput->Add(HNCounter);
+
   const UInt_t BinsPdgId = 100;
   const Float_t PdgIdMin = -50.;
   const Float_t PdgIdMax = 50.;
@@ -612,6 +616,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   fReader.SetEntry(entry);
 
 #ifndef CMSDATA
+  HNCounter->Fill(1);
   if (!((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) || (*HLT_IsoMu20||*HLT_Mu55)) &&
       !(*Flag_HBHENoiseFilter && *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
         *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter && *PV_npvsGood > 0 && *MET_pt > 30))
@@ -969,22 +974,27 @@ void PreSelector::Terminate() {
   HMassTW.Write();
   chc->Print(Form("%s_HMassTW_SUM.png",SampleName.Data()));
 
-#ifndef CMSDATA
+#ifndef CMSDATA;
+  HNCounter->Write("HNCounter");
   ch->cd(1);
   HGenPartFA->SetTitle("PdgId Final State (3e0#mu); PdgId; Event count");
   HGenPartFA->LabelsDeflate();
+  HGenPartFA->Write("HGenPartFA");
   HGenPartFA->Draw();
   ch->cd(2);
   HGenPartFB->SetTitle("PdgId Final State (2e1#mu); PdgId; Event count");
   HGenPartFB->LabelsDeflate();
+  HGenPartFB->Write("HGenPartFB");
   HGenPartFB->Draw();
   ch->cd(3);
   HGenPartFC->SetTitle("PdgId Final State (1e2#mu); PdgId; Event count");
   HGenPartFC->LabelsDeflate();
+  HGenPartFC->Write("HGenPartFC");
   HGenPartFC->Draw();
   ch->cd(4);
   HGenPartFD->SetTitle("PdgId Final State (0e3#mu); PdgId; Event count");
   HGenPartFD->LabelsDeflate();
+  HGenPartFD->Write("HGenPartFD");
   HGenPartFD->Draw();
   ch->Print(Form("%s_PdgIdFinal.png",SampleName.Data()));
 #endif

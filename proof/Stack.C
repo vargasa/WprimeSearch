@@ -6,15 +6,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   const Float_t pbFactor = 1e-12; /*pico prefix*/
 
   const Int_t FillStyle = 1001;
-  // ShortName, DasName, kColor, Style, isSignal?, XSection
-  std::vector<std::tuple<std::string,std::string,Int_t,Int_t,Bool_t,Float_t>> BgNames = {
-    std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",kOrange,FillStyle,false,4.102),
-    std::make_tuple("DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,FillStyle,false,5.795e02),
-    std::make_tuple("DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,FillStyle,false,1.030e+02),
-    std::make_tuple("t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kBlue-2,FillStyle,false,2.412e02),
-    std::make_tuple("Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",kRed+3,FillStyle,false,7.564e01),
-    std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",kBlue,FillStyle,false,1.256),
-    std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",kBlack,0,true,3.196e02)
+  // ShortName, DasName, kColor, Style, isSignal?, XSection, nEvents
+  std::vector<std::tuple<std::string,std::string,Int_t,Int_t,Bool_t,Float_t,Int_t>> BgNames = {
+    std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
+                    kOrange,FillStyle,false,4.102,1993200),
+    std::make_tuple("DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                    kOrange+7,FillStyle,false,5.795e02,6584581),
+    std::make_tuple("DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                    kOrange+7,FillStyle,false,1.030e+02,2903064),
+    std::make_tuple("t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                    kBlue-2,FillStyle,false,2.412e02,6068369),
+    std::make_tuple("Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+                    kRed+3,FillStyle,false,7.564e01,18134601),
+    std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",
+                    kBlue,FillStyle,false,1.256,6669988),
+    std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",
+                    kBlack,0,true,3.196e02,50000)
   };
 
   std::string DataName = "DoubleEGSingleElectronSingleMuon";
@@ -62,7 +69,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->SetFillStyle(std::get<3>(BGN));
       h->SetTitle((std::get<0>(BGN)).c_str());
       h->SetFillColor(std::get<2>(BGN));
-      h->Scale(luminosity*std::get<5>(BGN)*pbFactor);
+      h->Scale(luminosity*std::get<5>(BGN)*pbFactor/((Float_t)std::get<6>(BGN)));
       if(!IsSignal) h->SetLineWidth(0);
       hs->Add(h);
       legend->AddEntry(h,(std::get<0>(BGN)).c_str(),IsSignal? "L":"F");
