@@ -617,9 +617,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 #ifndef CMSDATA
   HNCounter->Fill(1);
-  if (!((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) || (*HLT_IsoMu20||*HLT_Mu55)) &&
-      !(*Flag_HBHENoiseFilter && *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
-        *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter && *PV_npvsGood > 0 && *MET_pt > 30))
+  if (!((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) || (*HLT_IsoMu20||*HLT_Mu55)))
+    return kFALSE;
+  if (!(*Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
+        *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
+        && *PV_npvsGood > 0 && *MET_pt > 30))
     return kFALSE;
 #endif
 
@@ -642,6 +644,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   HNEl->Fill(*nElectron,GoodElectron.size());
   HNMu->Fill(*nMuon,GoodMuon.size());
+
+  if( (GoodElectron.size() + GoodMuon.size()) <3 ) return kFALSE;
 
   const Double_t MinRemPt = 20.;
 
@@ -731,7 +735,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 0e3mu
     if(IsD){
-      if(IsZMassOk && Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+      if(Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
         FillD();
       } else {
         IsD = false;
@@ -740,7 +744,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 1e2Mu
     if(IsC){
-      if(IsZMassOk && Electron_pt[lead]>MinRemPt){
+      if(Electron_pt[lead]>MinRemPt){
         FillC();
       } else {
         IsC = false;
@@ -775,7 +779,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 2e1mu
     if(IsB){
-      if(IsZMassOk && Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
+      if(Muon_pt[lead]>MinRemPt && Muon_highPtId[lead] == 2){
         FillB();
       } else {
         IsB = false;
@@ -784,7 +788,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     //3e0mu
     if(IsA){
-      if(IsZMassOk && Electron_pt[lead]>MinRemPt){
+      if(Electron_pt[lead]>MinRemPt){
         FillA();
       } else {
         IsA = false;
