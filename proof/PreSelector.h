@@ -182,6 +182,7 @@ class PreSelector : public TSelector {
   TH1F *HGenPartFC;
   TH1F *HGenPartFD;
 #endif
+  TH1F *HCutFlow;
   TH2I *HRunLumi;
   TH1I *HRun;
   TH1I *HLumi;
