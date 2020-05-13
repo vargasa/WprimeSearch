@@ -166,7 +166,6 @@ class PreSelector : public TSelector {
   TH1I *HOverlap;
 
 #ifndef CMSDATA
-  TH1I *HNCounter;
   TH1F *HGenPartZA;
   TH1F *HGenPartZB;
   TH1F *HGenPartZC;

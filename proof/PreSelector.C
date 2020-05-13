@@ -46,7 +46,7 @@ PreSelector::PreSelector(TTree *)
   HOverlap=0;
 
 #ifndef CMSDATA
-  HNCounter=0;
+
   HGenPartZA=0;
   HGenPartZB=0;
   HGenPartZC=0;
@@ -165,13 +165,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
   fOutput->Add(HOverlap);
 
-#ifndef CMSDATA
-  HNCounter = new TH1I("HNCounter","HNCounter",2,0,2);
-  fOutput->Add(HNCounter);
-
   const UInt_t BinsPdgId = 100;
   const Float_t PdgIdMin = -50.;
   const Float_t PdgIdMax = 50.;
+
+#ifndef CMSDATA
 
   HGenPartZA = new TH1F("HGenPartZA","",BinsPdgId,PdgIdMin,PdgIdMax);
   HGenPartZB = new TH1F("HGenPartZB","",BinsPdgId,PdgIdMin,PdgIdMax);
@@ -625,7 +623,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   HCutFlow->Fill("NoCuts",w);
 #ifndef CMSDATA
-  HNCounter->Fill(1);
   if (!((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) || (*HLT_IsoMu20||*HLT_Mu55))){
     HCutFlow->Fill("FailHLT",w);
     return kFALSE;
@@ -856,21 +853,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
 void PreSelector::Terminate() {
 
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
+  std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
+
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
+  fOut->mkdir(SampleName);
+  fOut->cd(SampleName);
 
   HCutFlow->LabelsDeflate();
   gPad->SetLogy();
   HCutFlow->Draw("HIST TEXT45");
   ch->Print(Form("%s_HCutFlow.png",SampleName.Data()));
   gPad->SetLogy(kFALSE);
-
-  ch->Divide(2,2);
-  std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
-
-
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
-  fOut->mkdir(SampleName);
-  fOut->cd(SampleName);
-
+  HCutFlow->Write("HCutFlow");
 
   THStack *hsA = new THStack("hsA","");
   THStack *hsB = new THStack("hsB","");
@@ -884,6 +878,8 @@ void PreSelector::Terminate() {
     h->SetFillColor(16);
     h->SetFillStyle(4050);
   };
+
+  ch->Divide(2,2);
 
   ch->cd(1);
   HRun->SetTitle("HRun");
@@ -1035,7 +1031,6 @@ void PreSelector::Terminate() {
   chc->Print(Form("%s_HMassTW_SUM.png",SampleName.Data()));
 
 #ifndef CMSDATA
-  HNCounter->Write("HNCounter");
   ch->cd(1);
   HGenPartFA->SetTitle("PdgId Final State (3e0#mu); PdgId; Event count");
   HGenPartFA->LabelsDeflate();

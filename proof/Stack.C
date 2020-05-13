@@ -66,9 +66,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     for (auto BGN: BgNames) {
       Bool_t IsSignal = std::get<4>(BGN);
       auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
-      auto hcounter =
-        (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HNCounter"));
-      Float_t nEvents = (Float_t)hcounter->GetBinContent(2);
+      auto hCutFlow =
+        (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
+      Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
       h->SetFillStyle(std::get<3>(BGN));
       h->SetTitle((std::get<0>(BGN)).c_str());
       h->SetFillColor(std::get<2>(BGN));
