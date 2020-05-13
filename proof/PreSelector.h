@@ -163,6 +163,9 @@ class PreSelector : public TSelector {
   TH1F *HMassWZC;
   TH1F *HMassWZD;
 
+  //Angular
+  TH1F *HPairEtaPhi;
+
   TH1I *HOverlap;
 
 #ifndef CMSDATA
@@ -223,6 +226,7 @@ class PreSelector : public TSelector {
   std::vector<UInt_t> GetGoodMuon(Muons);
   std::vector<UInt_t> GetGoodElectron(Electrons);
 
+  Float_t GetEtaPhiDistance(Float_t,Float_t,Float_t,Float_t);
   Double_t GetMassFromPair(std::pair<Int_t,Int_t>);
   Double_t MassRecoZ(Double_t,Double_t,Double_t,Double_t,
                      Double_t,Double_t,Double_t,Double_t);

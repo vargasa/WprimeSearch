@@ -45,6 +45,8 @@ PreSelector::PreSelector(TTree *)
 
   HOverlap=0;
 
+  HPairEtaPhi=0;
+
 #ifndef CMSDATA
 
   HGenPartZA=0;
@@ -101,6 +103,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMetB = new TH1F("HMetB","",MetBins,MinMet,MaxMet);
   HMetC = new TH1F("HMetC","",MetBins,MinMet,MaxMet);
   HMetD = new TH1F("HMetD","",MetBins,MinMet,MaxMet);
+
+  HPairEtaPhi = new TH1F("HPairEtaPhi","AngularDistance",
+                         100,0.,TMath::Pi());
+  fOutput->Add(HPairEtaPhi);
 
   const Double_t MaxnLep = 7;
   const Double_t MinnLep = 0;
@@ -500,7 +506,14 @@ std::vector<Float_t> PreSelector::GetWWZWTMass(Float_t lPt, Float_t lEta, Float_
 
 }
 
+Float_t PreSelector::GetEtaPhiDistance(Float_t eta1, Float_t phi1,
+                                        Float_t eta2, Float_t phi2){
+  return sqrt(pow(eta2-eta1,2.)-pow(phi2-phi1,2.));
+}
+
 void PreSelector::FillA(){
+  HPairEtaPhi->Fill(GetEtaPhiDistance(Electron_eta[l1],Electron_phi[l1],
+                                       Electron_eta[l2],Electron_phi[l2]));
   HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
   HMetA->Fill(*MET_pt);
   HnElA->Fill(GoodElectron.size());
@@ -530,6 +543,8 @@ void PreSelector::FillA(){
 }
 
 void PreSelector::FillB(){
+  HPairEtaPhi->Fill(GetEtaPhiDistance(Electron_eta[l1],Electron_phi[l1],
+                                       Electron_eta[l2],Electron_phi[l2]));
   HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
   HMetB->Fill(*MET_pt);
   HnElB->Fill(GoodElectron.size());
@@ -559,6 +574,8 @@ void PreSelector::FillB(){
 }
 
 void PreSelector::FillC(){
+  HPairEtaPhi->Fill(GetEtaPhiDistance(Muon_eta[l1],Muon_phi[l1],
+                                       Muon_eta[l2],Muon_phi[l2]));
   HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
   HMetC->Fill(*MET_pt);
   HnElC->Fill(GoodElectron.size());
@@ -588,6 +605,8 @@ void PreSelector::FillC(){
 }
 
 void PreSelector::FillD(){
+  HPairEtaPhi->Fill(GetEtaPhiDistance(Muon_eta[l1],Muon_phi[l1],
+                                       Muon_eta[l2],Muon_phi[l2]));
   HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
   HMetD->Fill(*MET_pt);
   HnElD->Fill(GoodElectron.size());
@@ -866,6 +885,10 @@ void PreSelector::Terminate() {
   gPad->SetLogy(kFALSE);
   HCutFlow->Write("HCutFlow");
 
+  ch->Clear();
+  HPairEtaPhi->Draw("HIST");
+  ch->Print(Form("%s_HPairEtaPhi.png",SampleName.Data()));
+
   THStack *hsA = new THStack("hsA","");
   THStack *hsB = new THStack("hsB","");
   THStack *hsC = new THStack("hsC","");
@@ -980,7 +1003,6 @@ void PreSelector::Terminate() {
   HMassW.Write();
   HMassW.Draw();
   chc->Print(Form("%s_HMassW_SUM.png",SampleName.Data()));
-
 
   ch->cd(1);
   HMassZA->SetTitle("Z Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
