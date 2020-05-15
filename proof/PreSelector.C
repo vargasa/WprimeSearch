@@ -641,6 +641,18 @@ void PreSelector::FillD(){
 #endif
 }
 
+Bool_t PreSelector::CheckElectronPair(std::pair<UInt_t,UInt_t> p){
+  const Float_t MinPt = 35.;
+  if (Electron_pt[p.first] < MinPt || Electron_pt[p.second] < MinPt) return kFALSE;
+  return kTRUE;
+}
+
+Bool_t PreSelector::CheckMuonPair(std::pair<UInt_t,UInt_t> p){
+  const Float_t MinLeadPt = 25.;
+  const Float_t MinSubleadPt = 10.;
+  if (Muon_pt[p.first] < MinLeadPt || Muon_pt[p.second] < MinSubleadPt) return kFALSE;
+  return kTRUE;
+}
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
@@ -706,10 +718,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ztmu;
 
   ztmu = PreSelector::FindZ(Mus,GoodMuon);
-  if(!ztmu.empty()) PairMu = true;
+  if(!ztmu.empty() && CheckMuonPair(std::get<2>((ztmu)[0]))) PairMu = true;
 
   ztel = PreSelector::FindZ(Els,GoodElectron);
-  if(!ztel.empty()) PairEl = true;
+  if(!ztel.empty() && CheckElectronPair(std::get<2>((ztel)[0]))) PairEl = true;
 
   if (!PairEl && !PairMu) {
     HCutFlow->Fill("NoPairs",w);

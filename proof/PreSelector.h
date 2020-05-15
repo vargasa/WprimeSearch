@@ -226,6 +226,8 @@ class PreSelector : public TSelector {
   std::vector<UInt_t> GetGoodMuon(Muons);
   std::vector<UInt_t> GetGoodElectron(Electrons);
 
+  Bool_t CheckElectronPair(std::pair<UInt_t,UInt_t>);
+  Bool_t CheckMuonPair(std::pair<UInt_t,UInt_t>);
   Float_t GetEtaPhiDistance(Float_t,Float_t,Float_t,Float_t);
   Double_t GetMassFromPair(std::pair<Int_t,Int_t>);
   Double_t MassRecoZ(Double_t,Double_t,Double_t,Double_t,
