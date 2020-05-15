@@ -345,7 +345,13 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(Leptons l, std
 
   for(UInt_t i=0; i< positive.size(); i++){
     for(UInt_t j=0; j< negative.size();j++){
-      couples.emplace_back(std::make_pair(positive[i],negative[j]));
+      std::pair<UInt_t,UInt_t> p;
+      if (l.pt[positive[i]] > l.pt[negative[j]]) {
+	p = std::make_pair(positive[i],negative[j]);
+      } else {
+	p = std::make_pair(negative[j],positive[i]);
+      }
+      couples.emplace_back(p);
     }
   }
 
