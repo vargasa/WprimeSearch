@@ -66,6 +66,10 @@ PreSelector::PreSelector(TTree *)
 #endif
   HCutFlow = 0;
 
+  HPtl1 = 0;
+  HPtl2 = 0;
+  HPtlead = 0;
+
   HRunLumi=0;
   HRun = 0;
   HLumi = 0;
@@ -104,7 +108,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMetC = new TH1F("HMetC","",MetBins,MinMet,MaxMet);
   HMetD = new TH1F("HMetD","",MetBins,MinMet,MaxMet);
 
-  HPairEtaPhi = new TH1F("HPairEtaPhi","AngularDistance",
+  HPairEtaPhi = new TH1F("HPairEtaPhi","Distance in EtaPhi",
                          100,0.,TMath::Pi());
   fOutput->Add(HPairEtaPhi);
 
@@ -271,6 +275,22 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HRun);
   fOutput->Add(HLumi);
 
+  HPtl1 = new TH1F("HPtl1","Z Leading lepton Pt",
+                   MetBins,MinMet,MaxMet);
+  fOutput->Add(HPtl1);
+
+  HPtl2 = new TH1F("HPtl2","Z Subleading lepton Pt",
+                   MetBins,MinMet,MaxMet);
+  fOutput->Add(HPtl2);
+
+  HPtlead = new TH1F("HPtlead","W lepton pt",
+                     MetBins,MinMet,MaxMet);
+  fOutput->Add(HPtlead);
+
+  HMetPt = new TH1F("HMetPt","MET Pt",
+                    MetBins,MinMet,MaxMet);
+  fOutput->Add(HMetPt);
+
 }
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
@@ -347,9 +367,9 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(Leptons l, std
     for(UInt_t j=0; j< negative.size();j++){
       std::pair<UInt_t,UInt_t> p;
       if (l.pt[positive[i]] > l.pt[negative[j]]) {
-	p = std::make_pair(positive[i],negative[j]);
+        p = std::make_pair(positive[i],negative[j]);
       } else {
-	p = std::make_pair(negative[j],positive[i]);
+        p = std::make_pair(negative[j],positive[i]);
       }
       couples.emplace_back(p);
     }
@@ -517,9 +537,16 @@ Float_t PreSelector::GetEtaPhiDistance(Float_t eta1, Float_t phi1,
   return sqrt(pow(eta2-eta1,2.)-pow(phi2-phi1,2.));
 }
 
+void PreSelector::FillCommon(Leptons lz, Leptons lw){
+  HPtl1->Fill(lz.pt[l1]);
+  HPtl2->Fill(lz.pt[l2]);
+  HPtlead->Fill(lw.pt[lead]);
+  HPairEtaPhi->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
+                                      lz.eta[l2],lz.phi[l2]));
+  HMetPt->Fill(*MET_pt);
+}
+
 void PreSelector::FillA(){
-  HPairEtaPhi->Fill(GetEtaPhiDistance(Electron_eta[l1],Electron_phi[l1],
-                                       Electron_eta[l2],Electron_phi[l2]));
   HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
   HMetA->Fill(*MET_pt);
   HnElA->Fill(GoodElectron.size());
@@ -549,8 +576,6 @@ void PreSelector::FillA(){
 }
 
 void PreSelector::FillB(){
-  HPairEtaPhi->Fill(GetEtaPhiDistance(Electron_eta[l1],Electron_phi[l1],
-                                       Electron_eta[l2],Electron_phi[l2]));
   HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
   HMetB->Fill(*MET_pt);
   HnElB->Fill(GoodElectron.size());
@@ -580,8 +605,6 @@ void PreSelector::FillB(){
 }
 
 void PreSelector::FillC(){
-  HPairEtaPhi->Fill(GetEtaPhiDistance(Muon_eta[l1],Muon_phi[l1],
-                                       Muon_eta[l2],Muon_phi[l2]));
   HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
   HMetC->Fill(*MET_pt);
   HnElC->Fill(GoodElectron.size());
@@ -611,8 +634,7 @@ void PreSelector::FillC(){
 }
 
 void PreSelector::FillD(){
-  HPairEtaPhi->Fill(GetEtaPhiDistance(Muon_eta[l1],Muon_phi[l1],
-                                       Muon_eta[l2],Muon_phi[l2]));
+
   HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
   HMetD->Fill(*MET_pt);
   HnElD->Fill(GoodElectron.size());
@@ -805,6 +827,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     if(IsD){
       if(Muon_pt[lead]>MinRemPt){
         if(Muon_highPtId[lead] == 2){
+          FillCommon(Mus,Mus);
           FillD();
         } else {
           IsD = false;
@@ -819,6 +842,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     // 1e2Mu
     if(IsC){
       if(Electron_pt[lead]>MinRemPt){
+        FillCommon(Mus,Els);
         FillC();
       } else {
         HCutFlow->Fill("Fail1e2muMinRemPt",w);
@@ -859,6 +883,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     if(IsB){
       if(Muon_pt[lead]>MinRemPt){
         if(Muon_highPtId[lead] == 2){
+          FillCommon(Els,Mus);
           FillB();
         } else {
           IsB = false;
@@ -873,6 +898,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     //3e0mu
     if(IsA){
       if(Electron_pt[lead]>MinRemPt){
+        FillCommon(Els,Els);
         FillA();
       } else {
         IsA = false;
@@ -889,6 +915,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
+  gStyle->SetOptStat(1111111);
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
@@ -896,23 +923,40 @@ void PreSelector::Terminate() {
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
 
+  ch->cd();
   HCutFlow->LabelsDeflate();
   gPad->SetLogy();
   HCutFlow->Draw("HIST TEXT45");
   ch->Print(Form("%s_HCutFlow.png",SampleName.Data()));
-  gPad->SetLogy(kFALSE);
   HCutFlow->Write("HCutFlow");
 
   ch->Clear();
   HPairEtaPhi->Draw("HIST");
+  HPairEtaPhi->Write();
   ch->Print(Form("%s_HPairEtaPhi.png",SampleName.Data()));
+
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HPtl1->Draw("HIST");
+  HPtl1->Write();
+  ch->cd(2);
+  HPtl2->Draw("HIST");
+  HPtl2->Write();
+  ch->cd(3);
+  HPtlead->Draw("HIST");
+  HPtlead->Write();
+  ch->cd(4);
+  HMetPt->Draw("HIST");
+  HMetPt->Write();
+  ch->Print(Form("%s_LeptonsPt.png",SampleName.Data()));
 
   THStack *hsA = new THStack("hsA","");
   THStack *hsB = new THStack("hsB","");
   THStack *hsC = new THStack("hsC","");
   THStack *hsD = new THStack("hsD","");
 
-  gStyle->SetOptStat(1111111);
+
   auto SetStyle = [](TH1 *h) {
     gPad->SetGrid();
     gPad->SetLogy();
@@ -920,6 +964,7 @@ void PreSelector::Terminate() {
     h->SetFillStyle(4050);
   };
 
+  ch->Clear();
   ch->Divide(2,2);
 
   ch->cd(1);

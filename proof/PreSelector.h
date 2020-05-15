@@ -194,6 +194,11 @@ class PreSelector : public TSelector {
   TH2I *HNLepC;
   TH2I *HNLepD;
 
+  TH1F *HPtl1;
+  TH1F *HPtl2;
+  TH1F *HPtlead;
+  TH1F *HMetPt;
+
   TH2I *HNEl;
   TH2I *HNMu;
 
@@ -234,6 +239,7 @@ class PreSelector : public TSelector {
                      Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t);
   Double_t MassRecoW(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
+  void FillCommon(Leptons lz, Leptons lw);
   void FillA();
   void FillB();
   void FillC();
