@@ -99,4 +99,41 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       c1->Divide(2,2);
     }
   }
+
+  std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
+    std::make_pair("HPtl1","Z Lepton highest pt;Pt;Normalized Events"),
+    std::make_pair("HPtl2","Z Second Lepton pt;Pt;Normalized Events"),
+    std::make_pair("HPtlead","W Lepton Pt;Pt;Normalized Events"),
+    std::make_pair("HMetPt","Met Pt;Pt;Normalized Events"),
+  };
+
+  c1->Clear();
+  c1->Divide(2,2);
+  UInt_t canvasPos = 1;
+  gStyle->SetOptStat(0);
+
+  for(auto hp: NonStackedHistos){
+    auto legend = new TLegend(0.11, 0.7, .89, .89);
+    legend->SetNColumns(3);
+    for(auto BGN: BgNames){
+      Bool_t IsSignal = std::get<4>(BGN);
+      c1->cd(canvasPos);
+      std::string folder = std::get<1>(BGN);
+      std::string histoName = hp.first;
+      auto h = (TH1F*)f1->Get(Form("%s/%s",folder.c_str(),histoName.c_str()));
+      float_t maxBinContent= h->GetBinContent(h->GetMaximumBin());
+      legend->AddEntry(h,(std::get<0>(BGN)).c_str(), "L");
+      legend->SetBorderSize(0);
+      h->SetTitle(hp.second.c_str());
+      h->SetLineColor(std::get<2>(BGN));
+      h->GetXaxis()->SetRangeUser(0., 800.);
+      if(IsSignal) h->SetLineWidth(2);
+      h->Scale(1./maxBinContent);
+      h->SetMaximum(1.5);
+      h->Draw("HIST SAME");
+    }
+    legend->Draw();
+    canvasPos++;
+  }
+  c1->Print("Stack_LeptonsPt.png");
 }
