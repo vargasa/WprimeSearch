@@ -65,26 +65,15 @@ Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-   fReader.SetEntry(entry);
-
+  this->ReadEntry(entry,2016);
+  
    if (!IsGold(*run,*luminosityBlock)) return kFALSE;
 
    // Event Selection
-   if ( ((*HLT_DoubleEle33_CaloIdL_MW||*HLT_Ele115_CaloIdVT_GsfTrkIdT) ||
-   	 (*HLT_IsoMu20||*HLT_Mu55)) &&
-        *Flag_HBHENoiseFilter &&
-        *Flag_HBHENoiseIsoFilter &&
-        *Flag_EcalDeadCellTriggerPrimitiveFilter &&
-        *Flag_globalTightHalo2016Filter &&
-        *Flag_BadPFMuonSummer16Filter &&
-        *PV_npvsGood > 0 &&
-        *MET_pt > 30
-        ) {
-
+   if ( (this->ElectronTest() || this->MuonTest()) && *MET_pt > 30 ) {
      EventID = GetEventIndex(*run,*event);
      eTree->Fill();
      EntryList->Enter(entry);
-       
    }
    return kTRUE;
 }
