@@ -476,13 +476,6 @@ ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Floa
 
 }
 
-#ifdef CMSDATA
-Long64_t PreSelector::GetEventIndex(UInt_t run,ULong64_t event) {
-  // run < 285500 && event < 5e9
-  return std::stol(std::to_string(run)+std::to_string(event));
-}
-#endif
-
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEtaPhiMVector lep,
                                                             Float_t MetPt, Float_t MetPhi, Float_t Wmt){
   const Float_t Mw = 80.379;
@@ -541,7 +534,7 @@ std::vector<Float_t> PreSelector::GetWWZWTMass(Float_t lPt, Float_t lEta, Float_
 
 Float_t PreSelector::GetEtaPhiDistance(Float_t eta1, Float_t phi1,
                                         Float_t eta2, Float_t phi2){
-  return sqrt(pow(eta2-eta1,2.)-pow(phi2-phi1,2.));
+  return sqrt(pow(eta2-eta1,2.)+pow(phi2-phi1,2.));
 }
 
 void PreSelector::FillCommon(Leptons lz, Leptons lw){
@@ -685,7 +678,7 @@ Bool_t PreSelector::CheckMuonPair(std::pair<UInt_t,UInt_t> p){
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
-  this->ReadEntry(entry,2016);
+  this->ReadEntry(entry,Year);
 
   HCutFlow->Fill("NoCuts",w);
 
