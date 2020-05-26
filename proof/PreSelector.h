@@ -202,6 +202,7 @@ class PreSelector : public TSelector {
   TH2I *HNEl;
   TH2I *HNMu;
 
+  Int_t Year;
   UInt_t l1, l2, lead; // Lepton pair index and lead remaining
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;

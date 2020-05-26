@@ -95,6 +95,11 @@ void PreSelector::Begin(TTree *tree) {
     SampleName = p->GetTitle();
   }
 
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+  }
+
 }
 
 void PreSelector::SlaveBegin(TTree *tree) {

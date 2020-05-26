@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 
-Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4){
+Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 2016){
 
   TChain* fChain = new TChain("Events");
 
@@ -12,6 +12,7 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4){
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
   fProof->SetProgressDialog(false);
+  fProof->SetParameter("Year",year);
   fProof->SetParameter("SampleName",rootfile.Data());
 
   fChain->SetProof();
