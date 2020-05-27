@@ -24,6 +24,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
                     kBlack,0,true,3.196e02)
   };
 
+
+  Int_t WpMass;
+  std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
+  std::smatch sm;
+  if(std::regex_search(std::get<1>(BgNames[BgNames.size()-1]),sm,rexp1)){
+    WpMass = std::stoi(sm[3]);
+  }
+
   std::string DataName = "DoubleEGSingleElectronSingleMuon";
 
   auto f1 = TFile::Open(FileName.c_str());
@@ -94,7 +102,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     ++j;
     legend->Draw();
     if( r+1 == 4 ){
-      c1->Print(Form("Stack_%s.png",(std::get<0>(HN)).c_str()));
+      c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(HN)).c_str(),WpMass));
       c1->Clear();
       c1->Divide(2,2);
     }
@@ -105,6 +113,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_pair("HPtl2","Z Second Lepton pt;Pt;Normalized Events"),
     std::make_pair("HPtlead","W Lepton Pt;Pt;Normalized Events"),
     std::make_pair("HMetPt","Met Pt;Pt;Normalized Events"),
+    /*Next series*/
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
   };
 
   c1->Clear();
@@ -112,12 +125,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   UInt_t canvasPos = 1;
   gStyle->SetOptStat(0);
 
+  j = 1;
   for(auto hp: NonStackedHistos){
+    Int_t r = (j-1)%4;
     auto legend = new TLegend(0.11, 0.7, .89, .89);
     legend->SetNColumns(3);
+    c1->cd(r+1);
     for(auto BGN: BgNames){
       Bool_t IsSignal = std::get<4>(BGN);
-      c1->cd(canvasPos);
       std::string folder = std::get<1>(BGN);
       std::string histoName = hp.first;
       auto h = (TH1F*)f1->Get(Form("%s/%s",folder.c_str(),histoName.c_str()));
@@ -132,8 +147,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->SetMaximum(1.5);
       h->Draw("HIST SAME");
     }
+    ++j;
     legend->Draw();
-    canvasPos++;
+    if( r+1 == 4 ){
+      c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(hp)).c_str(),WpMass));
+      c1->Clear();
+      c1->Divide(2,2);
+    }
   }
-  c1->Print("Stack_LeptonsPt.png");
 }
