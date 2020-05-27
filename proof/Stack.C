@@ -19,18 +19,24 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
                     kRed+3,FillStyle,false,7.564e01),
     std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",
-                    kBlue,FillStyle,false,1.256),
-    std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",
-                    kBlack,0,true,3.196e02)
+                    kBlue,FillStyle,false,1.256)
   };
 
-
-  Int_t WpMass;
-  std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
-  std::smatch sm;
-  if(std::regex_search(std::get<1>(BgNames[BgNames.size()-1]),sm,rexp1)){
-    WpMass = std::stoi(sm[3]);
-  }
+  std::vector<std::tuple<std::string,std::string,Float_t>> SignalSamples = {
+    std::make_tuple("W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",3.19e2),
+    std::make_tuple("W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",3.19e2)
+  };
 
   std::string DataName = "DoubleEGSingleElectronSingleMuon";
 
@@ -58,9 +64,32 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count")
   };
 
-  auto c1 = new TCanvas("cs","cs",10,10,1196,772);
-  c1->Divide(2,2);
+  std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
+    std::make_pair("HPtl1","Z Lepton highest pt;Pt;Normalized Events"),
+    std::make_pair("HPtl2","Z Second Lepton pt;Pt;Normalized Events"),
+    std::make_pair("HPtlead","W Lepton Pt;Pt;Normalized Events"),
+    std::make_pair("HMetPt","Met Pt;Pt;Normalized Events"),
+    /*Next series*/
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+  };
 
+
+  auto c1 = new TCanvas("cs","cs",10,10,1196,772);
+
+  for (auto signal: SignalSamples) {
+
+  Int_t WpMass;
+  std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
+  std::smatch sm;
+  if(std::regex_search(std::get<1>(signal),sm,rexp1)){
+    WpMass = std::stoi(sm[3]);
+  }
+
+  c1->Clear();
+  c1->Divide(2,2);
   Int_t j = 1;
   for (auto HN : HistNames){
     Int_t r = (j-1)%4;
@@ -72,7 +101,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     auto h = (TH1F*)f1->Get(Form("%s/%s",DataName.c_str(),(std::get<0>(HN).c_str())));
     hsdata->Add(h);
     for (auto BGN: BgNames) {
-      Bool_t IsSignal = std::get<4>(BGN);
       auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
       auto hCutFlow =
         (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
@@ -81,11 +109,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->SetTitle((std::get<0>(BGN)).c_str());
       h->SetFillColor(std::get<2>(BGN));
       h->Scale(luminosity*std::get<5>(BGN)*pbFactor/nEvents);
-      if(!IsSignal) h->SetLineWidth(0);
+      h->SetLineWidth(0);
       hs->Add(h);
-      legend->AddEntry(h,(std::get<0>(BGN)).c_str(),IsSignal? "L":"F");
+      legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
     }
-    hs->SetTitle((std::get<1>(HN)).c_str());
+    auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(HN).c_str())));
+
+    auto hCutFlow =
+      (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
+    Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
+    hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
+    legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
+    hs->Add(hsig);
+    hs->SetTitle((std::get<0>(HN)).c_str());
+
     gPad->SetLogy();
     gPad->SetTickx();
     gPad->SetTicky();
@@ -107,18 +144,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       c1->Divide(2,2);
     }
   }
-
-  std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
-    std::make_pair("HPtl1","Z Lepton highest pt;Pt;Normalized Events"),
-    std::make_pair("HPtl2","Z Second Lepton pt;Pt;Normalized Events"),
-    std::make_pair("HPtlead","W Lepton Pt;Pt;Normalized Events"),
-    std::make_pair("HMetPt","Met Pt;Pt;Normalized Events"),
-    /*Next series*/
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
-  };
 
   c1->Clear();
   c1->Divide(2,2);
@@ -142,11 +167,17 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->SetTitle(hp.second.c_str());
       h->SetLineColor(std::get<2>(BGN));
       h->GetXaxis()->SetRangeUser(0., 800.);
-      if(IsSignal) h->SetLineWidth(2);
       h->Scale(1./maxBinContent);
       h->SetMaximum(1.5);
       h->Draw("HIST SAME");
     }
+
+    auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(hp).c_str())));
+    hsig->SetLineWidth(2);
+    float_t maxBinContent= hsig->GetBinContent(hsig->GetMaximumBin());
+    hsig->Scale(1./maxBinContent);
+    hsig->Draw("HIST SAME");
+
     ++j;
     legend->Draw();
     if( r+1 == 4 ){
@@ -155,4 +186,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       c1->Divide(2,2);
     }
   }
+  }
+
+
 }
