@@ -5,21 +5,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   const Float_t luminosity = 35.9e15; /* 35.9fb^-1 2016 */
   const Float_t pbFactor = 1e-12; /*pico prefix*/
 
-  const Int_t FillStyle = 1001;
-  // ShortName, DasName, kColor, Style, isSignal?, XSection, nEvents
-  std::vector<std::tuple<std::string,std::string,Int_t,Int_t,Bool_t,Float_t>> BgNames = {
+  // ShortName, DasName, kColor, Style, XSection, nEvents
+  std::vector<std::tuple<std::string,std::string,Int_t,Float_t>> BgNames = {
     std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-                    kOrange,FillStyle,false,4.102),
+                    kOrange,4.102),
     std::make_tuple("DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,FillStyle,false,5.795e02),
+                    kOrange+7,5.795e02),
     std::make_tuple("DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,FillStyle,false,1.030e+02),
+                    kOrange+7,1.030e+02),
     std::make_tuple("t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kBlue-2,FillStyle,false,2.412e02),
+                    kBlue-2,2.412e02),
     std::make_tuple("Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-                    kRed+3,FillStyle,false,7.564e01),
+                    kRed+3,7.564e01),
     std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",
-                    kBlue,FillStyle,false,1.256)
+                    kBlue,1.256)
   };
 
   std::vector<std::tuple<std::string,std::string,Float_t>> SignalSamples = {
@@ -37,8 +36,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",3.19e2),
     std::make_tuple("W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",3.19e2)
   };
-
-  std::string DataName = "DoubleEGSingleElectronSingleMuon";
 
   auto f1 = TFile::Open(FileName.c_str());
 
@@ -81,112 +78,105 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   for (auto signal: SignalSamples) {
 
-  Int_t WpMass;
-  std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
-  std::smatch sm;
-  if(std::regex_search(std::get<1>(signal),sm,rexp1)){
-    WpMass = std::stoi(sm[3]);
-  }
+    Int_t WpMass;
+    std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
+    std::smatch sm;
+    if(std::regex_search(std::get<1>(signal),sm,rexp1)){
+      WpMass = std::stoi(sm[3]);
+    }
 
-  c1->Clear();
-  c1->Divide(2,2);
-  Int_t j = 1;
-  for (auto HN : HistNames){
-    Int_t r = (j-1)%4;
-    c1->cd(r+1);
-    THStack *hs = new THStack("hs","");
-    THStack *hsdata = new THStack("hsdata","");
-    auto legend = new TLegend(0.3, 0.66, .89, .89);
-    legend->SetNColumns(2);
-    auto h = (TH1F*)f1->Get(Form("%s/%s",DataName.c_str(),(std::get<0>(HN).c_str())));
-    hsdata->Add(h);
-    for (auto BGN: BgNames) {
-      auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
+    c1->Clear();
+    c1->Divide(2,2);
+    Int_t j = 1;
+    for (auto HN : HistNames) {
+      Int_t r = (j-1)%4;
+      c1->cd(r+1);
+      THStack *hs = new THStack("hs","");
+      THStack *hsdata = new THStack("hsdata","");
+      auto legend = new TLegend(0.3, 0.66, .89, .89);
+      legend->SetNColumns(2);
+      for (auto BGN: BgNames) {
+        auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
+        auto hCutFlow =
+          (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
+        Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
+        h->SetFillStyle(1001);
+        h->SetTitle((std::get<0>(BGN)).c_str());
+        h->SetFillColor(std::get<2>(BGN));
+        h->Scale(luminosity*std::get<3>(BGN)*pbFactor/nEvents);
+        h->SetLineWidth(0);
+        hs->Add(h);
+        legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
+      }
+      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(HN).c_str())));
+
       auto hCutFlow =
-        (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
+        (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
       Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
-      h->SetFillStyle(std::get<3>(BGN));
-      h->SetTitle((std::get<0>(BGN)).c_str());
-      h->SetFillColor(std::get<2>(BGN));
-      h->Scale(luminosity*std::get<5>(BGN)*pbFactor/nEvents);
-      h->SetLineWidth(0);
-      hs->Add(h);
-      legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
-    }
-    auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(HN).c_str())));
+      hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
+      legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
+      hs->Add(hsig);
+      hs->SetTitle((std::get<0>(HN)).c_str());
 
-    auto hCutFlow =
-      (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
-    Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
-    hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
-    legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
-    hs->Add(hsig);
-    hs->SetTitle((std::get<0>(HN)).c_str());
-
-    gPad->SetLogy();
-    gPad->SetTickx();
-    gPad->SetTicky();
-    TH1 *last = (TH1*)hs->GetStack()->Last();
-    const Float_t LegendSpace = 10.; // Log Scale ;/
-    const Float_t MaxY = last->GetBinContent(last->GetMaximumBin()) * LegendSpace;
-    legend->SetBorderSize(0);
-    hs->SetMaximum(MaxY);
-    hs->Draw("HIST");
-    auto hdata = (TH1F*)hsdata->GetStack()->Last();
-    hdata->SetMarkerStyle(kFullCircle);
-    hdata->Draw("HIST SAME P");
-
-    ++j;
-    legend->Draw();
-    if( r+1 == 4 ){
-      c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(HN)).c_str(),WpMass));
-      c1->Clear();
-      c1->Divide(2,2);
-    }
-  }
-
-  c1->Clear();
-  c1->Divide(2,2);
-  UInt_t canvasPos = 1;
-  gStyle->SetOptStat(0);
-
-  j = 1;
-  for(auto hp: NonStackedHistos){
-    Int_t r = (j-1)%4;
-    auto legend = new TLegend(0.11, 0.7, .89, .89);
-    legend->SetNColumns(3);
-    c1->cd(r+1);
-    for(auto BGN: BgNames){
-      Bool_t IsSignal = std::get<4>(BGN);
-      std::string folder = std::get<1>(BGN);
-      std::string histoName = hp.first;
-      auto h = (TH1F*)f1->Get(Form("%s/%s",folder.c_str(),histoName.c_str()));
-      float_t maxBinContent= h->GetBinContent(h->GetMaximumBin());
-      legend->AddEntry(h,(std::get<0>(BGN)).c_str(), "L");
+      gPad->SetLogy();
+      gPad->SetTickx();
+      gPad->SetTicky();
+      TH1 *last = (TH1*)hs->GetStack()->Last();
+      const Float_t LegendSpace = 10.; // Log Scale ;/
+      const Float_t MaxY = last->GetBinContent(last->GetMaximumBin()) * LegendSpace;
       legend->SetBorderSize(0);
-      h->SetTitle(hp.second.c_str());
-      h->SetLineColor(std::get<2>(BGN));
-      h->GetXaxis()->SetRangeUser(0., 800.);
-      h->Scale(1./maxBinContent);
-      h->SetMaximum(1.5);
-      h->Draw("HIST SAME");
+      hs->SetMaximum(MaxY);
+      hs->Draw("HIST");
+
+      ++j;
+      legend->Draw();
+      if( r+1 == 4 ){
+        c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(HN)).c_str(),WpMass));
+        c1->Clear();
+        c1->Divide(2,2);
+      }
     }
 
-    auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(hp).c_str())));
-    hsig->SetLineWidth(2);
-    float_t maxBinContent= hsig->GetBinContent(hsig->GetMaximumBin());
-    hsig->Scale(1./maxBinContent);
-    hsig->Draw("HIST SAME");
+    c1->Clear();
+    c1->Divide(2,2);
+    UInt_t canvasPos = 1;
+    gStyle->SetOptStat(0);
 
-    ++j;
-    legend->Draw();
-    if( r+1 == 4 ){
-      c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(hp)).c_str(),WpMass));
-      c1->Clear();
-      c1->Divide(2,2);
+    j = 1;
+    for(auto hp: NonStackedHistos){
+      Int_t r = (j-1)%4;
+      auto legend = new TLegend(0.11, 0.7, .89, .89);
+      legend->SetNColumns(3);
+      c1->cd(r+1);
+      for(auto BGN: BgNames){
+        std::string folder = std::get<1>(BGN);
+        std::string histoName = hp.first;
+        auto h = (TH1F*)f1->Get(Form("%s/%s",folder.c_str(),histoName.c_str()));
+        float_t maxBinContent= h->GetBinContent(h->GetMaximumBin());
+        legend->AddEntry(h,(std::get<0>(BGN)).c_str(), "L");
+        legend->SetBorderSize(0);
+        h->SetTitle(hp.second.c_str());
+        h->SetLineColor(std::get<2>(BGN));
+        h->GetXaxis()->SetRangeUser(0., 800.);
+        h->Scale(1./maxBinContent);
+        h->SetMaximum(1.5);
+        h->Draw("HIST SAME");
+      }
+
+      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(hp).c_str())));
+      hsig->SetLineWidth(2);
+      float_t maxBinContent= hsig->GetBinContent(hsig->GetMaximumBin());
+      hsig->Scale(1./maxBinContent);
+      hsig->Draw("HIST SAME");
+
+      ++j;
+      legend->Draw();
+      if( r+1 == 4 ){
+        c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(hp)).c_str(),WpMass));
+        c1->Clear();
+        c1->Divide(2,2);
+      }
     }
   }
-  }
-
 
 }
