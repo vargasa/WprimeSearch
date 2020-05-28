@@ -138,7 +138,9 @@ class PreSelector : public TSelector, EventSelection {
   TH1F *HMassWZD;
 
   //Angular
-  TH1F *HPairEtaPhi;
+  TH1F *HDistl1l2;
+  TH1F *HDistl1l3;
+  TH1F *HDistl2l3;
 
   TH1I *HOverlap;
 
@@ -170,14 +172,14 @@ class PreSelector : public TSelector, EventSelection {
 
   TH1F *HPtl1;
   TH1F *HPtl2;
-  TH1F *HPtlead;
+  TH1F *HPtl3;
   TH1F *HMetPt;
 
   TH2I *HNEl;
   TH2I *HNMu;
 
   Int_t Year;
-  UInt_t l1, l2, lead; // Lepton pair index and lead remaining
+  UInt_t l1, l2, l3; // Lepton pair index and lead remaining
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;

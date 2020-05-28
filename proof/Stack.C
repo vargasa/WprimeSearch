@@ -64,13 +64,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
     std::make_pair("HPtl1","Z Lepton highest pt;Pt;Normalized Events"),
     std::make_pair("HPtl2","Z Second Lepton pt;Pt;Normalized Events"),
-    std::make_pair("HPtlead","W Lepton Pt;Pt;Normalized Events"),
+    std::make_pair("HPtl3","W Lepton Pt;Pt;Normalized Events"),
     std::make_pair("HMetPt","Met Pt;Pt;Normalized Events"),
     /*Next series*/
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
-    std::make_pair("HPairEtaPhi","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HDistl1l2","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"),
+    std::make_pair("HDistl1l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"),
+    std::make_pair("HDistl2l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"),
+    std::make_pair("HDistl1l2","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
   };
 
 
@@ -164,10 +164,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
 
       auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(hp).c_str())));
+      hsig->SetLineColor(kBlack);
       hsig->SetLineWidth(2);
       float_t maxBinContent= hsig->GetBinContent(hsig->GetMaximumBin());
       hsig->Scale(1./maxBinContent);
       hsig->Draw("HIST SAME");
+      legend->AddEntry(hsig,(std::get<0>(signal)).c_str(), "L");
 
       ++j;
       legend->Draw();

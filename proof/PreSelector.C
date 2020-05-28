@@ -45,7 +45,9 @@ PreSelector::PreSelector(TTree *)
 
   HOverlap=0;
 
-  HPairEtaPhi=0;
+  HDistl1l2=0;
+  HDistl1l3=0;
+  HDistl2l3=0;
 
 #ifndef CMSDATA
 
@@ -68,7 +70,7 @@ PreSelector::PreSelector(TTree *)
 
   HPtl1 = 0;
   HPtl2 = 0;
-  HPtlead = 0;
+  HPtl3 = 0;
 
   HRunLumi=0;
   HRun = 0;
@@ -113,9 +115,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMetC = new TH1F("HMetC","",MetBins,MinMet,MaxMet);
   HMetD = new TH1F("HMetD","",MetBins,MinMet,MaxMet);
 
-  HPairEtaPhi = new TH1F("HPairEtaPhi","Distance in EtaPhi",
-                         100,0.,TMath::Pi());
-  fOutput->Add(HPairEtaPhi);
+  const Int_t DistBins = 100;
+  const Float_t MaxDist = 2.01*TMath::Pi();
+
+  HDistl1l2 = new TH1F("HDistl1l2","Distance in EtaPhi l1,l2",DistBins,0.,MaxDist);
+  fOutput->Add(HDistl1l2);
+  HDistl1l3 = new TH1F("HDistl1l3","Eta-Phi Distance l1,l3",DistBins,0.,MaxDist);
+  fOutput->Add(HDistl1l3);
+  HDistl2l3 = new TH1F("HFistl2l3","Eta-Phi Distance l2,l3",DistBins,0.,MaxDist);
+  fOutput->Add(HDistl2l3);
 
   const Double_t MaxnLep = 7;
   const Double_t MinnLep = 0;
@@ -288,9 +296,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
                    MetBins,MinMet,MaxMet);
   fOutput->Add(HPtl2);
 
-  HPtlead = new TH1F("HPtlead","W lepton pt",
+  HPtl3 = new TH1F("HPtl3","W lepton pt",
                      MetBins,MinMet,MaxMet);
-  fOutput->Add(HPtlead);
+  fOutput->Add(HPtl3);
 
   HMetPt = new TH1F("HMetPt","MET Pt",
                     MetBins,MinMet,MaxMet);
@@ -540,9 +548,13 @@ Float_t PreSelector::GetEtaPhiDistance(Float_t eta1, Float_t phi1,
 void PreSelector::FillCommon(Leptons lz, Leptons lw){
   HPtl1->Fill(lz.pt[l1]);
   HPtl2->Fill(lz.pt[l2]);
-  HPtlead->Fill(lw.pt[lead]);
-  HPairEtaPhi->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
+  HPtl3->Fill(lw.pt[l3]);
+  HDistl1l2->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
                                       lz.eta[l2],lz.phi[l2]));
+  HDistl1l3->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
+                                      lw.eta[l3],lw.phi[l3]));
+  HDistl2l3->Fill(GetEtaPhiDistance(lz.eta[l2],lz.phi[l2],
+                                      lw.eta[l3],lw.phi[l3]));
   HMetPt->Fill(*MET_pt);
 }
 
@@ -553,8 +565,8 @@ void PreSelector::FillA(){
   HnMuA->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Electron_pt[lead], Electron_eta[lead],
-                   Electron_phi[lead], Electrons::mass);
+    = GetWWZWTMass(Electron_pt[l3], Electron_eta[l3],
+                   Electron_phi[l3], Electrons::mass);
 
   HMassWA->Fill(wwzm[0]);
   HMassWZA->Fill(wwzm[1]);
@@ -564,14 +576,14 @@ void PreSelector::FillA(){
 #ifndef CMSDATA
   HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
   HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
-  HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
+  HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]),w);
 
   HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
                                        Electron_pdgId[l1]).second),w);
   HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
                                        Electron_pdgId[l2]).second),w);
-  HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
-                                       Electron_pdgId[lead]).second),w);
+  HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[l3],
+                                       Electron_pdgId[l3]).second),w);
 #endif
 }
 
@@ -582,8 +594,8 @@ void PreSelector::FillB(){
   HnMuB->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Muon_pt[lead],Muon_eta[lead],
-                   Muon_phi[lead],Muons::mass);
+    = GetWWZWTMass(Muon_pt[l3],Muon_eta[l3],
+                   Muon_phi[l3],Muons::mass);
 
   HMassWB->Fill(wwzm[0]);
   HMassWZB->Fill(wwzm[1]);
@@ -593,14 +605,14 @@ void PreSelector::FillB(){
 #ifndef CMSDATA
   HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
   HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
-  HGenPartFB->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
+  HGenPartFB->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]),w);
 
   HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
                                        Electron_pdgId[l1]).second),w);
   HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
                                        Electron_pdgId[l2]).second),w);
-  HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
-                                       Muon_pdgId[lead]).second),w);
+  HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[l3],
+                                       Muon_pdgId[l3]).second),w);
 #endif
 }
 
@@ -611,8 +623,8 @@ void PreSelector::FillC(){
   HnMuC->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Electron_pt[lead],Electron_eta[lead],
-                   Electron_phi[lead],Electrons::mass);
+    = GetWWZWTMass(Electron_pt[l3],Electron_eta[l3],
+                   Electron_phi[l3],Electrons::mass);
 
   HMassWC->Fill(wwzm[0]);
   HMassWZC->Fill(wwzm[1]);
@@ -622,14 +634,14 @@ void PreSelector::FillC(){
 #ifndef CMSDATA
   HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
   HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
-  HGenPartFC->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[lead]]),w);
+  HGenPartFC->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]),w);
 
   HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
                                        Muon_pdgId[l1]).second),w);
   HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
                                        Muon_pdgId[l2]).second),w);
-  HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[lead],
-                                       Electron_pdgId[lead]).second),w);
+  HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[l3],
+                                       Electron_pdgId[l3]).second),w);
 #endif
 }
 
@@ -641,8 +653,8 @@ void PreSelector::FillD(){
   HnMuD->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Muon_pt[lead],Muon_eta[lead],
-                   Muon_phi[lead],Muons::mass);
+    = GetWWZWTMass(Muon_pt[l3],Muon_eta[l3],
+                   Muon_phi[l3],Muons::mass);
 
   HMassWD->Fill(wwzm[0]);
   HMassWZD->Fill(wwzm[1]);
@@ -652,14 +664,14 @@ void PreSelector::FillD(){
 #ifndef CMSDATA
   HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
   HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
-  HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[lead]]),w);
+  HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]),w);
 
   HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
                                        Muon_pdgId[l1]).second),w);
   HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
                                        Muon_pdgId[l2]).second),w);
-  HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[lead],
-                                       Muon_pdgId[lead]).second),w);
+  HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[l3],
+                                       Muon_pdgId[l3]).second),w);
 #endif
 }
 
@@ -803,18 +815,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
       if(GoodElectron.size() > 0){
         if(Muon_pt[WCand[0]] > Electron_pt[GoodElectron[0]]){
           IsD = true;
-          lead = WCand[0];
+          l3 = WCand[0];
         } else {
           IsC = true;
-          lead = GoodElectron[0];
+          l3 = GoodElectron[0];
         }
       } else {
         IsD = true;
-        lead = WCand[0];
+        l3 = WCand[0];
       }
     } else if (GoodElectron.size()>0) {
       IsC = true;
-      lead = GoodElectron[0];
+      l3 = GoodElectron[0];
     }
 
     if (IsC) HCutFlow->Fill("IsC_",w);
@@ -822,8 +834,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 0e3mu
     if(IsD){
-      if(Muon_pt[lead]>MinRemPt){
-        if(Muon_highPtId[lead] == 2){
+      if(Muon_pt[l3]>MinRemPt){
+        if(Muon_highPtId[l3] == 2){
           FillCommon(Mus,Mus);
           FillD();
         } else {
@@ -838,7 +850,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 1e2Mu
     if(IsC){
-      if(Electron_pt[lead]>MinRemPt){
+      if(Electron_pt[l3]>MinRemPt){
         FillCommon(Mus,Els);
         FillC();
       } else {
@@ -859,18 +871,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
       if(GoodMuon.size() > 0){
         if(Muon_pt[GoodMuon[0]] > Electron_pt[WCand[0]] ){
           IsB = true;
-          lead = GoodMuon[0];
+          l3 = GoodMuon[0];
         } else {
           IsA = true;
-          lead = WCand[0];
+          l3 = WCand[0];
         }
       } else {
         IsA = true;
-        lead = WCand[0];
+        l3 = WCand[0];
       }
     } else if (GoodMuon.size()>0) {
       IsB = true;
-      lead = GoodMuon[0];
+      l3 = GoodMuon[0];
     }
 
     if (IsA) HCutFlow->Fill("IsA_",w);
@@ -878,8 +890,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 2e1mu
     if(IsB){
-      if(Muon_pt[lead]>MinRemPt){
-        if(Muon_highPtId[lead] == 2){
+      if(Muon_pt[l3]>MinRemPt){
+        if(Muon_highPtId[l3] == 2){
           FillCommon(Els,Mus);
           FillB();
         } else {
@@ -894,7 +906,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     //3e0mu
     if(IsA){
-      if(Electron_pt[lead]>MinRemPt){
+      if(Electron_pt[l3]>MinRemPt){
         FillCommon(Els,Els);
         FillA();
       } else {
@@ -928,9 +940,17 @@ void PreSelector::Terminate() {
   HCutFlow->Write("HCutFlow");
 
   ch->Clear();
-  HPairEtaPhi->Draw("HIST");
-  HPairEtaPhi->Write();
-  ch->Print(Form("%s_HPairEtaPhi.png",SampleName.Data()));
+  ch->Divide(2,2);
+  ch->cd(1);
+  HDistl1l2->Draw("HIST");
+  HDistl1l2->Write();
+  ch->cd(2);
+  HDistl1l3->Draw("HIST");
+  HDistl1l3->Write();
+  ch->cd(3);
+  HDistl2l3->Draw("Hist");
+  HDistl2l3->Write();
+  ch->Print(Form("%s_HDistLeptons.png",SampleName.Data()));
 
   ch->Clear();
   ch->Divide(2,2);
@@ -941,8 +961,8 @@ void PreSelector::Terminate() {
   HPtl2->Draw("HIST");
   HPtl2->Write();
   ch->cd(3);
-  HPtlead->Draw("HIST");
-  HPtlead->Write();
+  HPtl3->Draw("HIST");
+  HPtl3->Write();
   ch->cd(4);
   HMetPt->Draw("HIST");
   HMetPt->Write();
