@@ -829,6 +829,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodElectron[0];
     }
 
+    Bool_t ZHighPtIdCut = Muon_highPtId[l1]>=1 && Muon_highPtId[l2]>=2;
+
+    if(!ZHighPtIdCut){
+      HCutFlow->Fill("FailZHighPtIdCut",w);
+      return kFALSE;
+    }
+
     if (IsC) HCutFlow->Fill("IsC_",w);
     if (IsD) HCutFlow->Fill("IsD_",w);
 
