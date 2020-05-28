@@ -400,11 +400,12 @@ std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector:
 
   Pairs = PreSelector::GetLeptonPairs(l,GoodLepton);
 
-  if(Pairs.empty())
-    return std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>>();
-
   // ZMassDistance, ZMass, Pair
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ZMassTuple;
+
+  if(Pairs.empty())
+    return ZMassTuple;
+
   const Double_t ZNominalMass = 91.1876;
 
   for(UInt_t k = 0; k< Pairs.size(); k++){
@@ -803,6 +804,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
     lep2 = PtEtaPhiMVector(Muon_pt[l2],Muon_eta[l2],
                            Muon_phi[l2],Muons::mass);
     zb   = lep1 + lep2;
+  }
+
+  Bool_t Zl1PtCut = lep1.Pt() < 50.;
+  if(Zl1PtCut){
+    HCutFlow->Fill("FailZl1PtCut",w);
+    return kFALSE;
   }
 
   if(PairMu){
