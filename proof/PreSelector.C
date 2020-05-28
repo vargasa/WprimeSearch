@@ -43,6 +43,11 @@ PreSelector::PreSelector(TTree *)
   HMassWZC=0;
   HMassWZD=0;
 
+  HMassZWZA=0;
+  HMassZWZB=0;
+  HMassZWZC=0;
+  HMassZWZD=0;
+
   HOverlap=0;
 
   HDistl1l2=0;
@@ -183,6 +188,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMassWZB);
   fOutput->Add(HMassWZC);
   fOutput->Add(HMassWZD);
+
+  HMassZWZA = new TH2F("HMassZWZA","3e0mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
+  fOutput->Add(HMassZWZA);
+  HMassZWZB = new TH2F("HMassZWZB","2e1mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
+  fOutput->Add(HMassZWZB);
+  HMassZWZC = new TH2F("HMassZWZC","1e2mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
+  fOutput->Add(HMassZWZC);
+  HMassZWZD = new TH2F("HMassZWZD","0e3mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
+  fOutput->Add(HMassZWZD);
 
   HOverlap = new TH1I("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
@@ -569,6 +583,7 @@ void PreSelector::FillA(){
     = GetWWZWTMass(Electron_pt[l3], Electron_eta[l3],
                    Electron_phi[l3], Electrons::mass);
 
+  HMassZWZA->Fill(BestZMass,wwzm[1]);
   HMassWA->Fill(wwzm[0]);
   HMassWZA->Fill(wwzm[1]);
   HMassZA->Fill(BestZMass);
@@ -597,7 +612,8 @@ void PreSelector::FillB(){
   std::vector<Float_t> wwzm
     = GetWWZWTMass(Muon_pt[l3],Muon_eta[l3],
                    Muon_phi[l3],Muons::mass);
-
+  
+  HMassZWZB->Fill(BestZMass,wwzm[1]);
   HMassWB->Fill(wwzm[0]);
   HMassWZB->Fill(wwzm[1]);
   HMassZB->Fill(BestZMass);
@@ -626,7 +642,8 @@ void PreSelector::FillC(){
   std::vector<Float_t> wwzm
     = GetWWZWTMass(Electron_pt[l3],Electron_eta[l3],
                    Electron_phi[l3],Electrons::mass);
-
+  
+  HMassZWZC->Fill(BestZMass,wwzm[1]);
   HMassWC->Fill(wwzm[0]);
   HMassWZC->Fill(wwzm[1]);
   HMassZC->Fill(BestZMass);
@@ -657,6 +674,7 @@ void PreSelector::FillD(){
     = GetWWZWTMass(Muon_pt[l3],Muon_eta[l3],
                    Muon_phi[l3],Muons::mass);
 
+  HMassZWZD->Fill(BestZMass,wwzm[1]);
   HMassWD->Fill(wwzm[0]);
   HMassWZD->Fill(wwzm[1]);
   HMassZD->Fill(BestZMass);
@@ -959,6 +977,22 @@ void PreSelector::Terminate() {
   HCutFlow->Draw("HIST TEXT45");
   ch->Print(Form("%s_HCutFlow.png",SampleName.Data()));
   HCutFlow->Write("HCutFlow");
+
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HMassZWZA->Draw("COLZ");
+  HMassZWZA->Write();
+  ch->cd(2);
+  HMassZWZB->Draw("COLZ");
+  HMassZWZB->Write();
+  ch->cd(3);
+  HMassZWZC->Draw("COLZ");
+  HMassZWZC->Write();
+  ch->cd(4);
+  HMassZWZD->Draw("COLZ");
+  HMassZWZD->Write();
+  ch->Print(Form("%s_HMassZWZ.png",SampleName.Data()));
 
   ch->Clear();
   ch->Divide(2,2);

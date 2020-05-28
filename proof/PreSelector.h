@@ -132,6 +132,11 @@ class PreSelector : public TSelector, EventSelection {
   TH1F *HMassWC;
   TH1F *HMassWD;
 
+  TH2F *HMassZWZA;
+  TH2F *HMassZWZB;
+  TH2F *HMassZWZC;
+  TH2F *HMassZWZD;
+
   TH1F *HMassWZA;
   TH1F *HMassWZB;
   TH1F *HMassWZC;
