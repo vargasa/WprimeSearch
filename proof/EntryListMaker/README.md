@@ -3,7 +3,7 @@
 
 ```bash
 FILES=../files/2016/data/*.txt
-for i in files:
+for i in $FILES
 do
  root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
 done

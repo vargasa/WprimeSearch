@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 
-Int_t MakeEventIDTree(std::string file = "", Int_t fWorkers = 2){
+Int_t MakeEventIDTree(std::string file = "", Int_t fWorkers = 2, Int_t year = 2016){
 
   TChain* fChain = new TChain("Events");
 
@@ -24,6 +24,7 @@ Int_t MakeEventIDTree(std::string file = "", Int_t fWorkers = 2){
 
   fProof->SetProgressDialog(false);
   fProof->SetParameter("SampleName",sample.c_str());
+  fProof->SetParameter("Year", year);
 
   fChain->SetProof();
   fChain->Process("EventIDMaker.C+");

@@ -20,6 +20,7 @@ class EventIDMaker : public TSelector, EventSelection {
   Long64_t GetEventIndex(UInt_t run,ULong64_t event);
   TEntryList *EntryList;
   TTree *eTree;
+  Int_t Year;
   Long64_t EventID;
   TTree *EventIndexTree;
   std::unordered_set<Long64_t> EventIndex;

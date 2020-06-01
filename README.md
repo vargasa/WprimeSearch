@@ -52,9 +52,9 @@ Where "_all" stands for MC + Data.
 
 ### References:
 
-* (Analysis update B2G Workshop May/18/2020)[https://indico.cern.ch/event/891751/timetable/]
-* (Analysis update B2G Diboson meetings Feb/7/2020)[https://indico.cern.ch/event/886464/]
-* (8 TeV Search - EXO-12-025)[http://cms.cern.ch/iCMS/analysisadmin/cadilines?line=EXO-12-025]
-* (8 TeV Search paper)[https://arxiv.org/pdf/1407.3476.pdf]
-* (7 TeV Search - EXO-11-041)[http://cms.cern.ch/iCMS/analysisadmin/cadilines?line=EXO-11-041]
-* (7 TeV Search paper)[https://arxiv.org/pdf/1206.0433.pdf]
+* [Analysis update B2G Workshop May/18/2020](https://indico.cern.ch/event/891751/timetable/)
+* [Analysis update B2G Diboson meetings Feb/7/2020](https://indico.cern.ch/event/886464/)
+* [8 TeV Search - EXO-12-025](http://cms.cern.ch/iCMS/analysisadmin/cadilines?line=EXO-12-025)
+* [8 TeV Search paper](https://arxiv.org/pdf/1407.3476.pdf)
+* [7 TeV Search - EXO-11-041](http://cms.cern.ch/iCMS/analysisadmin/cadilines?line=EXO-11-041)
+* [7 TeV Search paper](https://arxiv.org/pdf/1206.0433.pdf)

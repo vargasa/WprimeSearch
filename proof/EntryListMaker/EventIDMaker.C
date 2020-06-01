@@ -7,6 +7,7 @@ EventIDMaker::EventIDMaker(TTree *)
 {
   eTree = 0;
   EntryList = 0;
+  EventIndexTree = 0;
 }
 
 void EventIDMaker::Init(TTree *tree)
@@ -22,6 +23,12 @@ void EventIDMaker::Begin(TTree *tree) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
     SampleName = p->GetTitle();
   }
+
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+  }
+
   if (fInput){
     EntryList = new TEntryList("EntryList","Entry Number");
     fInput->Add(EntryList);
@@ -65,23 +72,23 @@ Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-  this->ReadEntry(entry,2016);
+  this->ReadEntry(entry,Year);
   
-   if (!IsGold(*run,*luminosityBlock)) return kFALSE;
+  if (!IsGold(*run,*luminosityBlock)) return kFALSE;
 
    // Event Selection
-   if ( (this->ElectronTest() || this->MuonTest()) && *MET_pt > 30 ) {
-     EventID = GetEventIndex(*run,*event);
-     eTree->Fill();
-     EntryList->Enter(entry);
-   }
-   return kTRUE;
+  if ( (this->ElectronTest() || this->MuonTest()) && *MET_pt > 30 ) {
+    EventID = GetEventIndex(*run,*event);
+    eTree->Fill();
+    EntryList->Enter(entry);
+  }
+  return kTRUE;
 }
 
 void EventIDMaker::Terminate() {
 
   std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
-  fEventIDTree->mkdir(SampleName);
+  fEventIDTree->mkdir(Form("%s_%d",SampleName.Data(),Year));
   fEventIDTree->cd(SampleName);
   eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
   eTree->Write();
@@ -89,7 +96,7 @@ void EventIDMaker::Terminate() {
   
   EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
   std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
-  fEntryList->mkdir(SampleName);
+  fEntryList->mkdir(Form("%s_%d",SampleName.Data(),Year));
   fEntryList->cd(SampleName);
   EntryList->Write();
   fEntryList->Close();
