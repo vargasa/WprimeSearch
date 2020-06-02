@@ -21,7 +21,7 @@
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
-class PreSelector : public TSelector, EventSelection {
+class PreSelector : public EventSelection {
 
  private :
 
@@ -47,7 +47,6 @@ class PreSelector : public TSelector, EventSelection {
 
   // Muons
   // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/muons_cff.py
-  TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
   TTreeReaderArray<Float_t> Muon_pt = {fReader, "Muon_pt"};
   TTreeReaderArray<Float_t> Muon_eta = {fReader, "Muon_eta"};
   TTreeReaderArray<Float_t> Muon_mass = {fReader, "Muon_mass"};
@@ -68,7 +67,6 @@ class PreSelector : public TSelector, EventSelection {
 
   // Electrons
   // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/electrons_cff.py
-  TTreeReaderValue<UInt_t> nElectron = {fReader, "nElectron"};
   TTreeReaderArray<Float_t> Electron_pt = {fReader, "Electron_pt"};
   TTreeReaderArray<Float_t> Electron_eta = {fReader, "Electron_eta"};
   TTreeReaderArray<Float_t> Electron_mass = {fReader, "Electron_mass"};

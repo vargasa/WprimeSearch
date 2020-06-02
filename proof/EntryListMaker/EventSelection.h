@@ -27,6 +27,10 @@ class EventSelection {
   TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, "Flag_HBHENoiseIsoFilter"};
   TTreeReaderValue<Int_t> PV_npvsGood = {fReader, "PV_npvsGood"}; // total number of reconstructed primary vertices
 
+  TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
+  TTreeReaderValue<UInt_t> nElectron = {fReader, "nElectron"};
+
+  Bool_t MinLeptons;
   UInt_t Year;
   Bool_t ElectronHLTs;
   Bool_t MuonHLTs;
@@ -39,6 +43,7 @@ class EventSelection {
   Bool_t ElectronTest() { return ElectronHLTs; };
   Bool_t MuonTest() { return MuonHLTs; };
   Bool_t FlagsTest() { return Flags; };
+  Bool_t MinLeptonsTest() { return MinLeptons; };
   void ReadEntry(Long64_t entry, UInt_t year);
 
 };
@@ -46,6 +51,8 @@ class EventSelection {
 void EventSelection::ReadEntry(Long64_t entry, UInt_t year){
 
   fReader.SetEntry(entry);
+
+  MinLeptons = (*nElectron + *nMuon) > 2;
 
   if(year == 2016){
     ElectronHLTs = (*HLT_Ele27_WPLoose_Gsf||*HLT_Ele115_CaloIdVT_GsfTrkIdT||*HLT_Photon175);

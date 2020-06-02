@@ -322,7 +322,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   std::vector<UInt_t> GoodIndex = {};
-  if(!this->MuonTest()) return GoodIndex;
+  if(!MuonTest()) return GoodIndex;
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 10.;
   const Float_t MaxDxy = 0.2; // 2mm
@@ -341,7 +341,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(Electrons El){
   const Float_t MinPt = 20.;
   const Float_t MaxRelIso = 0.15;
   std::vector<UInt_t> GoodIndex = {};
-  if(!this->ElectronTest()) return GoodIndex;
+  if(!ElectronTest()) return GoodIndex;
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
     if(El.cutBased[i]>=1 && El.pt[i]>MinPt &&
@@ -709,15 +709,15 @@ Bool_t PreSelector::CheckMuonPair(std::pair<UInt_t,UInt_t> p){
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
-  this->ReadEntry(entry,Year);
+  ReadEntry(entry,Year);
 
   HCutFlow->Fill("NoCuts",w);
 
-  if (!this->ElectronTest() && !this->MuonTest() ){
+  if (!ElectronTest() && !MuonTest() ){
     HCutFlow->Fill("FailHLT",w);
     return kFALSE;
   }
-  if (!this->FlagsTest()){
+  if (!FlagsTest()){
     HCutFlow->Fill("FailFlags",w);
     return kFALSE;
   }
@@ -726,7 +726,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  if( (*nElectron + *nMuon) < 3 ) {
+  if(!MinLeptonsTest()) {
     HCutFlow->Fill("lep<3",w);
     return kFALSE;
   }
