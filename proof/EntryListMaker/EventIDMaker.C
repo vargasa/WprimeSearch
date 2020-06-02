@@ -28,34 +28,19 @@ void EventIDMaker::Begin(TTree *tree) {
     TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
     Year = p->GetVal();
   }
-
-  if (fInput){
-    EntryList = new TEntryList("EntryList","Entry Number");
-    fInput->Add(EntryList);
-    eTree = new TTree("eTree","eTree");
-    fInput->Add(eTree);
-  }
 }
 
 void EventIDMaker::SlaveBegin(TTree *tree) {
 
   BuildGoldenJson();
 
-  if((EntryList = (TEntryList*) fInput->FindObject("EntryList")))
-    EntryList = (TEntryList *) EntryList->Clone();
+  EntryList = new TEntryList("EntryList","Entry Number");
+  fOutput->Add(EntryList);
   
-  if(EntryList)
-    fOutput->Add(EntryList);
-  
-  if((eTree = (TTree*) fInput->FindObject("eTree"))){
-    eTree = (TTree*) eTree->Clone();
-    eTree->Branch("EventID",&EventID);
-  }
-  
+  eTree = new TTree("eTree","eTree");
+  eTree->Branch("EventID",&EventID);
+  fOutput->Add(eTree);
 
-  if(eTree)
-    fOutput->Add(eTree);
-  
 } 
 
 Bool_t EventIDMaker::IsGold(UInt_t Run, UInt_t LuminosityBlock){
@@ -87,18 +72,18 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
 
 void EventIDMaker::Terminate() {
 
+  std::string dirName = Form("%s_%d",SampleName.Data(),Year);
   std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
-  fEventIDTree->mkdir(Form("%s_%d",SampleName.Data(),Year));
-  fEventIDTree->cd(SampleName);
+  fEventIDTree->mkdir(dirName.c_str());
+  fEventIDTree->cd(dirName.c_str());
   eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
-  eTree->Write();
+  eTree->Write("eTree");
   fEventIDTree->Close();
   
-  EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
   std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
-  fEntryList->mkdir(Form("%s_%d",SampleName.Data(),Year));
-  fEntryList->cd(SampleName);
-  EntryList->Write();
+  fEntryList->mkdir(dirName.c_str());
+  fEntryList->cd(dirName.c_str());
+  EntryList->Write("EntryList");
   fEntryList->Close();
 
 }
