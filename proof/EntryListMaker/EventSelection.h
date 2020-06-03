@@ -5,7 +5,7 @@
 #include "TSelector.h"
 
 
-class EventSelection {
+class EventSelection : public TSelector{
 
  protected:
   TTreeReader fReader;

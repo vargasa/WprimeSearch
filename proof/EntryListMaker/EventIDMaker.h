@@ -6,7 +6,7 @@
 #include "TEntryList.h"
 #include "EventSelection.h"
 
-class EventIDMaker : public TSelector, EventSelection {
+class EventIDMaker : public EventSelection {
 
  private :
 

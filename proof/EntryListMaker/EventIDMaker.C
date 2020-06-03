@@ -51,18 +51,23 @@ Bool_t EventIDMaker::IsGold(UInt_t Run, UInt_t LuminosityBlock){
 }
 
 Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
-  // run < 285500 && event < 5e9
+  if ( run > 3e5 or event > 6e9) {
+    std::cerr << Form("EventIDMaker::GetEventIndex() Unexpected range for run[%d] or event[%llu]\n",
+		      run,event);
+  }
   return std::stol(std::to_string(run)+std::to_string(event));
 }
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-  this->ReadEntry(entry,Year);
+  ReadEntry(entry,Year);
+
+  if (!MinLeptonsTest()) return kFALSE;
   
   if (!IsGold(*run,*luminosityBlock)) return kFALSE;
 
    // Event Selection
-  if ( (this->ElectronTest() || this->MuonTest()) && *MET_pt > 30 ) {
+  if ( (ElectronTest() || MuonTest()) && *MET_pt > 30 ) {
     EventID = GetEventIndex(*run,*event);
     eTree->Fill();
     EntryList->Enter(entry);
