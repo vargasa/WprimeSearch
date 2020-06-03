@@ -26,8 +26,8 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   // Order taken DoubleEG -> SingleElectron -> SingleMuon
   // Takes sizeof(tree) memory PER worker
   TFile *f1 = TFile::Open("EventIDTree.root","READ");
-  TTree *EventTree = (TTree*)f1->Get("DoubleEG/eTree;1");
-  //TTree *EventTree2 = (TTree*)f1->Get("SingleElectron/eTree;1");
+  TTree *EventTree = (TTree*)f1->Get("SingleElectron/eTree;1");
+  //TTree *EventTree2 = (TTree*)f1->Get("SingleMuon/eTree;1");
   EventTree->SetName("EventIndexTree1");
   //EventTree2->SetName("EventIndexTree2");
   fProof->AddInput(EventTree);
