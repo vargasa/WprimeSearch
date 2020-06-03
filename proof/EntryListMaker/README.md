@@ -18,25 +18,31 @@ entries for a collection of datasets is necessary.
 
 ### Build unique TEntryList
 
-We will take `SingleElectron` as a base dataset, meaning we will take all the events passing
-the basic selection on this dataset, then we compare it to `SingleMuon` and discard all
-the repeated events in it and finally take `SinglePhoton` and discard all the events
-found already in the previous two datasets. 
+We will take `SinglePhoton` as a base dataset, meaning we will take all the events passing
+the basic selection on this dataset, then we compare it to `SingleElectron` and discard all
+the repeated events in it and finally take `SingleMuon` and discard all the events
+found already in the previous two datasets. This order is based on the number of events
+in each dataset as we need to make sure the index object fits in memory.
 
 ```bash
-root -l -b -q "MakeUniqueEntryList.C(\"../files/2016/data/SingleMuon.txt\",3)"
-root -l -b -q "MakeUniqueEntryList.C(\"../files/2016/data/SinglePhoton.txt\",3)"
+root -l -b -q "MakeUniqueEntryList.C(\"../files/2016/data/SingleElectron.txt\",4)"
+root -l -b -q "MakeUniqueEntryList.C(\"../files/2016/data/SingleMuon.txt\",2)"
 ```
 
 Creating one file `EntryLists_Unique.root` containing `TEntryLists` for each dataset
-with one unique entry per event. It is possible to concatenate the list:
+with one unique entry per event. 
+
+We reduce the number of jobs as the index keeping track of the events already included
+grows in size.
+
+It is possible to concatenate the list:
 
 ```cpp
 TFile f0("EntryLists.root","READ");
-auto t1 = (TEntryList*)f0.Get("SingleElectron/EntryList;1");
+auto t1 = (TEntryList*)f0.Get("SinglePhoton/EntryList;1");
 TFile f1("EntryLists_Unique.root","UPDATE");
-auto t2 = (TEntryList*)f1.Get("SingleMuon/EntryList;1");
-auto t3 = (TEntryList*)f1.Get("SinglePhoton/EntryList;1");
+auto t2 = (TEntryList*)f1.Get("SingleElectron/EntryList;1");
+auto t3 = (TEntryList*)f1.Get("SingleMuon/EntryList;1");
 TEntryList *t4 = new TEntryList("EntryList","SingleElectron+SingleMuon+SinglePhoton");
 t4->Add(t1);
 t4->Add(t2);
