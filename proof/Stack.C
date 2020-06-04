@@ -39,7 +39,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",3.19e2)
   };
 
-  auto f1 = TFile::Open(FileName.c_str());
+  auto f1 = TFile::Open(FileName.c_str(),"READ");
 
   std::vector<std::tuple<std::string,std::string>> HistNames = {
     std::make_tuple("HMassZA","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count"),
@@ -98,6 +98,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       legend->SetNColumns(2);
       for (auto BGN: BgNames) {
         auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
+        h = (TH1F*)h->Clone();
         auto hCutFlow =
           (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
         Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
