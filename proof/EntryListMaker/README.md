@@ -39,7 +39,7 @@ It is possible to concatenate the list:
 
 ```cpp
 TFile f0("EntryLists.root","READ");
-auto t1 = (TEntryList*)f0.Get("SinglePhoton/EntryList;1");
+auto t1 = (TEntryList*)f0.Get("SinglePhoton_2016/EntryList;1");
 TFile f1("EntryLists_Unique.root","UPDATE");
 auto t2 = (TEntryList*)f1.Get("SingleElectron/EntryList;1");
 auto t3 = (TEntryList*)f1.Get("SingleMuon/EntryList;1");
@@ -47,8 +47,8 @@ TEntryList *t4 = new TEntryList("EntryList","SingleElectron+SingleMuon+SinglePho
 t4->Add(t1);
 t4->Add(t2);
 t4->Add(t3);
-f1.mkdir("SingleElectronSingleMuonSinglePhoton");
-f1.cd("SingleElectronSingleMuonSinglePhoton");
+f1.mkdir("SinglePhotonSingleElectronSingleMuon");
+f1.cd("SinglePhotonSingleElectronSingleMuon");
 t4->Write();
 f1.Close();
 f0.Close();
