@@ -5,6 +5,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   const Float_t luminosity = 35.9e15; /* 35.9fb^-1 2016 */
   const Float_t pbFactor = 1e-12; /*pico prefix*/
 
+  const std::string DataName = "SinglePhotonSingleElectronSingleMuon";
+
   // ShortName, DasName, kColor, Style, XSection, nEvents
   std::vector<std::tuple<std::string,std::string,Int_t,Float_t>> BgNames = {
     std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
@@ -92,7 +94,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       Int_t r = (j-1)%4;
       c1->cd(r+1);
       THStack *hs = new THStack("hs","");
-      THStack *hsdata = new THStack("hsdata","");
       auto legend = new TLegend(0.3, 0.66, .89, .89);
       legend->SetNColumns(2);
       for (auto BGN: BgNames) {
@@ -128,6 +129,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hs->SetMaximum(MaxY);
       hs->Draw("HIST");
 
+      auto hdata = (TH1F*)f1->Get(Form("%s/%s",DataName.c_str(),std::get<0>(HN).c_str()));
+      hdata->SetMarkerStyle(kFullCircle);
+      hdata->Draw("HIST SAME P");
+
       ++j;
       legend->Draw();
       if( r+1 == 4 ){
@@ -151,6 +156,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       for(auto BGN: BgNames){
         std::string folder = std::get<1>(BGN);
         std::string histoName = hp.first;
+        std::cout << Form("Getting %s/%s\n",folder.c_str(),histoName.c_str());
         auto h = (TH1F*)f1->Get(Form("%s/%s",folder.c_str(),histoName.c_str()));
         float_t maxBinContent= h->GetBinContent(h->GetMaximumBin());
         legend->AddEntry(h,(std::get<0>(BGN)).c_str(), "L");

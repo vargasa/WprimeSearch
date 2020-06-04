@@ -127,7 +127,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HDistl1l2);
   HDistl1l3 = new TH1F("HDistl1l3","Eta-Phi Distance l1,l3",DistBins,0.,MaxDist);
   fOutput->Add(HDistl1l3);
-  HDistl2l3 = new TH1F("HFistl2l3","Eta-Phi Distance l2,l3",DistBins,0.,MaxDist);
+  HDistl2l3 = new TH1F("HDistl2l3","Eta-Phi Distance l2,l3",DistBins,0.,MaxDist);
   fOutput->Add(HDistl2l3);
 
   const Double_t MaxnLep = 7;
@@ -815,14 +815,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
                            Electron_phi[l1],Electrons::mass);
     lep2 = PtEtaPhiMVector(Electron_pt[l2],Electron_eta[l2],
                            Electron_phi[l2],Electrons::mass);
-    zb   = lep1 + lep2;
   } else { //PairMu
     lep1 = PtEtaPhiMVector(Muon_pt[l1],Muon_eta[l1],
                            Muon_phi[l1],Muons::mass);
     lep2 = PtEtaPhiMVector(Muon_pt[l2],Muon_eta[l2],
                            Muon_phi[l2],Muons::mass);
-    zb   = lep1 + lep2;
   }
+
+  zb   = lep1 + lep2;
 
   Bool_t Zl1PtCut = lep1.Pt() < 50.;
   if(Zl1PtCut){
