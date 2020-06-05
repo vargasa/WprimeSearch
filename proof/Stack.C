@@ -10,13 +10,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   // ShortName, DasName, kColor, Style, XSection, nEvents
   std::vector<std::tuple<std::string,std::string,Int_t,Float_t>> BgNames = {
     std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-                    kOrange,4.102),
+                    kOrange,4.43),
     std::make_tuple("DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,5.795e02),
+                    kOrange+7,57.3),
     std::make_tuple("DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,1.030e+02),
+                    kOrange+7,6.733),
     std::make_tuple("t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kBlue-2,2.412e02),
+                    kBlue-2,56.86),
     std::make_tuple("Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
                     kRed+3,7.564e01),
     std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",
@@ -24,19 +24,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   std::vector<std::tuple<std::string,std::string,Float_t>> SignalSamples = {
-    std::make_tuple("W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",3.19e2),
-    std::make_tuple("W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",3.19e2)
+    std::make_tuple("W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",14490.0),
+    std::make_tuple("W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",3197.0),
+    std::make_tuple("W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",1227.0),
+    std::make_tuple("W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",589.6),
+    std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",319.6),
+    std::make_tuple("W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",185.9),
+    std::make_tuple("W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",113.5),
+    std::make_tuple("W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",71.67),
+    std::make_tuple("W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",24.66),
+    std::make_tuple("W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",8.971),
+    std::make_tuple("W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",3.304),
+    std::make_tuple("W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",1.221),
+    std::make_tuple("W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",0.4574)
   };
 
   auto f1 = TFile::Open(FileName.c_str(),"READ");
