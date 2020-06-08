@@ -531,12 +531,10 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 
 }
 
-std::vector<Float_t> PreSelector::GetWWZWTMass(Float_t lPt, Float_t lEta, Float_t lPhi, Float_t lMass){
+std::vector<Float_t> PreSelector::GetWWZWTMass(){
 
   Double_t wmt =
-    PreSelector::MassRecoW(lPt, lPhi, *MET_pt, *MET_phi);
-
-  lep3 = PtEtaPhiMVector(lPt, lEta, lPhi, lMass);
+    PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
 
   nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
 
@@ -580,8 +578,7 @@ void PreSelector::FillA(){
   HnMuA->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Electron_pt[l3], Electron_eta[l3],
-                   Electron_phi[l3], Electrons::mass);
+    = GetWWZWTMass();
 
   HMassZWZA->Fill(BestZMass,wwzm[1]);
   HMassWA->Fill(wwzm[0]);
@@ -610,8 +607,7 @@ void PreSelector::FillB(){
   HnMuB->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Muon_pt[l3],Muon_eta[l3],
-                   Muon_phi[l3],Muons::mass);
+    = GetWWZWTMass();
   
   HMassZWZB->Fill(BestZMass,wwzm[1]);
   HMassWB->Fill(wwzm[0]);
@@ -640,8 +636,7 @@ void PreSelector::FillC(){
   HnMuC->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Electron_pt[l3],Electron_eta[l3],
-                   Electron_phi[l3],Electrons::mass);
+    = GetWWZWTMass();
   
   HMassZWZC->Fill(BestZMass,wwzm[1]);
   HMassWC->Fill(wwzm[0]);
@@ -663,6 +658,10 @@ void PreSelector::FillC(){
 #endif
 }
 
+void PreSelector::DefineLep3(Leptons l){
+  lep3 = PtEtaPhiMVector(l.pt[l3], l.eta[l3], l.phi[l3], l.mass);
+}
+
 void PreSelector::FillD(){
 
   HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
@@ -671,8 +670,7 @@ void PreSelector::FillD(){
   HnMuD->Fill(GoodMuon.size());
 
   std::vector<Float_t> wwzm
-    = GetWWZWTMass(Muon_pt[l3],Muon_eta[l3],
-                   Muon_phi[l3],Muons::mass);
+    = GetWWZWTMass();
 
   HMassZWZD->Fill(BestZMass,wwzm[1]);
   HMassWD->Fill(wwzm[0]);
@@ -861,10 +859,26 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodElectron[0];
     }
 
-    Bool_t ZHighPtIdCut = Muon_highPtId[l1]>=1 && Muon_highPtId[l2]>=2;
+    if(IsC) DefineLep3(Els);
+    if(IsD) DefineLep3(Mus);
 
+    Bool_t ZHighPtIdCut = Muon_highPtId[l1]>=1 && Muon_highPtId[l2]>=2;
     if(!ZHighPtIdCut){
       HCutFlow->Fill("FailZHighPtIdCut",w);
+      return kFALSE;
+    }
+
+    const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
+    Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
+    if(l1l3DistCut){
+      HCutFlow->Fill("Faill1l3DistCut",w);
+      return kFALSE;
+    }
+
+    const float l2l3Dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
+    Bool_t l2l3DistCut = l2l3Dist < 1.2 or l2l3Dist > 5.;
+    if(l2l3DistCut){
+      HCutFlow->Fill("Faill2l3DistCut",w);
       return kFALSE;
     }
 
@@ -924,8 +938,28 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodMuon[0];
     }
 
-    if (IsA) HCutFlow->Fill("IsA_",w);
-    if (IsB) HCutFlow->Fill("IsB_",w);
+    if (IsA) {
+      HCutFlow->Fill("IsA_",w);
+      DefineLep3(Els);
+    }
+    if (IsB){
+      HCutFlow->Fill("IsB_",w);
+      DefineLep3(Mus);
+    }
+
+    const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
+    Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
+    if(l1l3DistCut){
+      HCutFlow->Fill("Faill1l3DistCut",w);
+      return kFALSE;
+    }
+
+    const float l2l3Dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
+    Bool_t l2l3DistCut = l2l3Dist < 1.2 or l2l3Dist > 5.;
+    if(l2l3DistCut){
+      HCutFlow->Fill("Faill2l3DistCut",w);
+      return kFALSE;
+    }
 
     // 2e1mu
     if(IsB){
