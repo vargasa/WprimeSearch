@@ -183,6 +183,8 @@ class PreSelector : public EventSelection {
 
   Int_t Year;
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
+  Float_t wmt; // W Transverse mass;
+
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
@@ -211,7 +213,7 @@ class PreSelector : public EventSelection {
   std::vector<UInt_t> GetGoodMuon(Muons);
   std::vector<UInt_t> GetGoodElectron(Electrons);
 
-  void DefineLep3(Leptons l);
+  void DefineW(Leptons l);
   Bool_t CheckElectronPair(std::pair<UInt_t,UInt_t>);
   Bool_t CheckMuonPair(std::pair<UInt_t,UInt_t>);
   Float_t GetEtaPhiDistance(Float_t,Float_t,Float_t,Float_t);
@@ -231,7 +233,6 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter);
 #endif
 
-  std::vector<Float_t> GetWWZWTMass();
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t,Float_t);

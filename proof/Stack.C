@@ -90,18 +90,24 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c1->Clear();
     c1->Divide(2,2);
     Int_t j = 1;
+    TH1F* hCutFlow;
+    Float_t nEvents;
+
     for (auto HN : HistNames) {
       Int_t r = (j-1)%4;
       c1->cd(r+1);
+
       THStack *hs = new THStack("hs","");
+
       auto legend = new TLegend(0.3, 0.66, .89, .89);
       legend->SetNColumns(2);
+
       for (auto BGN: BgNames) {
         auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
         h = (TH1F*)h->Clone();
-        auto hCutFlow =
-          (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
-        Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
+        hCutFlow =
+          (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
+        nEvents = (Float_t)hCutFlow->GetBinContent(1);
         h->SetFillStyle(1001);
         h->SetTitle((std::get<0>(BGN)).c_str());
         h->SetFillColor(std::get<2>(BGN));
@@ -110,11 +116,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         hs->Add(h);
         legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
       }
-      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(HN).c_str())));
 
-      auto hCutFlow =
-        (TH1I*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
-      Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
+      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(HN).c_str())));
+      hsig = (TH1F*)hsig->Clone();
+      hCutFlow =
+        (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
+      nEvents = (Float_t)hCutFlow->GetBinContent(1);
       hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
       legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
       hs->Add(hsig);

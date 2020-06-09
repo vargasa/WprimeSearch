@@ -531,27 +531,6 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 
 }
 
-std::vector<Float_t> PreSelector::GetWWZWTMass(){
-
-  Double_t wmt =
-    PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
-
-  nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
-
-  Float_t wm = -1, wzm = -1.;
-
-  wb = (lep3 + nu[0]);
-  wm = wb.M(); // Forcing nominal value
-  wzm = (zb+wb).M();
-
-  std::vector<Float_t> s;
-  s.emplace_back(wm);
-  s.emplace_back(wzm);
-  s.emplace_back(wmt);
-
-  return s;
-
-}
 
 Float_t PreSelector::GetEtaPhiDistance(Float_t eta1, Float_t phi1,
                                         Float_t eta2, Float_t phi2){
@@ -576,15 +555,11 @@ void PreSelector::FillA(){
   HMetA->Fill(*MET_pt);
   HnElA->Fill(GoodElectron.size());
   HnMuA->Fill(GoodMuon.size());
-
-  std::vector<Float_t> wwzm
-    = GetWWZWTMass();
-
-  HMassZWZA->Fill(BestZMass,wwzm[1]);
-  HMassWA->Fill(wwzm[0]);
-  HMassWZA->Fill(wwzm[1]);
+  HMassZWZA->Fill(BestZMass,(wb+zb).M());
+  HMassWA->Fill(wb.M());
+  HMassWZA->Fill((wb+zb).M());
   HMassZA->Fill(BestZMass);
-  HMassTWA->Fill(wwzm[2]);
+  HMassTWA->Fill(wmt);
   HCutFlow->Fill("3e0mu",w);
 #ifndef CMSDATA
   HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
@@ -605,15 +580,11 @@ void PreSelector::FillB(){
   HMetB->Fill(*MET_pt);
   HnElB->Fill(GoodElectron.size());
   HnMuB->Fill(GoodMuon.size());
-
-  std::vector<Float_t> wwzm
-    = GetWWZWTMass();
-  
-  HMassZWZB->Fill(BestZMass,wwzm[1]);
-  HMassWB->Fill(wwzm[0]);
-  HMassWZB->Fill(wwzm[1]);
+  HMassZWZB->Fill(BestZMass,(wb+zb).M());
+  HMassWB->Fill(wb.M());
+  HMassWZB->Fill((wb+zb).M());
   HMassZB->Fill(BestZMass);
-  HMassTWB->Fill(wwzm[2]);
+  HMassTWB->Fill(wmt);
   HCutFlow->Fill("2e1mu",w);
 #ifndef CMSDATA
   HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
@@ -634,15 +605,11 @@ void PreSelector::FillC(){
   HMetC->Fill(*MET_pt);
   HnElC->Fill(GoodElectron.size());
   HnMuC->Fill(GoodMuon.size());
-
-  std::vector<Float_t> wwzm
-    = GetWWZWTMass();
-  
-  HMassZWZC->Fill(BestZMass,wwzm[1]);
-  HMassWC->Fill(wwzm[0]);
-  HMassWZC->Fill(wwzm[1]);
+  HMassZWZC->Fill(BestZMass,(wb+zb).M());
+  HMassWC->Fill(wb.M());
+  HMassWZC->Fill((wb+zb).M());
   HMassZC->Fill(BestZMass);
-  HMassTWC->Fill(wwzm[2]);
+  HMassTWC->Fill(wmt);
   HCutFlow->Fill("1e2mu",w);
 #ifndef CMSDATA
   HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
@@ -658,8 +625,12 @@ void PreSelector::FillC(){
 #endif
 }
 
-void PreSelector::DefineLep3(Leptons l){
+void PreSelector::DefineW(Leptons l){
   lep3 = PtEtaPhiMVector(l.pt[l3], l.eta[l3], l.phi[l3], l.mass);
+  wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
+  nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
+  wb = (lep3 + nu[0]);
+
 }
 
 void PreSelector::FillD(){
@@ -668,15 +639,11 @@ void PreSelector::FillD(){
   HMetD->Fill(*MET_pt);
   HnElD->Fill(GoodElectron.size());
   HnMuD->Fill(GoodMuon.size());
-
-  std::vector<Float_t> wwzm
-    = GetWWZWTMass();
-
-  HMassZWZD->Fill(BestZMass,wwzm[1]);
-  HMassWD->Fill(wwzm[0]);
-  HMassWZD->Fill(wwzm[1]);
+  HMassZWZD->Fill(BestZMass,(wb+zb).M());
+  HMassWD->Fill(wb.M());
+  HMassWZD->Fill((wb+zb).M());
   HMassZD->Fill(BestZMass);
-  HMassTWD->Fill(wwzm[2]);
+  HMassTWD->Fill(wmt);
   HCutFlow->Fill("0e3mu",w);
 #ifndef CMSDATA
   HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
@@ -859,8 +826,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodElectron[0];
     }
 
-    if(IsC) DefineLep3(Els);
-    if(IsD) DefineLep3(Mus);
+    if(IsC) DefineW(Els);
+    if(IsD) DefineW(Mus);
 
     Bool_t ZHighPtIdCut = Muon_highPtId[l1]>=1 && Muon_highPtId[l2]>=2;
     if(!ZHighPtIdCut){
@@ -940,11 +907,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     if (IsA) {
       HCutFlow->Fill("IsA_",w);
-      DefineLep3(Els);
+      DefineW(Els);
     }
     if (IsB){
       HCutFlow->Fill("IsB_",w);
-      DefineLep3(Mus);
+      DefineW(Mus);
     }
 
     const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
