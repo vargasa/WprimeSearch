@@ -87,6 +87,10 @@ PreSelector::PreSelector(TTree *)
 
   HNEl = 0;
   HNMu = 0;
+
+  HWZDist = 0;
+  HWZPtDist = 0;
+  HWZPt = 0;
 }
 
 void PreSelector::Init(TTree *tree)
@@ -129,6 +133,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HDistl1l3);
   HDistl2l3 = new TH1F("HDistl2l3","Eta-Phi Distance l2,l3",DistBins,0.,MaxDist);
   fOutput->Add(HDistl2l3);
+
+  HWZDist = new TH1F("HWZDist","HWZDist",DistBins,0.,MaxDist);
+  fOutput->Add(HWZDist);
+
+  HWZPtDist = new TH2F("HWZPtDist","HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
+  fOutput->Add(HWZPtDist);
+
+  HWZPt = new TH1F("HWZPt","HWZPt",100,0.,1e3);
+  fOutput->Add(HWZPt);
 
   const Double_t MaxnLep = 7;
   const Double_t MinnLep = 0;
@@ -538,6 +551,9 @@ Float_t PreSelector::GetEtaPhiDistance(Float_t eta1, Float_t phi1,
 }
 
 void PreSelector::FillCommon(Leptons lz, Leptons lw){
+  HWZPtDist->Fill((wb+zb).Pt(),GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
+  HWZPt->Fill((wb+zb).Pt());
+  HWZDist->Fill(GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
   HPtl1->Fill(lz.pt[l1]);
   HPtl2->Fill(lz.pt[l2]);
   HPtl3->Fill(lw.pt[l3]);
@@ -971,6 +987,17 @@ void PreSelector::Terminate() {
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
+
+  ch->cd();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HWZDist->Draw("HIST");
+  ch->cd(2);
+  HWZPtDist->Draw("COLZ");
+  ch->cd(3);
+  HWZPt->Draw("HIST");
+  ch->Print(Form("%s_HWZDist.png",SampleName.Data()));
+  ch->Clear();
 
   ch->cd();
   HCutFlow->LabelsDeflate();
