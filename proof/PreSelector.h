@@ -190,6 +190,8 @@ class PreSelector : public EventSelection {
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
   Float_t wmt; // W Transverse mass;
 
+  TH2F *SFTrigger;
+
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
