@@ -992,10 +992,13 @@ void PreSelector::Terminate() {
   ch->Divide(2,2);
   ch->cd(1);
   HWZDist->Draw("HIST");
+  HWZDist->Write("HWZDist");
   ch->cd(2);
   HWZPtDist->Draw("COLZ");
+  HWZPtDist->Write("HWZPtDist");
   ch->cd(3);
   HWZPt->Draw("HIST");
+  HWZPt->Write("HWZPt");
   ch->Print(Form("%s_HWZDist.png",SampleName.Data()));
   ch->Clear();
 

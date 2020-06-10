@@ -10,10 +10,10 @@ voms-proxy-init --voms cms --debug #Set up proxy
 ```bash
 cd proof/
 echo "" > IsData.h # Make sure CMSDATA is undefined
-FILES=files/2016/*.txt #Loop over set of the list files
+FILES=files/mc/2016/*.txt #Loop over set of the list files
 for i in $FILES
 do
- root -l -b -q "Selector.C(\"$i\", 10)"; # 10 Workers
+ root -l -b -q "Selector.C(\"$i\", 8)"; # 8 Workers
 done
 
 ```
@@ -33,7 +33,7 @@ create the required `EntryLists.root` file.
 ```bash
 cd proof/
 echo "#define CMSDATA" > IsData.h # Make sure CMSDATA is defined
-root -l -b -q "Selector.C(\"files/2016/data/SinglePhoton.txt+files/2016/data/SingleElectron.txt+files/2016/data/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")"; # 8 Workers
+root -l -b -q "Selector.C(\"files/data/2016/SinglePhoton.txt+files/data/2016/SingleElectron.txt+files/data/2016/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")"; # 8 Workers
 ```
 
 This will create `WprimeHistos.root` file which will contain all the histograms

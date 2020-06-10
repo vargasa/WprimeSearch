@@ -72,7 +72,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_pair("HDistl1l2","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"),
     std::make_pair("HDistl1l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"),
     std::make_pair("HDistl2l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"),
-    std::make_pair("HDistl1l2","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane for ZLeptons; Normalized Events"),
+    std::make_pair("HWZDist","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"),
   };
 
 
