@@ -7,6 +7,12 @@ voms-proxy-init --voms cms --debug #Set up proxy
 ```
 
 ### Setup for MC
+
+Retrieve scale factors:
+
+wget -c https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_Period4.root
+wget -c https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_RunBtoF.root
+
 ```bash
 cd proof/
 echo "" > IsData.h # Make sure CMSDATA is undefined

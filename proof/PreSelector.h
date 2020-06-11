@@ -207,6 +207,9 @@ class PreSelector : public EventSelection {
  public :
 
   TString SampleName;
+  TH2F *SFTriggerBF;
+  TH2F *SFTriggerGH;
+
 
   PreSelector(TTree * = 0);
   virtual ~PreSelector() { }

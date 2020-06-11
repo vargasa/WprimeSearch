@@ -331,9 +331,13 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
 
-  if (fInput->FindObject("SFTrigger")) {
-    TH2F *h = dynamic_cast<TH2F *>(fInput->FindObject("SFTrigger"));
-    SFTrigger = (TH2F*)h->Clone();
+  if(fInput->FindObject("SFTriggerBF")){
+    TH2F *h1 = dynamic_cast<TH2F*>(fInput->FindObject("SFTriggerBF"));
+    SFTriggerBF = (TH2F*)h1->Clone();
+  }
+  if (fInput->FindObject("SFTriggerGH")){
+    TH2F *h2 = dynamic_cast<TH2F*>(fInput->FindObject("SFTriggerGH"));
+    SFTriggerGH = (TH2F*)h2->Clone();
   }
 
 }
@@ -825,7 +829,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairMu){
 
-    Float_t SFMuon = SFTrigger->GetBinContent(SFTrigger->FindBin(abs(Muon_eta[l1]),Muon_pt[l1]));
+    const Float_t LumiBF = 3.11; //fb-1
+    const Float_t LumiGH = 5.54;
+    const Float_t SFMuonTriggerBF = SFTriggerBF->GetBinContent(SFTriggerBF->FindBin(abs(Muon_eta[l1]),Muon_pt[l1]));
+    const Float_t SFMuonTriggerGH = SFTriggerGH->GetBinContent(SFTriggerGH->FindBin(abs(Muon_eta[l1]),Muon_pt[l1]));
+    const Float_t SFMuon = (LumiBF*SFMuonTriggerBF+LumiGH*SFMuonTriggerGH)/(LumiBF+LumiGH);
 
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);
