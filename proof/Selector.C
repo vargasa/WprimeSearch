@@ -3,7 +3,9 @@
 #include <string>
 #include <fstream>
 
-Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile = "", Int_t year = 2016){
+Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile = "", Int_t year = 2016,
+               TString SFFileBF = "EfficienciesAndSF_RunBtoF.root",
+               TString SFFileGH = "EfficienciesAndSF_Period4.root"){
 
   TChain* fChain = new TChain("Events");
 
@@ -39,6 +41,21 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   fProof->SetProgressDialog(false);
   fProof->SetParameter("Year",year);
   fProof->SetParameter("SampleName",sample.c_str());
+
+  TFile *f1 = TFile::Open(SFFileBF.Data(),"READ");
+  auto SFTriggerBF = (TH2F*)f1->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
+  SFTriggerBF->SetName("SFTriggerBF");
+
+  TList *SFDb = new TList();
+  SFDb->SetName("SFDb");
+  SFDb->Add(SFTriggerBF);
+
+  TFile *f2 = TFile::Open(SFFileGH.Data(),"READ");
+  auto SFTriggerGH = (TH2F*)f2->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
+  SFTriggerGH->SetName("SFTriggerGH");
+  SFDb->Add(SFTriggerGH);
+  fProof->AddInputData(SFDb);
+
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+");

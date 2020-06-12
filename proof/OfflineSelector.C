@@ -21,12 +21,16 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 20
   TFile *f1 = TFile::Open(SFFileBF.Data(),"READ");
   auto SFTriggerBF = (TH2F*)f1->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
   SFTriggerBF->SetName("SFTriggerBF");
-  fProof->AddInputData(SFTriggerBF);
+
+  TList *SFDb = new TList();
+  SFDb->SetName("SFDb");
+  SFDb->Add(SFTriggerBF);
 
   TFile *f2 = TFile::Open(SFFileGH.Data(),"READ");
   auto SFTriggerGH = (TH2F*)f2->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
   SFTriggerGH->SetName("SFTriggerGH");
-  fProof->AddInputData(SFTriggerGH);
+  SFDb->Add(SFTriggerGH);
+  fProof->AddInputData(SFDb);
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+");

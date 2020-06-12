@@ -331,15 +331,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
 
-  if(fInput->FindObject("SFTriggerBF")){
-    TH2F *h1 = dynamic_cast<TH2F*>(fInput->FindObject("SFTriggerBF"));
-    SFTriggerBF = (TH2F*)h1->Clone();
+  if(fInput->FindObject("SFDb")){
+    SFDb = dynamic_cast<TList*>(fInput->FindObject("SFDb"));
   }
-  if (fInput->FindObject("SFTriggerGH")){
-    TH2F *h2 = dynamic_cast<TH2F*>(fInput->FindObject("SFTriggerGH"));
-    SFTriggerGH = (TH2F*)h2->Clone();
-  }
-
 }
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
@@ -829,11 +823,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairMu){
 
-    const Float_t LumiBF = 3.11; //fb-1
-    const Float_t LumiGH = 5.54;
-    const Float_t SFMuonTriggerBF = SFTriggerBF->GetBinContent(SFTriggerBF->FindBin(abs(Muon_eta[l1]),Muon_pt[l1]));
-    const Float_t SFMuonTriggerGH = SFTriggerGH->GetBinContent(SFTriggerGH->FindBin(abs(Muon_eta[l1]),Muon_pt[l1]));
-    const Float_t SFMuon = (LumiBF*SFMuonTriggerBF+LumiGH*SFMuonTriggerGH)/(LumiBF+LumiGH);
+    const Float_t SFMuon = GetMuonTriggerSF(SFDb, Year, Muon_eta[l1], Muon_pt[l1]);
+
+    std::cout << SFMuon << std::endl;
 
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);

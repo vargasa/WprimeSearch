@@ -190,7 +190,7 @@ class PreSelector : public EventSelection {
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
   Float_t wmt; // W Transverse mass;
 
-  TH2F *SFTrigger;
+  TList *SFDb;
 
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
@@ -207,10 +207,7 @@ class PreSelector : public EventSelection {
  public :
 
   TString SampleName;
-  TH2F *SFTriggerBF;
-  TH2F *SFTriggerGH;
-
-
+ 
   PreSelector(TTree * = 0);
   virtual ~PreSelector() { }
   virtual void    Begin(TTree *tree);

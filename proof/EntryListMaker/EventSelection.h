@@ -45,8 +45,28 @@ class EventSelection : public TSelector{
   Bool_t FlagsTest() { return Flags; };
   Bool_t MinLeptonsTest() { return MinLeptons; };
   void ReadEntry(Long64_t entry, UInt_t year);
+  Float_t GetMuonTriggerSF(TList *SFDB ,Int_t year,Float_t eta, Float_t pt);
 
 };
+
+Float_t EventSelection::GetMuonTriggerSF(TList *SFDb, Int_t year, Float_t eta, Float_t pt){
+
+  Float_t sf = -1;
+
+  TH2F *SFTriggerBF = dynamic_cast<TH2F*>(SFDb->FindObject("SFTriggerBF"));
+  TH2F *SFTriggerGH = dynamic_cast<TH2F*>(fInput->FindObject("SFTriggerGH"));
+
+  if (year == 2016) {
+    const Float_t LumiBF = 3.11; //fb-1
+    const Float_t LumiGH = 5.54;
+    const Float_t SFMuonTriggerBF = SFTriggerBF->GetBinContent(SFTriggerBF->FindBin(abs(eta),pt));
+    const Float_t SFMuonTriggerGH = SFTriggerGH->GetBinContent(SFTriggerGH->FindBin(abs(eta),pt));
+    sf = (LumiBF*SFMuonTriggerBF+LumiGH*SFMuonTriggerGH)/(LumiBF+LumiGH);
+  }
+
+  return sf;
+
+}
 
 void EventSelection::ReadEntry(Long64_t entry, UInt_t year){
 
