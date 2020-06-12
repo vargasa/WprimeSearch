@@ -31,7 +31,6 @@ class EventSelection : public TSelector{
   TTreeReaderValue<UInt_t> nElectron = {fReader, "nElectron"};
 
   Bool_t MinLeptons;
-  UInt_t Year;
   Bool_t ElectronHLTs;
   Bool_t MuonHLTs;
   Bool_t Flags;
@@ -44,7 +43,7 @@ class EventSelection : public TSelector{
   Bool_t MuonTest() { return MuonHLTs; };
   Bool_t FlagsTest() { return Flags; };
   Bool_t MinLeptonsTest() { return MinLeptons; };
-  void ReadEntry(Long64_t entry, UInt_t year);
+  void ReadEntry(Long64_t entry, Int_t year);
   Float_t GetMuonTriggerSF(TList *SFDB ,Int_t year,Float_t eta, Float_t pt);
 
 };
@@ -54,7 +53,7 @@ Float_t EventSelection::GetMuonTriggerSF(TList *SFDb, Int_t year, Float_t eta, F
   Float_t sf = -1;
 
   TH2F *SFTriggerBF = dynamic_cast<TH2F*>(SFDb->FindObject("SFTriggerBF"));
-  TH2F *SFTriggerGH = dynamic_cast<TH2F*>(fInput->FindObject("SFTriggerGH"));
+  TH2F *SFTriggerGH = dynamic_cast<TH2F*>(SFDb->FindObject("SFTriggerGH"));
 
   if (year == 2016) {
     const Float_t LumiBF = 3.11; //fb-1
@@ -68,7 +67,7 @@ Float_t EventSelection::GetMuonTriggerSF(TList *SFDb, Int_t year, Float_t eta, F
 
 }
 
-void EventSelection::ReadEntry(Long64_t entry, UInt_t year){
+void EventSelection::ReadEntry(Long64_t entry, Int_t year){
 
   fReader.SetEntry(entry);
 

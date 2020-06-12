@@ -105,12 +105,6 @@ void PreSelector::Begin(TTree *tree) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
     SampleName = p->GetTitle();
   }
-
-  if (fInput->FindObject("Year")) {
-    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
-    Year = p->GetVal();
-  }
-
 }
 
 void PreSelector::SlaveBegin(TTree *tree) {
@@ -334,6 +328,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
   if(fInput->FindObject("SFDb")){
     SFDb = dynamic_cast<TList*>(fInput->FindObject("SFDb"));
   }
+
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+  }
+
 }
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
