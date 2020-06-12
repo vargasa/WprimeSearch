@@ -360,7 +360,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(Electrons El){
   if(!ElectronTest()) return GoodIndex;
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
-    if(El.cutBased[i]>=1 && El.pt[i]>MinPt &&
+    if(El.cutBased[i]>1 && El.pt[i]>MinPt &&
        abs(El.eta[i])<MaxEta &&
        El.miniPFRelIso_all[i]<MaxRelIso)
       GoodIndex.emplace_back(i);
