@@ -355,14 +355,12 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
 std::vector<UInt_t> PreSelector::GetGoodElectron(Electrons El){
   const Float_t MaxEta = 2.5;
   const Float_t MinPt = 20.;
-  const Float_t MaxRelIso = 0.15;
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
     if(El.cutBased[i]>1 && El.pt[i]>MinPt &&
-       abs(El.eta[i])<MaxEta &&
-       El.miniPFRelIso_all[i]<MaxRelIso)
+       abs(El.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
   return GoodIndex;
@@ -725,7 +723,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
                 Electron_charge,Electron_dxy,Electron_dz,
-                Electron_cutBased,Electron_miniPFRelIso_all);
+                Electron_cutBased);
 
   GoodElectron = PreSelector::GetGoodElectron(Els);
   GoodMuon = PreSelector::GetGoodMuon(Mus);
