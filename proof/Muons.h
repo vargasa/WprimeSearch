@@ -15,7 +15,7 @@ class Muons : public Leptons{
         RAF, RAB, RAB);
   ~Muons() {};
 
-  RAB looseId;
+  RAB tightId;
   RAB isGlobal;
 
   static constexpr Float_t mass = 0.105658755;
@@ -23,8 +23,8 @@ class Muons : public Leptons{
 
 Muons::Muons(TTreeReaderValue<UInt_t>& n, RAF pt, RAF eta,
              RAF phi, RAI charge,
-             RAF dxy, RAF dz, RAB looseId,
+             RAF dxy, RAF dz, RAB tightId,
              RAB isGlobal) :
-Leptons(n,mass,pt,eta,phi,charge,dxy,dz), looseId(looseId), isGlobal(isGlobal){
+Leptons(n,mass,pt,eta,phi,charge,dxy,dz), tightId(tightId), isGlobal(isGlobal){
 
 }

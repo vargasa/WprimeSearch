@@ -11,7 +11,7 @@ class EventSelection : public TSelector{
   TTreeReader fReader;
 
   TTreeReaderValue<Bool_t> HLT_Ele115_CaloIdVT_GsfTrkIdT = {fReader, "HLT_Ele115_CaloIdVT_GsfTrkIdT"};
-  TTreeReaderValue<Bool_t> HLT_Ele27_WPLoose_Gsf = {fReader, "HLT_Ele27_WPLoose_Gsf"};
+  TTreeReaderValue<Bool_t> HLT_Ele27_WPTight_Gsf = {fReader, "HLT_Ele27_WPLoose_Gsf"};
   TTreeReaderValue<Bool_t> HLT_Photon175 = {fReader, "HLT_Photon175"};
   TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, "HLT_Mu50"};
   TTreeReaderValue<Bool_t> HLT_TkMu50 = {fReader, "HLT_TkMu50"};
@@ -74,8 +74,8 @@ void EventSelection::ReadEntry(Long64_t entry, Int_t year){
   MinLeptons = (*nElectron + *nMuon) > 2;
 
   if(year == 2016){
-    ElectronHLTs = (*HLT_Ele27_WPLoose_Gsf||*HLT_Ele115_CaloIdVT_GsfTrkIdT||*HLT_Photon175);
-    MuonHLTs = (*HLT_IsoMu24||*HLT_IsoTkMu24||*HLT_Mu50||*HLT_TkMu50);
+    ElectronHLTs = (*HLT_Ele27_WPTight_Gsf||*HLT_Photon175);
+    MuonHLTs = (*HLT_Mu50||*HLT_TkMu50);
     Flags = *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
       *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
       && *PV_npvsGood > 0;
