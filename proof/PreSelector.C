@@ -341,12 +341,9 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   if(!MuonTest()) return GoodIndex;
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 10.;
-  const Float_t MaxDxy = 0.2; // 2mm
-  const Float_t MaxDz = 0.5; // 5mm
   for (UInt_t i=0; i<*Mu.n;i++){
-    if(Mu.isGlobal[i] && Mu.tightId[i] &&
-       Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta &&
-       abs(Mu.dxy[i])<MaxDxy && abs(Mu.dz[i])<MaxDz)
+    if(Mu.tightId[i] &&
+       Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
   return GoodIndex;
@@ -694,6 +691,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
   ReadEntry(entry,Year);
 
   HCutFlow->Fill("NoCuts",w);
+
+  if (!ElectronTest()) HCutFlow->Fill("FailElectronHLTs",w);
+  if (!MuonTest()) HCutFlow->Fill("FailMuonHLTs",w);
 
   if (!ElectronTest() && !MuonTest() ){
     HCutFlow->Fill("FailHLT",w);
