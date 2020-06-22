@@ -8,10 +8,20 @@ voms-proxy-init --voms cms --debug #Set up proxy
 
 ### Setup for MC
 
-Retrieve scale factors:
+Scale factors:
 
-wget -c https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_Period4.root
-wget -c https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_RunBtoF.root
+
+#### Muon Trigger:
+
+[2016 GH](https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_Period4.root)
+[2016 B-F](https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_RunBtoF.root)
+
+#### Muon ID:
+
+Download filename differs from the one shown in the URL
+
+[2016 GH](https://gitlab.cern.ch/cms-muonPOG/MuonReferenceEfficiencies/-/blob/master/EfficienciesStudies/2016_legacy_rereco/rootfiles/RunGH_SF_ID.root)
+[2016 B-F](https://gitlab.cern.ch/cms-muonPOG/MuonReferenceEfficiencies/-/blob/master/EfficienciesStudies/2016_legacy_rereco/rootfiles/RunBCDEF_SF_ID.root)
 
 ```bash
 cd proof/

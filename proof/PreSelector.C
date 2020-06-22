@@ -821,9 +821,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairMu){
 
-    const Float_t SFMuon = GetMuonTriggerSF(SFDb, Year, Muon_eta[l1], Muon_pt[l1]);
-
-    std::cout << SFMuon << std::endl;
+    const Float_t SFMuon = GetMuonSF(SFDb, Year, Muon_eta[l2], Muon_pt[l2]);
 
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);

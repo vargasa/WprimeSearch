@@ -30,6 +30,17 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 20
   auto SFTriggerGH = (TH2F*)f2->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
   SFTriggerGH->SetName("SFTriggerGH");
   SFDb->Add(SFTriggerGH);
+
+  TFile *f3 = TFile::Open("EfficienciesStudies_2016_legacy_rereco_rootfiles_RunBCDEF_SF_ID.root","READ");
+  auto SFMuonIDBF = (TH2D*)f3->Get("NUM_TightID_DEN_genTracks_eta_pt");
+  SFMuonIDBF->SetName("SFMuonIDBF");
+  SFDb->Add(SFMuonIDBF);
+
+  TFile *f4 = TFile::Open("EfficienciesStudies_2016_legacy_rereco_rootfiles_RunGH_SF_ID.root","READ");
+  auto SFMuonIDGH = (TH2D*)f4->Get("NUM_TightID_DEN_genTracks_eta_pt");
+  SFMuonIDGH->SetName("SFMuonIDGH");
+  SFDb->Add(SFMuonIDGH);
+
   fProof->AddInputData(SFDb);
 
   fChain->SetProof();
