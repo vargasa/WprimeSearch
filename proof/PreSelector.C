@@ -821,7 +821,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairMu){
 
+#ifndef CMSDATA
     const Float_t SFMuon = GetMuonSF(SFDb, Year, Muon_eta[l2], Muon_pt[l2]);
+#endif
 
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);

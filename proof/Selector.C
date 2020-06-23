@@ -56,6 +56,17 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFDb->Add(SFTriggerGH);
   fProof->AddInputData(SFDb);
 
+  TFile *f3 = TFile::Open("EfficienciesStudies_2016_legacy_rereco_rootfiles_RunBCDEF_SF_ID.root","READ");
+  auto SFMuonIDBF = (TH2D*)f3->Get("NUM_TightID_DEN_genTracks_eta_pt");
+  SFMuonIDBF->SetName("SFMuonIDBF");
+  SFDb->Add(SFMuonIDBF);
+
+  TFile *f4 = TFile::Open("EfficienciesStudies_2016_legacy_rereco_rootfiles_RunGH_SF_ID.root","READ");
+  auto SFMuonIDGH = (TH2D*)f4->Get("NUM_TightID_DEN_genTracks_eta_pt");
+  SFMuonIDGH->SetName("SFMuonIDGH");
+  SFDb->Add(SFMuonIDGH);
+
+  fProof->AddInputData(SFDb);
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+");

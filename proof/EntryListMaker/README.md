@@ -2,7 +2,7 @@
 ### Build 1st TEntryList and TTrees
 
 ```bash
-FILES=../files/2016/data/*.txt
+FILES=../files/data/2016/*.txt
 for i in $FILES
 do
  root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
@@ -25,8 +25,9 @@ found already in the previous two datasets. This order is based on the number of
 in each dataset as we need to make sure the index object fits in memory.
 
 ```bash
-root -l -b -q "MakeUniqueEntryList.C(\"../files/2016/data/SingleElectron.txt\",4)"
-root -l -b -q "MakeUniqueEntryList.C(\"../files/2016/data/SingleMuon.txt\",2)"
+root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/SingleElectron.txt\",4)"
+# Edit MakeUniqueEntryList.C to include SingleElectron Tree and EntryList
+root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/SingleMuon.txt\",2)"
 ```
 
 Creating one file `EntryLists_Unique.root` containing `TEntryLists` for each dataset
