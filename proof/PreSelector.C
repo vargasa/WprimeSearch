@@ -325,9 +325,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
 
+#ifndef CMSDATA
   if(fInput->FindObject("SFDb")){
     SFDb = dynamic_cast<TList*>(fInput->FindObject("SFDb"));
   }
+#endif
 
   if (fInput->FindObject("Year")) {
     TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
@@ -719,7 +721,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,
-            Muon_tightId,Muon_isGlobal);
+            Muon_tightId);
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
                 Electron_charge,Electron_dxy,Electron_dz,
@@ -870,9 +872,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
       return kFALSE;
     }
 
-    if (IsC) HCutFlow->Fill("IsC_",w);
-    if (IsD) HCutFlow->Fill("IsD_",w);
-
     // 0e3mu
     if(IsD){
       if(Muon_pt[l3]>MinRemPt){
@@ -926,14 +925,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodMuon[0];
     }
 
-    if (IsA) {
-      HCutFlow->Fill("IsA_",w);
-      DefineW(Els);
-    }
-    if (IsB){
-      HCutFlow->Fill("IsB_",w);
-      DefineW(Mus);
-    }
+
+    if (IsA) DefineW(Els);
+    if (IsB) DefineW(Mus);
+
 
     const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
     Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;

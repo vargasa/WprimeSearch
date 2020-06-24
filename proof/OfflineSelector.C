@@ -4,9 +4,7 @@
 #include <fstream>
 
 
-Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 2016,
-                      TString SFFileBF = "EfficienciesAndSF_RunBtoF.root",
-                      TString SFFileGH = "EfficienciesAndSF_Period4.root"){
+Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 2016){
 
   TChain* fChain = new TChain("Events");
 
@@ -18,7 +16,7 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 20
   fProof->SetParameter("Year",year);
   fProof->SetParameter("SampleName",rootfile.Data());
 
-  TFile *f1 = TFile::Open(SFFileBF.Data(),"READ");
+  TFile *f1 = TFile::Open("EfficienciesAndSF_RunBtoF.root","READ");
   auto SFTriggerBF = (TH2F*)f1->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
   SFTriggerBF->SetName("SFTriggerBF");
 
@@ -26,7 +24,7 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 20
   SFDb->SetName("SFDb");
   SFDb->Add(SFTriggerBF);
 
-  TFile *f2 = TFile::Open(SFFileGH.Data(),"READ");
+  TFile *f2 = TFile::Open("EfficienciesAndSF_Period4.root","READ");
   auto SFTriggerGH = (TH2F*)f2->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
   SFTriggerGH->SetName("SFTriggerGH");
   SFDb->Add(SFTriggerGH);

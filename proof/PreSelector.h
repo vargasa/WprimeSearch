@@ -200,10 +200,6 @@ class PreSelector : public EventSelection {
   Float_t BestZMass;
   const Float_t w = 1.;
 
-#ifdef CMSDATA
-  TEntryList *EntryList;
-#endif
-
  public :
 
   TString SampleName;
