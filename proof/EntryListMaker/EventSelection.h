@@ -31,10 +31,10 @@ class EventSelection : public TSelector{
   TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
   TTreeReaderValue<UInt_t> nElectron = {fReader, "nElectron"};
 
-  Bool_t MinLeptons;
-  Bool_t ElectronHLTs;
-  Bool_t MuonHLTs;
-  Bool_t Flags;
+  Bool_t MinLeptons{};
+  Bool_t ElectronHLTs{};
+  Bool_t MuonHLTs{};
+  Bool_t Flags{};
 
  public:
 
@@ -58,8 +58,8 @@ Float_t EventSelection::GetMuonSF(TList *SFDb, Int_t year, Float_t eta, Float_t 
 
   Float_t sf = -1;
 
-  TH2F *SFMuonTriggerBF = dynamic_cast<TH2F*>(SFDb->FindObject("SFTriggerBF"));
-  TH2F *SFMuonTriggerGH = dynamic_cast<TH2F*>(SFDb->FindObject("SFTriggerGH"));
+  TH2F *SFMuonTriggerBF = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
+  TH2F *SFMuonTriggerGH = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
 
   TH2D *SFMuonIDBF = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
   TH2D *SFMuonIDGH = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));

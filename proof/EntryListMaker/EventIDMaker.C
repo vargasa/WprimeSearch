@@ -2,12 +2,14 @@
 #include "EventIDMaker.h"
 #include "TError.h"
 #include "BuildGoldenJson.hxx"
+#include "TCanvas.h"
 
 EventIDMaker::EventIDMaker(TTree *)
 {
   eTree = 0;
   EntryList = 0;
   EventIndexTree = 0;
+  hlog = 0;
 }
 
 void EventIDMaker::Init(TTree *tree)
@@ -28,6 +30,10 @@ void EventIDMaker::Begin(TTree *tree) {
     TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
     Year = p->GetVal();
   }
+
+  std::clog << "EventIDMaker::Begin SampleName:" << SampleName 
+	    << "Year " << Year;
+
 }
 
 void EventIDMaker::SlaveBegin(TTree *tree) {
@@ -41,6 +47,16 @@ void EventIDMaker::SlaveBegin(TTree *tree) {
   eTree->Branch("EventID",&EventID);
   fOutput->Add(eTree);
 
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+  }
+
+  std::clog << "EventIDMaker::SlaveBegin Year " << Year;
+
+  hlog = new TH1F("hlog","hlog",100,0,100); /*Ranges are meaningless here*/
+  fOutput->Add(hlog);
+
 } 
 
 Bool_t EventIDMaker::IsGold(UInt_t Run, UInt_t LuminosityBlock){
@@ -52,6 +68,7 @@ Bool_t EventIDMaker::IsGold(UInt_t Run, UInt_t LuminosityBlock){
 
 Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
   if ( run > 3e5 or event > 6e9) {
+    hlog->Fill("EventIDOutOfRange",1.);
     std::cerr << Form("EventIDMaker::GetEventIndex() Unexpected range for run[%d] or event[%llu]\n",
 		      run,event);
   }
@@ -62,12 +79,33 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
 
   ReadEntry(entry,Year);
 
-  if (!MinLeptonsTest()) return kFALSE;
+  hlog->Fill("Total",1.);
+
+  if (!MinLeptonsTest()){
+    hlog->Fill("FailMinLeptonsTest",1.);
+    return kFALSE;
+  }
   
-  if (!IsGold(*run,*luminosityBlock)) return kFALSE;
+  if (!IsGold(*run,*luminosityBlock)){
+    hlog->Fill("FailGoldenJsonTest",1.);
+    return kFALSE;
+  }
+
+  if (ElectronTest()){
+    hlog->Fill("FailElectronTest",1.);
+  }
+
+  if (MuonTest()){
+    hlog->Fill("FailMuonTest",1.);
+  }
+
+  if (*MET_pt<=30.){
+    hlog->Fill("FailsMETPtTest",1.);
+  }
 
    // Event Selection
   if ( (ElectronTest() || MuonTest()) && *MET_pt > 30 ) {
+    hlog->Fill("Passed",1.);
     EventID = GetEventIndex(*run,*event);
     eTree->Fill();
     EntryList->Enter(entry);
@@ -76,6 +114,12 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
 }
 
 void EventIDMaker::Terminate() {
+
+  std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
+  gPad->SetLogy();
+  hlog->LabelsDeflate();
+  hlog->Draw("HIST TEXT45");
+  ch->Print("EventIDMaker_hlog.png");
 
   std::string dirName = Form("%s_%d",SampleName.Data(),Year);
   std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));

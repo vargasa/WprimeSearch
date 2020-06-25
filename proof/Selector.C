@@ -44,13 +44,13 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
 #ifndef CMSDATA
   TFile *f1 = TFile::Open("EfficienciesAndSF_RunBtoF.root","READ");
   auto SFTriggerBF = (TH2F*)f1->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
-  SFTriggerBF->SetName("SFTriggerBF");
+  SFTriggerBF->SetName("SFMuonTriggerBF");
   TList *SFDb = new TList();
   SFDb->SetName("SFDb");
   SFDb->Add(SFTriggerBF);
   TFile *f2 = TFile::Open("EfficienciesAndSF_Period4.root","READ");
   auto SFTriggerGH = (TH2F*)f2->Get("IsoMu24_OR_IsoTkMu24_PtEtaBins/efficienciesMC/abseta_pt_MC");
-  SFTriggerGH->SetName("SFTriggerGH");
+  SFTriggerGH->SetName("SFMuonTriggerGH");
   SFDb->Add(SFTriggerGH);
   fProof->AddInputData(SFDb);
   TFile *f3 = TFile::Open("EfficienciesStudies_2016_legacy_rereco_rootfiles_RunBCDEF_SF_ID.root","READ");

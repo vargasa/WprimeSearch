@@ -4,6 +4,7 @@
 #include "TParameter.h"
 #include <memory>
 #include "TEntryList.h"
+#include "TH1F.h"
 
 class UniqueEntryListMaker : public TSelector {
 
@@ -22,6 +23,8 @@ class UniqueEntryListMaker : public TSelector {
   TTree *EventIndexTree;
   std::unordered_set<Long64_t> EventIndex;
   void AddTreeToEventIndex(std::string treeName);
+
+  TH1F *hlog;
 
  public :
 
