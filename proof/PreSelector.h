@@ -164,9 +164,6 @@ class PreSelector : public EventSelection {
   TH1F *HGenPartFD;
 #endif
   TH1F *HCutFlow;
-  TH2I *HRunLumi;
-  TH1I *HRun;
-  TH1I *HLumi;
 
   TH2I *HNLepA;
   TH2I *HNLepB;
