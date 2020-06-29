@@ -202,13 +202,13 @@ class PreSelector : public EventSelection {
   TString SampleName;
  
   PreSelector(TTree * = 0);
-  virtual ~PreSelector() { }
-  virtual void    Begin(TTree *tree);
-  virtual void    Init(TTree *tree);
-  virtual void    SlaveBegin(TTree *tree);
-  virtual Bool_t  Process(Long64_t entry);
-  virtual void    Terminate();
-  virtual Int_t   Version() const { return 2; }
+  ~PreSelector() { }
+  void    Begin(TTree *tree);
+  void    Init(TTree *tree);
+  void    SlaveBegin(TTree *tree);
+  Bool_t  Process(Long64_t entry);
+  void    Terminate();
+  Int_t   Version() const { return 2; }
 
   std::vector<UInt_t> GetGoodMuon(Muons);
   std::vector<UInt_t> GetGoodElectron(Electrons);

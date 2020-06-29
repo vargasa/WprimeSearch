@@ -28,18 +28,20 @@ class EventIDMaker : public EventSelection {
 
   TH1F *hlog;
 
+  Bool_t BrokenTree{};
+
  public :
 
   TString SampleName;
 
   EventIDMaker(TTree * = 0);
-  virtual ~EventIDMaker() { }
-  virtual void    Begin(TTree *tree);
-  virtual void    Init(TTree *tree);
-  virtual void    SlaveBegin(TTree *tree);
-  virtual Bool_t  Process(Long64_t entry);
-  virtual void    Terminate();
-  virtual Int_t   Version() const { return 2; }
+  ~EventIDMaker() { }
+  void    Begin(TTree *tree);
+  void    Init(TTree *tree);
+  void    SlaveBegin(TTree *tree);
+  Bool_t  Process(Long64_t entry);
+  void    Terminate();
+  Int_t   Version() const { return 2; }
   void BuildGoldenJson();
 
   Bool_t IsGold(UInt_t Run, UInt_t LuminosityBlock);

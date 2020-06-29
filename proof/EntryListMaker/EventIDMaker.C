@@ -14,8 +14,23 @@ EventIDMaker::EventIDMaker(TTree *)
 
 void EventIDMaker::Init(TTree *tree)
 {
+
+
+  std::vector<const char*> branches = {"HLT_Ele115_CaloIdVT_GsfTrkIdT","HLT_Ele27_WPTight_Gsf","HLT_Photon175","HLT_Mu50","HLT_TkMu50","HLT_IsoMu24","HLT_IsoTkMu24"};
   //Called every time a new TTree is attached.
+
+  for(auto brn: branches){
+    TBranch *b = tree->FindBranch(brn);
+    if(b == nullptr){
+      std::cerr << "Tree initialized: " << tree->GetName() << std::endl;
+      std::cerr << brn << " Not found" << std::endl;
+      std::cerr << "URL: " <<tree->GetCurrentFile()->GetEndpointUrl()->GetUrl() <<std::endl;
+      BrokenTree = true;
+    }
+  }
+ 
   fReader.SetTree(tree);
+
 }
 
 void EventIDMaker::Begin(TTree *tree) {
@@ -77,6 +92,7 @@ Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
+  if(BrokenTree) return kFALSE;
   ReadEntry(entry,Year);
 
   hlog->Fill("Total",1.);
