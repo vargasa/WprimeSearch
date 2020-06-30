@@ -195,7 +195,6 @@ class PreSelector : public EventSelection {
   std::vector<ROOT::Math::PxPyPzMVector> nu;
 
   Float_t BestZMass;
-  const Float_t w = 1.;
 
  public :
 

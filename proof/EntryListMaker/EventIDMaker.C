@@ -4,6 +4,8 @@
 #include "BuildGoldenJson.hxx"
 #include "TCanvas.h"
 
+#define FillS(ss) Fill(ss,1.);
+
 EventIDMaker::EventIDMaker(TTree *)
 {
   eTree = 0;
@@ -81,7 +83,7 @@ Bool_t EventIDMaker::IsGold(UInt_t Run, UInt_t LuminosityBlock){
 
 Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
   if ( run > 3e5 or event > 6e9) {
-    hlog->Fill("EventIDOutOfRange",1.);
+    hlog->FillS("EventIDOutOfRange");
     std::cerr << Form("EventIDMaker::GetEventIndex() Unexpected range for run[%d] or event[%llu]\n",
 		      run,event);
   }
@@ -91,39 +93,39 @@ Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
   if(BrokenTree){
-    hlog->Fill("BrokenTree",1.);
+    hlog->FillS("BrokenTree");
     return kFALSE;
   }
 
   ReadEntry(entry,Year);
 
-  hlog->Fill("Total",1.);
+  hlog->FillS("Total");
 
   if (!MinLeptonsTest()){
-    hlog->Fill("FailMinLeptonsTest",1.);
+    hlog->FillS("FailMinLeptonsTest");
     return kFALSE;
   }
   
   if (!IsGold(*run,*luminosityBlock)){
-    hlog->Fill("FailGoldenJsonTest",1.);
+    hlog->FillS("FailGoldenJsonTest");
     return kFALSE;
   }
 
   if (ElectronTest()){
-    hlog->Fill("FailElectronTest",1.);
+    hlog->FillS("FailElectronTest");
   }
 
   if (MuonTest()){
-    hlog->Fill("FailMuonTest",1.);
+    hlog->FillS("FailMuonTest");
   }
 
   if (*MET_pt<=30.){
-    hlog->Fill("FailsMETPtTest",1.);
+    hlog->FillS("FailsMETPtTest");
   }
 
    // Event Selection
   if ( (ElectronTest() || MuonTest()) && *MET_pt > 30 ) {
-    hlog->Fill("Passed",1.);
+    hlog->FillS("Passed");
     EventID = GetEventIndex(*run,*event);
     eTree->Fill();
     EntryList->Enter(entry);

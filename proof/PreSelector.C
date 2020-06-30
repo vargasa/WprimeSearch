@@ -4,6 +4,8 @@
 #include "TLegend.h"
 #include "TError.h"
 
+#define FillS(xx) Fill(xx,1.)
+
 PreSelector::PreSelector(TTree *)
 {
 
@@ -559,18 +561,18 @@ void PreSelector::FillA(){
   HMassWZA->Fill((wb+zb).M());
   HMassZA->Fill(BestZMass);
   HMassTWA->Fill(wmt);
-  HCutFlow->Fill("3e0mu",w);
+  HCutFlow->FillS("3e0mu");
 #ifndef CMSDATA
-  HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
-  HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
-  HGenPartFA->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]),w);
+  HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
+  HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
+  HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
 
-  HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
-                                       Electron_pdgId[l1]).second),w);
-  HGenPartZA->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
-                                       Electron_pdgId[l2]).second),w);
-  HGenPartWA->Fill(Form("%d",GetMother(Electron_genPartIdx[l3],
-                                       Electron_pdgId[l3]).second),w);
+  HGenPartZA->FillS(Form("%d",GetMother(Electron_genPartIdx[l1],
+                                       Electron_pdgId[l1]).second));
+  HGenPartZA->FillS(Form("%d",GetMother(Electron_genPartIdx[l2],
+					Electron_pdgId[l2]).second));
+  HGenPartWA->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
+					Electron_pdgId[l3]).second));
 #endif
 }
 
@@ -584,18 +586,18 @@ void PreSelector::FillB(){
   HMassWZB->Fill((wb+zb).M());
   HMassZB->Fill(BestZMass);
   HMassTWB->Fill(wmt);
-  HCutFlow->Fill("2e1mu",w);
+  HCutFlow->FillS("2e1mu");
 #ifndef CMSDATA
-  HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]),w);
-  HGenPartFB->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]),w);
-  HGenPartFB->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]),w);
+  HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
+  HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
+  HGenPartFB->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
 
-  HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l1],
-                                       Electron_pdgId[l1]).second),w);
-  HGenPartZB->Fill(Form("%d",GetMother(Electron_genPartIdx[l2],
-                                       Electron_pdgId[l2]).second),w);
-  HGenPartWB->Fill(Form("%d",GetMother(Muon_genPartIdx[l3],
-                                       Muon_pdgId[l3]).second),w);
+  HGenPartZB->FillS(Form("%d",GetMother(Electron_genPartIdx[l1],
+                                       Electron_pdgId[l1]).second));
+  HGenPartZB->FillS(Form("%d",GetMother(Electron_genPartIdx[l2],
+                                       Electron_pdgId[l2]).second));
+  HGenPartWB->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
+                                       Muon_pdgId[l3]).second));
 #endif
 }
 
@@ -609,18 +611,18 @@ void PreSelector::FillC(){
   HMassWZC->Fill((wb+zb).M());
   HMassZC->Fill(BestZMass);
   HMassTWC->Fill(wmt);
-  HCutFlow->Fill("1e2mu",w);
+  HCutFlow->FillS("1e2mu");
 #ifndef CMSDATA
-  HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
-  HGenPartFC->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
-  HGenPartFC->Fill(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]),w);
+  HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
+  HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
+  HGenPartFC->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
 
-  HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
-                                       Muon_pdgId[l1]).second),w);
-  HGenPartZC->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
-                                       Muon_pdgId[l2]).second),w);
-  HGenPartWC->Fill(Form("%d",GetMother(Electron_genPartIdx[l3],
-                                       Electron_pdgId[l3]).second),w);
+  HGenPartZC->FillS(Form("%d",GetMother(Muon_genPartIdx[l1],
+					Muon_pdgId[l1]).second));
+  HGenPartZC->FillS(Form("%d",GetMother(Muon_genPartIdx[l2],
+					Muon_pdgId[l2]).second));
+  HGenPartWC->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
+					Electron_pdgId[l3]).second));
 #endif
 }
 
@@ -643,18 +645,18 @@ void PreSelector::FillD(){
   HMassWZD->Fill((wb+zb).M());
   HMassZD->Fill(BestZMass);
   HMassTWD->Fill(wmt);
-  HCutFlow->Fill("0e3mu",w);
+  HCutFlow->FillS("0e3mu");
 #ifndef CMSDATA
-  HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]),w);
-  HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]),w);
-  HGenPartFD->Fill(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]),w);
+  HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
+  HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
+  HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
 
-  HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l1],
-                                       Muon_pdgId[l1]).second),w);
-  HGenPartZD->Fill(Form("%d",GetMother(Muon_genPartIdx[l2],
-                                       Muon_pdgId[l2]).second),w);
-  HGenPartWD->Fill(Form("%d",GetMother(Muon_genPartIdx[l3],
-                                       Muon_pdgId[l3]).second),w);
+  HGenPartZD->FillS(Form("%d",GetMother(Muon_genPartIdx[l1],
+					Muon_pdgId[l1]).second));
+  HGenPartZD->FillS(Form("%d",GetMother(Muon_genPartIdx[l2],
+					Muon_pdgId[l2]).second));
+  HGenPartWD->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
+					Muon_pdgId[l3]).second));
 #endif
 }
 
@@ -675,26 +677,26 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   ReadEntry(entry,Year);
 
-  HCutFlow->Fill("NoCuts",w);
+  HCutFlow->FillS("NoCuts");
 
-  if (!ElectronTest()) HCutFlow->Fill("FailElectronHLTs",w);
-  if (!MuonTest()) HCutFlow->Fill("FailMuonHLTs",w);
+  if (!ElectronTest()) HCutFlow->FillS("FailElectronHLTs");
+  if (!MuonTest()) HCutFlow->FillS("FailMuonHLTs");
 
   if (!ElectronTest() && !MuonTest() ){
-    HCutFlow->Fill("FailHLT",w);
+    HCutFlow->FillS("FailHLT");
     return kFALSE;
   }
   if (!FlagsTest()){
-    HCutFlow->Fill("FailFlags",w);
+    HCutFlow->FillS("FailFlags");
     return kFALSE;
   }
   if (*MET_pt < 30){
-    HCutFlow->Fill("MET_pt<30",w);
+    HCutFlow->FillS("MET_pt<30");
     return kFALSE;
   }
 
   if(!MinLeptonsTest()) {
-    HCutFlow->Fill("lep<3",w);
+    HCutFlow->FillS("lep<3");
     return kFALSE;
   }
 
@@ -714,7 +716,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   HNMu->Fill(*nMuon,GoodMuon.size());
 
   if( (GoodElectron.size() + GoodMuon.size()) <3 ){
-    HCutFlow->Fill("goodLep<3",w);
+    HCutFlow->FillS("goodLep<3");
     return kFALSE;
   }
 
@@ -738,7 +740,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   if(!ztel.empty() && CheckElectronPair(std::get<2>((ztel)[0]))) PairEl = true;
 
   if (!PairEl && !PairMu) {
-    HCutFlow->Fill("NoPairs",w);
+    HCutFlow->FillS("NoPairs");
     return kFALSE;
   }
 
@@ -759,15 +761,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
     zt = &ztmu;
   }
 
-  if(PairMu) HCutFlow->Fill("PairMu",w);
-  if(PairEl) HCutFlow->Fill("PairEl",w);
+  if(PairMu) HCutFlow->FillS("PairMu");
+  if(PairEl) HCutFlow->FillS("PairEl");
 
   std::vector<UInt_t> WCand;
 
   BestZMass = std::get<1>((*zt)[0]);
   Bool_t IsZMassOk = (BestZMass > MinZMass) && (BestZMass < MaxZMass);
   if(!IsZMassOk){
-    HCutFlow->Fill("FailZMassWindow",w);
+    HCutFlow->FillS("FailZMassWindow");
     return kFALSE;
   }
 
@@ -790,14 +792,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   Bool_t Zl1PtCut = lep1.Pt() < 50.;
   if(Zl1PtCut){
-    HCutFlow->Fill("FailZl1PtCut",w);
+    HCutFlow->FillS("FailZl1PtCut");
     return kFALSE;
   }
 
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist > 1.5 and l1l2Dist < 5.0 ;
   if(ZDistCut){
-    HCutFlow->Fill("FailZDistCut",w);
+    HCutFlow->FillS("FailZDistCut");
     return kFALSE;
   }
 
@@ -834,21 +836,21 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     Bool_t ZHighPtIdCut = Muon_highPtId[l1]>=1 && Muon_highPtId[l2]>=2;
     if(!ZHighPtIdCut){
-      HCutFlow->Fill("FailZHighPtIdCut",w);
+      HCutFlow->FillS("FailZHighPtIdCut");
       return kFALSE;
     }
 
     const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
     Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
     if(l1l3DistCut){
-      HCutFlow->Fill("Faill1l3DistCut",w);
+      HCutFlow->FillS("Faill1l3DistCut");
       return kFALSE;
     }
 
     const float l2l3Dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
     Bool_t l2l3DistCut = l2l3Dist < 1.2 or l2l3Dist > 5.;
     if(l2l3DistCut){
-      HCutFlow->Fill("Faill2l3DistCut",w);
+      HCutFlow->FillS("Faill2l3DistCut");
       return kFALSE;
     }
 
@@ -860,11 +862,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
           FillD();
         } else {
           IsD = false;
-          HCutFlow->Fill("Fail0e3muHighPtId",w);
+          HCutFlow->FillS("Fail0e3muHighPtId");
         }
       } else {
         IsD = false;
-        HCutFlow->Fill("Fail0e3muMinRemPt",w);
+        HCutFlow->FillS("Fail0e3muMinRemPt");
       }
     }
 
@@ -874,7 +876,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
         FillCommon(Mus,Els);
         FillC();
       } else {
-        HCutFlow->Fill("Fail1e2muMinRemPt",w);
+        HCutFlow->FillS("Fail1e2muMinRemPt");
         IsC = false;
       }
     }
@@ -905,22 +907,20 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodMuon[0];
     }
 
-
     if (IsA) DefineW(Els);
     if (IsB) DefineW(Mus);
-
 
     const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
     Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
     if(l1l3DistCut){
-      HCutFlow->Fill("Faill1l3DistCut",w);
+      HCutFlow->FillS("Faill1l3DistCut");
       return kFALSE;
     }
 
     const float l2l3Dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
     Bool_t l2l3DistCut = l2l3Dist < 1.2 or l2l3Dist > 5.;
     if(l2l3DistCut){
-      HCutFlow->Fill("Faill2l3DistCut",w);
+      HCutFlow->FillS("Faill2l3DistCut");
       return kFALSE;
     }
 
@@ -932,11 +932,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
           FillB();
         } else {
           IsB = false;
-          HCutFlow->Fill("Fail2e1muHighPtId",w);
+          HCutFlow->FillS("Fail2e1muHighPtId");
         }
       } else {
         IsB = false;
-        HCutFlow->Fill("Fail2e1muMinRemPt",w);
+        HCutFlow->FillS("Fail2e1muMinRemPt");
       }
     }
 
@@ -947,7 +947,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
         FillA();
       } else {
         IsA = false;
-        HCutFlow->Fill("Fail3e0muMinRemPt",w);
+        HCutFlow->FillS("Fail3e0muMinRemPt");
       }
     }
   }
