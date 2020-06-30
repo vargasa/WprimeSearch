@@ -11,25 +11,28 @@ class EventSelection : public TSelector{
  protected:
   TTreeReader fReader;
 
-  TTreeReaderValue<Bool_t> HLT_Ele115_CaloIdVT_GsfTrkIdT = {fReader, "HLT_Ele115_CaloIdVT_GsfTrkIdT"};
-  TTreeReaderValue<Bool_t> HLT_Ele27_WPTight_Gsf = {fReader, "HLT_Ele27_WPTight_Gsf"};
-  TTreeReaderValue<Bool_t> HLT_Photon175 = {fReader, "HLT_Photon175"};
-  TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, "HLT_Mu50"};
-  TTreeReaderValue<Bool_t> HLT_TkMu50 = {fReader, "HLT_TkMu50"};
-  TTreeReaderValue<Bool_t> HLT_IsoMu24 = {fReader, "HLT_IsoMu24"};
-  TTreeReaderValue<Bool_t> HLT_IsoTkMu24 = {fReader, "HLT_IsoTkMu24"};
-  TTreeReaderValue<Bool_t> Flag_globalTightHalo2016Filter = {fReader, "Flag_globalTightHalo2016Filter"};
-  TTreeReaderValue<Bool_t> Flag_hcalLaserEventFilter = {fReader, "Flag_hcalLaserEventFilter"};
-  TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter = {fReader, "Flag_EcalDeadCellTriggerPrimitiveFilter"};
-  TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, "Flag_eeBadScFilter"};
-  TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, "Flag_BadPFMuonFilter"};
-  TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, "Flag_BadPFMuonSummer16Filter"};
-  TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, "Flag_HBHENoiseFilter"};
-  TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, "Flag_HBHENoiseIsoFilter"};
-  TTreeReaderValue<Int_t> PV_npvsGood = {fReader, "PV_npvsGood"}; // total number of reconstructed primary vertices
+  std::vector<const char*> BranchNamesList;
+  const char *MakeBranchList(const char *bname);
 
-  TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
-  TTreeReaderValue<UInt_t> nElectron = {fReader, "nElectron"};
+  TTreeReaderValue<Bool_t> HLT_Ele115_CaloIdVT_GsfTrkIdT = {fReader, MakeBranchList("HLT_Ele115_CaloIdVT_GsfTrkIdT")};
+  TTreeReaderValue<Bool_t> HLT_Ele27_WPTight_Gsf = {fReader, MakeBranchList("HLT_Ele27_WPTight_Gsf")};
+  TTreeReaderValue<Bool_t> HLT_Photon175 = {fReader, MakeBranchList("HLT_Photon175")};
+  TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, MakeBranchList("HLT_Mu50")};
+  TTreeReaderValue<Bool_t> HLT_TkMu50 = {fReader, MakeBranchList("HLT_TkMu50")};
+  TTreeReaderValue<Bool_t> HLT_IsoMu24 = {fReader, MakeBranchList("HLT_IsoMu24")};
+  TTreeReaderValue<Bool_t> HLT_IsoTkMu24 = {fReader, MakeBranchList("HLT_IsoTkMu24")};
+  TTreeReaderValue<Bool_t> Flag_globalTightHalo2016Filter = {fReader, MakeBranchList("Flag_globalTightHalo2016Filter")};
+  TTreeReaderValue<Bool_t> Flag_hcalLaserEventFilter = {fReader, MakeBranchList("Flag_hcalLaserEventFilter")};
+  TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter = {fReader, MakeBranchList("Flag_EcalDeadCellTriggerPrimitiveFilter")};
+  TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
+  TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
+  TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, MakeBranchList("Flag_BadPFMuonSummer16Filter")};
+  TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, MakeBranchList("Flag_HBHENoiseFilter")};
+  TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, MakeBranchList("Flag_HBHENoiseIsoFilter")};
+  TTreeReaderValue<Int_t> PV_npvsGood = {fReader, MakeBranchList("PV_npvsGood")}; // total number of reconstructed primary vertices
+
+  TTreeReaderValue<UInt_t> nMuon = {fReader, MakeBranchList("nMuon")};
+  TTreeReaderValue<UInt_t> nElectron = {fReader, MakeBranchList("nElectron")};
 
   Bool_t MinLeptons{};
   Bool_t ElectronHLTs{};
@@ -47,6 +50,11 @@ class EventSelection : public TSelector{
   void ReadEntry(Long64_t entry, Int_t year);
   Float_t GetMuonSF(TList *SFDB ,Int_t year,Float_t eta, Float_t pt);
   Float_t GetSF(TH1* h,Float_t eta, Float_t pt);
+};
+
+const char* EventSelection::MakeBranchList(const char *bname){
+  BranchNamesList.emplace_back(bname);
+  return bname;
 };
 
 Float_t EventSelection::GetSF(TH1* h,Float_t x, Float_t y){

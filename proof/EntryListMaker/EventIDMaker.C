@@ -15,20 +15,18 @@ EventIDMaker::EventIDMaker(TTree *)
 void EventIDMaker::Init(TTree *tree)
 {
 
-
-  std::vector<const char*> branches = {"HLT_Ele115_CaloIdVT_GsfTrkIdT","HLT_Ele27_WPTight_Gsf","HLT_Photon175","HLT_Mu50","HLT_TkMu50","HLT_IsoMu24","HLT_IsoTkMu24"};
   //Called every time a new TTree is attached.
 
-  for(auto brn: branches){
+  for(auto brn: BranchNamesList){
     TBranch *b = tree->FindBranch(brn);
     if(b == nullptr){
-      std::cerr << "Tree initialized: " << tree->GetName() << std::endl;
-      std::cerr << brn << " Not found" << std::endl;
-      std::cerr << "URL: " <<tree->GetCurrentFile()->GetEndpointUrl()->GetUrl() <<std::endl;
+      std::cerr << "EventIDMaker::Init Error: Tree " << tree->GetName() 
+		<< " Branch: " << brn << " not found" << std::endl;
+      std::cerr << "URL: " << tree->GetCurrentFile()->GetEndpointUrl()->GetUrl() <<std::endl;
       BrokenTree = true;
     }
   }
- 
+
   fReader.SetTree(tree);
 
 }
@@ -92,7 +90,11 @@ Long64_t EventIDMaker::GetEventIndex(UInt_t run,ULong64_t event) {
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-  if(BrokenTree) return kFALSE;
+  if(BrokenTree){
+    hlog->Fill("BrokenTree",1.);
+    return kFALSE;
+  }
+
   ReadEntry(entry,Year);
 
   hlog->Fill("Total",1.);
@@ -135,7 +137,7 @@ void EventIDMaker::Terminate() {
   gPad->SetLogy();
   hlog->LabelsDeflate();
   hlog->Draw("HIST TEXT45");
-  ch->Print("EventIDMaker_hlog.png");
+  ch->Print(Form("EventIDMaker_hlog_%s_%d.png",SampleName.Data(),Year));
 
   std::string dirName = Form("%s_%d",SampleName.Data(),Year);
   std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
