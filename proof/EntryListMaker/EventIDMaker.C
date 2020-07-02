@@ -94,6 +94,7 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
 
   if(BrokenTree){
     hlog->FillS("BrokenTree");
+    Abort("BrokenTree, Check logs!");
     return kFALSE;
   }
 
