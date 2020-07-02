@@ -323,7 +323,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 }
 
-std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
+std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   std::vector<UInt_t> GoodIndex = {};
   if(!MuonTest()) return GoodIndex;
   const Float_t MaxEta = 2.4;
@@ -336,7 +336,7 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(Muons Mu){
   return GoodIndex;
 };
 
-std::vector<UInt_t> PreSelector::GetGoodElectron(Electrons El){
+std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MaxEta = 2.5;
   const Float_t MinPt = 20.;
   std::vector<UInt_t> GoodIndex = {};
@@ -350,8 +350,8 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(Electrons El){
   return GoodIndex;
 };
 
-Double_t PreSelector::MassRecoZ(Double_t pt1, Double_t eta1, Double_t phi1, Double_t m1,
-                                Double_t pt2, Double_t eta2, Double_t phi2, Double_t m2){
+float PreSelector::MassRecoZ(const float& pt1, const float& eta1, const float& phi1, const float& m1,
+                                const float& pt2, const float& eta2, const float& phi2, const float& m2){
 
   ROOT::Math::PtEtaPhiMVector l1(pt1, eta1, phi1, m1);
   ROOT::Math::PtEtaPhiMVector l2(pt2, eta2, phi2, m2);
@@ -359,20 +359,20 @@ Double_t PreSelector::MassRecoZ(Double_t pt1, Double_t eta1, Double_t phi1, Doub
   return (l1+l2).M();
 };
 
-Double_t PreSelector::MassRecoW(ROOT::Math::PtEtaPhiMVector lep, Float_t MetPt, Float_t MetPhi){
+Float_t PreSelector::MassRecoW(const ROOT::Math::PtEtaPhiMVector& lep){
 
-  return PreSelector::MassRecoW(lep.Pt(),lep.Phi(),MetPt,MetPhi);
+  return PreSelector::MassRecoW(lep.Pt(),lep.Phi(),*MET_pt,*MET_phi);
 
 };
 
 
-Double_t PreSelector::MassRecoW(Double_t ptl, Double_t phil,
-                                Double_t ptmet, Double_t phimet){
+Float_t PreSelector::MassRecoW(const float& ptl, const float& phil,
+                             const float& ptmet, const float& phimet){
   return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
 };
 
 
-std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(Leptons l, std::vector<UInt_t> GoodIndex){
+std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons& l, const std::vector<UInt_t>& GoodIndex){
 
   std::vector<UInt_t> positive;
   std::vector<UInt_t> negative;
@@ -406,7 +406,7 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(Leptons l, std
 
 }
 
-std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZ(Leptons l,std::vector<UInt_t> GoodLepton){
+std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZ(const Leptons& l, const std::vector<UInt_t>& GoodLepton){
 
   std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
 
@@ -455,42 +455,42 @@ std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\M
 }
 #endif
 
-std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(ROOT::Math::PtEtaPhiMVector lep,
-                                                               Float_t MetPt, Float_t MetPhi, Float_t Wmt){
+std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,
+                                                               const Float_t& Wmt){
 
   std::vector<ROOT::Math::PxPyPzMVector> s;
-  Float_t pz = (lep.Pz()/lep.Pt())*MetPt;
-  s.emplace_back(Get4V(MetPt,MetPhi,pz));
+  Float_t pz = (lep.Pz()/lep.Pt())*(*MET_pt);
+  s.emplace_back(Get4V(pz));
   return s;
 
 }
 
-std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(ROOT::Math::PtEtaPhiMVector lep,
-                                                               Float_t MetPt, Float_t MetPhi, Float_t Wmt){
+std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep,
+                                                               const Float_t& Wmt){
 
   std::vector<ROOT::Math::PxPyPzMVector> s;
   Float_t NuPz = 0.;
   const Float_t Mw = 80.379;
-  Float_t a = 2.*lep.Pt()*MetPt;
+  Float_t a = 2.*lep.Pt()*(*MET_pt);
   Float_t k = Mw*Mw - Wmt*Wmt;
   Float_t b = (k + a);
-  Float_t c = k*(k + 4.*lep.Pt()*MetPt);
-  if (c<0) return GetNu4VFix(lep,MetPt,MetPhi,Wmt);
+  Float_t c = k*(k + 4.*lep.Pt()*(*MET_pt));
+  if (c<0) return GetNu4VFix(lep,Wmt);
   Float_t d = lep.P()*TMath::Sqrt(c);
   NuPz = (lep.Pz()*b + d)/(2.*lep.Pt()*lep.Pt());
-  s.emplace_back(Get4V(MetPt,MetPhi,NuPz));
+  s.emplace_back(Get4V(NuPz));
   NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt());
-  s.emplace_back(Get4V(MetPt,MetPhi,NuPz));
+  s.emplace_back(Get4V(NuPz));
   return s;
 
 }
 
-ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz){
+ROOT::Math::PxPyPzMVector PreSelector::Get4V(const Float_t& Pz){
 
   const Float_t MNu = 0.;
 
-  ROOT::Math::PxPyPzMVector s(MetPt*TMath::Cos(MetPhi),
-                              MetPt*TMath::Sin(MetPhi),
+  ROOT::Math::PxPyPzMVector s((*MET_pt)*TMath::Cos(*MET_phi),
+                              (*MET_pt)*TMath::Sin(*MET_phi),
                               Pz,MNu);
 
   return s;
@@ -498,31 +498,31 @@ ROOT::Math::PxPyPzMVector PreSelector::Get4V(Float_t MetPt, Float_t MetPhi, Floa
 }
 
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEtaPhiMVector lep,
-                                                            Float_t MetPt, Float_t MetPhi, Float_t Wmt){
+                                                            Float_t Wmt){
   const Float_t Mw = 80.379;
   const Float_t MNu = 0.;
 
-  Float_t dphi = MetPhi-lep.Phi();
+  Float_t dphi = *MET_phi-lep.Phi();
   Float_t a,b;
 
   Float_t pz = 0.;
 
   std::vector<ROOT::Math::PxPyPzMVector> s;
 
-  a = pow(Mw,2) + 2.*lep.Pt()*MetPt*TMath::Cos(dphi);
-  b = pow(a,2) - 4*pow(lep.Pt(),2)*pow(MetPt,2);
+  a = pow(Mw,2) + 2.*lep.Pt()*(*MET_pt)*TMath::Cos(dphi);
+  b = pow(a,2) - 4*pow(lep.Pt(),2)*pow((*MET_pt),2);
 
-  if (b < 0) return GetNu4VFix(lep, MetPt, MetPhi, Wmt);
+  if (b < 0) return GetNu4VFix(lep, Wmt);
 
   pz = lep.Pz()*a + lep.P()*TMath::Sqrt(b);
   pz = pz/(2.*pow(lep.Pt(),2.));
 
-  s.emplace_back(PreSelector::Get4V(MetPt,MetPhi,pz));
+  s.emplace_back(PreSelector::Get4V(pz));
 
   pz = lep.Pz()*a - lep.P()*TMath::Sqrt(b);
   pz = pz/(2.*pow(lep.Pt(),2));
 
-  s.emplace_back(PreSelector::Get4V(MetPt,MetPhi,pz));
+  s.emplace_back(PreSelector::Get4V(pz));
 
 
   return s;
@@ -530,12 +530,12 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 }
 
 
-Float_t PreSelector::GetEtaPhiDistance(Float_t eta1, Float_t phi1,
-                                        Float_t eta2, Float_t phi2){
+Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
+                                        const float& eta2, const float& phi2){
   return sqrt(pow(eta2-eta1,2.)+pow(phi2-phi1,2.));
 }
 
-void PreSelector::FillCommon(Leptons lz, Leptons lw){
+void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HWZPtDist->Fill((wb+zb).Pt(),GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
   HWZPt->Fill((wb+zb).Pt());
   HWZDist->Fill(GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
@@ -629,7 +629,7 @@ void PreSelector::FillC(){
 void PreSelector::DefineW(Leptons l){
   lep3 = PtEtaPhiMVector(l.pt[l3], l.eta[l3], l.phi[l3], l.mass);
   wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
-  nu = PreSelector::GetNu4V(lep3, *MET_pt, *MET_phi, wmt);
+  nu = PreSelector::GetNu4V(lep3, wmt);
   wb = (lep3 + nu[0]);
 
 }
@@ -660,13 +660,13 @@ void PreSelector::FillD(){
 #endif
 }
 
-Bool_t PreSelector::CheckElectronPair(std::pair<UInt_t,UInt_t> p){
+Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p){
   const Float_t MinPt = 35.;
   if (Electron_pt[p.first] < MinPt || Electron_pt[p.second] < MinPt) return kFALSE;
   return kTRUE;
 }
 
-Bool_t PreSelector::CheckMuonPair(std::pair<UInt_t,UInt_t> p){
+Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p){
   const Float_t MinLeadPt = 25.;
   const Float_t MinSubleadPt = 10.;
   if (Muon_pt[p.first] < MinLeadPt || Muon_pt[p.second] < MinSubleadPt) return kFALSE;

@@ -209,19 +209,18 @@ class PreSelector : public EventSelection {
   void    Terminate();
   Int_t   Version() const { return 2; }
 
-  std::vector<UInt_t> GetGoodMuon(Muons);
-  std::vector<UInt_t> GetGoodElectron(Electrons);
+  std::vector<UInt_t> GetGoodMuon(const Muons&);
+  std::vector<UInt_t> GetGoodElectron(const Electrons&);
 
   void DefineW(Leptons l);
-  Bool_t CheckElectronPair(std::pair<UInt_t,UInt_t>);
-  Bool_t CheckMuonPair(std::pair<UInt_t,UInt_t>);
-  Float_t GetEtaPhiDistance(Float_t,Float_t,Float_t,Float_t);
-  Double_t GetMassFromPair(std::pair<Int_t,Int_t>);
-  Double_t MassRecoZ(Double_t,Double_t,Double_t,Double_t,
-                     Double_t,Double_t,Double_t,Double_t);
-  Double_t MassRecoW(Double_t,Double_t,Double_t,Double_t);
-  Double_t MassRecoW(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t);
-  void FillCommon(Leptons lz, Leptons lw);
+  Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&);
+  Bool_t CheckMuonPair(const std::pair<UInt_t,UInt_t>&);
+  Float_t GetEtaPhiDistance(const float&,const float&,const float&,const float&);
+  Float_t MassRecoZ(const float&,const float&,const float&,const float&,
+                     const float&,const float&,const float&,const float&);
+  Float_t MassRecoW(const float&,const float&,const float&,const float&);
+  Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
+  void FillCommon(const Leptons& lz,const Leptons& lw);
   void FillA();
   void FillB();
   void FillC();
@@ -232,13 +231,13 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter);
 #endif
 
-  std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(Leptons, std::vector<UInt_t>);
-  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(Leptons,std::vector<UInt_t>);
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t,Float_t);
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VAlt(ROOT::Math::PtEtaPhiMVector,Float_t,Float_t,Float_t); 
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(ROOT::Math::PtEtaPhiMVector lep,
-                                                                 Float_t MetPt, Float_t MetPhi, Float_t Wmt);
-  ROOT::Math::PxPyPzMVector Get4V(Float_t MetPt, Float_t MetPhi, Float_t Pz);
+  std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(const Leptons&, const std::vector<UInt_t>&);
+  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(const Leptons&,const std::vector<UInt_t>&);
+  std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(const ROOT::Math::PtEtaPhiMVector&,const Float_t&);
+  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VAlt(ROOT::Math::PtEtaPhiMVector,Float_t); 
+  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,
+                                                                 const Float_t& Wmt);
+  ROOT::Math::PxPyPzMVector Get4V(const Float_t& Pz);
 
   ClassDef(PreSelector,0);
 };
