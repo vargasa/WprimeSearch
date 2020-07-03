@@ -16,13 +16,15 @@ class UniqueEntryListMaker : public TSelector {
   TTreeReaderValue<UInt_t> luminosityBlock = {fReader, "luminosityBlock"};
   TTreeReaderValue<ULong64_t> event = {fReader, "event"};
 
-  Long64_t GetEventIndex(UInt_t run,ULong64_t event);
+  Long64_t GetEventIndex(const UInt_t& run,const ULong64_t& event);
+  Bool_t IsGold(const UInt_t& Run, const UInt_t& LuminosityBlock);
+
   TEntryList *EntryList;
 
   Long64_t EventID;
   TTree *EventIndexTree;
   std::unordered_set<Long64_t> EventIndex;
-  void AddTreeToEventIndex(std::string treeName);
+  void AddTreeToEventIndex(std::string_view treeName);
 
   TH1F *hlog;
 
@@ -40,7 +42,6 @@ class UniqueEntryListMaker : public TSelector {
   virtual Int_t   Version() const { return 2; }
   void BuildGoldenJson();
 
-  Bool_t IsGold(UInt_t Run, UInt_t LuminosityBlock);
 
   ClassDef(UniqueEntryListMaker,0);
 };

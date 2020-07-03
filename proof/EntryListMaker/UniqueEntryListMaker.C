@@ -53,18 +53,17 @@ void UniqueEntryListMaker::SlaveBegin(TTree *tree) {
   
 } 
 
-void UniqueEntryListMaker::AddTreeToEventIndex(std::string treeName){
-  EventIndexTree = dynamic_cast<TTree *>(fInput->FindObject(treeName.c_str()));
+void UniqueEntryListMaker::AddTreeToEventIndex(std::string_view treeName){
+  EventIndexTree = dynamic_cast<TTree *>(fInput->FindObject(treeName.data()));
   TTreeReader fReader1(EventIndexTree);
   TTreeReaderValue<Long64_t> EvID(fReader1,"EventID");
     
   while(fReader1.Next()){
-    hlog->Fill(treeName.c_str(),1.);
+    hlog->Fill(treeName.data(),1.);
     EventIndex.insert(*EvID);
   }
 }
-Long64_t UniqueEntryListMaker::GetEventIndex(UInt_t run,ULong64_t event) {
-  // run < 285500 && event < 5e9
+Long64_t UniqueEntryListMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) {
   return std::stol(std::to_string(run)+std::to_string(event));
 }
 
@@ -74,10 +73,10 @@ Bool_t UniqueEntryListMaker::Process(Long64_t entry) {
 
    EventID = GetEventIndex(*run,*event);
    if(EventIndex.find(EventID) == EventIndex.end ()) {
-     hlog->Fill(Form("UniqueEvent_%s",SampleName.Data());
+     hlog->Fill(Form("UniqueEvent_%s",SampleName.Data()),1.);
      EntryList->Enter(entry);
    } else {
-     hlog->Fill(Form("DuplicatedEvent_%s",SampleName.Data());
+     hlog->Fill(Form("DuplicatedEvent_%s",SampleName.Data()),1.);
    }
 
    return kTRUE;
