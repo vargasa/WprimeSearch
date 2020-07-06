@@ -183,7 +183,6 @@ class PreSelector : public EventSelection {
   TH2I *HNEl;
   TH2I *HNMu;
 
-  Int_t Year;
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
   Float_t wmt; // W Transverse mass;
 
@@ -203,7 +202,6 @@ class PreSelector : public EventSelection {
   PreSelector(TTree * = 0);
   ~PreSelector() { }
   void    Begin(TTree *tree);
-  void    Init(TTree *tree);
   void    SlaveBegin(TTree *tree);
   Bool_t  Process(Long64_t entry);
   void    Terminate();

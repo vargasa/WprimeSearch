@@ -21,7 +21,6 @@ class EventIDMaker : public EventSelection {
   Long64_t GetEventIndex(const UInt_t& run,const ULong64_t& event);
   TEntryList *EntryList;
   TTree *eTree;
-  Int_t Year;
   Long64_t EventID;
   TTree *EventIndexTree;
   std::unordered_set<Long64_t> EventIndex;
@@ -37,10 +36,8 @@ class EventIDMaker : public EventSelection {
   EventIDMaker(TTree * = 0);
   ~EventIDMaker() { }
   void    Begin(TTree *tree);
-  void    Init(TTree *tree);
   void    SlaveBegin(TTree *tree);
   Bool_t  Process(Long64_t entry);
-  Bool_t  Notify();
   void    Terminate();
   Int_t   Version() const { return 2; }
   void BuildGoldenJson();

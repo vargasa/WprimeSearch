@@ -33,7 +33,8 @@ class EventSelection : public TSelector{
 
   TTreeReaderValue<UInt_t> nMuon = {fReader, MakeBranchList("nMuon")};
   TTreeReaderValue<UInt_t> nElectron = {fReader, MakeBranchList("nElectron")};
-
+  Int_t Year;
+  Bool_t BrokenTree{};
   Bool_t MinLeptons{};
   Bool_t ElectronHLTs{};
   Bool_t MuonHLTs{};
@@ -44,13 +45,49 @@ class EventSelection : public TSelector{
   EventSelection() {};
   ~EventSelection() {};
   Bool_t ElectronTest() { return ElectronHLTs; };
+  void Init(TTree *tree);
   Bool_t MuonTest() { return MuonHLTs; };
   Bool_t FlagsTest() { return Flags; };
   Bool_t MinLeptonsTest() { return MinLeptons; };
-  void ReadEntry(Long64_t entry, Int_t year);
-  Float_t GetMuonSF(TList *SFDB ,Int_t year,Float_t eta, Float_t pt);
+  void ReadEntry(Long64_t entry);
+  Float_t GetMuonSF(TList *SFDB, Float_t eta, Float_t pt);
   Float_t GetSF(TH1* h,Float_t eta, Float_t pt);
+  Bool_t Notify();
 };
+
+void EventSelection::Init(TTree *tree)
+{
+
+  for(auto brn: BranchNamesList){
+    const TBranch *b = tree->FindBranch(brn);
+    if(b == nullptr){
+      std::cerr << "EventIDSelection::Init Error: Tree " << tree->GetName()
+		<< " Branch: " << brn << " not found " << Year << std::endl;
+      std::cerr << "URL: " << tree->GetCurrentFile()->GetEndpointUrl()->GetUrl() <<std::endl;
+      BrokenTree = true;
+    }
+  }
+
+  if (Year == 2016) {
+    if (BrokenTree){
+      HLT_TkMu50 = HLT_Mu50;
+      std::clog << Form("Superseeding branch content: %s <- %s\n", HLT_TkMu50.GetBranchName(),HLT_Mu50.GetBranchName());
+    } else {
+      TTreeReaderValue<Bool_t> tmp{fReader,"HLT_TkMu50"};
+      HLT_TkMu50 = tmp;
+      std::clog << Form("Restoring %s Branch",HLT_TkMu50.GetBranchName());
+    }
+  }
+
+  fReader.SetTree(tree);
+
+}
+
+
+Bool_t EventSelection::Notify(){
+  std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+  return kTRUE;
+}
 
 const char* EventSelection::MakeBranchList(const char *bname){
   BranchNamesList.emplace_back(bname);
@@ -62,7 +99,7 @@ Float_t EventSelection::GetSF(TH1* h,Float_t x, Float_t y){
 }
 
 
-Float_t EventSelection::GetMuonSF(TList *SFDb, Int_t year, Float_t eta, Float_t pt){
+Float_t EventSelection::GetMuonSF(TList *SFDb, Float_t eta, Float_t pt){
 
   Float_t sf = -1;
 
@@ -72,7 +109,7 @@ Float_t EventSelection::GetMuonSF(TList *SFDb, Int_t year, Float_t eta, Float_t 
   TH2D *SFMuonIDBF = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
   TH2D *SFMuonIDGH = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
 
-  if (year == 2016) {
+  if (Year == 2016) {
     const Float_t LumiBF = 3.11; //fb-1
     const Float_t LumiGH = 5.54;
     const Float_t SFTriggerBF = GetSF(SFMuonTriggerBF,abs(eta),pt);
@@ -87,13 +124,13 @@ Float_t EventSelection::GetMuonSF(TList *SFDb, Int_t year, Float_t eta, Float_t 
 
 }
 
-void EventSelection::ReadEntry(Long64_t entry, Int_t year){
+void EventSelection::ReadEntry(Long64_t entry){
 
   fReader.SetEntry(entry);
 
   MinLeptons = (*nElectron + *nMuon) > 2;
 
-  if(year == 2016){
+  if(Year == 2016){
     ElectronHLTs = (*HLT_Ele27_WPTight_Gsf||*HLT_Photon175);
     MuonHLTs = (*HLT_Mu50||*HLT_TkMu50);
     Flags = *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&

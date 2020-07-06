@@ -92,11 +92,6 @@ PreSelector::PreSelector(TTree *)
   HWZPt = 0;
 }
 
-void PreSelector::Init(TTree *tree)
-{
-  //Called every time a new TTree is attached.
-  fReader.SetTree(tree);
-}
 void PreSelector::Begin(TTree *tree) {
 
   if (fInput->FindObject("SampleName")) {
@@ -320,6 +315,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
     TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
     Year = p->GetVal();
   }
+
+  std::clog << Form("PreSelector::SlaveBegin Year: %d\n",Year);
 
 }
 
@@ -675,7 +672,7 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p){
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
-  ReadEntry(entry,Year);
+  ReadEntry(entry);
 
   HCutFlow->FillS("NoCuts");
 
@@ -806,7 +803,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   if(PairMu){
 
 #ifndef CMSDATA
-    const Float_t SFMuon = GetMuonSF(SFDb, Year, Muon_eta[l2], Muon_pt[l2]);
+    const Float_t SFMuon = GetMuonSF(SFDb, Muon_eta[l2], Muon_pt[l2]);
 #endif
 
     for(auto i: GoodMuon){

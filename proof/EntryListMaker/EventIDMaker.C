@@ -14,40 +14,6 @@ EventIDMaker::EventIDMaker(TTree *)
   hlog = 0;
 }
 
-void EventIDMaker::Init(TTree *tree)
-{
-
-  for(auto brn: BranchNamesList){
-    const TBranch *b = tree->FindBranch(brn);
-    if(b == nullptr){
-      std::cerr << "EventIDMaker::Init Error: Tree " << tree->GetName()
-		<< " Branch: " << brn << " not found " << Year << std::endl;
-      std::cerr << "URL: " << tree->GetCurrentFile()->GetEndpointUrl()->GetUrl() <<std::endl;
-      BrokenTree = true;
-      hlog->FillS(Form("T_MissingBranch_%s",brn));
-    }
-  }
-
-  if (Year == 2016) {
-    if (BrokenTree){
-      HLT_TkMu50 = HLT_Mu50;
-      std::clog << Form("Superseeding branch content: %s <- %s\n", HLT_TkMu50.GetBranchName(),HLT_Mu50.GetBranchName());
-    } else {
-      TTreeReaderValue<Bool_t> tmp{fReader,"HLT_TkMu50"};
-      HLT_TkMu50 = tmp;
-      std::clog << Form("Restoring %s Branch",HLT_TkMu50.GetBranchName());
-    }
-  }
-
-  fReader.SetTree(tree);
-
-}
-
-Bool_t EventIDMaker::Notify(){
-  std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
-  return kTRUE;
-}
-
 void EventIDMaker::Begin(TTree *tree) {
 
   if (fInput->FindObject("SampleName")) {
@@ -82,7 +48,7 @@ void EventIDMaker::SlaveBegin(TTree *tree) {
     Year = p->GetVal();
   }
 
-  std::clog << "EventIDMaker::SlaveBegin Year " << Year;
+  std::clog << Form("EventIDMaker::SlaveBegin Year:%d \n", Year);
 
   hlog = new TH1F("hlog","hlog",100,0,100); /*Ranges are meaningless here*/
   fOutput->Add(hlog);
@@ -107,7 +73,9 @@ Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) {
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-  ReadEntry(entry,Year);
+  if(BrokenTree) hlog->FillS("BrokenTreeEvents");
+
+  ReadEntry(entry);
 
   hlog->FillS("Total");
 
