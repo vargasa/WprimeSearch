@@ -40,6 +40,7 @@ class EventIDMaker : public EventSelection {
   void    Init(TTree *tree);
   void    SlaveBegin(TTree *tree);
   Bool_t  Process(Long64_t entry);
+  Bool_t  Notify();
   void    Terminate();
   Int_t   Version() const { return 2; }
   void BuildGoldenJson();
