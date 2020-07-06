@@ -1,4 +1,4 @@
- #ifndef EVENTSELECTION
+#ifndef EVENTSELECTION
 #define EVENTSELECTION
 #include "TTreeReaderValue.h"
 #include "TTreeReader.h"
@@ -19,6 +19,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> HLT_Photon175 = {fReader, MakeBranchList("HLT_Photon175")};
   TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, MakeBranchList("HLT_Mu50")};
   TTreeReaderValue<Bool_t> HLT_TkMu50 = {fReader, MakeBranchList("HLT_TkMu50")};
+  TTreeReaderValue<Bool_t> Dummy_TkMu50 = {fReader, "HLT_TkMu50"}; /*Do not dereference*/
   TTreeReaderValue<Bool_t> HLT_IsoMu24 = {fReader, MakeBranchList("HLT_IsoMu24")};
   TTreeReaderValue<Bool_t> HLT_IsoTkMu24 = {fReader, MakeBranchList("HLT_IsoTkMu24")};
   TTreeReaderValue<Bool_t> Flag_globalTightHalo2016Filter = {fReader, MakeBranchList("Flag_globalTightHalo2016Filter")};
@@ -58,10 +59,12 @@ class EventSelection : public TSelector{
 void EventSelection::Init(TTree *tree)
 {
 
+  BrokenTree = false;
+
   for(auto brn: BranchNamesList){
     const TBranch *b = tree->FindBranch(brn);
     if(b == nullptr){
-      std::cerr << "EventIDSelection::Init Error: Tree " << tree->GetName()
+      std::cerr << "EventSelection::Init Error: Tree " << tree->GetName()
 		<< " Branch: " << brn << " not found " << Year << std::endl;
       std::cerr << "URL: " << tree->GetCurrentFile()->GetEndpointUrl()->GetUrl() <<std::endl;
       BrokenTree = true;
@@ -70,12 +73,10 @@ void EventSelection::Init(TTree *tree)
 
   if (Year == 2016) {
     if (BrokenTree){
-      HLT_TkMu50 = HLT_Mu50;
       std::clog << Form("Superseeding branch content: %s <- %s\n", HLT_TkMu50.GetBranchName(),HLT_Mu50.GetBranchName());
+      HLT_TkMu50 = HLT_Mu50;
     } else {
-      TTreeReaderValue<Bool_t> tmp{fReader,"HLT_TkMu50"};
-      HLT_TkMu50 = tmp;
-      std::clog << Form("Restoring %s Branch",HLT_TkMu50.GetBranchName());
+      HLT_TkMu50 = Dummy_TkMu50;
     }
   }
 
@@ -86,6 +87,7 @@ void EventSelection::Init(TTree *tree)
 
 Bool_t EventSelection::Notify(){
   std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+  if (Year == 2016) std::clog << Form("Branch being processed: %s\n", HLT_TkMu50.GetBranchName());
   return kTRUE;
 }
 
