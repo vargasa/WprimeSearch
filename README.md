@@ -8,20 +8,35 @@ voms-proxy-init --voms cms --debug #Set up proxy
 
 ### Setup for MC
 
-Scale factors:
+Scale factors: Additional notes [here](https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/README.txt)
 
+#### Electron Trigger
+
+```
+#[2016 - LowPt Bin]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root
+#[2016 - HighPt Bin]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root
+```
 
 #### Muon Trigger:
 
-[2016 GH](https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_Period4.root)
-[2016 B-F](https://calderon.web.cern.ch/calderon/MuonPOG/2016dataReRecoEfficiencies/trigger/EfficienciesAndSF_RunBtoF.root)
-
+```
+#[2016 GH]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/EfficienciesAndSF_Period4.root
+#[2016 B-F]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/EfficienciesAndSF_RunBtoF.root
+````
 #### Muon ID:
 
 Download filename differs from the one shown in the URL
 
-[2016 GH](https://gitlab.cern.ch/cms-muonPOG/MuonReferenceEfficiencies/-/blob/master/EfficienciesStudies/2016_legacy_rereco/rootfiles/RunGH_SF_ID.root)
-[2016 B-F](https://gitlab.cern.ch/cms-muonPOG/MuonReferenceEfficiencies/-/blob/master/EfficienciesStudies/2016_legacy_rereco/rootfiles/RunBCDEF_SF_ID.root)
+```
+#[2016 GH]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunGH_SF_ID.root
+#[2016 B-F]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunBCDEF_SF_ID.root
+```
 
 ```bash
 cd proof/
