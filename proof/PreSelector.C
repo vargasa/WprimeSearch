@@ -348,7 +348,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
 };
 
 float PreSelector::MassRecoZ(const float& pt1, const float& eta1, const float& phi1, const float& m1,
-                                const float& pt2, const float& eta2, const float& phi2, const float& m2){
+                                const float& pt2, const float& eta2, const float& phi2, const float& m2) const{
 
   ROOT::Math::PtEtaPhiMVector l1(pt1, eta1, phi1, m1);
   ROOT::Math::PtEtaPhiMVector l2(pt2, eta2, phi2, m2);
@@ -364,12 +364,12 @@ Float_t PreSelector::MassRecoW(const ROOT::Math::PtEtaPhiMVector& lep){
 
 
 Float_t PreSelector::MassRecoW(const float& ptl, const float& phil,
-                             const float& ptmet, const float& phimet){
+                             const float& ptmet, const float& phimet) const{
   return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
 };
 
 
-std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons& l, const std::vector<UInt_t>& GoodIndex){
+std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons& l, const std::vector<UInt_t>& GoodIndex) const{
 
   std::vector<UInt_t> positive;
   std::vector<UInt_t> negative;
@@ -403,7 +403,7 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons&
 
 }
 
-std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZ(const Leptons& l, const std::vector<UInt_t>& GoodLepton){
+std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector::FindZ(const Leptons& l, const std::vector<UInt_t>& GoodLepton) const{
 
   std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
 
@@ -431,12 +431,12 @@ std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector:
 }
 
 #ifndef CMSDATA
-std::pair<Int_t,Int_t> PreSelector::GetMother(std::pair<Int_t,Int_t> Daughter){
+std::pair<Int_t,Int_t> PreSelector::GetMother(std::pair<Int_t,Int_t> Daughter) const{
   return PreSelector::GetMother(Daughter.first,Daughter.second);
 }
 #endif
 #ifndef CMSDATA
-std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\Mu or e*/){
+std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\Mu or e*/) const{
 
   if(GenPartIdx == -1 ) return std::make_pair(GenPartIdx,9999);
 
@@ -463,7 +463,7 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(const ROOT::Math:
 }
 
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep,
-                                                               const Float_t& Wmt){
+							    const Float_t& Wmt){
 
   std::vector<ROOT::Math::PxPyPzMVector> s;
   Float_t NuPz = 0.;
@@ -486,16 +486,14 @@ ROOT::Math::PxPyPzMVector PreSelector::Get4V(const Float_t& Pz){
 
   const Float_t MNu = 0.;
 
-  ROOT::Math::PxPyPzMVector s((*MET_pt)*TMath::Cos(*MET_phi),
-                              (*MET_pt)*TMath::Sin(*MET_phi),
-                              Pz,MNu);
-
-  return s;
+  return ROOT::Math::PxPyPzMVector((*MET_pt)*TMath::Cos(*MET_phi),
+				   (*MET_pt)*TMath::Sin(*MET_phi),
+				   Pz,MNu);
 
 }
 
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEtaPhiMVector lep,
-                                                            Float_t Wmt){
+							       Float_t Wmt){
   const Float_t Mw = 80.379;
   const Float_t MNu = 0.;
 
@@ -528,7 +526,7 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 
 
 Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
-                                        const float& eta2, const float& phi2){
+                                        const float& eta2, const float& phi2) const{
   return sqrt(pow(eta2-eta1,2.)+pow(phi2-phi1,2.));
 }
 
@@ -657,13 +655,13 @@ void PreSelector::FillD(){
 #endif
 }
 
-Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p){
+Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
   const Float_t MinPt = 35.;
   if (Electron_pt[p.first] < MinPt || Electron_pt[p.second] < MinPt) return kFALSE;
   return kTRUE;
 }
 
-Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p){
+Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
   const Float_t MinLeadPt = 25.;
   const Float_t MinSubleadPt = 10.;
   if (Muon_pt[p.first] < MinLeadPt || Muon_pt[p.second] < MinSubleadPt) return kFALSE;

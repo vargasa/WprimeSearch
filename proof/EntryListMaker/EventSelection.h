@@ -45,14 +45,14 @@ class EventSelection : public TSelector{
 
   EventSelection() {};
   ~EventSelection() {};
-  Bool_t ElectronTest() { return ElectronHLTs; };
+  Bool_t ElectronTest() const { return ElectronHLTs; };
   void Init(TTree *tree);
-  Bool_t MuonTest() { return MuonHLTs; };
-  Bool_t FlagsTest() { return Flags; };
-  Bool_t MinLeptonsTest() { return MinLeptons; };
-  void ReadEntry(Long64_t entry);
-  Float_t GetMuonSF(TList *SFDB, Float_t eta, Float_t pt);
-  Float_t GetSF(TH1* h,Float_t eta, Float_t pt);
+  Bool_t MuonTest() const { return MuonHLTs; };
+  Bool_t FlagsTest() const { return Flags; };
+  Bool_t MinLeptonsTest() const { return MinLeptons; };
+  void ReadEntry(const Long64_t& entry);
+  Float_t GetMuonSF(TList *SFDB,const Float_t& eta,const Float_t& pt) const;
+  Float_t GetSF(TH1* h,const Float_t& eta,const Float_t& pt) const;
   Bool_t Notify();
 };
 
@@ -85,7 +85,7 @@ void EventSelection::Init(TTree *tree)
 }
 
 
-Bool_t EventSelection::Notify(){
+Bool_t EventSelection::Notify() {
   std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
   if (Year == 2016) std::clog << Form("Branch being processed: %s\n", HLT_TkMu50.GetBranchName());
   return kTRUE;
@@ -96,12 +96,12 @@ const char* EventSelection::MakeBranchList(const char *bname){
   return bname;
 };
 
-Float_t EventSelection::GetSF(TH1* h,Float_t x, Float_t y){
+Float_t EventSelection::GetSF(TH1* h,const Float_t& x, const Float_t& y) const {
   return h->GetBinContent(h->FindBin(x,y));
 }
 
 
-Float_t EventSelection::GetMuonSF(TList *SFDb, Float_t eta, Float_t pt){
+Float_t EventSelection::GetMuonSF(TList *SFDb, const Float_t& eta, const Float_t& pt) const{
 
   Float_t sf = -1;
 
@@ -126,7 +126,7 @@ Float_t EventSelection::GetMuonSF(TList *SFDb, Float_t eta, Float_t pt){
 
 }
 
-void EventSelection::ReadEntry(Long64_t entry){
+void EventSelection::ReadEntry(const Long64_t& entry){
 
   fReader.SetEntry(entry);
 
