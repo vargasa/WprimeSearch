@@ -55,14 +55,14 @@ void EventIDMaker::SlaveBegin(TTree *tree) {
 
 } 
 
-Bool_t EventIDMaker::IsGold(const UInt_t& Run,const UInt_t& LuminosityBlock){
+Bool_t EventIDMaker::IsGold(const UInt_t& Run,const UInt_t& LuminosityBlock) {
   for (auto LumiRange: GoldenJson[Run]) {
     if (LuminosityBlock >= LumiRange.first && LuminosityBlock <= LumiRange.second) return true;
   }
   return false;
 }
 
-Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) {
+Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) const{
   if ( run > 3e5 or event > 6e9) {
     hlog->FillS("EventIDOutOfRange");
     std::cerr << Form("EventIDMaker::GetEventIndex() Unexpected range for run[%d] or event[%llu]\n",
@@ -73,11 +73,11 @@ Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) {
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-  if(BrokenTree) hlog->FillS("BrokenTreeEvents");
-
   ReadEntry(entry);
 
   hlog->FillS("Total");
+
+  if(BrokenTree) hlog->FillS("BrokenTreeEvents");
 
   if (!MinLeptonsTest()){
     hlog->FillS("FailMinLeptonsTest");

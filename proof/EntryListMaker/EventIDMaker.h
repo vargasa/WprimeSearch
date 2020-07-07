@@ -18,7 +18,7 @@ class EventIDMaker : public EventSelection {
   TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
 
   std::unordered_map<Int_t, std::vector<std::pair<UInt_t,UInt_t>>> GoldenJson;
-  Long64_t GetEventIndex(const UInt_t& run,const ULong64_t& event);
+  Long64_t GetEventIndex(const UInt_t& run,const ULong64_t& event) const;
   TEntryList *EntryList;
   TTree *eTree;
   Long64_t EventID;
@@ -26,8 +26,6 @@ class EventIDMaker : public EventSelection {
   std::unordered_set<Long64_t> EventIndex;
 
   TH1F *hlog;
-
-  Bool_t BrokenTree{};
 
  public :
 
