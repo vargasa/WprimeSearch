@@ -134,14 +134,28 @@ Float_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt) const{
 Float_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt) const{
 
   Float_t sf = -1;
+  const Float_t epsilon = 1e-2;
 
   if (Year == 2016) {
     const Float_t LumiBF = 3.11; //fb-1
     const Float_t LumiGH = 5.54;
-    const Float_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt);
-    const Float_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt);
-    const Float_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt);
-    const Float_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt);
+
+    Float_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt);
+    if (SFTriggerBF < epsilon)
+      SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),SFMuonTriggerBF->GetYaxis()->GetXmax());
+
+    Float_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt);
+    if (SFTriggerGH < epsilon)
+      SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),SFMuonTriggerGH->GetYaxis()->GetXmax());
+
+    Float_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt);
+    if (SFIDBF < epsilon)
+      SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,SFMuonIDBF->GetYaxis()->GetXmax());
+
+    Float_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt);
+    if (SFIDGH < epsilon)
+      SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,SFMuonIDGH->GetYaxis()->GetXmax());
+
     sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
     sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
   }
