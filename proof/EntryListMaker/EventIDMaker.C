@@ -77,7 +77,7 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
 
   hlog->FillS("Total");
 
-  if(BrokenTree) hlog->FillS("BrokenTreeEvents");
+  if(IsMissingBranch) hlog->FillS("MissingBranch");
 
   if (!MinLeptonsTest()){
     hlog->FillS("FailMinLeptonsTest");
@@ -104,6 +104,7 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
    // Event Selection
   if ( (ElectronTest() || MuonTest()) && *MET_pt > 30 ) {
     hlog->FillS("Passed");
+    if (IsMissingBranch) hlog->FillS("MissingBranch&Passed");
     EventID = GetEventIndex(*run,*event);
     eTree->Fill();
     EntryList->Enter(entry);

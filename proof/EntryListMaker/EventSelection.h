@@ -36,7 +36,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<UInt_t> nMuon = {fReader, MakeBranchList("nMuon")};
   TTreeReaderValue<UInt_t> nElectron = {fReader, MakeBranchList("nElectron")};
   Int_t Year;
-  Bool_t BrokenTree{};
+  Bool_t IsMissingBranch{};
   Bool_t MinLeptons{};
   Bool_t ElectronHLTs{};
   Bool_t MuonHLTs{};
@@ -76,7 +76,7 @@ Float_t EventSelection::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) 
 void EventSelection::Init(TTree *tree)
 {
 
-  BrokenTree = false;
+  IsMissingBranch = false;
 
   for(auto brn: BranchNamesList){
     const TBranch *b = tree->FindBranch(brn);
@@ -84,12 +84,12 @@ void EventSelection::Init(TTree *tree)
       std::cerr << "EventSelection::Init Error: Tree " << tree->GetName()
 		<< " Branch: " << brn << " not found " << Year << std::endl;
       std::cerr << "URL: " << tree->GetCurrentFile()->GetEndpointUrl()->GetUrl() <<std::endl;
-      BrokenTree = true;
+      IsMissingBranch = true;
     }
   }
 
   if (Year == 2016) {
-    if (BrokenTree){
+    if (IsMissingBranch){
       std::clog << Form("Superseeding branch content: %s <- %s\n", HLT_TkMu50.GetBranchName(),HLT_Mu50.GetBranchName());
       HLT_TkMu50 = HLT_Mu50;
     } else {
