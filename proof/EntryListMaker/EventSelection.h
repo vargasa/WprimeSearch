@@ -5,7 +5,6 @@
 #include "TSelector.h"
 #include "TH2F.h"
 #include "TH2D.h"
-#include "TGraphAsymmErrors.h"
 
 class EventSelection : public TSelector{
 
@@ -52,26 +51,8 @@ class EventSelection : public TSelector{
   Bool_t FlagsTest() const { return Flags; };
   Bool_t MinLeptonsTest() const { return MinLeptons; };
   void ReadEntry(const Long64_t& entry);
-  Float_t GetElectronSF(TList *SFDb, const Float_t& eta, const Float_t& pt) const;
-  Float_t GetMuonSF(TList *SFDB,const Float_t& eta,const Float_t& pt) const;
-  Float_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt) const;
-  Float_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) const;
   Bool_t Notify();
 };
-
-Float_t EventSelection::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) const {
-
-  Double_t* a;
-
-  for(Int_t i = 0; i < g->GetN(); i++){
-    a = (g->GetY()+i);
-    /* Test right bin limit*/
-    if( eta < (*(g->GetX()+i) + g->GetErrorX(i))) break;
-  }
-
-  return static_cast<Float_t>(*a);
-
-}
 
 void EventSelection::Init(TTree *tree)
 {
@@ -101,7 +82,6 @@ void EventSelection::Init(TTree *tree)
 
 }
 
-
 Bool_t EventSelection::Notify() {
   std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
   if (Year == 2016) std::clog << Form("Branch being processed: %s\n", HLT_TkMu50.GetBranchName());
@@ -112,57 +92,6 @@ const char* EventSelection::MakeBranchList(const char *bname){
   BranchNamesList.emplace_back(bname);
   return bname;
 };
-
-Float_t EventSelection::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y) const {
-  return h->GetBinContent(h->FindBin(x,y));
-}
-
-
-Float_t EventSelection::GetElectronSF(TList *SFDb, const Float_t& eta, const Float_t& pt) const{
-
-  Float_t sf = -1;
-
-  if(Year == 2016){
-    auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-    auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-
-    /* 2 bins in pt */
-    if( pt < 175.){
-      sf = GetSFFromGraph(SFElectronTrigger1,eta); 
-    } else {
-      sf = GetSFFromGraph(SFElectronTrigger2,eta);
-    }
-  }
-
-  return sf;
-
-}
-
-
-Float_t EventSelection::GetMuonSF(TList *SFDb, const Float_t& eta, const Float_t& pt) const{
-
-  Float_t sf = -1;
-
-  auto SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
-  auto SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
-
-  auto SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
-  auto SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
-
-  if (Year == 2016) {
-    const Float_t LumiBF = 3.11; //fb-1
-    const Float_t LumiGH = 5.54;
-    const Float_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt);
-    const Float_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt);
-    const Float_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt);
-    const Float_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt);
-    sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
-    sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
-  }
-
-  return sf;
-
-}
 
 void EventSelection::ReadEntry(const Long64_t& entry){
 

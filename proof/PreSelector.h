@@ -18,6 +18,7 @@
 #include "Math/Vector4Dfwd.h"
 #include "TEntryList.h"
 #include "EntryListMaker/EventSelection.h"
+#include "TGraphAsymmErrors.h"
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
@@ -181,8 +182,6 @@ class PreSelector : public EventSelection {
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
   Float_t wmt; // W Transverse mass;
 
-  TList *SFDb;
-
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
@@ -222,6 +221,19 @@ class PreSelector : public EventSelection {
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
+
+  Float_t GetElectronSF(const Float_t& eta, const Float_t& pt) const;
+  Float_t GetMuonSF(const Float_t& eta,const Float_t& pt) const;
+  Float_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt) const;
+  Float_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) const;
+
+  TList *SFDb;
+  TH2F* SFMuonTriggerBF;
+  TH2F* SFMuonTriggerGH;
+  TH2D* SFMuonIDBF;
+  TH2D* SFMuonIDGH;
+  TGraphAsymmErrors* SFElectronTrigger1;
+  TGraphAsymmErrors* SFElectronTrigger2;
 #endif
 
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(const Leptons&, const std::vector<UInt_t>&) const;

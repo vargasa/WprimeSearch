@@ -92,6 +92,65 @@ PreSelector::PreSelector(TTree *)
   HWZPt = 0;
 }
 
+#ifndef CMSDATA
+Float_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) const {
+
+  Double_t* a;
+
+  for(Int_t i = 0; i < g->GetN(); i++){
+    a = (g->GetY()+i);
+    /* Test right bin limit*/
+    if( eta < (*(g->GetX()+i) + g->GetErrorX(i))) break;
+  }
+
+  return static_cast<Float_t>(*a);
+
+}
+#endif
+#ifndef CMSDATA
+Float_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y) const {
+  return h->GetBinContent(h->FindBin(x,y));
+}
+#endif
+#ifndef CMSDATA
+Float_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt) const{
+
+  Float_t sf = -1;
+
+  if(Year == 2016){
+    /* 2 bins in pt */
+    if( pt < 175.){
+      sf = GetSFFromGraph(SFElectronTrigger1,eta); 
+    } else {
+      sf = GetSFFromGraph(SFElectronTrigger2,eta);
+    }
+  }
+
+  return sf;
+
+}
+#endif
+#ifndef CMSDATA
+Float_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt) const{
+
+  Float_t sf = -1;
+
+  if (Year == 2016) {
+    const Float_t LumiBF = 3.11; //fb-1
+    const Float_t LumiGH = 5.54;
+    const Float_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt);
+    const Float_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt);
+    const Float_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt);
+    const Float_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt);
+    sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
+    sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
+  }
+
+  return sf;
+
+}
+#endif
+
 void PreSelector::Begin(TTree *tree) {
 
   if (fInput->FindObject("SampleName")) {
@@ -305,16 +364,26 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
 
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+    std::clog << Form("PreSelector::SlaveBegin() Year Set: %d\n",Year);
+  }
+
 #ifndef CMSDATA
   if(fInput->FindObject("SFDb")){
     SFDb = dynamic_cast<TList*>(fInput->FindObject("SFDb"));
   }
-#endif
 
-  if (fInput->FindObject("Year")) {
-    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
-    Year = p->GetVal();
+  if (Year == 2016){
+    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+    SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
+    SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
+    SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
+    SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
   }
+#endif
 
   std::clog << Form("PreSelector::SlaveBegin Year: %d\n",Year);
 
@@ -555,7 +624,7 @@ void PreSelector::FillA(){
   HCutFlow->FillS("3e0mu");
 
 #ifndef CMSDATA
-  w = GetElectronSF(SFDb, lep1.Eta(), lep1.Pt());
+  w = GetElectronSF(lep1.Eta(), lep1.Pt());
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
@@ -586,8 +655,8 @@ void PreSelector::FillB(){
   HCutFlow->FillS("2e1mu");
 
 #ifndef CMSDATA
-  w = GetElectronSF(SFDb,lep1.Eta(),lep1.Pt());
-  w *= GetMuonSF(SFDb,lep3.Eta(),Lep3.Pt());
+  w = GetElectronSF(lep1.Eta(),lep1.Pt());
+  w *= GetMuonSF(lep3.Eta(),lep3.Pt());
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
@@ -616,8 +685,8 @@ void PreSelector::FillC(){
   HCutFlow->FillS("1e2mu");
 
 #ifndef CMSDATA
-  w *= GetMuonSF(SFDb,lep1.Eta(),lep1.Pt());
-  w = GetElectronSF(SFDb,lep3.Eta(),lep3.Pt());
+  w *= GetMuonSF(lep1.Eta(),lep1.Pt());
+  w = GetElectronSF(lep3.Eta(),lep3.Pt());
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
@@ -653,7 +722,7 @@ void PreSelector::FillD(){
   HCutFlow->FillS("0e3mu");
 
 #ifndef CMSDATA
-  w = GetMuonSF(SFDb,lep1.Eta(),lep1.Pt());
+  w = GetMuonSF(lep1.Eta(),lep1.Pt());
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
@@ -817,10 +886,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   if(PairMu){
-
-#ifndef CMSDATA
-    const Float_t SFMuon = GetMuonSF(SFDb, Muon_eta[l2], Muon_pt[l2]);
-#endif
 
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);
