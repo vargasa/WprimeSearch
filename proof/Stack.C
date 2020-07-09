@@ -60,7 +60,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("HMassWZA","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count"),
     std::make_tuple("HMassWZB","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count"),
     std::make_tuple("HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count"),
-    std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count")
+    std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count"),
   };
 
   std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
@@ -73,6 +73,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_pair("HDistl1l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"),
     std::make_pair("HDistl2l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"),
     std::make_pair("HWZDist","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"),
+    /*Next series*/
+    std::make_pair("HScaleFactors","Scale Factors; Scale Factor; Normalized events"),
+    std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
+    std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
+    std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
+
   };
 
 

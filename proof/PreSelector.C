@@ -90,6 +90,9 @@ PreSelector::PreSelector(TTree *)
 
   HWZDist = 0;
   HWZPtDist = 0;
+
+  HPileup = 0;
+
   HWZPt = 0;
 }
 
@@ -177,9 +180,9 @@ void PreSelector::Begin(TTree *tree) {
 
 void PreSelector::SlaveBegin(TTree *tree) {
 
-  const Double_t MaxMet = 1000.;
+  const Double_t MaxMet = 600.;
   const Double_t MinMet = 0.;
-  const Int_t MetBins = 100;
+  const Int_t MetBins = 60;
 
   HMetA = new TH1F("HMetA","",MetBins,MinMet,MaxMet);
   HMetB = new TH1F("HMetB","",MetBins,MinMet,MaxMet);
@@ -220,8 +223,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
   const Float_t MinMass = -1.;
-  const Float_t MaxMass = 2000.;
-  const Int_t MassBins = 50;
+  const Float_t MaxMass = 2200.;
+  const Int_t MassBins = 52;
 
   const Float_t MinWMass = 0.;
   const Float_t MaxWMass = 1e3;
@@ -378,6 +381,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMetPt = new TH1F("HMetPt","MET Pt",
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
+
+  HPileup = new TH1D("HPileup","PV_npvs",
+		     100,0.,100.); 
+  fOutput->Add(HPileup);
 
   if (fInput->FindObject("Year")) {
     TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
@@ -631,6 +638,7 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HDistl2l3->Fill(GetEtaPhiDistance(lz.eta[l2],lz.phi[l2],
                                       lw.eta[l3],lw.phi[l3]));
   HMetPt->Fill(*MET_pt);
+  HPileup->Fill(static_cast<Double_t>(*PV_npvs));
 }
 
 void PreSelector::FillA(){
@@ -1406,6 +1414,12 @@ void PreSelector::Terminate() {
   HOverlap->Draw();
   HOverlap->Write("HOverlap");
   ch->Print(Form("%s_Overlap.png",SampleName.Data()));
+
+  ch->Clear();
+  ch->cd();
+  HPileup->Draw();
+  HPileup->Write("HPileup");
+  ch->Print(Form("%s_HPileup.png",SampleName.Data()));
 
   ch->Clear();
   gStyle->SetOptStat(0);

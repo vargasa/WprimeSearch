@@ -38,6 +38,13 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunGH_S
 wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunBCDEF_SF_ID.root
 ```
 
+### Pileup distribution
+```
+#2016
+wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2016-69200ub.root
+
+```
+
 ```bash
 cd proof/
 echo "" > IsData.h # Make sure CMSDATA is undefined
