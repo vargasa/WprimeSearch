@@ -158,6 +158,7 @@ class PreSelector : public EventSelection {
   TH1F *HGenPartFB;
   TH1F *HGenPartFC;
   TH1F *HGenPartFD;
+  TH1F *HScaleFactors;
 #endif
   TH1F *HCutFlow;
 

@@ -72,6 +72,7 @@ PreSelector::PreSelector(TTree *)
   HGenPartFB=0;
   HGenPartFC=0;
   HGenPartFD=0;
+  HScaleFactors = 0;
 #endif
   HCutFlow = 0;
 
@@ -142,19 +143,19 @@ Float_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt) const{
 
     Float_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt);
     if (SFTriggerBF < epsilon)
-      SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),SFMuonTriggerBF->GetYaxis()->GetXmax());
+      SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),(SFMuonTriggerBF->GetYaxis()->GetXmax() - epsilon));
 
     Float_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt);
     if (SFTriggerGH < epsilon)
-      SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),SFMuonTriggerGH->GetYaxis()->GetXmax());
+      SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),(SFMuonTriggerGH->GetYaxis()->GetXmax() - epsilon));
 
     Float_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt);
     if (SFIDBF < epsilon)
-      SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,SFMuonIDBF->GetYaxis()->GetXmax());
+      SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,(SFMuonIDBF->GetYaxis()->GetXmax() - epsilon));
 
     Float_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt);
     if (SFIDGH < epsilon)
-      SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,SFMuonIDGH->GetYaxis()->GetXmax());
+      SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,(SFMuonIDGH->GetYaxis()->GetXmax() - epsilon));
 
     sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
     sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
@@ -397,6 +398,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
     SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
     SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
   }
+
+  HScaleFactors = new TH1F("HScaleFactors","HScaleFactors",30,0.,1.5);
+  fOutput->Add(HScaleFactors);
 #endif
 
   std::clog << Form("PreSelector::SlaveBegin Year: %d\n",Year);
@@ -639,6 +643,7 @@ void PreSelector::FillA(){
 
 #ifndef CMSDATA
   w = GetElectronSF(lep1.Eta(), lep1.Pt());
+  HScaleFactors->Fill(w);
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
@@ -671,6 +676,7 @@ void PreSelector::FillB(){
 #ifndef CMSDATA
   w = GetElectronSF(lep1.Eta(),lep1.Pt());
   w *= GetMuonSF(lep3.Eta(),lep3.Pt());
+  HScaleFactors->Fill(w);
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
@@ -701,6 +707,7 @@ void PreSelector::FillC(){
 #ifndef CMSDATA
   w *= GetMuonSF(lep1.Eta(),lep1.Pt());
   w = GetElectronSF(lep3.Eta(),lep3.Pt());
+  HScaleFactors->Fill(w);
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
@@ -737,6 +744,7 @@ void PreSelector::FillD(){
 
 #ifndef CMSDATA
   w = GetMuonSF(lep1.Eta(),lep1.Pt());
+  HScaleFactors->Fill(w);
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
@@ -1365,8 +1373,17 @@ void PreSelector::Terminate() {
   HGenPartZD->Write("HGenPartZD");
   HGenPartWD->Write("HGenPartWD");
   ch->Print(Form("%s_GenPartMother.png",SampleName.Data()));
+
+  ch->Clear();
+  ch->cd();
+  HScaleFactors->SetTitle("ScaleFactors Distribution; SF; Event count");
+  HScaleFactors->Draw();
+  HScaleFactors->Write("HScaleFactors");
+  ch->Print(Form("%s_HScaleFactors.png",SampleName.Data()));
 #endif
 
+  ch->Clear();
+  ch->Divide(2,2);
   ch->cd(1);
   gPad->SetLogz();
   HNLepA->SetTitle("# Leptons (3e0#mu); GoodMuon Size; GoodElectron Size");
