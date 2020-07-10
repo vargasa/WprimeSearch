@@ -383,7 +383,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMetPt);
 
   HPileup = new TH1D("HPileup","PV_npvs",
-		     100,0.,100.); 
+                     100,0.,100.);
   fOutput->Add(HPileup);
 
   if (fInput->FindObject("Year")) {
@@ -638,7 +638,6 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HDistl2l3->Fill(GetEtaPhiDistance(lz.eta[l2],lz.phi[l2],
                                       lw.eta[l3],lw.phi[l3]));
   HMetPt->Fill(*MET_pt);
-  HPileup->Fill(static_cast<Double_t>(*PV_npvs));
 }
 
 void PreSelector::FillA(){
@@ -721,11 +720,11 @@ void PreSelector::FillC(){
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
 
   HGenPartZC->FillS(Form("%d",GetMother(Muon_genPartIdx[l1],
-					Muon_pdgId[l1]).second));
+                                        Muon_pdgId[l1]).second));
   HGenPartZC->FillS(Form("%d",GetMother(Muon_genPartIdx[l2],
-					Muon_pdgId[l2]).second));
+                                        Muon_pdgId[l2]).second));
   HGenPartWC->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
-					Electron_pdgId[l3]).second));
+                                        Electron_pdgId[l3]).second));
 #endif
 
   HMetC->Fill(*MET_pt,w);
@@ -758,11 +757,11 @@ void PreSelector::FillD(){
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
 
   HGenPartZD->FillS(Form("%d",GetMother(Muon_genPartIdx[l1],
-					Muon_pdgId[l1]).second));
+                                        Muon_pdgId[l1]).second));
   HGenPartZD->FillS(Form("%d",GetMother(Muon_genPartIdx[l2],
-					Muon_pdgId[l2]).second));
+                                        Muon_pdgId[l2]).second));
   HGenPartWD->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
-					Muon_pdgId[l3]).second));
+                                        Muon_pdgId[l3]).second));
 #endif
 
   HMetD->Fill(*MET_pt,w);
@@ -802,7 +801,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     HCutFlow->FillS("FailFlags");
     return kFALSE;
   }
-  if (*MET_pt < 30){
+  if (*MET_pt < 30.){
     HCutFlow->FillS("MET_pt<30");
     return kFALSE;
   }
@@ -812,6 +811,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+  HPileup->Fill(static_cast<Double_t>(*PV_npvs));
 
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,

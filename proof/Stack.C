@@ -5,7 +5,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   const Float_t luminosity = 35.9e15; /* 35.9fb^-1 2016 */
   const Float_t pbFactor = 1e-12; /*pico prefix*/
 
-  const std::string DataName = "SinglePhotonSingleElectronSingleMuon";
+  const char* DataName = "SinglePhotonSingleElectronSingleMuon";
 
   // ShortName, DasName, kColor, Style, XSection, nEvents
   std::vector<std::tuple<std::string,std::string,Int_t,Float_t>> BgNames = {
@@ -61,6 +61,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("HMassWZB","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count"),
     std::make_tuple("HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count"),
     std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count"),
+    /* Another series */
+    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
+    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
+    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
+    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
   };
 
   std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
@@ -79,6 +84,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
     std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
 
+  };
+
+  auto normalizeHisto = [](TH1* h1){
+    float_t maxBinContent= h1->GetBinContent(h1->GetMaximumBin());
+    h1->Scale(1./maxBinContent);
   };
 
 
@@ -143,14 +153,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hs->SetMaximum(MaxY);
       hs->Draw("HIST");
 
-      auto hdata = (TH1F*)f1->Get(Form("%s/%s",DataName.c_str(),std::get<0>(HN).c_str()));
+      auto hdata = (TH1F*)f1->Get(Form("%s/%s",DataName,std::get<0>(HN).c_str()));
       hdata->SetMarkerStyle(kFullCircle);
-      hdata->Draw("HIST SAME P");
+      hdata->Draw("SAME P");
 
       ++j;
       legend->Draw();
       if( r+1 == 4 ){
-        c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(HN)).c_str(),WpMass));
+        c1->Print(Form("Stack_%s_Wprime%d_Data.png",(std::get<0>(HN)).c_str(),WpMass));
         c1->Clear();
         c1->Divide(2,2);
       }
@@ -163,33 +173,43 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     j = 1;
     for(auto hp: NonStackedHistos){
+      std::string histoName = hp.first;
       Int_t r = (j-1)%4;
       auto legend = new TLegend(0.11, 0.7, .89, .89);
       legend->SetNColumns(3);
       c1->cd(r+1);
       for(auto BGN: BgNames){
         std::string folder = std::get<1>(BGN);
-        std::string histoName = hp.first;
         std::cout << Form("Getting %s/%s\n",folder.c_str(),histoName.c_str());
         auto h = (TH1F*)f1->Get(Form("%s/%s",folder.c_str(),histoName.c_str()));
-        float_t maxBinContent= h->GetBinContent(h->GetMaximumBin());
+        h = (TH1F*)h->Clone();
         legend->AddEntry(h,(std::get<0>(BGN)).c_str(), "L");
         legend->SetBorderSize(0);
         h->SetTitle(hp.second.c_str());
         h->SetLineColor(std::get<2>(BGN));
         h->GetXaxis()->SetRangeUser(0., 800.);
-        h->Scale(1./maxBinContent);
+        normalizeHisto(h);
         h->SetMaximum(1.5);
         h->Draw("HIST SAME");
       }
 
       auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(hp).c_str())));
+      hsig = (TH1F*)hsig->Clone();
       hsig->SetLineColor(kBlack);
       hsig->SetLineWidth(2);
-      float_t maxBinContent= hsig->GetBinContent(hsig->GetMaximumBin());
-      hsig->Scale(1./maxBinContent);
+      normalizeHisto(hsig);
       hsig->Draw("HIST SAME");
       legend->AddEntry(hsig,(std::get<0>(signal)).c_str(), "L");
+
+      if(hp.first == "HPileup"){
+        auto hdata = (TH1D*)f1->Get(Form("%s/%s",DataName,histoName.c_str()));
+        hdata = (TH1D*)hdata->Clone();
+        hdata->SetLineColor(kRed);
+        hdata->SetLineWidth(2);
+        normalizeHisto(hdata);
+        hdata->Draw("HIST SAME");
+        legend->AddEntry(hdata,"Data","L");
+      }
 
       ++j;
       legend->Draw();
