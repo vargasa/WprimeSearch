@@ -73,6 +73,7 @@ PreSelector::PreSelector(TTree *)
   HGenPartFC=0;
   HGenPartFD=0;
   HScaleFactors = 0;
+  SFPileup = 0;
 #endif
   HCutFlow = 0;
 
@@ -114,6 +115,11 @@ Float_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) con
 #ifndef CMSDATA
 Float_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y) const {
   return h->GetBinContent(h->FindBin(x,y));
+}
+#endif
+#ifndef CMSDATA
+Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
+  return h->GetBinContent(h->FindBin(npv));
 }
 #endif
 #ifndef CMSDATA
@@ -393,6 +399,13 @@ void PreSelector::SlaveBegin(TTree *tree) {
   }
 
 #ifndef CMSDATA
+
+  if (fInput->FindObject("SampleName")) {
+    // Lesson: TString can't be in TCollection
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
+    SampleName = p->GetTitle();
+  }
+
   if(fInput->FindObject("SFDb")){
     SFDb = dynamic_cast<TList*>(fInput->FindObject("SFDb"));
   }
@@ -404,6 +417,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
     SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
     SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
     SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
+    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
+    SFPileup = static_cast<TH1D*>(l->FindObject(SampleName.Data()));
   }
 
   HScaleFactors = new TH1F("HScaleFactors","HScaleFactors",30,0.,1.5);
@@ -650,6 +665,7 @@ void PreSelector::FillA(){
 
 #ifndef CMSDATA
   w = GetElectronSF(lep1.Eta(), lep1.Pt());
+  w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
@@ -683,6 +699,7 @@ void PreSelector::FillB(){
 #ifndef CMSDATA
   w = GetElectronSF(lep1.Eta(),lep1.Pt());
   w *= GetMuonSF(lep3.Eta(),lep3.Pt());
+  w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
@@ -712,8 +729,9 @@ void PreSelector::FillC(){
   HCutFlow->FillS("1e2mu");
 
 #ifndef CMSDATA
-  w *= GetMuonSF(lep1.Eta(),lep1.Pt());
-  w = GetElectronSF(lep3.Eta(),lep3.Pt());
+  w = GetMuonSF(lep1.Eta(),lep1.Pt());
+  w *= GetElectronSF(lep3.Eta(),lep3.Pt());
+  w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
@@ -751,6 +769,7 @@ void PreSelector::FillD(){
 
 #ifndef CMSDATA
   w = GetMuonSF(lep1.Eta(),lep1.Pt());
+  w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));

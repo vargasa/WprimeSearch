@@ -69,6 +69,10 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
   SFElectronTrigger2->SetName("SFElectronTrigger2");
   SFDb->Add(SFElectronTrigger2);
+  TFile *f7 = TFile::Open("PileupWeights.root","READ");
+  auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
+  SFDb->Add(SFPileup);
+  SFList->SetName("SFList");
   fProof->AddInputData(SFDb);
 #endif
 

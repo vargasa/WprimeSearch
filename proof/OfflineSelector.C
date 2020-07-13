@@ -49,6 +49,9 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 20
   SFElectronTrigger2->SetName("SFElectronTrigger2");
   SFDb->Add(SFElectronTrigger2);
 
+  TFile *f7 = TFile::Open("PileupWeights.root","READ");
+  auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
+  SFDb->Add(SFPileup);
 
   fProof->AddInputData(SFDb);
 

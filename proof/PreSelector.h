@@ -159,6 +159,7 @@ class PreSelector : public EventSelection {
   TH1F *HGenPartFC;
   TH1F *HGenPartFD;
   TH1F *HScaleFactors;
+  TH1D *SFPileup;
 #endif
   TH1F *HCutFlow;
 
@@ -228,6 +229,7 @@ class PreSelector : public EventSelection {
   Float_t GetMuonSF(const Float_t& eta,const Float_t& pt) const;
   Float_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt) const;
   Float_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) const;
+  Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
 
   TList *SFDb;
   TH2F* SFMuonTriggerBF;

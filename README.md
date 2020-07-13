@@ -39,11 +39,20 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunBCDE
 ```
 
 ### Pileup distribution
+
 ```
 #2016
 wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2016-69200ub.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/PileupWeights.root
+```
+
+The pileup scalefactors `PileupWeights.root` is computed by using:
 
 ```
+root -l PileupReweighing.C
+```
+
+Which takes as input `WprimeHistos.root` and `PileupHistogram-goldenJSON-13tev-2016-69200ub.root`
 
 ```bash
 cd proof/
