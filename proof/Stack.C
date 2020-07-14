@@ -91,6 +91,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     h1->Scale(1./maxBinContent);
   };
 
+  auto fixYRange = [](THStack* hss){
+    TH1 *last = (TH1*)hss->GetStack()->Last();
+    const Float_t LegendSpace = 10.; // Log Scale ;/
+    const Float_t MaxY = last->GetBinContent(last->GetMaximumBin()) * LegendSpace;
+    hss->SetMaximum(MaxY);
+  };
 
   auto c1 = new TCanvas("cs","cs",10,10,1196,772);
 
@@ -109,9 +115,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TH1F* hCutFlow;
     Float_t nEvents;
 
+    THStack* hscomb = new THStack("hscomb","");
+    THStack* hsdummy = new THStack("hsdummy","");
+    TH1F* hcombData;
+
     for (auto HN : HistNames) {
       Int_t r = (j-1)%4;
       c1->cd(r+1);
+      const char *hName = std::get<0>(HN).c_str();
 
       THStack *hs = new THStack("hs","");
 
@@ -119,7 +130,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       legend->SetNColumns(2);
 
       for (auto BGN: BgNames) {
-        auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),(std::get<0>(HN).c_str())));
+        auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),hName));
         h = (TH1F*)h->Clone();
         hCutFlow =
           (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
@@ -130,10 +141,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         h->Scale(luminosity*std::get<3>(BGN)*pbFactor/nEvents);
         h->SetLineWidth(0);
         hs->Add(h);
+        hscomb->Add(static_cast<TH1F*>(h->Clone()));
         legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
       }
 
-      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(HN).c_str())));
+      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),hName));
       hsig = (TH1F*)hsig->Clone();
       hCutFlow =
         (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
@@ -146,23 +158,36 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       gPad->SetLogy();
       gPad->SetTickx();
       gPad->SetTicky();
-      TH1 *last = (TH1*)hs->GetStack()->Last();
-      const Float_t LegendSpace = 10.; // Log Scale ;/
-      const Float_t MaxY = last->GetBinContent(last->GetMaximumBin()) * LegendSpace;
+      fixYRange(hs);
       legend->SetBorderSize(0);
-      hs->SetMaximum(MaxY);
       hs->Draw("HIST");
 
-      auto hdata = (TH1F*)f1->Get(Form("%s/%s",DataName,std::get<0>(HN).c_str()));
+      auto hdata = (TH1F*)f1->Get(Form("%s/%s",DataName,hName));
       hdata->SetMarkerStyle(kFullCircle);
       hdata->Draw("SAME P");
+      legend->AddEntry(hdata, "Data2016");
+      if( r+1 == 1 ){
+        hcombData = static_cast<TH1F*>(hdata->Clone());
+      } else {
+        hcombData->Add(hdata);
+      }
 
       ++j;
       legend->Draw();
       if( r+1 == 4 ){
-        c1->Print(Form("Stack_%s_Wprime%d_Data.png",(std::get<0>(HN)).c_str(),WpMass));
+        c1->Print(Form("Stack_%s_Wprime%d_Data.png",hName,WpMass));
+        c1->Clear();
+        gPad->SetLogy();
+        hscomb->Draw("HIST");
+        std::clog << Form("\thscomb integral: %s %f\n",hName,((TH1*)hscomb->GetStack()->Last())->Integral());;
+        hcombData->Draw("SAME P");
+        fixYRange(hscomb);
+        legend->Draw();
+        c1->Print(Form("Stack_Combined_%s_Wprime%d.png",hName,WpMass));
         c1->Clear();
         c1->Divide(2,2);
+        hscomb = static_cast<THStack*>(hsdummy->Clone());
+        hscomb->SetName("hscomb");
       }
     }
 
