@@ -179,6 +179,11 @@ class PreSelector : public EventSelection {
 
   TH1D *HPileup;
 
+  TH1F *HPileupA;
+  TH1F *HPileupB;
+  TH1F *HPileupC;
+  TH1F *HPileupD;
+
   TH2I *HNEl;
   TH2I *HNMu;
 

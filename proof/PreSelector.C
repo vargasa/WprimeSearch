@@ -93,6 +93,10 @@ PreSelector::PreSelector(TTree *)
   HWZPtDist = 0;
 
   HPileup = 0;
+  HPileupA = 0;
+  HPileupB = 0;
+  HPileupC = 0;
+  HPileupD = 0;
 
   HWZPt = 0;
 }
@@ -388,9 +392,29 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
 
+  const Int_t nPvsBins = 100;
+  const Float_t minPvs = 0.;
+  const Float_t maxPvs = 100.;
+
   HPileup = new TH1D("HPileup","PV_npvs",
-                     100,0.,100.);
+                     nPvsBins,minPvs,maxPvs);
   fOutput->Add(HPileup);
+
+  HPileupA = new TH1F("HPileupA","PV_npvs",
+                      nPvsBins,minPvs,maxPvs);
+  fOutput->Add(HPileupA);
+
+  HPileupB = new TH1F("HPileupB","PV_npvs",
+                      nPvsBins,minPvs,maxPvs);
+  fOutput->Add(HPileupB);
+
+  HPileupC = new TH1F("HPileupC","PV_npvs",
+                      nPvsBins,minPvs,maxPvs);
+  fOutput->Add(HPileupC);
+
+  HPileupD = new TH1F("HPileupD","PV_npvs",
+                      nPvsBins,minPvs,maxPvs);
+  fOutput->Add(HPileupD);
 
   if (fInput->FindObject("Year")) {
     TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
@@ -678,7 +702,7 @@ void PreSelector::FillA(){
   HGenPartWA->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
                                         Electron_pdgId[l3]).second));
 #endif
-
+  HPileupA->Fill(*PV_npvs,w);
   HMetA->Fill(*MET_pt,w);
   HMassWA->Fill(wb.M(),w);
   HMassWZA->Fill((wb+zb).M(),w);
@@ -712,7 +736,7 @@ void PreSelector::FillB(){
   HGenPartWB->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
                                        Muon_pdgId[l3]).second));
 #endif
-
+  HPileupB->Fill(*PV_npvs,w);
   HMetB->Fill(*MET_pt,w);
   HMassWB->Fill(wb.M(),w);
   HMassWZB->Fill((wb+zb).M(),w);
@@ -744,7 +768,7 @@ void PreSelector::FillC(){
   HGenPartWC->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
                                         Electron_pdgId[l3]).second));
 #endif
-
+  HPileupC->Fill(*PV_npvs,w);
   HMetC->Fill(*MET_pt,w);
   HMassWC->Fill(wb.M(),w);
   HMassWZC->Fill((wb+zb).M(),w);
@@ -782,7 +806,7 @@ void PreSelector::FillD(){
   HGenPartWD->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
                                         Muon_pdgId[l3]).second));
 #endif
-
+  HPileupD->Fill(*PV_npvs,w);
   HMetD->Fill(*MET_pt,w);
   HMassWD->Fill(wb.M(),w);
   HMassWZD->Fill((wb+zb).M(),w);
@@ -1438,6 +1462,22 @@ void PreSelector::Terminate() {
   ch->cd();
   HPileup->Draw();
   HPileup->Write("HPileup");
+  ch->Print(Form("%s_HPileupPriorToCuts.png",SampleName.Data()));
+
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HPileupA->Draw();
+  HPileupA->Write("HPileupA");
+  ch->cd(2);
+  HPileupB->Draw();
+  HPileupA->Write("HPileupB");
+  ch->cd(3);
+  HPileupC->Draw();
+  HPileupA->Write("HPileupC");
+  ch->cd(4);
+  HPileupD->Draw();
+  HPileupA->Write("HPileupD");
   ch->Print(Form("%s_HPileup.png",SampleName.Data()));
 
   ch->Clear();

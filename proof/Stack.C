@@ -62,10 +62,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count"),
     std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count"),
     /* Another series */
-    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
-    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
-    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
-    std::make_tuple("HPileup","Number of Good Primary Vertices;nPvs;Event count"),
+    std::make_tuple("HPileupA","Number of Good Primary Vertices;nPvs;Event count"),
+    std::make_tuple("HPileupB","Number of Good Primary Vertices;nPvs;Event count"),
+    std::make_tuple("HPileupC","Number of Good Primary Vertices;nPvs;Event count"),
+    std::make_tuple("HPileupD","Number of Good Primary Vertices;nPvs;Event count"),
   };
 
   std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
