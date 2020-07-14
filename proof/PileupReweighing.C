@@ -9,7 +9,6 @@ Int_t PileupReweighing(){
 
   std::vector<std::string> BgNames =
     {
-      "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
       "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
       "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
       "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
