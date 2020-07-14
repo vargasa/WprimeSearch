@@ -42,22 +42,22 @@ void UniqueEntryListMaker::SlaveBegin(TTree *tree) {
 
   if((EntryList = (TEntryList*) fInput->FindObject("EntryList")))
     EntryList = (TEntryList *) EntryList->Clone();
-  
+
   if(EntryList)
     fOutput->Add(EntryList);
-    
+
   if (fInput->FindObject("EventIndexTree1"))
     AddTreeToEventIndex("EventIndexTree1");
   if (fInput->FindObject("EventIndexTree2"))
     AddTreeToEventIndex("EventIndexTree2");
-  
-} 
+
+}
 
 void UniqueEntryListMaker::AddTreeToEventIndex(std::string_view treeName){
   EventIndexTree = dynamic_cast<TTree *>(fInput->FindObject(treeName.data()));
   TTreeReader fReader1(EventIndexTree);
   TTreeReaderValue<Long64_t> EvID(fReader1,"EventID");
-    
+
   while(fReader1.Next()){
     hlog->Fill(treeName.data(),1.);
     EventIndex.insert(*EvID);

@@ -27,8 +27,8 @@ void EventIDMaker::Begin(TTree *tree) {
     Year = p->GetVal();
   }
 
-  std::clog << "EventIDMaker::Begin SampleName:" << SampleName 
-	    << "Year " << Year;
+  std::clog << "EventIDMaker::Begin SampleName:" << SampleName
+            << "Year " << Year;
 
 }
 
@@ -38,7 +38,7 @@ void EventIDMaker::SlaveBegin(TTree *tree) {
 
   EntryList = new TEntryList("EntryList","Entry Number");
   fOutput->Add(EntryList);
-  
+
   eTree = new TTree("eTree","eTree");
   eTree->Branch("EventID",&EventID);
   fOutput->Add(eTree);
@@ -66,7 +66,7 @@ Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) c
   if ( run > 3e5 or event > 6e9) {
     hlog->FillS("EventIDOutOfRange");
     std::cerr << Form("EventIDMaker::GetEventIndex() Unexpected range for run[%d] or event[%llu]\n",
-		      run,event);
+                      run,event);
   }
   return std::stol(std::to_string(run)+std::to_string(event));
 }
@@ -83,7 +83,7 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
     hlog->FillS("FailMinLeptonsTest");
     return kFALSE;
   }
-  
+
   if (!IsGold(*run,*luminosityBlock)){
     hlog->FillS("FailGoldenJsonTest");
     return kFALSE;
@@ -127,7 +127,7 @@ void EventIDMaker::Terminate() {
   eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
   eTree->Write("eTree");
   fEventIDTree->Close();
-  
+
   std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
   fEntryList->mkdir(dirName.c_str());
   fEntryList->cd(dirName.c_str());

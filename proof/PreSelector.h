@@ -195,7 +195,7 @@ class PreSelector : public EventSelection {
  public :
 
   TString SampleName;
- 
+
   PreSelector(TTree * = 0);
   ~PreSelector() { }
   void    Begin(TTree *tree);
@@ -215,6 +215,7 @@ class PreSelector : public EventSelection {
                      const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
+
   void FillCommon(const Leptons& lz,const Leptons& lw);
   void FillA();
   void FillB();
