@@ -350,9 +350,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HnMuC);
   fOutput->Add(HnMuD);
 
-  const Int_t BinsLep = 7;
+  const Int_t BinsLep = 10;
   const Float_t MinLep = 0.;
-  const Float_t MaxLep = 7.;
+  const Float_t MaxLep = 10.;
 
   HNLepA = new TH2I("HNLepA","",BinsLep,MinLep,MaxLep,
                     BinsLep,MinLep,MaxLep);
@@ -456,6 +456,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   std::vector<UInt_t> GoodIndex = {};
   if(!MuonTest()) return GoodIndex;
+  GoodIndex.reserve(10);
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 10.;
   for (UInt_t i=0; i<*Mu.n;i++){
@@ -471,6 +472,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MinPt = 20.;
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
+  GoodIndex.reserve(10);
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
     if(El.cutBased[i]==4 && El.pt[i]>MinPt &&
@@ -481,7 +483,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
 };
 
 float PreSelector::MassRecoZ(const float& pt1, const float& eta1, const float& phi1, const float& m1,
-                                const float& pt2, const float& eta2, const float& phi2, const float& m2) const{
+                             const float& pt2, const float& eta2, const float& phi2, const float& m2) const{
 
   ROOT::Math::PtEtaPhiMVector l1(pt1, eta1, phi1, m1);
   ROOT::Math::PtEtaPhiMVector l2(pt2, eta2, phi2, m2);
@@ -504,8 +506,12 @@ Float_t PreSelector::MassRecoW(const float& ptl, const float& phil,
 
 std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons& l, const std::vector<UInt_t>& GoodIndex) const{
 
+  static const UInt_t size = 5;
+
   std::vector<UInt_t> positive;
+  positive.reserve(size);
   std::vector<UInt_t> negative;
+  negative.reserve(size);
 
   for(UInt_t i=0; i< GoodIndex.size(); i++){
     if (l.charge[GoodIndex[i]] == 1){
@@ -519,6 +525,7 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons&
     return std::vector<std::pair<UInt_t,UInt_t>>();
 
   std::vector<std::pair<UInt_t,UInt_t>> couples;
+  couples.reserve(size);
 
   for(UInt_t i=0; i< positive.size(); i++){
     for(UInt_t j=0; j< negative.size();j++){
@@ -544,6 +551,7 @@ std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> PreSelector:
 
   // ZMassDistance, ZMass, Pair
   std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> ZMassTuple;
+  ZMassTuple.reserve(5);
 
   if(Pairs.empty())
     return ZMassTuple;
