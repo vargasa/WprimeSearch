@@ -98,6 +98,34 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     hss->SetMaximum(MaxY);
   };
 
+  auto sortStack = [](THStack* hss){
+    THStack* hst  = new THStack();
+
+    TIter b = hss->begin();
+
+    std::map<Int_t,std::vector<TH1F*>> m;
+
+    while(b.Next()){
+      auto histo = static_cast<TH1F*>(*b);
+      auto it = m.find(histo->GetFillColor());
+      if( it != m.end()){
+        (it->second).emplace_back(histo);
+      } else {
+        std::vector<TH1F*> vh;
+        vh.push_back(histo);
+        m.insert({histo->GetFillColor(),vh});
+      }
+    }
+
+    for(auto const& ckey: m){
+      for(auto const& histo: ckey.second){
+        hst->Add(histo);
+      }
+    }
+
+    return hst;
+  };
+
   auto c1 = new TCanvas("cs","cs",10,10,1196,772);
 
   for (auto signal: SignalSamples) {
@@ -178,6 +206,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         c1->Print(Form("Stack_%s_Wprime%d_Data.png",hName,WpMass));
         c1->Clear();
         gPad->SetLogy();
+        hscomb = sortStack(hscomb);
         hscomb->Draw("HIST");
         std::clog << Form("\thscomb integral: %s %f\n",hName,((TH1*)hscomb->GetStack()->Last())->Integral());;
         hcombData->Draw("SAME P");
