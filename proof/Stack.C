@@ -164,7 +164,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
         nEvents = (Float_t)hCutFlow->GetBinContent(1);
         h->SetFillStyle(1001);
-        h->SetTitle((std::get<0>(BGN)).c_str());
+        h->SetTitle((std::get<1>(BGN)).c_str());
         h->SetFillColor(std::get<2>(BGN));
         h->Scale(luminosity*std::get<3>(BGN)*pbFactor/nEvents);
         h->SetLineWidth(0);
@@ -181,7 +181,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
       legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
       hs->Add(hsig);
-      hs->SetTitle((std::get<0>(HN)).c_str());
+      hs->SetTitle((std::get<1>(HN)).c_str());
 
       gPad->SetLogy();
       gPad->SetTickx();

@@ -89,11 +89,11 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  if (ElectronTest()){
+  if (!ElectronTest()){
     hlog->FillS("FailElectronTest");
   }
 
-  if (MuonTest()){
+  if (!MuonTest()){
     hlog->FillS("FailMuonTest");
   }
 

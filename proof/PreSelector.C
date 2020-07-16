@@ -841,6 +841,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   HCutFlow->FillS("NoCuts");
 
+  HPileup->Fill(static_cast<Double_t>(*PV_npvs));
+
   if (!ElectronTest()) HCutFlow->FillS("FailElectronHLTs");
   if (!MuonTest()) HCutFlow->FillS("FailMuonHLTs");
 
@@ -861,8 +863,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     HCutFlow->FillS("lep<3");
     return kFALSE;
   }
-
-  HPileup->Fill(static_cast<Double_t>(*PV_npvs));
 
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,
@@ -1497,7 +1497,7 @@ void PreSelector::Terminate() {
   HNEl->Draw("COL,TEXT");
   ch->cd(2);
   gPad->SetLogz();
-  HNMu->SetTitle("nMuon vs size(GoodMuon); nElectron; size(GoodMuon)");
+  HNMu->SetTitle("nMuon vs size(GoodMuon); nMuon; size(GoodMuon)");
   HNMu->Draw("COL,TEXT");
   ch->Print(Form("%s_CheckGoodLeptons.png",SampleName.Data()));
 
