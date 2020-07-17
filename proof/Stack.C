@@ -126,7 +126,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return hst;
   };
 
-  auto c1 = new TCanvas("cs","cs",10,10,1196,772);
+  auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
 
   for (auto signal: SignalSamples) {
 
@@ -154,7 +154,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       THStack *hs = new THStack("hs","");
 
-      auto legend = new TLegend(0.3, 0.66, .89, .89);
+      auto legend = new TLegend(0.3, 0.66, .87, .89);
       legend->SetNColumns(2);
 
       for (auto BGN: BgNames) {
@@ -188,12 +188,56 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       gPad->SetTicky();
       fixYRange(hs);
       legend->SetBorderSize(0);
+
+      Float_t leftMargin = 0.12;
+      Float_t rightMargin = 0.12;
+      Float_t topMargin = 0.12;
+      Float_t bottomMargin = 0.5;
+
+      auto mainPad = new TPad("subPad","subPad",0.,0.25,1.,1.);
+      mainPad->Draw();
+      mainPad->SetLeftMargin(leftMargin);
+      mainPad->SetRightMargin(rightMargin);
+      mainPad->SetBottomMargin(1e-3);
+      auto subPad = new TPad("mainPad","mainPad",0.,0.,1.,0.25);
+      subPad->Draw();
+      subPad->SetLeftMargin(leftMargin);
+      subPad->SetRightMargin(rightMargin);
+      subPad->SetTopMargin(1e-3);
+      subPad->SetBottomMargin(bottomMargin);
+
+      gStyle->SetOptStat(0);
+
+      mainPad->cd();
       hs->Draw("HIST");
 
       auto hdata = (TH1F*)f1->Get(Form("%s/%s",DataName,hName));
       hdata->SetMarkerStyle(kFullCircle);
+      mainPad->cd();
       hdata->Draw("SAME P");
       legend->AddEntry(hdata, "Data2016");
+
+      auto hcdata = static_cast<TH1*>(hdata->Clone());
+      hcdata->Divide(static_cast<TH1*>(hs->GetStack()->Last()));
+      hcdata->SetMarkerColor(kBlack);
+      hcdata->SetMarkerStyle(20);
+      hcdata->SetMarkerSize(.5);
+      hcdata->SetLineWidth(1);
+      hcdata->SetTitle("");
+      hcdata->GetXaxis()->SetTitleSize(25);
+      hcdata->GetXaxis()->SetTitleFont(43);
+      hcdata->GetXaxis()->SetTitleOffset(6.0);
+      hcdata->GetXaxis()->SetLabelSize(0.17);
+      hcdata->GetYaxis()->SetTitleSize(14);
+      hcdata->GetYaxis()->SetTitleFont(43);
+      hcdata->GetYaxis()->SetLabelSize(0.17);
+      hcdata->GetYaxis()->SetTitleOffset(5.0);
+      hcdata->GetYaxis()->SetNdivisions(6,3,0);
+      hcdata->GetYaxis()->SetTitle("Data/MC");
+      hcdata->GetYaxis()->SetLimits(0.,2.);
+      subPad->cd();
+      hcdata->Draw();
+
       if( r+1 == 1 ){
         hcombData = static_cast<TH1F*>(hdata->Clone());
       } else {
@@ -201,6 +245,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
 
       ++j;
+      mainPad->cd();
       legend->Draw();
       if( r+1 == 4 ){
         c1->Print(Form("Stack_%s_Wprime%d_Data.png",hName,WpMass));
