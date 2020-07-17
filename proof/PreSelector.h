@@ -22,6 +22,18 @@
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
+struct ZPairInfo{
+
+  Float_t Delta = -1;
+  Float_t Mass = -1;
+  std::pair<UInt_t,UInt_t> Pair;
+
+  Bool_t empty(){
+    return Mass < 0.f;
+  }
+
+};
+
 class PreSelector : public EventSelection {
 
  private :
@@ -195,7 +207,7 @@ class PreSelector : public EventSelection {
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
   std::vector<ROOT::Math::PxPyPzMVector> nu;
 
-  Float_t BestZMass;
+  Float_t PairZMass;
 
  public :
 
@@ -246,12 +258,12 @@ class PreSelector : public EventSelection {
   TGraphAsymmErrors* SFElectronTrigger2;
 #endif
 
-  std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(const Leptons&, const std::vector<UInt_t>&) const;
-  std::vector<std::tuple<Double_t,Double_t,std::pair<UInt_t,UInt_t>>> FindZ(const Leptons&,const std::vector<UInt_t>&) const;
+  std::pair<UInt_t,UInt_t> GetLeptonPair(const Leptons&, const std::vector<UInt_t>&) const;
+  ZPairInfo FindZ(const Leptons&,const std::vector<UInt_t>&) const;
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(const ROOT::Math::PtEtaPhiMVector&,const Float_t&);
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4VAlt(ROOT::Math::PtEtaPhiMVector,Float_t); 
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,
-						    const Float_t& Wmt);
+                                                    const Float_t& Wmt);
   ROOT::Math::PxPyPzMVector Get4V(const Float_t& Pz);
 
   ClassDef(PreSelector,0);
