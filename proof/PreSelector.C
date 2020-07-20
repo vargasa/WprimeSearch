@@ -190,6 +190,8 @@ void PreSelector::Begin(TTree *tree) {
 
 void PreSelector::SlaveBegin(TTree *tree) {
 
+  TH1::SetDefaultSumw2();
+
   const Double_t MaxMet = 600.;
   const Double_t MinMet = 0.;
   const Int_t MetBins = 60;
