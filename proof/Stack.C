@@ -147,6 +147,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     THStack* hsdummy = new THStack("hsdummy","");
     TH1F* hcombData;
 
+    auto hratio = new TH1F("hratio","DataMCRatios",50,0.,10.);
+    TH1F* hfdummy = new TH1F("","DataMCRatios",50,0.,10.);
+
     for (auto HN : HistNames) {
       Int_t r = (j-1)%4;
       c1->cd(r+1);
@@ -238,6 +241,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       subPad->cd();
       hcdata->Draw();
 
+      for(uint i = 0; i < hcdata->GetNbinsX(); i++){
+        float xx = hcdata->GetBinContent(i);
+        if(xx > 1e-3) hratio->Fill(xx);
+      }
+
       if( r+1 == 1 ){
         hcombData = static_cast<TH1F*>(hdata->Clone());
       } else {
@@ -258,6 +266,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         fixYRange(hscomb);
         legend->Draw();
         c1->Print(Form("Stack_Combined_%s_Wprime%d.png",hName,WpMass));
+        hratio->Draw("HIST");
+        c1->Print(Form("Stack_Combined_%s_Wprime%d_DataMCRatios.png",hName,WpMass));
+        hratio = static_cast<TH1F*>(hfdummy->Clone());
+        hratio->SetName("hratio");
         c1->Clear();
         c1->Divide(2,2);
         hscomb = static_cast<THStack*>(hsdummy->Clone());
