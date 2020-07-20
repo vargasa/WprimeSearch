@@ -836,13 +836,19 @@ void PreSelector::FillA(){
                                         Electron_pdgId[l2]).second));
   HGenPartWA->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
                                         Electron_pdgId[l3]).second));
+  HPileupA_->Fill(*PV_npvs);
+  HMetA_->Fill(*MET_pt);
+  HMassWA_->Fill(wb.M());
+  HMassWZA_->Fill((wb+zb).M());
+  HMassZA_->Fill(PairZMass);
+  HMassTWA_->Fill(wmt);
 #endif
-  HPileupA->Fill(*PV_npvs,w); HPileupA_->Fill(*PV_npvs);
-  HMetA->Fill(*MET_pt,w); HMetA_->Fill(*MET_pt);
-  HMassWA->Fill(wb.M(),w); HMassWA_->Fill(wb.M());
-  HMassWZA->Fill((wb+zb).M(),w); HMassWZA_->Fill((wb+zb).M());
-  HMassZA->Fill(PairZMass,w); HMassZA_->Fill(PairZMass);
-  HMassTWA->Fill(wmt,w); HMassTWA_->Fill(wmt);
+  HPileupA->Fill(*PV_npvs,w);
+  HMetA->Fill(*MET_pt,w);
+  HMassWA->Fill(wb.M(),w);
+  HMassWZA->Fill((wb+zb).M(),w); 
+  HMassZA->Fill(PairZMass,w);
+  HMassTWA->Fill(wmt,w);
 
 }
 
@@ -870,13 +876,19 @@ void PreSelector::FillB(){
                                        Electron_pdgId[l2]).second));
   HGenPartWB->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
                                        Muon_pdgId[l3]).second));
+  HPileupB_->Fill(*PV_npvs);
+  HMetB_->Fill(*MET_pt);
+  HMassWB_->Fill(wb.M());
+  HMassWZB_->Fill((wb+zb).M());
+  HMassZB_->Fill(PairZMass);
+  HMassTWB_->Fill(wmt);
 #endif
-  HPileupB->Fill(*PV_npvs,w); HPileupB_->Fill(*PV_npvs);
-  HMetB->Fill(*MET_pt,w); HMetB_->Fill(*MET_pt);
-  HMassWB->Fill(wb.M(),w); HMassWB_->Fill(wb.M());
-  HMassWZB->Fill((wb+zb).M(),w); HMassWZB_->Fill((wb+zb).M());
-  HMassZB->Fill(PairZMass,w); HMassZB_->Fill(PairZMass);
-  HMassTWB->Fill(wmt,w); HMassTWB_->Fill(wmt);
+  HPileupB->Fill(*PV_npvs,w);
+  HMetB->Fill(*MET_pt,w);
+  HMassWB->Fill(wb.M(),w);
+  HMassWZB->Fill((wb+zb).M(),w);
+  HMassZB->Fill(PairZMass,w);
+  HMassTWB->Fill(wmt,w);
 }
 
 void PreSelector::FillC(){
@@ -902,13 +914,19 @@ void PreSelector::FillC(){
                                         Muon_pdgId[l2]).second));
   HGenPartWC->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
                                         Electron_pdgId[l3]).second));
+  HPileupC_->Fill(*PV_npvs);
+  HMetC_->Fill(*MET_pt);
+  HMassWC_->Fill(wb.M());
+  HMassWZC_->Fill((wb+zb).M());
+  HMassZC_->Fill(PairZMass);
+  HMassTWC_->Fill(wmt);
 #endif
-  HPileupC->Fill(*PV_npvs,w); HPileupC_->Fill(*PV_npvs);
-  HMetC->Fill(*MET_pt,w); HMetC_->Fill(*MET_pt);
-  HMassWC->Fill(wb.M(),w); HMassWC_->Fill(wb.M());
-  HMassWZC->Fill((wb+zb).M(),w); HMassWZC_->Fill((wb+zb).M());
-  HMassZC->Fill(PairZMass,w); HMassZC_->Fill(PairZMass);
-  HMassTWC->Fill(wmt,w); HMassTWC_->Fill(wmt);
+  HPileupC->Fill(*PV_npvs,w); 
+  HMetC->Fill(*MET_pt,w);
+  HMassWC->Fill(wb.M(),w);
+  HMassWZC->Fill((wb+zb).M(),w);
+  HMassZC->Fill(PairZMass,w);
+  HMassTWC->Fill(wmt,w);
 }
 
 void PreSelector::DefineW(Leptons l){
@@ -940,13 +958,19 @@ void PreSelector::FillD(){
                                         Muon_pdgId[l2]).second));
   HGenPartWD->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
                                         Muon_pdgId[l3]).second));
+  HPileupD_->Fill(*PV_npvs);
+  HMetD_->Fill(*MET_pt);
+  HMassWD_->Fill(wb.M());
+  HMassWZD_->Fill((wb+zb).M());
+  HMassZD_->Fill(PairZMass);
+  HMassTWD_->Fill(wmt);
 #endif
-  HPileupD->Fill(*PV_npvs,w); HPileupD_->Fill(*PV_npvs);
-  HMetD->Fill(*MET_pt,w); HMetD_->Fill(*MET_pt);
-  HMassWD->Fill(wb.M(),w); HMassWD_->Fill(wb.M());
-  HMassWZD->Fill((wb+zb).M(),w); HMassWZD_->Fill((wb+zb).M());
-  HMassZD->Fill(PairZMass,w); HMassZD_->Fill(PairZMass);
-  HMassTWD->Fill(wmt,w); HMassTWD_->Fill(wmt);
+  HPileupD->Fill(*PV_npvs,w);
+  HMetD->Fill(*MET_pt,w);
+  HMassWD->Fill(wb.M(),w); 
+  HMassWZD->Fill((wb+zb).M(),w);
+  HMassZD->Fill(PairZMass,w);
+  HMassTWD->Fill(wmt,w);
 }
 
 Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
