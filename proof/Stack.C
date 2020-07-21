@@ -66,6 +66,26 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("HPileupB","Number of Good Primary Vertices;nPvs;Event count"),
     std::make_tuple("HPileupC","Number of Good Primary Vertices;nPvs;Event count"),
     std::make_tuple("HPileupD","Number of Good Primary Vertices;nPvs;Event count"),
+    /* Another series*/
+    std::make_tuple("HMassZA_NoSF","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count"),
+    std::make_tuple("HMassZB_NoSF","2e1#mu;M_{Z}^{2e1#mu}(GeV);Event count"),
+    std::make_tuple("HMassZC_NoSF","1e2#mu;M_{Z}^{1e2#mu}(GeV);Event count"),
+    std::make_tuple("HMassZD_NoSF","0e3#mu;M_{Z}^{0e3#mu}(GeV);Event count"),
+    /* Another series */
+    std::make_tuple("HMetA_NoSF","3e0#mu;#slash{E}^{3e0#mu}_{T}(GeV);Event count"),
+    std::make_tuple("HMetB_NoSF","2e1#mu;#slash{E}^{2e1#mu}_{T}(GeV);Event count"),
+    std::make_tuple("HMetC_NoSF","1e2#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count"),
+    std::make_tuple("HMetD_NoSF","0e3#mu;#slash{E}^{0e3#mu}_{T}(GeV);Event count"),
+    /* Another series */
+    std::make_tuple("HMassTWA_NoSF","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count"),
+    std::make_tuple("HMassTWB_NoSF","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count"),
+    std::make_tuple("HMassTWC_NoSF","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count"),
+    std::make_tuple("HMassTWD_NoSF","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count"),
+    /* Another series */
+    std::make_tuple("HMassWZA_NoSF","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count"),
+    std::make_tuple("HMassWZB_NoSF","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count"),
+    std::make_tuple("HMassWZC_NoSF","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count"),
+    std::make_tuple("HMassWZD_NoSF","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count"),
   };
 
   std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
@@ -124,6 +144,29 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
 
     return hst;
+  };
+
+
+  auto getRatio = [](TH1F* hhdata, THStack *hss){
+      auto hcdata = static_cast<TH1*>(hhdata->Clone());
+      hcdata->Divide(static_cast<TH1*>(hss->GetStack()->Last()));
+      hcdata->SetMarkerColor(kBlack);
+      hcdata->SetMarkerStyle(20);
+      hcdata->SetMarkerSize(.5);
+      hcdata->SetLineWidth(1);
+      hcdata->SetTitle("");
+      hcdata->GetXaxis()->SetTitleSize(25);
+      hcdata->GetXaxis()->SetTitleFont(43);
+      hcdata->GetXaxis()->SetTitleOffset(6.0);
+      hcdata->GetXaxis()->SetLabelSize(0.17);
+      hcdata->GetYaxis()->SetTitleSize(14);
+      hcdata->GetYaxis()->SetTitleFont(43);
+      hcdata->GetYaxis()->SetLabelSize(0.17);
+      hcdata->GetYaxis()->SetTitleOffset(5.0);
+      hcdata->GetYaxis()->SetNdivisions(6,3,0);
+      hcdata->GetYaxis()->SetTitle("Data/MC");
+      hcdata->GetYaxis()->SetLimits(0.,2.);
+      return hcdata;
   };
 
   auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
@@ -202,6 +245,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->SetLeftMargin(leftMargin);
       mainPad->SetRightMargin(rightMargin);
       mainPad->SetBottomMargin(1e-3);
+      mainPad->SetLogy();
       auto subPad = new TPad("mainPad","mainPad",0.,0.,1.,0.25);
       subPad->Draw();
       subPad->SetLeftMargin(leftMargin);
@@ -215,29 +259,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hs->Draw("HIST");
 
       auto hdata = (TH1F*)f1->Get(Form("%s/%s",DataName,hName));
+      if (!hdata) {
+        std::string tmp = hName;
+        tmp = tmp.substr(0,tmp.find("_NoSF"));
+        std::clog << Form("Printing data on %s_NoSF plot\n",tmp.c_str());
+        hdata = static_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,tmp.c_str())));
+      }
+
       hdata->SetMarkerStyle(kFullCircle);
       mainPad->cd();
       hdata->Draw("SAME P");
       legend->AddEntry(hdata, "Data2016");
 
-      auto hcdata = static_cast<TH1*>(hdata->Clone());
-      hcdata->Divide(static_cast<TH1*>(hs->GetStack()->Last()));
-      hcdata->SetMarkerColor(kBlack);
-      hcdata->SetMarkerStyle(20);
-      hcdata->SetMarkerSize(.5);
-      hcdata->SetLineWidth(1);
-      hcdata->SetTitle("");
-      hcdata->GetXaxis()->SetTitleSize(25);
-      hcdata->GetXaxis()->SetTitleFont(43);
-      hcdata->GetXaxis()->SetTitleOffset(6.0);
-      hcdata->GetXaxis()->SetLabelSize(0.17);
-      hcdata->GetYaxis()->SetTitleSize(14);
-      hcdata->GetYaxis()->SetTitleFont(43);
-      hcdata->GetYaxis()->SetLabelSize(0.17);
-      hcdata->GetYaxis()->SetTitleOffset(5.0);
-      hcdata->GetYaxis()->SetNdivisions(6,3,0);
-      hcdata->GetYaxis()->SetTitle("Data/MC");
-      hcdata->GetYaxis()->SetLimits(0.,2.);
+      auto hcdata = getRatio(hdata,hs);
       subPad->cd();
       hcdata->Draw();
 
@@ -261,13 +295,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         gPad->SetLogy();
         hscomb = sortStack(hscomb);
         hscomb->Draw("HIST");
-        std::clog << Form("\thscomb integral: %s %f\n",hName,((TH1*)hscomb->GetStack()->Last())->Integral());;
+        std::clog << Form("\thscomb integral: %s %f\n",hName,((TH1*)hscomb->GetStack()->Last())->Integral());
         hcombData->Draw("SAME P");
         fixYRange(hscomb);
         legend->Draw();
         c1->Print(Form("Stack_Combined_%s_Wprime%d.png",hName,WpMass));
         hratio->Draw("HIST");
-        c1->Print(Form("Stack_Combined_%s_Wprime%d_DataMCRatios.png",hName,WpMass));
+        c1->Print(Form("Stack_Combined_DataMCRatios_%s_Wprime%d.png",hName,WpMass));
         hratio = static_cast<TH1F*>(hfdummy->Clone());
         hratio->SetName("hratio");
         c1->Clear();

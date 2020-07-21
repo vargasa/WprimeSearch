@@ -37,6 +37,7 @@ Int_t PileupReweighing(){
   auto f = std::make_unique<TFile>("PileupWeights.root","RECREATE");
 
   for(auto sample: BgNames){
+    std::clog << Form("Processing: %s:\n", sample.c_str());
     mcPileup = static_cast<TH1D*>(mcFile->Get(Form("%s/HPileup",sample.c_str())));
     mcPileup = static_cast<TH1D*>(mcPileup->Clone());
     mcPileup->Scale(1./mcPileup->Integral());
