@@ -2,6 +2,8 @@
 
 void Stack(std::string FileName = "WprimeHistos_all.root"){
 
+  TH1::SetDefaultSumw2();
+
   const Float_t luminosity = 35.9e15; /* 35.9fb^-1 2016 */
   const Float_t pbFactor = 1e-12; /*pico prefix*/
 
@@ -104,6 +106,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
     std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
 
+  };
+
+  auto getErrorHisto = [](THStack* hst){
+    TList* lst = hst->GetHists();
+    auto h1 = static_cast<TH1F*>((hst->GetStack()->Last())->Clone());
+    /* Empty It */
+    for(uint i = 0; i < h1->GetNbinsX(); i++){
+      h1->SetBinContent(i,0.);
+    }
+    TIter next(lst);
+    while(auto h = static_cast<TH1*>(next())){
+      h1->Add(h);
+    }
+    h1->SetFillStyle(3004);
+    h1->SetFillColor(kBlack);
+    return h1;
   };
 
   auto normalizeHisto = [](TH1* h1){
@@ -268,7 +286,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       hdata->SetMarkerStyle(kFullCircle);
       mainPad->cd();
-      hdata->Draw("SAME P");
+      hdata->Draw("SAME HISTO P");
+      TH1F* herror = getErrorHisto(hs);
+      herror->Draw("SAME E2");
       legend->AddEntry(hdata, "Data2016");
 
       auto hcdata = getRatio(hdata,hs);
