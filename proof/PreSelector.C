@@ -148,8 +148,21 @@ Float_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) con
 }
 #endif
 #ifndef CMSDATA
-Float_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y) const {
-  return h->GetBinContent(h->FindBin(x,y));
+Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
+                                    const Int_t& option) const {
+  UInt_t nbin = h->FindBin(x,y);
+  Double_t sf = h->GetBinContent(nbin);
+  switch(option){
+  case -1:
+    sf -= h->GetBinErrorLow(nbin);
+    break;
+  case 1:
+    sf += h->GetBinErrorUp(nbin);
+    break;
+  case 0:
+    break;
+  }
+  return sf;
 }
 #endif
 #ifndef CMSDATA
@@ -176,30 +189,40 @@ Float_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt) const{
 }
 #endif
 #ifndef CMSDATA
-Float_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt) const{
+Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
+                               const Int_t& option) const{
+  /* Option 0: Central Value, -1: Low, +1: up */
 
-  Float_t sf = -1;
-  const Float_t epsilon = 1e-2;
+  Double_t sf = -1;
+  const Double_t epsilon = 1e-2;
 
   if (Year == 2016) {
-    const Float_t LumiBF = 3.11; //fb-1
-    const Float_t LumiGH = 5.54;
+    const Double_t LumiBF = 3.11; //fb-1
+    const Double_t LumiGH = 5.54;
 
-    Float_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt);
+    Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
     if (SFTriggerBF < epsilon)
-      SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),(SFMuonTriggerBF->GetYaxis()->GetXmax() - epsilon));
+      SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),
+                                   (SFMuonTriggerBF->GetYaxis()->GetXmax() - epsilon),
+                                   option);
 
-    Float_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt);
+    Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
     if (SFTriggerGH < epsilon)
-      SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),(SFMuonTriggerGH->GetYaxis()->GetXmax() - epsilon));
+      SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),
+                                   (SFMuonTriggerGH->GetYaxis()->GetXmax() - epsilon),
+                                   option);
 
-    Float_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt);
+    Double_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt,option);
     if (SFIDBF < epsilon)
-      SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,(SFMuonIDBF->GetYaxis()->GetXmax() - epsilon));
+      SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,
+                              (SFMuonIDBF->GetYaxis()->GetXmax() - epsilon),
+                              option);
 
-    Float_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt);
+    Double_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt,option);
     if (SFIDGH < epsilon)
-      SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,(SFMuonIDGH->GetYaxis()->GetXmax() - epsilon));
+      SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,
+                              (SFMuonIDGH->GetYaxis()->GetXmax() - epsilon),
+                              option);
 
     sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
     sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
@@ -853,7 +876,7 @@ void PreSelector::FillA(){
 }
 
 void PreSelector::FillB(){
-  Float_t w = 1.f;
+  Double_t w = 1.;
 
   HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
   HnElB->Fill(GoodElectron.size());
@@ -863,7 +886,7 @@ void PreSelector::FillB(){
 
 #ifndef CMSDATA
   w = GetElectronSF(lep1.Eta(),lep1.Pt());
-  w *= GetMuonSF(lep3.Eta(),lep3.Pt());
+  w *= GetMuonSF(lep3.Eta(),lep3.Pt(),0);
   w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
@@ -892,7 +915,7 @@ void PreSelector::FillB(){
 }
 
 void PreSelector::FillC(){
-  Float_t w = 1.f;
+  Double_t w = 1.f;
   HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
   HnElC->Fill(GoodElectron.size());
   HnMuC->Fill(GoodMuon.size());
@@ -900,7 +923,7 @@ void PreSelector::FillC(){
   HCutFlow->FillS("1e2mu");
 
 #ifndef CMSDATA
-  w = GetMuonSF(lep1.Eta(),lep1.Pt());
+  w = GetMuonSF(lep1.Eta(),lep1.Pt(),0);
   w *= GetElectronSF(lep3.Eta(),lep3.Pt());
   w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
@@ -937,7 +960,7 @@ void PreSelector::DefineW(Leptons l){
 }
 
 void PreSelector::FillD(){
-  Float_t w = 1.f;
+  Double_t w = 1.;
   HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
   HnElD->Fill(GoodElectron.size());
   HnMuD->Fill(GoodMuon.size());
@@ -945,7 +968,7 @@ void PreSelector::FillD(){
   HCutFlow->FillS("0e3mu");
 
 #ifndef CMSDATA
-  w = GetMuonSF(lep1.Eta(),lep1.Pt());
+  w = GetMuonSF(lep1.Eta(),lep1.Pt(),0);
   w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
