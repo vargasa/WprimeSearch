@@ -105,6 +105,35 @@ PreSelector::PreSelector(TTree *)
   HMassTWC_NoSF=0;
   HMassTWD_NoSF=0;
 
+  HPileupA_SFUp = 0;
+  HPileupB_SFUp = 0;
+  HPileupC_SFUp = 0;
+  HPileupD_SFUp = 0;
+
+  HMetA_SFUp=0;
+  HMetB_SFUp=0;
+  HMetC_SFUp=0;
+  HMetD_SFUp=0;
+
+  HMassWA_SFUp=0;
+  HMassWB_SFUp=0;
+  HMassWC_SFUp=0;
+  HMassWD_SFUp=0;
+
+  HMassWZA_SFUp=0;
+  HMassWZB_SFUp=0;
+  HMassWZC_SFUp=0;
+  HMassWZD_SFUp=0;
+
+  HMassZA_SFUp=0;
+  HMassZB_SFUp=0;
+  HMassZC_SFUp=0;
+  HMassZD_SFUp=0;
+
+  HMassTWA_SFUp=0;
+  HMassTWB_SFUp=0;
+  HMassTWC_SFUp=0;
+  HMassTWD_SFUp=0;
 #endif
   HCutFlow = 0;
 
@@ -460,6 +489,36 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(copyHisto(&HMassTWC_NoSF,HMassTWC,"NoSF"));
   fOutput->Add(copyHisto(&HMassTWD_NoSF,HMassTWD,"NoSF"));
 
+  fOutput->Add(copyHisto(&HMetA_SFUp,HMetA,"SFUp"));
+  fOutput->Add(copyHisto(&HMetB_SFUp,HMetB,"SFUp"));
+  fOutput->Add(copyHisto(&HMetC_SFUp,HMetC,"SFUp"));
+  fOutput->Add(copyHisto(&HMetD_SFUp,HMetD,"SFUp"));
+
+  fOutput->Add(copyHisto(&HPileupA_SFUp,HPileupA,"SFUp"));
+  fOutput->Add(copyHisto(&HPileupB_SFUp,HPileupB,"SFUp"));
+  fOutput->Add(copyHisto(&HPileupC_SFUp,HPileupC,"SFUp"));
+  fOutput->Add(copyHisto(&HPileupD_SFUp,HPileupD,"SFUp"));
+
+  fOutput->Add(copyHisto(&HMassWA_SFUp,HMassWA,"SFUp"));
+  fOutput->Add(copyHisto(&HMassWB_SFUp,HMassWB,"SFUp"));
+  fOutput->Add(copyHisto(&HMassWC_SFUp,HMassWC,"SFUp"));
+  fOutput->Add(copyHisto(&HMassWD_SFUp,HMassWD,"SFUp"));
+
+  fOutput->Add(copyHisto(&HMassWZA_SFUp,HMassWZA,"SFUp"));
+  fOutput->Add(copyHisto(&HMassWZB_SFUp,HMassWZB,"SFUp"));
+  fOutput->Add(copyHisto(&HMassWZC_SFUp,HMassWZC,"SFUp"));
+  fOutput->Add(copyHisto(&HMassWZD_SFUp,HMassWZD,"SFUp"));
+
+  fOutput->Add(copyHisto(&HMassZA_SFUp,HMassZA,"SFUp"));
+  fOutput->Add(copyHisto(&HMassZB_SFUp,HMassZB,"SFUp"));
+  fOutput->Add(copyHisto(&HMassZC_SFUp,HMassZC,"SFUp"));
+  fOutput->Add(copyHisto(&HMassZD_SFUp,HMassZD,"SFUp"));
+
+  fOutput->Add(copyHisto(&HMassTWA_SFUp,HMassTWA,"SFUp"));
+  fOutput->Add(copyHisto(&HMassTWB_SFUp,HMassTWB,"SFUp"));
+  fOutput->Add(copyHisto(&HMassTWC_SFUp,HMassTWC,"SFUp"));
+  fOutput->Add(copyHisto(&HMassTWD_SFUp,HMassTWD,"SFUp"));
+
 #endif
   HCutFlow = new TH1F("HCutFlow","",BinsPdgId,PdgIdMin,PdgIdMax);
   fOutput->Add(HCutFlow);
@@ -795,7 +854,6 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
 }
 
 void PreSelector::FillA(){
-  Float_t w = 1.f;
   HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
   HnElA->Fill(GoodElectron.size());
   HnMuA->Fill(GoodMuon.size());
@@ -803,9 +861,12 @@ void PreSelector::FillA(){
   HCutFlow->FillS("3e0mu");
 
 #ifndef CMSDATA
-  w = GetElectronSF(lep1.Eta(), lep1.Pt(),0);
-  w *= GetSFFromHisto(SFPileup,*PV_npvs);
-  HScaleFactors->Fill(w);
+  Double_t wup = 1.;
+
+  wup = GetElectronSF(lep1.Eta(), lep1.Pt(),1);
+  wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+
+  HScaleFactors->Fill(wup);
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
@@ -816,25 +877,32 @@ void PreSelector::FillA(){
                                         Electron_pdgId[l2]).second));
   HGenPartWA->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
                                         Electron_pdgId[l3]).second));
+
   HPileupA_NoSF->Fill(*PV_npvs);
   HMetA_NoSF->Fill(*MET_pt);
   HMassWA_NoSF->Fill(wb.M());
   HMassWZA_NoSF->Fill((wb+zb).M());
   HMassZA_NoSF->Fill(PairZMass);
   HMassTWA_NoSF->Fill(wmt);
+
+  HPileupA_SFUp->Fill(*PV_npvs,wup);
+  HMetA_SFUp->Fill(*MET_pt,wup);
+  HMassWA_SFUp->Fill(wb.M(),wup);
+  HMassWZA_SFUp->Fill((wb+zb).M(),wup);
+  HMassZA_SFUp->Fill(PairZMass,wup);
+  HMassTWA_SFUp->Fill(wmt,wup);
 #endif
-  HPileupA->Fill(*PV_npvs,w);
-  HMetA->Fill(*MET_pt,w);
-  HMassWA->Fill(wb.M(),w);
-  HMassWZA->Fill((wb+zb).M(),w); 
-  HMassZA->Fill(PairZMass,w);
-  HMassTWA->Fill(wmt,w);
+
+  HPileupA->Fill(*PV_npvs);
+  HMetA->Fill(*MET_pt);
+  HMassWA->Fill(wb.M());
+  HMassWZA->Fill((wb+zb).M());
+  HMassZA->Fill(PairZMass);
+  HMassTWA->Fill(wmt);
 
 }
 
 void PreSelector::FillB(){
-  Double_t w = 1.;
-
   HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
   HnElB->Fill(GoodElectron.size());
   HnMuB->Fill(GoodMuon.size());
@@ -842,10 +910,12 @@ void PreSelector::FillB(){
   HCutFlow->FillS("2e1mu");
 
 #ifndef CMSDATA
-  w = GetElectronSF(lep1.Eta(),lep1.Pt(),0);
-  w *= GetMuonSF(lep3.Eta(),lep3.Pt(),0);
-  w *= GetSFFromHisto(SFPileup,*PV_npvs);
-  HScaleFactors->Fill(w);
+  Double_t wup = 1.;
+  wup = GetElectronSF(lep1.Eta(),lep1.Pt(),1);
+  wup *= GetMuonSF(lep3.Eta(),lep3.Pt(),1);
+  wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+
+  HScaleFactors->Fill(wup);
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l2]]));
   HGenPartFB->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
@@ -856,23 +926,31 @@ void PreSelector::FillB(){
                                        Electron_pdgId[l2]).second));
   HGenPartWB->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
                                        Muon_pdgId[l3]).second));
+
   HPileupB_NoSF->Fill(*PV_npvs);
   HMetB_NoSF->Fill(*MET_pt);
   HMassWB_NoSF->Fill(wb.M());
   HMassWZB_NoSF->Fill((wb+zb).M());
   HMassZB_NoSF->Fill(PairZMass);
   HMassTWB_NoSF->Fill(wmt);
+
+  HPileupB_SFUp->Fill(*PV_npvs,wup);
+  HMetB_SFUp->Fill(*MET_pt,wup);
+  HMassWB_SFUp->Fill(wb.M(),wup);
+  HMassWZB_SFUp->Fill((wb+zb).M(),wup);
+  HMassZB_SFUp->Fill(PairZMass,wup);
+  HMassTWB_SFUp->Fill(wmt,wup);
 #endif
-  HPileupB->Fill(*PV_npvs,w);
-  HMetB->Fill(*MET_pt,w);
-  HMassWB->Fill(wb.M(),w);
-  HMassWZB->Fill((wb+zb).M(),w);
-  HMassZB->Fill(PairZMass,w);
-  HMassTWB->Fill(wmt,w);
+  HPileupB->Fill(*PV_npvs);
+  HMetB->Fill(*MET_pt);
+  HMassWB->Fill(wb.M());
+  HMassWZB->Fill((wb+zb).M());
+  HMassZB->Fill(PairZMass);
+  HMassTWB->Fill(wmt);
 }
 
 void PreSelector::FillC(){
-  Double_t w = 1.f;
+
   HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
   HnElC->Fill(GoodElectron.size());
   HnMuC->Fill(GoodMuon.size());
@@ -880,10 +958,11 @@ void PreSelector::FillC(){
   HCutFlow->FillS("1e2mu");
 
 #ifndef CMSDATA
-  w = GetMuonSF(lep1.Eta(),lep1.Pt(),0);
-  w *= GetElectronSF(lep3.Eta(),lep3.Pt(),0);
-  w *= GetSFFromHisto(SFPileup,*PV_npvs);
-  HScaleFactors->Fill(w);
+  Double_t wup = 1.;
+  wup = GetMuonSF(lep1.Eta(),lep1.Pt(),1);
+  wup *= GetElectronSF(lep3.Eta(),lep3.Pt(),1);
+  wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+  HScaleFactors->Fill(wup);
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l3]]));
@@ -900,13 +979,20 @@ void PreSelector::FillC(){
   HMassWZC_NoSF->Fill((wb+zb).M());
   HMassZC_NoSF->Fill(PairZMass);
   HMassTWC_NoSF->Fill(wmt);
+
+  HPileupC_SFUp->Fill(*PV_npvs,wup);
+  HMetC_SFUp->Fill(*MET_pt,wup);
+  HMassWC_SFUp->Fill(wb.M(),wup);
+  HMassWZC_SFUp->Fill((wb+zb).M(),wup);
+  HMassZC_SFUp->Fill(PairZMass,wup);
+  HMassTWC_SFUp->Fill(wmt,wup);
 #endif
-  HPileupC->Fill(*PV_npvs,w); 
-  HMetC->Fill(*MET_pt,w);
-  HMassWC->Fill(wb.M(),w);
-  HMassWZC->Fill((wb+zb).M(),w);
-  HMassZC->Fill(PairZMass,w);
-  HMassTWC->Fill(wmt,w);
+  HPileupC->Fill(*PV_npvs);
+  HMetC->Fill(*MET_pt);
+  HMassWC->Fill(wb.M());
+  HMassWZC->Fill((wb+zb).M());
+  HMassZC->Fill(PairZMass);
+  HMassTWC->Fill(wmt);
 }
 
 void PreSelector::DefineW(Leptons l){
@@ -917,7 +1003,7 @@ void PreSelector::DefineW(Leptons l){
 }
 
 void PreSelector::FillD(){
-  Double_t w = 1.;
+
   HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
   HnElD->Fill(GoodElectron.size());
   HnMuD->Fill(GoodMuon.size());
@@ -925,9 +1011,10 @@ void PreSelector::FillD(){
   HCutFlow->FillS("0e3mu");
 
 #ifndef CMSDATA
-  w = GetMuonSF(lep1.Eta(),lep1.Pt(),0);
-  w *= GetSFFromHisto(SFPileup,*PV_npvs);
-  HScaleFactors->Fill(w);
+  Double_t wup = 1.;
+  wup = GetMuonSF(lep1.Eta(),lep1.Pt(),1);
+  wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+  HScaleFactors->Fill(wup);
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l2]]));
   HGenPartFD->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l3]]));
@@ -944,13 +1031,20 @@ void PreSelector::FillD(){
   HMassWZD_NoSF->Fill((wb+zb).M());
   HMassZD_NoSF->Fill(PairZMass);
   HMassTWD_NoSF->Fill(wmt);
+
+  HPileupD_SFUp->Fill(*PV_npvs,wup);
+  HMetD_SFUp->Fill(*MET_pt,wup);
+  HMassWD_SFUp->Fill(wb.M(),wup);
+  HMassWZD_SFUp->Fill((wb+zb).M(),wup);
+  HMassZD_SFUp->Fill(PairZMass,wup);
+  HMassTWD_SFUp->Fill(wmt,wup);
 #endif
-  HPileupD->Fill(*PV_npvs,w);
-  HMetD->Fill(*MET_pt,w);
-  HMassWD->Fill(wb.M(),w); 
-  HMassWZD->Fill((wb+zb).M(),w);
-  HMassZD->Fill(PairZMass,w);
-  HMassTWD->Fill(wmt,w);
+  HPileupD->Fill(*PV_npvs);
+  HMetD->Fill(*MET_pt);
+  HMassWD->Fill(wb.M());
+  HMassWZD->Fill((wb+zb).M());
+  HMassZD->Fill(PairZMass);
+  HMassTWD->Fill(wmt);
 }
 
 Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
@@ -1565,6 +1659,96 @@ void PreSelector::Terminate() {
 
 
   ch->cd(1);
+  HMassZA_SFUp->SetTitle("Z Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
+  HMassZA_SFUp->Draw();
+  HMassZA_SFUp->Write();
+  ch->cd(2);
+  HMassZB_SFUp->SetTitle("Z Mass (2e1#mu);M_{Z}^{2e1#mu};Event count");
+  HMassZB_SFUp->Draw();
+  HMassZB_SFUp->Write();
+  ch->cd(3);
+  HMassZC_SFUp->SetTitle("Z Mass (1e2#mu);M_{Z}^{1e2#mu};Event count");
+  HMassZC_SFUp->Draw();
+  HMassZC_SFUp->Write();
+  ch->cd(4);
+  HMassZD_SFUp->SetTitle("Z Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
+  HMassZD_SFUp->Draw();
+  HMassZD_SFUp->Write();
+  ch->Print(Form("%s_HMassZ_SFUp.png",SampleName.Data()));
+
+  ch->cd(1);
+  HMassWA_SFUp->SetTitle("W Mass (3e0#mu);M_{W}^{3e0#mu};Event count");
+  HMassWA_SFUp->Draw();
+  HMassWA_SFUp->Write();
+  ch->cd(2);
+  HMassWB_SFUp->SetTitle("W Mass (2e1#mu);M_{W}^{2e1#mu};Event count");
+  HMassWB_SFUp->Draw();
+  HMassWB_SFUp->Write();
+  ch->cd(3);
+  HMassWC_SFUp->SetTitle("W Mass (1e2#mu);M_{W}^{1e2#mu};Event count");
+  HMassWC_SFUp->Draw();
+  HMassWC_SFUp->Write();
+  ch->cd(4);
+  HMassWD_SFUp->SetTitle("W Mass (0e3#mu);M_{W}^{0e3#mu};Event count");
+  HMassWD_SFUp->Draw();
+  HMassWD_SFUp->Write();
+
+  ch->cd(1);
+  HMassTWA_SFUp->SetTitle("M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count");
+  HMassTWA_SFUp->Draw();
+  HMassTWA_SFUp->Write();
+  ch->cd(2);
+  HMassTWB_SFUp->SetTitle("M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count");
+  HMassTWB_SFUp->Draw();
+  HMassTWB_SFUp->Write();
+  ch->cd(3);
+  HMassTWC_SFUp->SetTitle("M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count");
+  HMassTWC_SFUp->Draw();
+  HMassTWC_SFUp->Write();
+  ch->cd(4);
+  HMassTWD_SFUp->SetTitle("M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count");
+  HMassTWD_SFUp->Draw();
+  HMassTWD_SFUp->Write("");
+
+  ch->cd(1);
+  HMetA_SFUp->SetTitle("3e0#mu;#slash{E}^{3e0#mu}_{T};Event count");
+  SetStyle(HMetA_SFUp);
+  HMetA_SFUp->Draw();
+  HMetA_SFUp->Write();
+  ch->cd(2);
+  HMetB_SFUp->SetTitle("2e1#mu;#slash{E}^{2e1#mu}_{T};Event count");
+  SetStyle(HMetB_SFUp);
+  HMetB_SFUp->Draw();
+  HMetB_SFUp->Write();
+  ch->cd(3);
+  HMetC_SFUp->SetTitle("1e2#mu;#slash{E}^{1e2#mu}_{T};Event count");
+  SetStyle(HMetC_SFUp);
+  HMetC_SFUp->Draw();
+  HMetC_SFUp->Write();
+  ch->cd(4);
+  HMetD_SFUp->SetTitle("0e3#mu;#slash{E}^{0e3#mu}_{T};Event count");
+  SetStyle(HMetD_SFUp);
+  HMetD_SFUp->Draw();
+  HMetD_SFUp->Write();
+
+  ch->cd(1);
+  HMassWZA_SFUp->SetTitle("WZ Mass (3e0#mu);M_{WZ}^{3e0#mu};Event count");
+  HMassWZA_SFUp->Draw();
+  HMassWZA_SFUp->Write();
+  ch->cd(2);
+  HMassWZB_SFUp->SetTitle("WZ Mass (2e1#mu);M_{WZ}^{2e1#mu};Event count");
+  HMassWZB_SFUp->Draw();
+  HMassWZB_SFUp->Write();
+  ch->cd(3);
+  HMassWZC_SFUp->SetTitle("WZ Mass (1e2#mu);M_{WZ}^{1e2#mu};Event count");
+  HMassWZC_SFUp->Draw();
+  HMassWZC_SFUp->Write();
+  ch->cd(4);
+  HMassWZD_SFUp->SetTitle("WZ Mass (0e3#mu);M_{WZ}^{0e3#mu};Event count");
+  HMassWZD_SFUp->Draw();
+  HMassWZD_SFUp->Write();
+
+  ch->cd(1);
   HGenPartFA->SetTitle("PdgId Final State (3e0#mu); PdgId; Event count");
   HGenPartFA->LabelsDeflate();
   HGenPartFA->Write("HGenPartFA");
@@ -1676,6 +1860,21 @@ void PreSelector::Terminate() {
   HPileupD_NoSF->Write();
   ch->Print(Form("%s_HPileup_NoSFNoSF.png",SampleName.Data()));
 
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HPileupA_SFUp->Draw();
+  HPileupA_SFUp->Write();
+  ch->cd(2);
+  HPileupB_SFUp->Draw();
+  HPileupB_SFUp->Write();
+  ch->cd(3);
+  HPileupC_SFUp->Draw();
+  HPileupC_SFUp->Write();
+  ch->cd(4);
+  HPileupD_SFUp->Draw();
+  HPileupD_SFUp->Write();
+  ch->Print(Form("%s_HPileup_SFUpSFUp.png",SampleName.Data()));
 #endif
 
   ch->Clear();

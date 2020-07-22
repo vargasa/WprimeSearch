@@ -192,7 +192,7 @@ class PreSelector : public EventSelection {
   TH1F *HMassWZB_NoSF;
   TH1F *HMassWZC_NoSF;
   TH1F *HMassWZD_NoSF;
-  
+
   TH1F *HMassZA_NoSF;
   TH1F *HMassZB_NoSF;
   TH1F *HMassZC_NoSF;
@@ -202,6 +202,36 @@ class PreSelector : public EventSelection {
   TH1F *HMassTWB_NoSF;
   TH1F *HMassTWC_NoSF;
   TH1F *HMassTWD_NoSF;
+
+  TH1F *HPileupA_SFUp;
+  TH1F *HPileupB_SFUp;
+  TH1F *HPileupC_SFUp;
+  TH1F *HPileupD_SFUp;
+
+  TH1F *HMetA_SFUp;
+  TH1F *HMetB_SFUp;
+  TH1F *HMetC_SFUp;
+  TH1F *HMetD_SFUp;
+
+  TH1F *HMassWA_SFUp;
+  TH1F *HMassWB_SFUp;
+  TH1F *HMassWC_SFUp;
+  TH1F *HMassWD_SFUp;
+
+  TH1F *HMassWZA_SFUp;
+  TH1F *HMassWZB_SFUp;
+  TH1F *HMassWZC_SFUp;
+  TH1F *HMassWZD_SFUp;
+
+  TH1F *HMassZA_SFUp;
+  TH1F *HMassZB_SFUp;
+  TH1F *HMassZC_SFUp;
+  TH1F *HMassZD_SFUp;
+
+  TH1F *HMassTWA_SFUp;
+  TH1F *HMassTWB_SFUp;
+  TH1F *HMassTWC_SFUp;
+  TH1F *HMassTWD_SFUp;
 
 #endif
   TH1F *HCutFlow;
