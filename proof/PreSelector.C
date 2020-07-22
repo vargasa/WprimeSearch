@@ -424,101 +424,41 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HGenPartFC);
   fOutput->Add(HGenPartFD);
 
-  HMetA_NoSF = static_cast<TH1F*>(HMetA->Clone());
-  HMetA_NoSF->SetName(Form("%s_NoSF",HMetA->GetName()));
-  fOutput->Add(HMetA_NoSF);
+  auto copyHisto = [](TH1F** hcopy, TH1F *h, const std::string& idstr){
+    *hcopy = static_cast<TH1F*>(h->Clone());
+    (*hcopy)->SetName(Form("%s_%s",h->GetName(),idstr.c_str()));
+    return *hcopy;
+  };
 
-  HMetB_NoSF = static_cast<TH1F*>(HMetB->Clone());
-  HMetB_NoSF->SetName(Form("%s_NoSF",HMetB->GetName()));
-  fOutput->Add(HMetB_NoSF);
+  fOutput->Add(copyHisto(&HMetA_NoSF,HMetA,"NoSF"));
+  fOutput->Add(copyHisto(&HMetB_NoSF,HMetB,"NoSF"));
+  fOutput->Add(copyHisto(&HMetC_NoSF,HMetC,"NoSF"));
+  fOutput->Add(copyHisto(&HMetD_NoSF,HMetD,"NoSF"));
 
-  HMetC_NoSF = static_cast<TH1F*>(HMetC->Clone());
-  HMetC_NoSF->SetName(Form("%s_NoSF",HMetC->GetName()));
-  fOutput->Add(HMetC_NoSF);
+  fOutput->Add(copyHisto(&HPileupA_NoSF,HPileupA,"NoSF"));
+  fOutput->Add(copyHisto(&HPileupB_NoSF,HPileupB,"NoSF"));
+  fOutput->Add(copyHisto(&HPileupC_NoSF,HPileupC,"NoSF"));
+  fOutput->Add(copyHisto(&HPileupD_NoSF,HPileupD,"NoSF"));
 
-  HMetD_NoSF = static_cast<TH1F*>(HMetD->Clone());
-  HMetD_NoSF->SetName(Form("%s_NoSF",HMetD->GetName()));
-  fOutput->Add(HMetD_NoSF);
+  fOutput->Add(copyHisto(&HMassWA_NoSF,HMassWA,"NoSF"));
+  fOutput->Add(copyHisto(&HMassWB_NoSF,HMassWB,"NoSF"));
+  fOutput->Add(copyHisto(&HMassWC_NoSF,HMassWC,"NoSF"));
+  fOutput->Add(copyHisto(&HMassWD_NoSF,HMassWD,"NoSF"));
 
-  HPileupA_NoSF = static_cast<TH1F*>(HPileupA->Clone());
-  HPileupA_NoSF->SetName(Form("%s_NoSF",HPileupA->GetName()));
-  fOutput->Add(HPileupA_NoSF);
+  fOutput->Add(copyHisto(&HMassWZA_NoSF,HMassWZA,"NoSF"));
+  fOutput->Add(copyHisto(&HMassWZB_NoSF,HMassWZB,"NoSF"));
+  fOutput->Add(copyHisto(&HMassWZC_NoSF,HMassWZC,"NoSF"));
+  fOutput->Add(copyHisto(&HMassWZD_NoSF,HMassWZD,"NoSF"));
 
-  HPileupB_NoSF = static_cast<TH1F*>(HPileupB->Clone());
-  HPileupB_NoSF->SetName(Form("%s_NoSF",HPileupB->GetName()));
-  fOutput->Add(HPileupB_NoSF);
+  fOutput->Add(copyHisto(&HMassZA_NoSF,HMassZA,"NoSF"));
+  fOutput->Add(copyHisto(&HMassZB_NoSF,HMassZB,"NoSF"));
+  fOutput->Add(copyHisto(&HMassZC_NoSF,HMassZC,"NoSF"));
+  fOutput->Add(copyHisto(&HMassZD_NoSF,HMassZD,"NoSF"));
 
-  HPileupC_NoSF = static_cast<TH1F*>(HPileupC->Clone());
-  HPileupC_NoSF->SetName(Form("%s_NoSF",HPileupC->GetName()));
-  fOutput->Add(HPileupC_NoSF);
-
-  HPileupD_NoSF = static_cast<TH1F*>(HPileupD->Clone());
-  HPileupD_NoSF->SetName(Form("%s_NoSF",HPileupD->GetName()));
-  fOutput->Add(HPileupD_NoSF);
-
-  HMassWA_NoSF = static_cast<TH1F*>(HMassWA->Clone());
-  HMassWA_NoSF->SetName(Form("%s_NoSF",HMassWA->GetName()));
-  fOutput->Add(HMassWA_NoSF);
-
-  HMassWB_NoSF = static_cast<TH1F*>(HMassWB->Clone());
-  HMassWB_NoSF->SetName(Form("%s_NoSF",HMassWB->GetName()));
-  fOutput->Add(HMassWB_NoSF);
-
-  HMassWC_NoSF = static_cast<TH1F*>(HMassWC->Clone());
-  HMassWC_NoSF->SetName(Form("%s_NoSF",HMassWC->GetName()));
-  fOutput->Add(HMassWC_NoSF);
-
-  HMassWD_NoSF = static_cast<TH1F*>(HMassWD->Clone());
-  HMassWD_NoSF->SetName(Form("%s_NoSF",HMassWD->GetName()));
-  fOutput->Add(HMassWD_NoSF);
-
-  HMassWZA_NoSF = static_cast<TH1F*>(HMassWZA->Clone());
-  HMassWZA_NoSF->SetName(Form("%s_NoSF",HMassWZA->GetName()));
-  fOutput->Add(HMassWZA_NoSF);
-
-  HMassWZB_NoSF = static_cast<TH1F*>(HMassWZB->Clone());
-  HMassWZB_NoSF->SetName(Form("%s_NoSF",HMassWZB->GetName()));
-  fOutput->Add(HMassWZB_NoSF);
-
-  HMassWZC_NoSF = static_cast<TH1F*>(HMassWZC->Clone());
-  HMassWZC_NoSF->SetName(Form("%s_NoSF",HMassWZC->GetName()));
-  fOutput->Add(HMassWZC_NoSF);
-
-  HMassWZD_NoSF = static_cast<TH1F*>(HMassWZD->Clone());
-  HMassWZD_NoSF->SetName(Form("%s_NoSF",HMassWZD->GetName()));
-  fOutput->Add(HMassWZD_NoSF);
-
-  HMassZA_NoSF = static_cast<TH1F*>(HMassZA->Clone());
-  HMassZA_NoSF->SetName(Form("%s_NoSF",HMassZA->GetName()));
-  fOutput->Add(HMassZA_NoSF);
-
-  HMassZB_NoSF = static_cast<TH1F*>(HMassZB->Clone());
-  HMassZB_NoSF->SetName(Form("%s_NoSF",HMassZB->GetName()));
-  fOutput->Add(HMassZB_NoSF);
-
-  HMassZC_NoSF = static_cast<TH1F*>(HMassZC->Clone());
-  HMassZC_NoSF->SetName(Form("%s_NoSF",HMassZC->GetName()));
-  fOutput->Add(HMassZC_NoSF);
-
-  HMassZD_NoSF = static_cast<TH1F*>(HMassZD->Clone());
-  HMassZD_NoSF->SetName(Form("%s_NoSF",HMassZD->GetName()));
-  fOutput->Add(HMassZD_NoSF);
-
-  HMassTWA_NoSF = static_cast<TH1F*>(HMassTWA->Clone());
-  HMassTWA_NoSF->SetName(Form("%s_NoSF",HMassTWA->GetName()));
-  fOutput->Add(HMassTWA_NoSF);
-
-  HMassTWB_NoSF = static_cast<TH1F*>(HMassTWB->Clone());
-  HMassTWB_NoSF->SetName(Form("%s_NoSF",HMassTWB->GetName()));
-  fOutput->Add(HMassTWB_NoSF);
-
-  HMassTWC_NoSF = static_cast<TH1F*>(HMassTWC->Clone());
-  HMassTWC_NoSF->SetName(Form("%s_NoSF",HMassTWC->GetName()));
-  fOutput->Add(HMassTWC_NoSF);
-
-  HMassTWD_NoSF = static_cast<TH1F*>(HMassTWD->Clone());
-  HMassTWD_NoSF->SetName(Form("%s_NoSF",HMassTWD->GetName()));
-  fOutput->Add(HMassTWD_NoSF);
+  fOutput->Add(copyHisto(&HMassTWA_NoSF,HMassTWA,"NoSF"));
+  fOutput->Add(copyHisto(&HMassTWB_NoSF,HMassTWB,"NoSF"));
+  fOutput->Add(copyHisto(&HMassTWC_NoSF,HMassTWC,"NoSF"));
+  fOutput->Add(copyHisto(&HMassTWD_NoSF,HMassTWD,"NoSF"));
 
 #endif
   HCutFlow = new TH1F("HCutFlow","",BinsPdgId,PdgIdMin,PdgIdMax);
