@@ -274,10 +274,10 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
 
-  Float_t GetElectronSF(const Float_t& eta, const Float_t& pt) const;
+  Double_t GetElectronSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
   Double_t GetMuonSF(const Float_t& eta,const Float_t& pt, const Int_t& option) const;
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;
-  Float_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) const;
+  Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
 
   TList *SFDb;

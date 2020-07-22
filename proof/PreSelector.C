@@ -133,18 +133,34 @@ PreSelector::PreSelector(TTree *)
 }
 
 #ifndef CMSDATA
-Float_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta) const {
+Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
+                                    const Int_t& option) const {
 
-  Double_t* a;
+  Double_t sf = -1.;
+  Double_t* sfp;
 
-  for(Int_t i = 0; i < g->GetN(); i++){
-    a = (g->GetY()+i);
+  Int_t i = 0;
+  while(i < g->GetN()){
+    sfp = (g->GetY()+i);
     /* Test right bin limit*/
     if( eta < (*(g->GetX()+i) + g->GetErrorX(i))) break;
+    ++i;
   }
 
-  return static_cast<Float_t>(*a);
+  sf = *sfp;
 
+  switch(option){
+  case -1:
+    sf -= g->GetErrorYlow(i);
+    break;
+  case 1:
+    sf += g->GetErrorYhigh(i);
+    break;
+  case 0:
+    break;
+  }
+
+  return sf;
 }
 #endif
 #ifndef CMSDATA
@@ -171,16 +187,17 @@ Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
 }
 #endif
 #ifndef CMSDATA
-Float_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt) const{
+Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
+                                   const Int_t& option) const{
 
-  Float_t sf = -1;
+  Double_t sf = -1;
 
   if(Year == 2016){
     /* 2 bins in pt */
     if( pt < 175.){
-      sf = GetSFFromGraph(SFElectronTrigger1,eta); 
+      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
     } else {
-      sf = GetSFFromGraph(SFElectronTrigger2,eta);
+      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
     }
   }
 
@@ -846,7 +863,7 @@ void PreSelector::FillA(){
   HCutFlow->FillS("3e0mu");
 
 #ifndef CMSDATA
-  w = GetElectronSF(lep1.Eta(), lep1.Pt());
+  w = GetElectronSF(lep1.Eta(), lep1.Pt(),0);
   w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFA->FillS(Form("%d",GenPart_pdgId[Electron_genPartIdx[l1]]));
@@ -885,7 +902,7 @@ void PreSelector::FillB(){
   HCutFlow->FillS("2e1mu");
 
 #ifndef CMSDATA
-  w = GetElectronSF(lep1.Eta(),lep1.Pt());
+  w = GetElectronSF(lep1.Eta(),lep1.Pt(),0);
   w *= GetMuonSF(lep3.Eta(),lep3.Pt(),0);
   w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
@@ -924,7 +941,7 @@ void PreSelector::FillC(){
 
 #ifndef CMSDATA
   w = GetMuonSF(lep1.Eta(),lep1.Pt(),0);
-  w *= GetElectronSF(lep3.Eta(),lep3.Pt());
+  w *= GetElectronSF(lep3.Eta(),lep3.Pt(),0);
   w *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(w);
   HGenPartFC->FillS(Form("%d",GenPart_pdgId[Muon_genPartIdx[l1]]));
