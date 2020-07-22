@@ -173,35 +173,35 @@ class PreSelector : public EventSelection {
   TH1F *HScaleFactors;
   TH1D *SFPileup;
 
-  TH1F *HPileupA_;
-  TH1F *HPileupB_;
-  TH1F *HPileupC_;
-  TH1F *HPileupD_;
+  TH1F *HPileupA_NoSF;
+  TH1F *HPileupB_NoSF;
+  TH1F *HPileupC_NoSF;
+  TH1F *HPileupD_NoSF;
 
-  TH1F *HMetA_;
-  TH1F *HMetB_;
-  TH1F *HMetC_;
-  TH1F *HMetD_;
+  TH1F *HMetA_NoSF;
+  TH1F *HMetB_NoSF;
+  TH1F *HMetC_NoSF;
+  TH1F *HMetD_NoSF;
 
-  TH1F *HMassWA_;
-  TH1F *HMassWB_;
-  TH1F *HMassWC_;
-  TH1F *HMassWD_;
+  TH1F *HMassWA_NoSF;
+  TH1F *HMassWB_NoSF;
+  TH1F *HMassWC_NoSF;
+  TH1F *HMassWD_NoSF;
 
-  TH1F *HMassWZA_;
-  TH1F *HMassWZB_;
-  TH1F *HMassWZC_;
-  TH1F *HMassWZD_;
+  TH1F *HMassWZA_NoSF;
+  TH1F *HMassWZB_NoSF;
+  TH1F *HMassWZC_NoSF;
+  TH1F *HMassWZD_NoSF;
   
-  TH1F *HMassZA_;
-  TH1F *HMassZB_;
-  TH1F *HMassZC_;
-  TH1F *HMassZD_;
+  TH1F *HMassZA_NoSF;
+  TH1F *HMassZB_NoSF;
+  TH1F *HMassZC_NoSF;
+  TH1F *HMassZD_NoSF;
 
-  TH1F *HMassTWA_;
-  TH1F *HMassTWB_;
-  TH1F *HMassTWC_;
-  TH1F *HMassTWD_;
+  TH1F *HMassTWA_NoSF;
+  TH1F *HMassTWB_NoSF;
+  TH1F *HMassTWC_NoSF;
+  TH1F *HMassTWD_NoSF;
 
 #endif
   TH1F *HCutFlow;
