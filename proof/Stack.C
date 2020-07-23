@@ -19,7 +19,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
                     kOrange+7,6.733),
     std::make_tuple("t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                     kBlue-2,56.86),
-    std::make_tuple("Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+    std::make_tuple("Z#gamma","ZGToLLG_01J_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
                     kRed+3,124.9), /* AN2019_029_v3 */
     std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",
                     kBlue,1.256)

@@ -1,1 +1,1 @@
-/store/mc/RunIISummer16NanoAODv6/WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/280000/E7AA616D-62DA-3E4A-B56C-17EFC302A26E.root
+/store/mc/RunIISummer16NanoAODv7/WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/100000/7957A69F-69C2-A446-9A4B-283D6676F0A3.root
