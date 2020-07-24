@@ -12,15 +12,17 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   // ShortName, DasName, kColor, Style, XSection, nEvents
   std::vector<std::tuple<std::string,std::string,Int_t,Float_t>> BgNames = {
     std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-                    kOrange,4.43),
-    std::make_tuple("DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,57.3),
-    std::make_tuple("DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,6.733),
+                    kOrange,4.43), /*XSDB 2nd Sample is 0*/
+    std::make_tuple("DYJetsToLL","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+                    kOrange+7,5941.0),
     std::make_tuple("t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                     kBlue-2,56.86),
-    std::make_tuple("Z#gamma","ZGToLLG_01J_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-                    kRed+3,124.9), /* AN2019_029_v3 */
+    std::make_tuple("t#bar{t} Ext1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+                    kBlue-4,56.86),
+    std::make_tuple("Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+                    kRed+3,123.8), /*AN2019_252_v1*/
+    std::make_tuple("Z#gamma Ext1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
+                    kRed+3,123.8),
     std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",
                     kBlue,1.256)
   };
