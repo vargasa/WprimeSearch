@@ -189,6 +189,28 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       return hcdata;
   };
 
+  auto getBGStack = [&](std::string hname, THStack *hscomb = NULL,TLegend* legend = NULL){
+    THStack* hstck = new THStack();
+    for (auto BGN: BgNames) {
+      std::string hpath = Form("%s/%s",(std::get<1>(BGN)).c_str(),hname.c_str());
+      std::clog << "Reading: " << hpath << std::endl;
+      auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
+      h = static_cast<TH1F*>(h->Clone());
+      auto hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow")));
+      Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
+      h->SetFillStyle(1001);
+      h->SetTitle((std::get<1>(BGN)).c_str());
+      h->SetFillColor(std::get<2>(BGN));
+      h->Scale(luminosity*std::get<3>(BGN)*pbFactor/nEvents);
+      h->SetLineWidth(0);
+      hstck->Add(h);
+      if(hscomb) hscomb->Add(h);
+      if(legend)
+        legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
+    }
+    return hstck;
+  };
+
   auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
 
   for (auto signal: SignalSamples) {
@@ -203,8 +225,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c1->Clear();
     c1->Divide(2,2);
     Int_t j = 1;
-    TH1F* hCutFlow;
-    Float_t nEvents;
 
     THStack* hscomb = new THStack("hscomb","");
     THStack* hsdummy = new THStack("hsdummy","");
@@ -223,27 +243,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto legend = new TLegend(0.3, 0.66, .87, .89);
       legend->SetNColumns(2);
 
-      for (auto BGN: BgNames) {
-        auto h = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),hName));
-        h = (TH1F*)h->Clone();
-        hCutFlow =
-          (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow"));
-        nEvents = (Float_t)hCutFlow->GetBinContent(1);
-        h->SetFillStyle(1001);
-        h->SetTitle((std::get<1>(BGN)).c_str());
-        h->SetFillColor(std::get<2>(BGN));
-        h->Scale(luminosity*std::get<3>(BGN)*pbFactor/nEvents);
-        h->SetLineWidth(0);
-        hs->Add(h);
-        hscomb->Add(static_cast<TH1F*>(h->Clone()));
-        legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
-      }
+      hs = getBGStack(hName,hscomb,legend);
 
       auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),hName));
       hsig = (TH1F*)hsig->Clone();
-      hCutFlow =
+      TH1F* hCutFlow =
         (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
-      nEvents = (Float_t)hCutFlow->GetBinContent(1);
+      auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
       hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
       legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
       hs->Add(hsig);
@@ -295,7 +301,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       auto hcdata = getRatio(hdata,hs);
       subPad->cd();
+      hcdata->SetMaximum(2.);
+      hcdata->SetMinimum(0.);
       hcdata->Draw();
+      TLine *line = new TLine(hdata->GetXaxis()->GetXmin(),1.,
+                              hdata->GetXaxis()->GetXmax(),1.);
+      line->SetLineColor(kBlack);
+      line->Draw();
+
 
       for(uint i = 0; i < hcdata->GetNbinsX(); i++){
         float xx = hcdata->GetBinContent(i);
@@ -332,6 +345,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         hscomb->SetName("hscomb");
       }
     }
+
+    /*** HPileup ***/
+    c1->Clear();
+    auto legend = new TLegend();
+    THStack *hspileup = getBGStack("HPileup",NULL,legend);
+    hspileup->Draw("HIST E2");
+    legend->Draw();
+    auto hdata = (TH1D*)f1->Get(Form("%s/HPileup",DataName));
+    hdata = (TH1D*)hdata->Clone();
+    hdata->SetLineColor(kRed);
+    hdata->SetLineWidth(2);
+    hdata->Draw("HIST SAME P");
+    c1->Print("HPileup.png");
+
+
+    /*** NonStackedHistos ***/
 
     c1->Clear();
     c1->Divide(2,2);
