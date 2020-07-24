@@ -243,6 +243,7 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
 #endif
 #ifndef CMSDATA
 Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
+  if(!h) return 1.;
   return h->GetBinContent(h->FindBin(npv));
 }
 #endif
@@ -673,6 +674,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
     SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
     auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
     SFPileup = static_cast<TH1D*>(l->FindObject(SampleName.Data()));
+    if(!SFPileup) 
+      std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
   }
 
   HScaleFactors = new TH1F("HScaleFactors","HScaleFactors",30,0.,1.5);
