@@ -173,35 +173,6 @@ class PreSelector : public EventSelection {
   TH1F *HScaleFactors;
   TH1D *SFPileup;
 
-  TH1F *HPileupA_NoSF;
-  TH1F *HPileupB_NoSF;
-  TH1F *HPileupC_NoSF;
-  TH1F *HPileupD_NoSF;
-
-  TH1F *HMetA_NoSF;
-  TH1F *HMetB_NoSF;
-  TH1F *HMetC_NoSF;
-  TH1F *HMetD_NoSF;
-
-  TH1F *HMassWA_NoSF;
-  TH1F *HMassWB_NoSF;
-  TH1F *HMassWC_NoSF;
-  TH1F *HMassWD_NoSF;
-
-  TH1F *HMassWZA_NoSF;
-  TH1F *HMassWZB_NoSF;
-  TH1F *HMassWZC_NoSF;
-  TH1F *HMassWZD_NoSF;
-
-  TH1F *HMassZA_NoSF;
-  TH1F *HMassZB_NoSF;
-  TH1F *HMassZC_NoSF;
-  TH1F *HMassZD_NoSF;
-
-  TH1F *HMassTWA_NoSF;
-  TH1F *HMassTWB_NoSF;
-  TH1F *HMassTWC_NoSF;
-  TH1F *HMassTWD_NoSF;
 
   TH1F *HPileupA_SFUp;
   TH1F *HPileupB_SFUp;

@@ -70,26 +70,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::make_tuple("HPileupB","Number of Good Primary Vertices;nPvs;Event count"),
     std::make_tuple("HPileupC","Number of Good Primary Vertices;nPvs;Event count"),
     std::make_tuple("HPileupD","Number of Good Primary Vertices;nPvs;Event count"),
-    /* Another series*/
-    std::make_tuple("HMassZA_NoSF","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count"),
-    std::make_tuple("HMassZB_NoSF","2e1#mu;M_{Z}^{2e1#mu}(GeV);Event count"),
-    std::make_tuple("HMassZC_NoSF","1e2#mu;M_{Z}^{1e2#mu}(GeV);Event count"),
-    std::make_tuple("HMassZD_NoSF","0e3#mu;M_{Z}^{0e3#mu}(GeV);Event count"),
-    /* Another series */
-    std::make_tuple("HMetA_NoSF","3e0#mu;#slash{E}^{3e0#mu}_{T}(GeV);Event count"),
-    std::make_tuple("HMetB_NoSF","2e1#mu;#slash{E}^{2e1#mu}_{T}(GeV);Event count"),
-    std::make_tuple("HMetC_NoSF","1e2#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count"),
-    std::make_tuple("HMetD_NoSF","0e3#mu;#slash{E}^{0e3#mu}_{T}(GeV);Event count"),
-    /* Another series */
-    std::make_tuple("HMassTWA_NoSF","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count"),
-    std::make_tuple("HMassTWB_NoSF","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count"),
-    std::make_tuple("HMassTWC_NoSF","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count"),
-    std::make_tuple("HMassTWD_NoSF","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count"),
-    /* Another series */
-    std::make_tuple("HMassWZA_NoSF","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count"),
-    std::make_tuple("HMassWZB_NoSF","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count"),
-    std::make_tuple("HMassWZC_NoSF","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count"),
-    std::make_tuple("HMassWZD_NoSF","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count"),
   };
 
   std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
