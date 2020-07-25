@@ -46,25 +46,25 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   auto f1 = TFile::Open(FileName.c_str(),"READ");
 
   std::vector<std::tuple<std::string,std::string>> HistNames = {
-    std::make_tuple("HMassZA","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count"),
-    std::make_tuple("HMassZB","2e1#mu;M_{Z}^{2e1#mu}(GeV);Event count"),
-    std::make_tuple("HMassZC","1e2#mu;M_{Z}^{1e2#mu}(GeV);Event count"),
-    std::make_tuple("HMassZD","0e3#mu;M_{Z}^{0e3#mu}(GeV);Event count"),
+    std::make_tuple("HMassZA","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"),
+    std::make_tuple("HMassZB","2e1#mu;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"),
+    std::make_tuple("HMassZC","1e2#mu;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"),
+    std::make_tuple("HMassZD","0e3#mu;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"),
     /* Another series */
-    std::make_tuple("HMetA","3e0#mu;#slash{E}^{3e0#mu}_{T}(GeV);Event count"),
-    std::make_tuple("HMetB","2e1#mu;#slash{E}^{2e1#mu}_{T}(GeV);Event count"),
-    std::make_tuple("HMetC","1e2#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count"),
-    std::make_tuple("HMetD","0e3#mu;#slash{E}^{0e3#mu}_{T}(GeV);Event count"),
+    std::make_tuple("HMetA","3e0#mu;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"),
+    std::make_tuple("HMetB","2e1#mu;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"),
+    std::make_tuple("HMetC","1e2#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"),
+    std::make_tuple("HMetD","0e3#mu;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"),
     /* Another series */
-    std::make_tuple("HMassTWA","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count"),
-    std::make_tuple("HMassTWB","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count"),
-    std::make_tuple("HMassTWC","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count"),
-    std::make_tuple("HMassTWD","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count"),
+    std::make_tuple("HMassTWA","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"),
+    std::make_tuple("HMassTWB","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"),
+    std::make_tuple("HMassTWC","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"),
+    std::make_tuple("HMassTWD","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"),
     /* Another series */
-    std::make_tuple("HMassWZA","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count"),
-    std::make_tuple("HMassWZB","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count"),
-    std::make_tuple("HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count"),
-    std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count"),
+    std::make_tuple("HMassWZA","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"),
+    std::make_tuple("HMassWZB","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"),
+    std::make_tuple("HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"),
+    std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"),
     /* Another series */
     std::make_tuple("HPileupA","Number of Good Primary Vertices;nPvs;Event count"),
     std::make_tuple("HPileupB","Number of Good Primary Vertices;nPvs;Event count"),

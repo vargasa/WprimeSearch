@@ -366,9 +366,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuC = new TH1I("HnMuC","",nLepBins,MinnLep,MaxnLep);
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
-  const Float_t MinMass = -1.;
+  const Float_t MinMass = 0.;
   const Float_t MaxMass = 2200.;
-  const Int_t MassBins = 52;
+  const Int_t MassBins = 22;
 
   const Float_t MinWMass = 0.;
   const Float_t MaxWMass = 1e3;
@@ -385,26 +385,30 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   const Float_t HMaxZMass = 120.;
   const Float_t HMinZMass = 60.;
+  const Int_t ZMassBins = 30;
+  HMassZA = new TH1F("HMassZA","",ZMassBins,HMinZMass,HMaxZMass);
+  HMassZB = new TH1F("HMassZB","",ZMassBins,HMinZMass,HMaxZMass);
+  HMassZC = new TH1F("HMassZC","",ZMassBins,HMinZMass,HMaxZMass);
+  HMassZD = new TH1F("HMassZD","",ZMassBins,HMinZMass,HMaxZMass);
 
-  HMassZA = new TH1F("HMassZA","",MassBins,HMinZMass,HMaxZMass);
-  HMassZB = new TH1F("HMassZB","",MassBins,HMinZMass,HMaxZMass);
-  HMassZC = new TH1F("HMassZC","",MassBins,HMinZMass,HMaxZMass);
-  HMassZD = new TH1F("HMassZD","",MassBins,HMinZMass,HMaxZMass);
-
-  HMassTWA = new TH1F("HMassTWA","",MassBins,MinMass,HMaxZMass);
-  HMassTWB = new TH1F("HMassTWB","",MassBins,MinMass,HMaxZMass);
-  HMassTWC = new TH1F("HMassTWC","",MassBins,MinMass,HMaxZMass);
-  HMassTWD = new TH1F("HMassTWD","",MassBins,MinMass,HMaxZMass);
+  const Float_t MaxTWMass = 200.;
+  const Int_t TWMassBins = 40;
+  HMassTWA = new TH1F("HMassTWA","",TWMassBins,0.,MaxTWMass);
+  HMassTWB = new TH1F("HMassTWB","",TWMassBins,0.,MaxTWMass);
+  HMassTWC = new TH1F("HMassTWC","",TWMassBins,0.,MaxTWMass);
+  HMassTWD = new TH1F("HMassTWD","",TWMassBins,0.,MaxTWMass);
 
   fOutput->Add(HMassTWA);
   fOutput->Add(HMassTWB);
   fOutput->Add(HMassTWC);
   fOutput->Add(HMassTWD);
 
-  HMassWZA = new TH1F("HMassWZA","",MassBins,MinMass,MaxMass);
-  HMassWZB = new TH1F("HMassWZB","",MassBins,MinMass,MaxMass);
-  HMassWZC = new TH1F("HMassWZC","",MassBins,MinMass,MaxMass);
-  HMassWZD = new TH1F("HMassWZD","",MassBins,MinMass,MaxMass);
+  const Float_t MaxWZMass = 2000.;
+  const Int_t WZMassBins = 20;
+  HMassWZA = new TH1F("HMassWZA","",WZMassBins,0.,MaxWZMass);
+  HMassWZB = new TH1F("HMassWZB","",WZMassBins,0.,MaxWZMass);
+  HMassWZC = new TH1F("HMassWZC","",WZMassBins,0.,MaxWZMass);
+  HMassWZD = new TH1F("HMassWZD","",WZMassBins,0.,MaxWZMass);
 
   fOutput->Add(HMassWZA);
   fOutput->Add(HMassWZB);
