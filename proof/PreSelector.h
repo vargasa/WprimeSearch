@@ -156,6 +156,7 @@ class PreSelector : public EventSelection {
   TH1I *HOverlap;
 
 #ifndef CMSDATA
+  TEntryList *ELPass;
   TH1F *HGenPartZA;
   TH1F *HGenPartZB;
   TH1F *HGenPartZC;

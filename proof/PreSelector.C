@@ -57,7 +57,7 @@ PreSelector::PreSelector(TTree *)
   HDistl2l3=0;
 
 #ifndef CMSDATA
-
+  ELPass=0;
   HGenPartZA=0;
   HGenPartZB=0;
   HGenPartZC=0;
@@ -428,6 +428,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t PdgIdMax = 50.;
 
 #ifndef CMSDATA
+  ELPass = new TEntryList("ELPass","Events Passing Full Selection");
+  fOutput->Add(ELPass);
 
   HGenPartZA = new TH1F("HGenPartZA","",BinsPdgId,PdgIdMin,PdgIdMax);
   HGenPartZB = new TH1F("HGenPartZB","",BinsPdgId,PdgIdMin,PdgIdMax);
@@ -1252,6 +1254,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
     if(IsC) DefineW(Els);
     if(IsD) DefineW(Mus);
 
+#ifndef CMSDATA
+    ELPass->Enter(entry);
+#endif
+
     Bool_t ZHighPtIdCut = Muon_highPtId[l1]>=1 && Muon_highPtId[l2]>=2;
     if(!ZHighPtIdCut){
       HCutFlow->FillS("FailZHighPtIdCut");
@@ -1328,6 +1334,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
     if (IsA) DefineW(Els);
     if (IsB) DefineW(Mus);
 
+#ifndef CMSDATA
+    ELPass->Enter(entry);
+#endif
+
     const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
     Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
     if(l1l3DistCut){
@@ -1377,6 +1387,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
 }
 
 void PreSelector::Terminate() {
+
+#ifndef CMSDATA
+  std::unique_ptr<TFile> fELOut(TFile::Open("MCEntryLists.root","UPDATE"));
+  ELPass->SetName(SampleName.Data());
+  ELPass->Write(SampleName.Data());
+  fELOut->Close();
+#endif
 
   gStyle->SetOptStat(1111111);
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
