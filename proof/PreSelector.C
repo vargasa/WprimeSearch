@@ -56,6 +56,12 @@ PreSelector::PreSelector(TTree *)
   HMassZWZC=0;
   HMassZWZD=0;
 
+  HMassZTW=0;
+  HDeltaRPtZ=0;
+  HPtWPtZ=0;
+  HDeltaRMWZ=0;
+  HLtMWZ=0;
+
   HOverlap=0;
 
   HDistl1l2=0;
@@ -377,8 +383,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMassZC = new TH1F("HMassZC","",ZMassBins,HMinZMass,HMaxZMass);
   HMassZD = new TH1F("HMassZD","",ZMassBins,HMinZMass,HMaxZMass);
 
-  const Float_t MaxTWMass = 200.;
-  const Int_t TWMassBins = 40;
+  const Float_t MaxTWMass = 250.;
+  const Int_t TWMassBins = 50;
   HMassTWA = new TH1F("HMassTWA","",TWMassBins,0.,MaxTWMass);
   HMassTWB = new TH1F("HMassTWB","",TWMassBins,0.,MaxTWMass);
   HMassTWC = new TH1F("HMassTWC","",TWMassBins,0.,MaxTWMass);
@@ -420,6 +426,35 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMassZWZC);
   HMassZWZD = new TH2F("HMassZWZD","0e3mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
   fOutput->Add(HMassZWZD);
+
+
+  const Float_t MaxDeltaR = 6.f;
+  const Int_t NBinsDeltaR = 10;
+  const Float_t MaxWZM = 5000.f;
+  const Float_t MinWZM = 500.f;
+  const Int_t NBinsWZM = 45;
+  const Int_t ZPtBins = 20;
+  const Float_t ZPtMax = 2000;
+  HMassZTW =  new TH2F("HMassZTW","MassZ Vs Mass Wt",
+                       ZMassBins, HMinZMass, HMaxZMass,
+                       TWMassBins,0.,MaxTWMass);
+  fOutput->Add(HMassZTW);
+  HDeltaRPtZ = new TH2F("HDeltaRPtZ","Lep1Lep3DeltaR vs ZPt",
+                        NBinsDeltaR,0.,MaxDeltaR,
+                        ZPtBins,0.,ZPtMax);
+  fOutput->Add(HDeltaRPtZ);
+  HPtWPtZ = new TH2F("HPtWPtZ","WPt vs ZPt",
+                     110,0.,1100.,
+                     ZPtBins,0.,ZPtMax);
+  fOutput->Add(HPtWPtZ);
+  HDeltaRMWZ = new TH2F("HDeltaRMWZ","Lep1Lep3DeltaR Vs MWz",
+                        NBinsDeltaR,0.,MaxDeltaR,
+                        NBinsWZM,MinWZM,MaxWZM);
+  fOutput->Add(HDeltaRMWZ);
+  HLtMWZ = new TH2F("HLtMWZ","Lt vs MWZ",
+                    20,0.,2000.,
+                    NBinsWZM,MinWZM,MaxWZM);
+  fOutput->Add(HLtMWZ);
 
   HOverlap = new TH1I("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
@@ -899,6 +934,14 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HDistl2l3->Fill(GetEtaPhiDistance(lz.eta[l2],lz.phi[l2],
                                       lw.eta[l3],lw.phi[l3]));
   HMetPt->Fill(*MET_pt);
+
+  HMassZTW->Fill(zb.M(),wmt);
+  HDeltaRPtZ->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Eta(),
+                                     lep3.Phi(),lep3.Phi()),zb.Pt());
+  HPtWPtZ->Fill(wb.Pt(),zb.Pt());
+  HDeltaRMWZ->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Eta(),
+                                     lep3.Phi(),lep3.Phi()),(wb+zb).M());
+  HLtMWZ->Fill(lep1.Pt()+lep2.Pt()+lep3.Pt(),(wb+zb).M());
 }
 
 void PreSelector::FillA(){
@@ -1494,6 +1537,26 @@ void PreSelector::Terminate() {
   HMassZWZD->Draw("COLZ");
   HMassZWZD->Write();
   ch->Print(Form("%s_HMassZWZ.png",SampleName.Data()));
+
+
+  ch->Clear();
+  ch->Divide(2,3);
+  ch->cd(1);
+  HMassZTW->Draw();
+  HMassZTW->Write();
+  ch->cd(2);
+  HDeltaRPtZ->Draw();
+  HDeltaRPtZ->Write();
+  ch->cd(3);
+  HPtWPtZ->Draw();
+  HPtWPtZ->Write();
+  ch->cd(4);
+  HDeltaRMWZ->Draw();
+  HDeltaRMWZ->Write();
+  ch->cd(5);
+  HLtMWZ->Draw();
+  HLtMWZ->Write();
+  ch->Print(Form("%s_WindowMass.png",SampleName.Data()));
 
   ch->Clear();
   ch->Divide(2,2);

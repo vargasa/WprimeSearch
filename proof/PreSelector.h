@@ -143,6 +143,12 @@ class PreSelector : public EventSelection {
   TH2F *HMassZWZC;
   TH2F *HMassZWZD;
 
+  TH2F* HMassZTW;
+  TH2F* HDeltaRPtZ;
+  TH2F* HPtWPtZ;
+  TH2F* HDeltaRMWZ;
+  TH2F* HLtMWZ;
+
   TH1F *HMassWZA;
   TH1F *HMassWZB;
   TH1F *HMassWZC;
