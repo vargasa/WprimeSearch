@@ -45,6 +45,11 @@ PreSelector::PreSelector(TTree *)
   HMassWZC=0;
   HMassWZD=0;
 
+  HLtA=0;
+  HLtB=0;
+  HLtC=0;
+  HLtD=0;
+
   HMassZWZA=0;
   HMassZWZB=0;
   HMassZWZC=0;
@@ -95,6 +100,11 @@ PreSelector::PreSelector(TTree *)
   HMassWZC_SFUp=0;
   HMassWZD_SFUp=0;
 
+  HLtA_SFUp=0;
+  HLtB_SFUp=0;
+  HLtC_SFUp=0;
+  HLtD_SFUp=0;
+
   HMassZA_SFUp=0;
   HMassZB_SFUp=0;
   HMassZC_SFUp=0;
@@ -124,6 +134,11 @@ PreSelector::PreSelector(TTree *)
   HMassWZB_SFDown=0;
   HMassWZC_SFDown=0;
   HMassWZD_SFDown=0;
+
+  HLtA_SFDown=0;
+  HLtB_SFDown=0;
+  HLtC_SFDown=0;
+  HLtD_SFDown=0;
 
   HMassZA_SFDown=0;
   HMassZB_SFDown=0;
@@ -385,6 +400,17 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMassWZC);
   fOutput->Add(HMassWZD);
 
+  const Float_t MaxLt = 2000.;
+  const Int_t NLtBins = 20;
+  HLtA = new TH1F("HLtA","",NLtBins,0.,MaxLt);
+  fOutput->Add(HLtA);
+  HLtB = new TH1F("HLtB","",NLtBins,0.,MaxLt);
+  fOutput->Add(HLtB);
+  HLtC = new TH1F("HLtC","",NLtBins,0.,MaxLt);
+  fOutput->Add(HLtC);
+  HLtD = new TH1F("HLtD","",NLtBins,0.,MaxLt);
+  fOutput->Add(HLtD);
+
   HMassZWZA = new TH2F("HMassZWZA","3e0mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
   fOutput->Add(HMassZWZA);
   HMassZWZB = new TH2F("HMassZWZB","2e1mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
@@ -487,6 +513,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(copyHisto(&HMassWZC_SFUp,HMassWZC,"SFUp"));
   fOutput->Add(copyHisto(&HMassWZD_SFUp,HMassWZD,"SFUp"));
 
+  fOutput->Add(copyHisto(&HLtA_SFUp,HLtA,"SFUp"));
+  fOutput->Add(copyHisto(&HLtB_SFUp,HLtB,"SFUp"));
+  fOutput->Add(copyHisto(&HLtC_SFUp,HLtC,"SFUp"));
+  fOutput->Add(copyHisto(&HLtD_SFUp,HLtD,"SFUp"));
+
   fOutput->Add(copyHisto(&HMassZA_SFUp,HMassZA,"SFUp"));
   fOutput->Add(copyHisto(&HMassZB_SFUp,HMassZB,"SFUp"));
   fOutput->Add(copyHisto(&HMassZC_SFUp,HMassZC,"SFUp"));
@@ -516,6 +547,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(copyHisto(&HMassWZB_SFDown,HMassWZB,"SFDown"));
   fOutput->Add(copyHisto(&HMassWZC_SFDown,HMassWZC,"SFDown"));
   fOutput->Add(copyHisto(&HMassWZD_SFDown,HMassWZD,"SFDown"));
+
+  fOutput->Add(copyHisto(&HLtA_SFDown,HLtA,"SFDown"));
+  fOutput->Add(copyHisto(&HLtB_SFDown,HLtB,"SFDown"));
+  fOutput->Add(copyHisto(&HLtC_SFDown,HLtC,"SFDown"));
+  fOutput->Add(copyHisto(&HLtD_SFDown,HLtD,"SFDown"));
 
   fOutput->Add(copyHisto(&HMassZA_SFDown,HMassZA,"SFDown"));
   fOutput->Add(copyHisto(&HMassZB_SFDown,HMassZB,"SFDown"));
@@ -864,6 +900,7 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
 }
 
 void PreSelector::FillA(){
+  Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
   HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
   HnElA->Fill(GoodElectron.size());
   HnMuA->Fill(GoodMuon.size());
@@ -897,6 +934,7 @@ void PreSelector::FillA(){
   HMetA_SFUp->Fill(*MET_pt,wup);
   HMassWA_SFUp->Fill(wb.M(),wup);
   HMassWZA_SFUp->Fill((wb+zb).M(),wup);
+  HLtA_SFUp->Fill(lt,wup);
   HMassZA_SFUp->Fill(PairZMass,wup);
   HMassTWA_SFUp->Fill(wmt,wup);
 
@@ -904,6 +942,7 @@ void PreSelector::FillA(){
   HMetA_SFDown->Fill(*MET_pt,wdown);
   HMassWA_SFDown->Fill(wb.M(),wdown);
   HMassWZA_SFDown->Fill((wb+zb).M(),wdown);
+  HLtA_SFDown->Fill(lt,wdown);
   HMassZA_SFDown->Fill(PairZMass,wdown);
   HMassTWA_SFDown->Fill(wmt,wdown);
 
@@ -915,10 +954,11 @@ void PreSelector::FillA(){
   HMassWZA->Fill((wb+zb).M());
   HMassZA->Fill(PairZMass);
   HMassTWA->Fill(wmt);
-
+  HLtA->Fill(lt);
 }
 
 void PreSelector::FillB(){
+  Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
   HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
   HnElB->Fill(GoodElectron.size());
   HnMuB->Fill(GoodMuon.size());
@@ -954,6 +994,7 @@ void PreSelector::FillB(){
   HMetB_SFUp->Fill(*MET_pt,wup);
   HMassWB_SFUp->Fill(wb.M(),wup);
   HMassWZB_SFUp->Fill((wb+zb).M(),wup);
+  HLtB_SFUp->Fill(lt,wup);
   HMassZB_SFUp->Fill(PairZMass,wup);
   HMassTWB_SFUp->Fill(wmt,wup);
 
@@ -961,6 +1002,7 @@ void PreSelector::FillB(){
   HMetB_SFDown->Fill(*MET_pt,wdown);
   HMassWB_SFDown->Fill(wb.M(),wdown);
   HMassWZB_SFDown->Fill((wb+zb).M(),wdown);
+  HLtB_SFDown->Fill(lt,wdown);
   HMassZB_SFDown->Fill(PairZMass,wdown);
   HMassTWB_SFDown->Fill(wmt,wdown);
 #endif
@@ -970,10 +1012,11 @@ void PreSelector::FillB(){
   HMassWZB->Fill((wb+zb).M());
   HMassZB->Fill(PairZMass);
   HMassTWB->Fill(wmt);
+  HLtB->Fill(lt);
 }
 
 void PreSelector::FillC(){
-
+  Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
   HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
   HnElC->Fill(GoodElectron.size());
   HnMuC->Fill(GoodMuon.size());
@@ -1008,6 +1051,7 @@ void PreSelector::FillC(){
   HMetC_SFUp->Fill(*MET_pt,wup);
   HMassWC_SFUp->Fill(wb.M(),wup);
   HMassWZC_SFUp->Fill((wb+zb).M(),wup);
+  HLtC_SFUp->Fill(lt,wup);
   HMassZC_SFUp->Fill(PairZMass,wup);
   HMassTWC_SFUp->Fill(wmt,wup);
 
@@ -1015,9 +1059,9 @@ void PreSelector::FillC(){
   HMetC_SFDown->Fill(*MET_pt,wdown);
   HMassWC_SFDown->Fill(wb.M(),wdown);
   HMassWZC_SFDown->Fill((wb+zb).M(),wdown);
+  HLtC->Fill(lt,wdown);
   HMassZC_SFDown->Fill(PairZMass,wdown);
   HMassTWC_SFDown->Fill(wmt,wdown);
-
 #endif
   HPileupC->Fill(*PV_npvs);
   HMetC->Fill(*MET_pt);
@@ -1025,6 +1069,7 @@ void PreSelector::FillC(){
   HMassWZC->Fill((wb+zb).M());
   HMassZC->Fill(PairZMass);
   HMassTWC->Fill(wmt);
+  HLtC->Fill(lt);
 }
 
 void PreSelector::DefineW(Leptons l){
@@ -1035,7 +1080,7 @@ void PreSelector::DefineW(Leptons l){
 }
 
 void PreSelector::FillD(){
-
+  Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
   HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
   HnElD->Fill(GoodElectron.size());
   HnMuD->Fill(GoodMuon.size());
@@ -1067,6 +1112,7 @@ void PreSelector::FillD(){
   HMetD_SFUp->Fill(*MET_pt,wup);
   HMassWD_SFUp->Fill(wb.M(),wup);
   HMassWZD_SFUp->Fill((wb+zb).M(),wup);
+  HLtD_SFUp->Fill(lt,wup);
   HMassZD_SFUp->Fill(PairZMass,wup);
   HMassTWD_SFUp->Fill(wmt,wup);
 
@@ -1074,6 +1120,7 @@ void PreSelector::FillD(){
   HMetD_SFDown->Fill(*MET_pt,wdown);
   HMassWD_SFDown->Fill(wb.M(),wdown);
   HMassWZD_SFDown->Fill((wb+zb).M(),wdown);
+  HLtD_SFDown->Fill(lt,wdown);
   HMassZD_SFDown->Fill(PairZMass,wdown);
   HMassTWD_SFDown->Fill(wmt,wdown);
 
@@ -1084,6 +1131,7 @@ void PreSelector::FillD(){
   HMassWZD->Fill((wb+zb).M());
   HMassZD->Fill(PairZMass);
   HMassTWD->Fill(wmt);
+  HLtD->Fill(lt);
 }
 
 Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
@@ -1403,6 +1451,11 @@ void PreSelector::Terminate() {
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
 
+  HLtA->Write();
+  HLtB->Write();
+  HLtC->Write();
+  HLtD->Write();
+
   ch->cd();
   ch->Divide(2,2);
   ch->cd(1);
@@ -1711,6 +1764,11 @@ void PreSelector::Terminate() {
   HMassWZD_SFUp->Draw();
   HMassWZD_SFUp->Write();
 
+  HLtA_SFUp->Write();
+  HLtB_SFUp->Write();
+  HLtC_SFUp->Write();
+  HLtD_SFUp->Write();
+
   ch->cd(1);
   HMassZA_SFDown->SetTitle("Z Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
   HMassZA_SFDown->Draw();
@@ -1728,6 +1786,11 @@ void PreSelector::Terminate() {
   HMassZD_SFDown->Draw();
   HMassZD_SFDown->Write();
   ch->Print(Form("%s_HMassZ_SFDown.png",SampleName.Data()));
+
+  HLtA_SFDown->Write();
+  HLtB_SFDown->Write();
+  HLtC_SFDown->Write();
+  HLtD_SFDown->Write();
 
   ch->cd(1);
   HMassWA_SFDown->SetTitle("W Mass (3e0#mu);M_{W}^{3e0#mu};Event count");

@@ -148,6 +148,11 @@ class PreSelector : public EventSelection {
   TH1F *HMassWZC;
   TH1F *HMassWZD;
 
+  TH1F* HLtA;
+  TH1F* HLtB;
+  TH1F* HLtC;
+  TH1F* HLtD;
+
   //Angular
   TH1F *HDistl1l2;
   TH1F *HDistl1l3;
@@ -195,6 +200,11 @@ class PreSelector : public EventSelection {
   TH1F *HMassWZC_SFUp;
   TH1F *HMassWZD_SFUp;
 
+  TH1F* HLtA_SFUp;
+  TH1F* HLtB_SFUp;
+  TH1F* HLtC_SFUp;
+  TH1F* HLtD_SFUp;
+
   TH1F *HMassZA_SFUp;
   TH1F *HMassZB_SFUp;
   TH1F *HMassZC_SFUp;
@@ -224,6 +234,11 @@ class PreSelector : public EventSelection {
   TH1F *HMassWZB_SFDown;
   TH1F *HMassWZC_SFDown;
   TH1F *HMassWZD_SFDown;
+
+  TH1F* HLtA_SFDown;
+  TH1F* HLtB_SFDown;
+  TH1F* HLtC_SFDown;
+  TH1F* HLtD_SFDown;
 
   TH1F *HMassZA_SFDown;
   TH1F *HMassZB_SFDown;
