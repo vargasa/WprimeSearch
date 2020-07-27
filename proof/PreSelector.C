@@ -3,6 +3,7 @@
 #include "TMath.h"
 #include "TLegend.h"
 #include "TError.h"
+#include "TVector2.h"
 
 #define FillS(xx) Fill(xx,1.)
 
@@ -880,7 +881,8 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEta
 
 Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
                                         const float& eta2, const float& phi2) const{
-  return sqrt(pow(eta2-eta1,2.)+pow(phi2-phi1,2.));
+  Double_t dphi = TVector2::Phi_mpi_pi(phi1-phi2);
+  return sqrt(pow(eta2-eta1,2.)+pow(dphi,2.));
 }
 
 void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
