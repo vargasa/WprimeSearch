@@ -211,7 +211,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       return hcdata;
   };
 
-  auto getBGStack = [&](std::string hname, THStack *hscomb = NULL,TLegend* legend = NULL){
+  auto getBGStack = [&](std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
     for (auto BGN: BgNames) {
       std::string hpath = Form("%s/%s",(std::get<1>(BGN)).c_str(),hname.c_str());
@@ -226,7 +226,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->Scale(luminosity*std::get<3>(BGN)*pbFactor/nEvents);
       h->SetLineWidth(0);
       hstck->Add(h);
-      if(hscomb) hscomb->Add(h);
       if(legend)
         legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
     }
@@ -248,7 +247,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c1->Divide(2,2);
     Int_t j = 1;
 
-    THStack* hscomb = new THStack("hscomb","");
+
     THStack* hsdummy = new THStack("hsdummy","");
     TH1F* hcombData;
 
@@ -265,7 +264,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto legend = new TLegend(0.3, 0.66, .87, .89);
       legend->SetNColumns(2);
 
-      hs = getBGStack(hName,hscomb,legend);
+      hs = getBGStack(hName,legend);
 
       auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),hName));
       hsig = (TH1F*)hsig->Clone();
@@ -274,7 +273,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
       hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
       legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
-      hs->Add(hsig);
+      //hs->Add(hsig);
       hs->SetTitle((std::get<1>(HN)).c_str());
 
       gPad->SetLogy();
@@ -337,41 +336,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         if(xx > 1e-3) hratio->Fill(xx);
       }
 
-      if( r+1 == 1 ){
-        hcombData = static_cast<TH1F*>(hdata->Clone());
-      } else {
-        hcombData->Add(hdata);
-      }
-
       ++j;
       mainPad->cd();
       legend->Draw();
       if( r+1 == 4 ){
         c1->Print(Form("Stack_%s_Wprime%d_Data.png",hName,WpMass));
-        c1->Clear();
         gPad->SetLogy();
-        hscomb = sortStack(hscomb);
-        hscomb->Draw("HIST");
-        std::clog << Form("\thscomb integral: %s %f\n",hName,((TH1*)hscomb->GetStack()->Last())->Integral());
-        hcombData->Draw("SAME P");
-        fixYRange(hscomb);
-        legend->Draw();
-        c1->Print(Form("Stack_Combined_%s_Wprime%d.png",hName,WpMass));
-        hratio->Draw("HIST");
-        c1->Print(Form("Stack_Combined_DataMCRatios_%s_Wprime%d.png",hName,WpMass));
         hratio = static_cast<TH1F*>(hfdummy->Clone());
         hratio->SetName("hratio");
         c1->Clear();
         c1->Divide(2,2);
-        hscomb = static_cast<THStack*>(hsdummy->Clone());
-        hscomb->SetName("hscomb");
       }
     }
 
     /*** HPileup ***/
     c1->Clear();
     auto legend = new TLegend();
-    THStack *hspileup = getBGStack("HPileup",NULL,legend);
+    THStack *hspileup = getBGStack("HPileup",legend);
     hspileup->Draw("HIST E2");
     legend->Draw();
     auto hdata = (TH1D*)f1->Get(Form("%s/HPileup",DataName));
