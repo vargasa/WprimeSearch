@@ -285,7 +285,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c1->Divide(2,2);
     Int_t j = 1;
 
-    auto hratio = new TH1F("hratio","DataMCRatios",50,0.,10.);
     TH1F* hfdummy = new TH1F("","DataMCRatios",50,0.,10.);
 
     for (auto HN : HistNames) {
@@ -352,19 +351,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       line->SetLineColor(kBlack);
       line->Draw();
 
-      for(uint i = 0; i < hcdata->GetNbinsX(); i++){
-        float xx = hcdata->GetBinContent(i);
-        if(xx > 1e-3) hratio->Fill(xx);
-      }
-
       ++j;
       mainPad->cd();
       legend->Draw();
       if( r+1 == 4 ){
         c1->Print(Form("Stack_%s_Wprime%d_Data.png",hName,WpMass));
-        gPad->SetLogy();
-        hratio = static_cast<TH1F*>(hfdummy->Clone());
-        hratio->SetName("hratio");
         c1->Clear();
         c1->Divide(2,2);
       }
