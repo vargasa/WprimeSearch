@@ -9,135 +9,151 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   const char* DataName = "SinglePhotonSingleElectronSingleMuon";
 
-  // ShortName, DasName, kColor, Style, XSection, nEvents
-  std::vector<std::tuple<std::string,std::string,Int_t,Float_t>> BgNames = {
-    std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-                    kOrange,4.43), /*XSDB 2nd Sample is 0*/
-    std::make_tuple("WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
-                    kOrange,4.43), /*XSDB 2nd Sample is 0*/
-    std::make_tuple("DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,57.3),
-    std::make_tuple("DYJetsToLL_AEXT1","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-                    kOrange+7,57.3),
-    std::make_tuple("DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,6.733),
-    std::make_tuple("DYJetsToLL_BEXT1","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kOrange+7,6.733),
-    std::make_tuple("t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                    kBlue-2,56.86),
-    std::make_tuple("t#bar{t} EXT1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-                    kBlue-4,56.86),
-    std::make_tuple("Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-                    kRed+3,123.8), /*AN2019_252_v1*/
-    std::make_tuple("Z#gamma EXT1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
-                    kRed+3,123.8),
-    std::make_tuple("ZZ","ZZTo4L_13TeV_powheg_pythia8",
-                    kBlue,1.256)
+  struct BackgroundInfo {
+    std::string legendName;
+    std::string folderName;
+    UInt_t color;
+    Float_t xsec;
   };
 
-  std::vector<std::tuple<std::string,std::string,Float_t>> SignalSamples = {
-    std::make_tuple("W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",14490.0),
-    std::make_tuple("W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",3197.0),
-    std::make_tuple("W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",1227.0),
-    std::make_tuple("W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",589.6),
-    std::make_tuple("W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",319.6),
-    std::make_tuple("W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",185.9),
-    std::make_tuple("W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",113.5),
-    std::make_tuple("W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",71.67),
-    std::make_tuple("W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",24.66),
-    std::make_tuple("W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",8.971),
-    std::make_tuple("W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",3.304),
-    std::make_tuple("W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",1.221),
-    std::make_tuple("W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",0.4574)
+  // ShortName, DasName, kColor, Style, XSection, nEvents
+  std::vector<BackgroundInfo> BgNames = {
+    BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
+                   kOrange,4.43}, /*XSDB 2nd Sample is 0*/
+    // BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
+    //                kOrange,4.43}, /*XSDB 2nd Sample is 0*/
+    BackgroundInfo{"DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                   kOrange+7,57.3},
+    // BackgroundInfo{"DYJetsToLL_AEXT1","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+    //                kOrange+7,57.3},
+    BackgroundInfo{"DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                   kOrange+7,6.733},
+    // BackgroundInfo{"DYJetsToLL_BEXT1","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+    //                kOrange+7,6.733},
+    BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                   kBlue-2,56.86},
+    // BackgroundInfo{"t#bar{t} EXT1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+    //                kBlue-4,56.86},
+    // BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+    //                kRed+3,123.8}, /*AN2019_252_v1*/
+    // BackgroundInfo{"Z#gamma EXT1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
+                   // kRed+3,123.8},
+    BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
+                   kBlue,1.256}
+  };
+
+  struct SignalInfo {
+    std::string legendName;
+    std::string folderName;
+    Float_t xsec;
+  };
+
+  std::vector<SignalInfo> SignalSamples = {
+    SignalInfo{"W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",14490.0},
+    SignalInfo{"W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",3197.0},
+    SignalInfo{"W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",1227.0},
+    SignalInfo{"W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",589.6},
+    SignalInfo{"W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",319.6},
+    SignalInfo{"W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",185.9},
+    SignalInfo{"W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",113.5},
+    SignalInfo{"W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",71.67},
+    SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",24.66},
+    SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",8.971},
+    SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",3.304},
+    SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",1.221},
+    SignalInfo{"W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",0.4574}
   };
 
   auto f1 = TFile::Open(FileName.c_str(),"READ");
 
-  std::vector<std::tuple<std::string,std::string>> HistNames = {
-    std::make_tuple("HMassZA","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZB","2e1#mu;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZC","1e2#mu;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZD","0e3#mu;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"),
+  struct HistoInfo {
+    std::string name;
+    std::string title;
+  };
+
+  std::vector<HistoInfo> HistNames = {
+    HistoInfo{"HMassZA","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZB","2e1#mu;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZC","1e2#mu;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZD","0e3#mu;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
-    std::make_tuple("HMassZA_SFUp","3e0#mu SFUp;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZB_SFUp","2e1#mu SFUp;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZC_SFUp","1e2#mu SFUp;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZD_SFUp","0e3#mu SFUp;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"),
+    HistoInfo{"HMassZA_SFUp","3e0#mu SFUp;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZB_SFUp","2e1#mu SFUp;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZC_SFUp","1e2#mu SFUp;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZD_SFUp","0e3#mu SFUp;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
-    std::make_tuple("HMassZA_SFDown","3e0#mu SFDown;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZB_SFDown","2e1#mu SFDown;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZC_SFDown","1e2#mu SFDown;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"),
-    std::make_tuple("HMassZD_SFDown","0e3#mu SFDown;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"),
+    HistoInfo{"HMassZA_SFDown","3e0#mu SFDown;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZB_SFDown","2e1#mu SFDown;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZC_SFDown","1e2#mu SFDown;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZD_SFDown","0e3#mu SFDown;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
-    std::make_tuple("HMetA","3e0#mu;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetB","2e1#mu;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetC","1e2#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetD","0e3#mu;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"),
+    HistoInfo{"HMetA","3e0#mu;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetB","2e1#mu;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetC","1e2#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetD","0e3#mu;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
     /* Another series */
-    std::make_tuple("HMetA_SFUp","3e0#mu SFUp;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetB_SFUp","2e1#mu SFUp;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetC_SFUp","1e2#mu SFUp;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetD_SFUp","0e3#mu SFUp;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"),
+    HistoInfo{"HMetA_SFUp","3e0#mu SFUp;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetB_SFUp","2e1#mu SFUp;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetC_SFUp","1e2#mu SFUp;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetD_SFUp","0e3#mu SFUp;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
     /* Another series */
-    std::make_tuple("HMetA_SFDown","3e0#mu SFDown;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetB_SFDown","2e1#mu SFDown;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetC_SFDown","1e2#mu SFDown;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"),
-    std::make_tuple("HMetD_SFDown","0e3#mu SFDown;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"),
+    HistoInfo{"HMetA_SFDown","3e0#mu SFDown;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetB_SFDown","2e1#mu SFDown;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetC_SFDown","1e2#mu SFDown;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetD_SFDown","0e3#mu SFDown;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
     /* Another series */
-    std::make_tuple("HMassTWA","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWB","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWC","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWD","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"),
+    HistoInfo{"HMassTWA","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWB","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWC","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWD","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
     /* Another series */
-    std::make_tuple("HMassTWA_SFUp","M_{T}^{W} SFUp (3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWB_SFUp","M_{T}^{W} SFUp (2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWC_SFUp","M_{T}^{W} SFUp (1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWD_SFUp","M_{T}^{W} SFUp (0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"),
+    HistoInfo{"HMassTWA_SFUp","M_{T}^{W} SFUp (3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWB_SFUp","M_{T}^{W} SFUp (2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWC_SFUp","M_{T}^{W} SFUp (1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWD_SFUp","M_{T}^{W} SFUp (0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
     /* Another series */
-    std::make_tuple("HMassTWA_SFDown","M_{T}^{W} SFDown (3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWB_SFDown","M_{T}^{W} SFDown (2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWC_SFDown","M_{T}^{W} SFDown (1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"),
-    std::make_tuple("HMassTWD_SFDown","M_{T}^{W} SFDown (0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"),
+    HistoInfo{"HMassTWA_SFDown","M_{T}^{W} SFDown (3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWB_SFDown","M_{T}^{W} SFDown (2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWC_SFDown","M_{T}^{W} SFDown (1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
+    HistoInfo{"HMassTWD_SFDown","M_{T}^{W} SFDown (0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
     /* Another series */
-    std::make_tuple("HMassWZA","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZB","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"),
+    HistoInfo{"HMassWZA","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZB","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"},
     /* Another series */
-    std::make_tuple("HMassWZA_SFUp","WZ Mass SFUp (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZB_SFUp","WZ Mass SFUp (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZC_SFUp","WZ Mass SFUp (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZD_SFUp","WZ Mass SFUp (0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"), 
+    HistoInfo{"HMassWZA_SFUp","WZ Mass SFUp (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZB_SFUp","WZ Mass SFUp (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZC_SFUp","WZ Mass SFUp (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZD_SFUp","WZ Mass SFUp (0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"}, 
     /* Another series */
-    std::make_tuple("HMassWZA_SFDown","WZ Mass SFDown (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZB_SFDown","WZ Mass SFDown (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZC_SFDown","WZ Mass SFDown (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"),
-    std::make_tuple("HMassWZD_SFDown","WZ Mass SFDown(0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"),
+    HistoInfo{"HMassWZA_SFDown","WZ Mass SFDown (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZB_SFDown","WZ Mass SFDown (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZC_SFDown","WZ Mass SFDown (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZD_SFDown","WZ Mass SFDown(0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"},
     /* Another series */
-    std::make_tuple("HPileupA","Number of Good Primary Vertices;nPvs;Event count"),
-    std::make_tuple("HPileupB","Number of Good Primary Vertices;nPvs;Event count"),
-    std::make_tuple("HPileupC","Number of Good Primary Vertices;nPvs;Event count"),
-    std::make_tuple("HPileupD","Number of Good Primary Vertices;nPvs;Event count"),
-    /* Another series */
+    HistoInfo{"HPileupA","Number of Good Primary Vertices;nPvs;Event count"},
+    HistoInfo{"HPileupB","Number of Good Primary Vertices;nPvs;Event count"},
+    HistoInfo{"HPileupC","Number of Good Primary Vertices;nPvs;Event count"},
+    HistoInfo{"HPileupD","Number of Good Primary Vertices;nPvs;Event count"},
 
   };
 
-  std::vector<std::pair<std::string,std::string>> NonStackedHistos = {
-    std::make_pair("HPtl1","Z Lepton highest pt;Pt;Normalized Events"),
-    std::make_pair("HPtl2","Z Second Lepton pt;Pt;Normalized Events"),
-    std::make_pair("HPtl3","W Lepton Pt;Pt;Normalized Events"),
-    std::make_pair("HMetPt","Met Pt;Pt;Normalized Events"),
+  std::vector<HistoInfo> NonStackedHistos = {
+    HistoInfo{"HPtl1","Z Lepton highest pt;Pt;Normalized Events"},
+    HistoInfo{"HPtl2","Z Second Lepton pt;Pt;Normalized Events"},
+    HistoInfo{"HPtl3","W Lepton Pt;Pt;Normalized Events"},
+    HistoInfo{"HMetPt","Met Pt;Pt;Normalized Events"},
     /*Next series*/
-    std::make_pair("HDistl1l2","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"),
-    std::make_pair("HDistl1l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"),
-    std::make_pair("HDistl2l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"),
-    std::make_pair("HWZDist","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"),
+    HistoInfo{"HDistl1l2","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"},
+    HistoInfo{"HDistl1l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"},
+    HistoInfo{"HDistl2l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"},
+    HistoInfo{"HWZDist","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"},
     /*Next series*/
-    std::make_pair("HScaleFactors","Scale Factors; Scale Factor; Normalized events"),
-    std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
-    std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
-    std::make_pair("HPileup","Number of primary vertices; Npvs; Normalized events"),
-
+    HistoInfo{"HScaleFactors","Scale Factors; Scale Factor; Normalized events"},
+    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
+    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
+    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
   };
 
   auto getErrorHisto = [](THStack* hst){
@@ -222,20 +238,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   auto getBGStack = [&](std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
     for (auto BGN: BgNames) {
-      std::string hpath = Form("%s/%s",(std::get<1>(BGN)).c_str(),hname.c_str());
+      std::string hpath = Form("%s/%s",BGN.folderName.c_str(),hname.c_str());
       std::clog << "Reading: " << hpath << std::endl;
       auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
       h = static_cast<TH1F*>(h->Clone());
-      auto hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/%s",(std::get<1>(BGN)).c_str(),"HCutFlow")));
+      auto hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/%s",BGN.folderName.c_str(),"HCutFlow")));
       Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
       h->SetFillStyle(1001);
-      h->SetTitle((std::get<1>(BGN)).c_str());
-      h->SetFillColor(std::get<2>(BGN));
-      h->Scale(luminosity*std::get<3>(BGN)*pbFactor/nEvents);
+      h->SetTitle(BGN.legendName.c_str());
+      h->SetFillColor(BGN.color);
+      h->Scale(luminosity*BGN.xsec*pbFactor/nEvents);
       h->SetLineWidth(0);
       hstck->Add(h);
       if(legend)
-        legend->AddEntry(h,(std::get<0>(BGN)).c_str(),"F");
+        legend->AddEntry(h,BGN.legendName.c_str(),"F");
     }
     return hstck;
   };
@@ -247,7 +263,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     Int_t WpMass;
     std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
     std::smatch sm;
-    if(std::regex_search(std::get<1>(signal),sm,rexp1)){
+    if(std::regex_search(signal.folderName,sm,rexp1)){
       WpMass = std::stoi(sm[3]);
     }
 
@@ -255,45 +271,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c1->Divide(2,2);
     Int_t j = 1;
 
-
-    THStack* hsdummy = new THStack("hsdummy","");
-    TH1F* hcombData;
-
     auto hratio = new TH1F("hratio","DataMCRatios",50,0.,10.);
     TH1F* hfdummy = new TH1F("","DataMCRatios",50,0.,10.);
 
     for (auto HN : HistNames) {
+
       Int_t r = (j-1)%4;
       c1->cd(r+1);
-      const char *hName = std::get<0>(HN).c_str();
+      const char *hName = HN.name.c_str();
 
-      THStack *hs = new THStack("hs","");
-
-      auto legend = new TLegend(0.3, 0.66, .87, .89);
-      legend->SetNColumns(2);
-
-      hs = getBGStack(hName,legend);
-
-      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),hName));
-      hsig = (TH1F*)hsig->Clone();
-      TH1F* hCutFlow =
-        (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),"HCutFlow"));
-      auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
-      hsig->Scale(luminosity*std::get<2>(signal)*pbFactor/nEvents);
-      legend->AddEntry(hsig,(std::get<0>(signal)).c_str(),"L");
-      //hs->Add(hsig);
-      hs->SetTitle((std::get<1>(HN)).c_str());
-
-      gPad->SetLogy();
-      gPad->SetTickx();
-      gPad->SetTicky();
-      fixYRange(hs);
-      legend->SetBorderSize(0);
-
-      Float_t leftMargin = 0.12;
-      Float_t rightMargin = 0.12;
-      Float_t topMargin = 0.12;
-      Float_t bottomMargin = 0.5;
+      const Float_t leftMargin = 0.12;
+      const Float_t rightMargin = 0.12;
+      const Float_t topMargin = 0.12;
+      const Float_t bottomMargin = 0.5;
 
       auto mainPad = new TPad("subPad","subPad",0.,0.25,1.,1.);
       mainPad->Draw();
@@ -301,12 +291,34 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->SetRightMargin(rightMargin);
       mainPad->SetBottomMargin(1e-3);
       mainPad->SetLogy();
+      mainPad->SetTickx();
+      mainPad->SetTicky();
+
       auto subPad = new TPad("mainPad","mainPad",0.,0.,1.,0.25);
       subPad->Draw();
       subPad->SetLeftMargin(leftMargin);
       subPad->SetRightMargin(rightMargin);
       subPad->SetTopMargin(1e-3);
       subPad->SetBottomMargin(bottomMargin);
+
+      auto legend = new TLegend(0.3, 0.66, .87, .89);
+      legend->SetNColumns(2);
+
+      THStack *hs = new THStack("hs","");
+      hs = getBGStack(hName,legend);
+
+      auto hsig = (TH1F*)f1->Get(Form("%s/%s",signal.folderName.c_str(),hName));
+      hsig = (TH1F*)hsig->Clone();
+      TH1F* hCutFlow =
+        (TH1F*)f1->Get(Form("%s/HCutFlow",signal.folderName.c_str()));
+      auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
+      hsig->Scale(luminosity*signal.xsec*pbFactor/nEvents);
+      legend->AddEntry(hsig,signal.legendName.c_str(),"L");
+      hsig->Draw("SAME");
+      hs->SetTitle(HN.title.c_str());
+
+      fixYRange(hs);
+      legend->SetBorderSize(0);
 
       gStyle->SetOptStat(0);
 
@@ -320,6 +332,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         std::clog << Form("Printing data on %s (from %s) plot\n",tmp.c_str(),hName);
         hdata = static_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,tmp.c_str())));
       }
+      hdata = static_cast<TH1F*>(hdata->Clone());
 
       hdata->SetMarkerStyle(kFullCircle);
       mainPad->cd();
@@ -366,36 +379,34 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     j = 1;
     for(auto hp: NonStackedHistos){
-      std::string histoName = hp.first;
       Int_t r = (j-1)%4;
       auto legend = new TLegend(0.11, 0.7, .89, .89);
       legend->SetNColumns(3);
       c1->cd(r+1);
       for(auto BGN: BgNames){
-        std::string folder = std::get<1>(BGN);
-        std::cout << Form("Getting %s/%s\n",folder.c_str(),histoName.c_str());
-        auto h = (TH1F*)f1->Get(Form("%s/%s",folder.c_str(),histoName.c_str()));
+        std::cout << Form("Getting %s/%s\n",BGN.folderName.c_str(),hp.name.c_str());
+        auto h = (TH1F*)f1->Get(Form("%s/%s",BGN.folderName.c_str(),hp.name.c_str()));
         h = (TH1F*)h->Clone();
-        legend->AddEntry(h,(std::get<0>(BGN)).c_str(), "L");
+        legend->AddEntry(h,BGN.legendName.c_str(), "L");
         legend->SetBorderSize(0);
-        h->SetTitle(hp.second.c_str());
-        h->SetLineColor(std::get<2>(BGN));
+        h->SetTitle(hp.title.c_str());
+        h->SetLineColor(BGN.color);
         h->GetXaxis()->SetRangeUser(0., 800.);
         normalizeHisto(h);
         h->SetMaximum(1.5);
         h->Draw("HIST SAME");
       }
 
-      auto hsig = (TH1F*)f1->Get(Form("%s/%s",(std::get<1>(signal)).c_str(),(std::get<0>(hp).c_str())));
+      auto hsig = (TH1F*)f1->Get(Form("%s/%s",signal.folderName.c_str(),hp.name.c_str()));
       hsig = (TH1F*)hsig->Clone();
       hsig->SetLineColor(kBlack);
       hsig->SetLineWidth(2);
       normalizeHisto(hsig);
       hsig->Draw("HIST SAME");
-      legend->AddEntry(hsig,(std::get<0>(signal)).c_str(), "L");
+      legend->AddEntry(hsig,signal.legendName.c_str(), "L");
 
-      if(hp.first == "HPileup"){
-        auto hdata = (TH1D*)f1->Get(Form("%s/%s",DataName,histoName.c_str()));
+      if(hp.name == "HPileup"){
+        auto hdata = (TH1D*)f1->Get(Form("%s/%s",DataName,hp.name.c_str()));
         hdata = (TH1D*)hdata->Clone();
         hdata->SetLineColor(kRed);
         hdata->SetLineWidth(2);
@@ -407,7 +418,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       ++j;
       legend->Draw();
       if( r+1 == 4 ){
-        c1->Print(Form("Stack_%s_Wprime%d.png",(std::get<0>(hp)).c_str(),WpMass));
+        c1->Print(Form("Stack_%s_Wprime%d.png",hp.name.c_str(),WpMass));
         c1->Clear();
         c1->Divide(2,2);
       }
