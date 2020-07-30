@@ -7,8 +7,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   const Float_t luminosity = 35.9e15; /* 35.9fb^-1 2016 */
   const Float_t pbFactor = 1e-12; /*pico prefix*/
 
-  const char* DataName = "SinglePhotonSingleElectronSingleMuon";
-
   struct BackgroundInfo {
     std::string legendName;
     std::string folderName;
@@ -20,24 +18,24 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::vector<BackgroundInfo> BgNames = {
     BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
                    kOrange,4.43}, /*XSDB 2nd Sample is 0*/
-    // BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
-    //                kOrange,4.43}, /*XSDB 2nd Sample is 0*/
+    BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
+                   kOrange,4.43}, /*XSDB 2nd Sample is 0*/
     BackgroundInfo{"DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                    kOrange+7,57.3},
-    // BackgroundInfo{"DYJetsToLL_AEXT1","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-    //                kOrange+7,57.3},
+    BackgroundInfo{"DYJetsToLL_AEXT1","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+                   kOrange+7,57.3},
     BackgroundInfo{"DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                    kOrange+7,6.733},
-    // BackgroundInfo{"DYJetsToLL_BEXT1","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-    //                kOrange+7,6.733},
+    BackgroundInfo{"DYJetsToLL_BEXT1","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+                   kOrange+7,6.733},
     BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                    kBlue-2,56.86},
-    // BackgroundInfo{"t#bar{t} EXT1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-    //                kBlue-4,56.86},
-    // BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-    //                kRed+3,123.8}, /*AN2019_252_v1*/
-    // BackgroundInfo{"Z#gamma EXT1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
-                   // kRed+3,123.8},
+    BackgroundInfo{"t#bar{t} EXT1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+                   kBlue-4,56.86},
+    BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+                   kRed+3,123.8}, /*AN2019_252_v1*/
+    BackgroundInfo{"Z#gamma EXT1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
+                   kRed+3,123.8},
     BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
                    kBlue,1.256}
   };
@@ -235,19 +233,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       return hcdata;
   };
 
+  auto getMCHisto = [&](std::string folder, std::string hName, Float_t xsec){
+    auto h = static_cast<TH1F*>(f1->Get(Form("%s/%s",folder.c_str(),hName)));
+    h = static_cast<TH1F*>(hsig->Clone());
+    TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
+    auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
+    h->Scale(luminosity*xsec*pbFactor/nEvents);
+    return h;
+  }
+
   auto getBGStack = [&](std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
     for (auto BGN: BgNames) {
-      std::string hpath = Form("%s/%s",BGN.folderName.c_str(),hname.c_str());
-      std::clog << "Reading: " << hpath << std::endl;
-      auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
-      h = static_cast<TH1F*>(h->Clone());
-      auto hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/%s",BGN.folderName.c_str(),"HCutFlow")));
-      Float_t nEvents = (Float_t)hCutFlow->GetBinContent(1);
+      auto h = getMCHisto(BGN.folderName,hname,BGN.xsec);
       h->SetFillStyle(1001);
       h->SetTitle(BGN.legendName.c_str());
       h->SetFillColor(BGN.color);
-      h->Scale(luminosity*BGN.xsec*pbFactor/nEvents);
       h->SetLineWidth(0);
       hstck->Add(h);
       if(legend)
@@ -255,6 +256,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
     return hstck;
   };
+
+  auto getDataHisto = [&](std::string hName){
+    const char* DataName = "SinglePhotonSingleElectronSingleMuon";
+    auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,hName.c_str())));
+    if (!hdata) {
+      std::string tmp = hName;
+      tmp = tmp.substr(0,tmp.find("_SF"));
+      std::clog << Form("Printing data on %s (from %s) plot\n",tmp.c_str(),hName);
+      hdata = static_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,tmp.c_str())));
+    }
+    hdata = static_cast<TH1F*>(hdata->Clone());
+    return hdata;
+  }
 
   auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
 
@@ -307,12 +321,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       THStack *hs = new THStack("hs","");
       hs = getBGStack(hName,legend);
 
-      auto hsig = (TH1F*)f1->Get(Form("%s/%s",signal.folderName.c_str(),hName));
-      hsig = (TH1F*)hsig->Clone();
-      TH1F* hCutFlow =
-        (TH1F*)f1->Get(Form("%s/HCutFlow",signal.folderName.c_str()));
-      auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
-      hsig->Scale(luminosity*signal.xsec*pbFactor/nEvents);
+      auto hsig = getMCHisto(signal.folderName.c_str(),hName,signal.xsec);
       legend->AddEntry(hsig,signal.legendName.c_str(),"L");
       hsig->Draw("SAME");
       hs->SetTitle(HN.title.c_str());
@@ -325,15 +334,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       hs->Draw("HIST");
 
-      auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,hName)));
-      if (!hdata) {
-        std::string tmp = hName;
-        tmp = tmp.substr(0,tmp.find("_SF"));
-        std::clog << Form("Printing data on %s (from %s) plot\n",tmp.c_str(),hName);
-        hdata = static_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,tmp.c_str())));
-      }
-      hdata = static_cast<TH1F*>(hdata->Clone());
-
+      auto hdata = getDataHisto(hName);
       hdata->SetMarkerStyle(kFullCircle);
       mainPad->cd();
       hdata->Draw("SAME P");
@@ -350,7 +351,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
                               hdata->GetXaxis()->GetXmax(),1.);
       line->SetLineColor(kBlack);
       line->Draw();
-
 
       for(uint i = 0; i < hcdata->GetNbinsX(); i++){
         float xx = hcdata->GetBinContent(i);
@@ -406,8 +406,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       legend->AddEntry(hsig,signal.legendName.c_str(), "L");
 
       if(hp.name == "HPileup"){
-        auto hdata = (TH1D*)f1->Get(Form("%s/%s",DataName,hp.name.c_str()));
-        hdata = (TH1D*)hdata->Clone();
+        auto hdata = getDataHisto(hp.name);
         hdata->SetLineColor(kRed);
         hdata->SetLineWidth(2);
         normalizeHisto(hdata);
