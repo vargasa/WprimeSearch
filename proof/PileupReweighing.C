@@ -9,13 +9,14 @@ Int_t PileupReweighing(){
 
   std::vector<std::string> BgNames =
     {
-      "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-      "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
       "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+      "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
       "DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+      "DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
       "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-      "ZGToLLG_01J_LoosePtlPtg_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-      "ZZTo4L_13TeV_powheg_pythia8",
+      "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+      "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
+      "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
       "WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",
       "WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",
       "WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",
@@ -29,7 +30,11 @@ Int_t PileupReweighing(){
       "WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",
       "WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",
       "WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",
-      "WZ1400.root"
+      "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+      "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
+      "ZGToLLG_01J_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+      "ZZTo4L_13TeV_powheg_pythia8",
+      "WZ1400.root",
     };
 
   auto list = new TList();
