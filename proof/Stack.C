@@ -18,7 +18,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::vector<BackgroundInfo> BgNames = {
     BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
                    kOrange,4.43}, /*XSDB 2nd Sample is 0*/
-    BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
+    BackgroundInfo{"WZ EXT1","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
                    kOrange,4.43}, /*XSDB 2nd Sample is 0*/
     BackgroundInfo{"DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
                    kOrange+7,57.3},
@@ -234,13 +234,17 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   auto getMCHisto = [&](std::string folder, std::string hName, Float_t xsec){
-    auto h = static_cast<TH1F*>(f1->Get(Form("%s/%s",folder.c_str(),hName)));
-    h = static_cast<TH1F*>(hsig->Clone());
+    std::string hpath = Form("%s/%s",folder.c_str(),hName.c_str());
+    std::clog << "Getting MCHisto: " << hpath << std::endl;
+    auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
+    h = static_cast<TH1F*>(h->Clone());
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
     auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
+    std::clog << "\tnEvents Processed :" << nEvents << std::endl;
     h->Scale(luminosity*xsec*pbFactor/nEvents);
+    std::clog << "\tIntegral: " << h->Integral() << std::endl;
     return h;
-  }
+  };
 
   auto getBGStack = [&](std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
@@ -263,12 +267,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     if (!hdata) {
       std::string tmp = hName;
       tmp = tmp.substr(0,tmp.find("_SF"));
-      std::clog << Form("Printing data on %s (from %s) plot\n",tmp.c_str(),hName);
+      std::clog << Form("Printing data on %s (from %s) plot\n",tmp.c_str(),hName.c_str());
       hdata = static_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,tmp.c_str())));
     }
     hdata = static_cast<TH1F*>(hdata->Clone());
     return hdata;
-  }
+  };
 
   auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
 
@@ -285,8 +289,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c1->Divide(2,2);
     Int_t j = 1;
 
-    TH1F* hfdummy = new TH1F("","DataMCRatios",50,0.,10.);
-
     for (auto HN : HistNames) {
 
       Int_t r = (j-1)%4;
@@ -298,7 +300,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       const Float_t topMargin = 0.12;
       const Float_t bottomMargin = 0.5;
 
-      auto mainPad = new TPad("subPad","subPad",0.,0.25,1.,1.);
+      auto mainPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"mainPad",0.,0.25,1.,1.);
       mainPad->Draw();
       mainPad->SetLeftMargin(leftMargin);
       mainPad->SetRightMargin(rightMargin);
@@ -307,7 +309,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->SetTickx();
       mainPad->SetTicky();
 
-      auto subPad = new TPad("mainPad","mainPad",0.,0.,1.,0.25);
+      auto subPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"subPad",0.,0.,1.,0.25);
       subPad->Draw();
       subPad->SetLeftMargin(leftMargin);
       subPad->SetRightMargin(rightMargin);
@@ -335,7 +337,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       auto hdata = getDataHisto(hName);
       hdata->SetMarkerStyle(kFullCircle);
-      mainPad->cd();
       hdata->Draw("SAME P");
       TH1F* herror = getErrorHisto(hs);
       herror->Draw("SAME E2");
