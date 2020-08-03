@@ -10,11 +10,12 @@
 PreSelector::PreSelector(TTree *)
 {
 
-  gErrorIgnoreLevel = kError;
   HMetA=0;
   HMetB=0;
   HMetC=0;
   HMetD=0;
+
+  HMetPt=0;
 
   HnElA=0;
   HnElB=0;
@@ -649,16 +650,18 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HNEl);
   fOutput->Add(HNMu);
 
+  const Float_t MaxPt = 1000;
+
   HPtl1 = new TH1F("HPtl1","Z Leading lepton Pt",
-                   MetBins,MinMet,MaxMet);
+                   MetBins,MinMet,MaxPt);
   fOutput->Add(HPtl1);
 
   HPtl2 = new TH1F("HPtl2","Z Subleading lepton Pt",
-                   MetBins,MinMet,MaxMet);
+                   MetBins,MinMet,MaxPt);
   fOutput->Add(HPtl2);
 
   HPtl3 = new TH1F("HPtl3","W lepton pt",
-                     MetBins,MinMet,MaxMet);
+                     MetBins,MinMet,MaxPt);
   fOutput->Add(HPtl3);
 
   HMetPt = new TH1F("HMetPt","MET Pt",
@@ -696,7 +699,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
       std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
   }
 
-  HScaleFactors = new TH1F("HScaleFactors","HScaleFactors",30,0.,1.5);
+  HScaleFactors = new TH1F("HScaleFactors","HScaleFactors",60,0.,6.);
   fOutput->Add(HScaleFactors);
 #endif
 
