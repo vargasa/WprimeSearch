@@ -158,6 +158,7 @@ PreSelector::PreSelector(TTree *)
   HMassTWC_SFDown=0;
   HMassTWD_SFDown=0;
 
+  HLog = 0;
 #endif
   HCutFlow = 0;
 
@@ -600,8 +601,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(copyHisto(&HMassTWC_SFDown,HMassTWC,"SFDown"));
   fOutput->Add(copyHisto(&HMassTWD_SFDown,HMassTWD,"SFDown"));
 
+  HLog = new TH1F("HLog","",50,0,50.); /* Limits are meaningless here */
+  fOutput->Add(HLog);
+
 #endif
-  HCutFlow = new TH1F("HCutFlow","",BinsPdgId,PdgIdMin,PdgIdMax);
+  HCutFlow = new TH1F("HCutFlow","",BinsPdgId,PdgIdMin,PdgIdMax);  /* Limits are meaningless here */
   fOutput->Add(HCutFlow);
 
   fOutput->Add(HMassZA);
@@ -960,9 +964,11 @@ void PreSelector::FillA(){
   Double_t wdown = 1.;
 
   wup = GetElectronSF(lep1.Eta(), lep1.Pt(),1);
+  if (wup < 0.) HLog->FillS("ElectronSFUpFail_A");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
   wdown = GetElectronSF(lep1.Eta(), lep1.Pt(),-1);
+  if (wdown < 0.) HLog->FillS("ElectronSFDownFail_A");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
 
   HScaleFactors->Fill(wup);
@@ -1018,11 +1024,15 @@ void PreSelector::FillB(){
   Double_t wdown = 1.;
 
   wup = GetElectronSF(lep1.Eta(),lep1.Pt(),1);
+  if (wup < 0.) HLog->FillS("ElectronSFUpFail_B");
   wup *= GetMuonSF(lep3.Eta(),lep3.Pt(),1);
+  if (wup < 0.) HLog->FillS("MuonSFUpFail_B");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
   wdown = GetElectronSF(lep1.Eta(),lep1.Pt(),-1);
+  if (wdown < 0.) HLog->FillS("ElectronSFDownFail_B");
   wdown *= GetMuonSF(lep3.Eta(),lep3.Pt(),-1);
+  if (wdown < 0.) HLog->FillS("MuonSFDownFail_B");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
 
   HScaleFactors->Fill(wup);
@@ -1076,11 +1086,15 @@ void PreSelector::FillC(){
   Double_t wdown = 1.;
 
   wup = GetMuonSF(lep1.Eta(),lep1.Pt(),1);
+  if (wup < 0.) HLog->FillS("MuonSFUpFail_C");
   wup *= GetElectronSF(lep3.Eta(),lep3.Pt(),1);
+  if (wup < 0.) HLog->FillS("ElectronSFUpFail_C");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
   wdown = GetMuonSF(lep1.Eta(),lep1.Pt(),-1);
+  if (wdown < 0.) HLog->FillS("MuonSFDownFail_C");
   wdown *= GetElectronSF(lep3.Eta(),lep3.Pt(),-1);
+  if (wdown < 0.) HLog->FillS("ElectronSFDownFail_C");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
 
   HScaleFactors->Fill(wup);
@@ -1140,9 +1154,11 @@ void PreSelector::FillD(){
   Double_t wdown = 1.;
 
   wup = GetMuonSF(lep1.Eta(),lep1.Pt(),1);
+  if (wup < 0.) HLog->FillS("MuonSFUpFail_D");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
   wdown = GetMuonSF(lep1.Eta(),lep1.Pt(),-1);
+  if (wdown < 0.) HLog->FillS("MuonSFUpFail_D");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(wup);
   HScaleFactors->Fill(wdown);
@@ -1953,8 +1969,16 @@ void PreSelector::Terminate() {
   HGenPartFD->Write("HGenPartFD");
   HGenPartFD->Draw();
   ch->Print(Form("%s_PdgIdFinal.png",SampleName.Data()));
+
+
+  ch->Clear();
+  HLog->Print("HIST TEXT45");
+  HLog->Write();
+  ch->Print(Form("%s_HLog.png",SampleName.Data()));
 #endif
 
+  ch->Clear();
+  ch->Divide(2,2);
   ch->cd(1);
   HMassWZA->SetTitle("WZ Mass (3e0#mu);M_{WZ}^{3e0#mu};Event count");
   HMassWZA->Draw();

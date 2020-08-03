@@ -256,6 +256,8 @@ class PreSelector : public EventSelection {
   TH1F *HMassTWC_SFDown;
   TH1F *HMassTWD_SFDown;
 
+  TH1F* HLog;
+
 #endif
   TH1F *HCutFlow;
 
