@@ -1197,7 +1197,7 @@ Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
 }
 
 Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
-  const Float_t MinLeadPt = 25.;
+  const Float_t MinLeadPt = 52.; /* HLT_Mu50_OR_HLT_TkMu50 from SFDB*/
   const Float_t MinSubleadPt = 10.;
   if (Muon_pt[p.first] < MinLeadPt || Muon_pt[p.second] < MinSubleadPt) return kFALSE;
   return kTRUE;
