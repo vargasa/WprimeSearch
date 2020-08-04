@@ -198,10 +198,12 @@ Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
     sfp = (g->GetY()+i);
     /* Test right bin limit*/
     if( eta < (*(g->GetX()+i) + g->GetErrorX(i))) break;
-    ++i;
+    i++;
   }
 
-  sf = *sfp;
+  if( i == g->GetN() ) i = (g->GetN()-1);
+
+  sf = sfp? *sfp: -1.;
 
   switch(option){
   case -1:
@@ -1972,7 +1974,7 @@ void PreSelector::Terminate() {
 
 
   ch->Clear();
-  HLog->Print("HIST TEXT45");
+  HLog->Draw("HIST TEXT45");
   HLog->Write();
   ch->Print(Form("%s_HLog.png",SampleName.Data()));
 #endif
