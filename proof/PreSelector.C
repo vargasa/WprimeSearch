@@ -188,7 +188,9 @@ PreSelector::PreSelector(TTree *)
 
 #ifndef CMSDATA
 Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
-                                    const Int_t& option) const {
+				     const Int_t& option) const {
+
+  assert(g!=NULL);
 
   Double_t sf = -1.;
   Double_t* sfp;
@@ -224,7 +226,11 @@ Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
 #ifndef CMSDATA
 Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
                                     const Int_t& option) const {
-  UInt_t nbin = h->FindBin(x,y);
+  assert(h!= NULL);
+  assert(x < h->GetXaxis()->GetXmax() && x > h->GetXaxis()->GetXmin());
+  if(y > h->GetYaxis()->GetXmax())
+    return GetSFFromHisto(h,x,h->GetYaxis()->GetXmax() - 1e-3,option);
+  Int_t nbin = h->FindBin(x,y);
   Double_t sf = h->GetBinContent(nbin);
   switch(option){
   case -1:
@@ -237,7 +243,7 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
     break;
   }
 
-  assert(sf>0);
+  assert(sf>0.);
   return sf;
 }
 #endif
@@ -272,35 +278,15 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
   /* Option 0: Central Value, -1: Low, +1: up */
 
   Double_t sf = -1;
-  const Double_t epsilon = 1e-2;
 
   if (Year == 2016) {
     const Double_t LumiBF = 3.11; //fb-1
     const Double_t LumiGH = 5.54;
 
     Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
-    if (SFTriggerBF < epsilon)
-      SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),
-                                   (SFMuonTriggerBF->GetYaxis()->GetXmax() - epsilon),
-                                   option);
-
     Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
-    if (SFTriggerGH < epsilon)
-      SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),
-                                   (SFMuonTriggerGH->GetYaxis()->GetXmax() - epsilon),
-                                   option);
-
     Double_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt,option);
-    if (SFIDBF < epsilon)
-      SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,
-                              (SFMuonIDBF->GetYaxis()->GetXmax() - epsilon),
-                              option);
-
     Double_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt,option);
-    if (SFIDGH < epsilon)
-      SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,
-                              (SFMuonIDGH->GetYaxis()->GetXmax() - epsilon),
-                              option);
 
     sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
     sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
