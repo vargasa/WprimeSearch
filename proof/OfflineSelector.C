@@ -56,7 +56,7 @@ Int_t OfflineSelector(TString rootfile = "", Int_t fWorkers = 4, Int_t year = 20
   fProof->AddInputData(SFDb);
 
   fChain->SetProof();
-  fChain->Process("PreSelector.C+");
+  fChain->Process("PreSelector.C+g");
   fProof->Print("a");
 
   return 0;

@@ -216,6 +216,8 @@ Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
     break;
   }
 
+  assert(sf>0.);
+
   return sf;
 }
 #endif
@@ -234,6 +236,8 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
   case 0:
     break;
   }
+
+  assert(sf>0);
   return sf;
 }
 #endif
