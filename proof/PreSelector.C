@@ -705,7 +705,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   std::vector<UInt_t> GoodIndex = {};
-  if(!MuonTest()) return GoodIndex;
+  if(!MuonTest())  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
+    return GoodIndex;
+  if(Mu.pt[0] < 52.)
+    return GoodIndex;
   GoodIndex.reserve(10);
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 10.;
@@ -1197,9 +1200,8 @@ Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
 }
 
 Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
-  const Float_t MinLeadPt = 52.; /* HLT_Mu50_OR_HLT_TkMu50 from SFDB*/
   const Float_t MinSubleadPt = 10.;
-  if (Muon_pt[p.first] < MinLeadPt || Muon_pt[p.second] < MinSubleadPt) return kFALSE;
+  if (Muon_pt[p.second] < MinSubleadPt) return kFALSE;
   return kTRUE;
 }
 
