@@ -1327,7 +1327,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
-  Bool_t ZDistCut = l1l2Dist > 1.5 and l1l2Dist < 5.0 ;
+  Bool_t ZDistCut = l1l2Dist > 1.5;
   if(ZDistCut){
     HCutFlow->FillS("FailZDistCut");
     return kFALSE;
