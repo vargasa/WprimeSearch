@@ -257,6 +257,8 @@ Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
 Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
                                    const Int_t& option) const{
 
+  assert(abs(eta)<2.5);
+
   Double_t sf = -1;
 
   if(Year == 2016){
@@ -276,6 +278,8 @@ Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
 Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
                                const Int_t& option) const{
   /* Option 0: Central Value, -1: Low, +1: up */
+
+  assert(abs(eta)<2.4);
 
   Double_t sf = -1;
 
@@ -958,11 +962,11 @@ void PreSelector::FillA(){
   Double_t wup = 1.;
   Double_t wdown = 1.;
 
-  wup = GetElectronSF(lep1.Eta(), lep1.Pt(),1);
+  wup = GetElectronSF(Electron_eta[0], Electron_pt[0],1);
   if (wup < 0.) HLog->FillS("ElectronSFUpFail_A");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
-  wdown = GetElectronSF(lep1.Eta(), lep1.Pt(),-1);
+  wdown = GetElectronSF(Electron_eta[0], Electron_pt[0],-1);
   if (wdown < 0.) HLog->FillS("ElectronSFDownFail_A");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
 
@@ -1018,15 +1022,15 @@ void PreSelector::FillB(){
   Double_t wup = 1.;
   Double_t wdown = 1.;
 
-  wup = GetElectronSF(lep1.Eta(),lep1.Pt(),1);
+  wup = GetElectronSF(Electron_eta[0],Electron_pt[0],1);
   if (wup < 0.) HLog->FillS("ElectronSFUpFail_B");
-  wup *= GetMuonSF(lep3.Eta(),lep3.Pt(),1);
+  wup *= GetMuonSF(Muon_eta[0],Muon_pt[0],1);
   if (wup < 0.) HLog->FillS("MuonSFUpFail_B");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
-  wdown = GetElectronSF(lep1.Eta(),lep1.Pt(),-1);
+  wdown = GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
   if (wdown < 0.) HLog->FillS("ElectronSFDownFail_B");
-  wdown *= GetMuonSF(lep3.Eta(),lep3.Pt(),-1);
+  wdown *= GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
   if (wdown < 0.) HLog->FillS("MuonSFDownFail_B");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
 
@@ -1080,15 +1084,15 @@ void PreSelector::FillC(){
   Double_t wup = 1.;
   Double_t wdown = 1.;
 
-  wup = GetMuonSF(lep1.Eta(),lep1.Pt(),1);
+  wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
   if (wup < 0.) HLog->FillS("MuonSFUpFail_C");
-  wup *= GetElectronSF(lep3.Eta(),lep3.Pt(),1);
+  wup *= GetElectronSF(Electron_eta[0],Electron_pt[0],1);
   if (wup < 0.) HLog->FillS("ElectronSFUpFail_C");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
-  wdown = GetMuonSF(lep1.Eta(),lep1.Pt(),-1);
+  wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
   if (wdown < 0.) HLog->FillS("MuonSFDownFail_C");
-  wdown *= GetElectronSF(lep3.Eta(),lep3.Pt(),-1);
+  wdown *= GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
   if (wdown < 0.) HLog->FillS("ElectronSFDownFail_C");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
 
@@ -1148,11 +1152,11 @@ void PreSelector::FillD(){
   Double_t wup = 1.;
   Double_t wdown = 1.;
 
-  wup = GetMuonSF(lep1.Eta(),lep1.Pt(),1);
+  wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
   if (wup < 0.) HLog->FillS("MuonSFUpFail_D");
   wup *= GetSFFromHisto(SFPileup,*PV_npvs);
 
-  wdown = GetMuonSF(lep1.Eta(),lep1.Pt(),-1);
+  wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
   if (wdown < 0.) HLog->FillS("MuonSFUpFail_D");
   wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
   HScaleFactors->Fill(wup);
