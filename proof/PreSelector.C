@@ -710,7 +710,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   std::vector<UInt_t> GoodIndex = {};
   if(!MuonTest()) return GoodIndex;
-  assert(*Mu.n > 0); // If triggers were triggered
+  if(*Mu.n == 0) return GoodIndex;
   if(Mu.pt[0] < 52.)  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
     return GoodIndex;
   const Float_t MaxEta = 2.4;
@@ -731,7 +731,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MinPt = 20.;
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
-  assert(*El.n > 0); // If triggers were triggered...
+  if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
   if(abs(El.eta[0]) > MaxEta) return GoodIndex;
   GoodIndex.reserve(10);
   UInt_t index = 0;
