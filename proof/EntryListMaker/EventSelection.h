@@ -105,6 +105,18 @@ void EventSelection::ReadEntry(const Long64_t& entry){
     Flags = *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
       *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
       && *PV_npvsGood > 0;
+  } else if (Year == 2017) {
+    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonHLT2017
+    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2017
+    // https://twiki.cern.ch/twiki/bin/view/CMS/EgHLTScaleFactorMeasurements
+    // ElectronHLTs = (*HLT_Ele35_WPTight_Gsf || *HLT_Photon200);
+    // MuonHLTs = *HLT_Mu50;
+    // Flags = true;
+  } else if (Year == 2018) {
+    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2018
+    // ElectronHLTs = (*HLT_Ele32_WPTight_Gsf || *HLT_Photon200);
+    // MuonHLTs = (*HLT_Mu50 || *HLT_OldMu100 || *HLT_TkMu1100);
+    // Flags = true;
   }
 
 }

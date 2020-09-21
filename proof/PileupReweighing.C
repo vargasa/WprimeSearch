@@ -1,8 +1,11 @@
-
 Int_t PileupReweighing(){
 
   TFile *mcFile = TFile::Open("WprimeHistos.root","READ");
+  const int year = 2016;
+  //PileupHistogram-goldenJSON-13tev-2017-69200ub.root
+  //PileupHistogram-goldenJSON-13tev-2018-69200ub.root
   TFile *dataFile = TFile::Open("PileupHistogram-goldenJSON-13tev-2016-69200ub.root");
+
   auto dataPileup = static_cast<TH1D*>(dataFile->Get("pileup"));
   TH1D* mcPileup;
   TH1D* weights;
@@ -41,7 +44,10 @@ Int_t PileupReweighing(){
   list->SetName("PileupSFList");
   auto f = std::make_unique<TFile>("PileupWeights.root","RECREATE");
 
-  for(auto sample: BgNames){
+  f.mkdir(Form("%d",year));
+  f.cd(Form("%d",year));
+
+  for(auto& sample: BgNames){
     std::clog << Form("Processing: %s:\n", sample.c_str());
     mcPileup = static_cast<TH1D*>(mcFile->Get(Form("%s/HPileup",sample.c_str())));
     mcPileup = static_cast<TH1D*>(mcPileup->Clone());

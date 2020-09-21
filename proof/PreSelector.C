@@ -284,6 +284,7 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
   Double_t sf = -1;
 
   if (Year == 2016) {
+    /*FixMe*/
     const Double_t LumiBF = 3.11; //fb-1
     const Double_t LumiGH = 5.54;
 
@@ -1502,6 +1503,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
+  auto getFullPath() = [&](const std::string name){
+    const std::string dir = "plots";
+    return Form("%s/%d/%s_%s.png",dir.c_str(),Year,SampleName.Data(),name.c_str());
+  };
+
+
+
 #ifndef CMSDATA
   std::unique_ptr<TFile> fELOut(TFile::Open("MCEntryLists.root","UPDATE"));
   ELPass->SetName(SampleName.Data());
@@ -1514,6 +1522,8 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
+  fOut->mkdir(Form("%d",Year));
+  fOut->cd(Form("%d",Year));
   fOut->mkdir(SampleName);
   fOut->cd(SampleName);
 
@@ -1533,14 +1543,14 @@ void PreSelector::Terminate() {
   ch->cd(3);
   HWZPt->Draw("HIST");
   HWZPt->Write("HWZPt");
-  ch->Print(Form("%s_HWZDist.png",SampleName.Data()));
+  ch->Print(getFullPath("HWZDist"));
   ch->Clear();
 
   ch->cd();
   HCutFlow->LabelsDeflate();
   gPad->SetLogy();
   HCutFlow->Draw("HIST TEXT45");
-  ch->Print(Form("%s_HCutFlow.png",SampleName.Data()));
+  ch->Print(getFullPath("HCutFlow"));
   HCutFlow->Write("HCutFlow");
 
   ch->Clear();
@@ -1557,7 +1567,7 @@ void PreSelector::Terminate() {
   ch->cd(4);
   HMassZWZD->Draw("COLZ");
   HMassZWZD->Write();
-  ch->Print(Form("%s_HMassZWZ.png",SampleName.Data()));
+  ch->Print(getFullPath("HMassZWZ"));
 
 
   ch->Clear();
@@ -1577,7 +1587,7 @@ void PreSelector::Terminate() {
   ch->cd(5);
   HLtMWZ->Draw();
   HLtMWZ->Write();
-  ch->Print(Form("%s_WindowMass.png",SampleName.Data()));
+  ch->Print(getFullPath("WindowMass"));
 
   ch->Clear();
   ch->Divide(2,2);
@@ -1590,7 +1600,7 @@ void PreSelector::Terminate() {
   ch->cd(3);
   HDistl2l3->Draw("Hist");
   HDistl2l3->Write();
-  ch->Print(Form("%s_HDistLeptons.png",SampleName.Data()));
+  ch->Print(getFullPath("HDistLeptons"));
 
   ch->Clear();
   ch->Divide(2,2);
@@ -1606,7 +1616,7 @@ void PreSelector::Terminate() {
   ch->cd(4);
   HMetPt->Draw("HIST");
   HMetPt->Write();
-  ch->Print(Form("%s_LeptonsPt.png",SampleName.Data()));
+  ch->Print(getFullPath("LeptonsPt"));
 
   THStack *hsA = new THStack("hsA","");
   THStack *hsB = new THStack("hsB","");
@@ -1645,14 +1655,14 @@ void PreSelector::Terminate() {
   SetStyle(HMetD);
   HMetD->Draw();
   HMetD->Write("HMetD");
-  ch->Print(Form("%s_HMet.png",SampleName.Data()));
+  ch->Print(getFullPath("HMet"));
   chc->cd();
   TH1F HMet = *HMetA + *HMetB + *HMetC + *HMetD;
   HMet.SetTitle("MET;#slash{M}_{T};Event count");
   HMet.SetName("HMet");
   HMet.Write();
   HMet.Draw();
-  chc->Print(Form("%s_HMet_SUM.png",SampleName.Data()));
+  chc->Print(getFullPath("HMet_SUM"));
 
   ch->cd(1);
   gStyle->SetOptStat(1111111);
@@ -1683,7 +1693,7 @@ void PreSelector::Terminate() {
   hsD->Add(HnElD);
   hsD->SetTitle("0e3#mu;n;Event count");
   hsD->Draw();
-  ch->Print(Form("%s_nGoodLeptons.png",SampleName.Data()));
+  ch->Print(getFullPath("nGoodLeptons"));
 
   ch->cd(1);
   HMassWA->SetTitle("W Mass (3e0#mu);M_{W}^{3e0#mu};Event count");
@@ -1701,14 +1711,14 @@ void PreSelector::Terminate() {
   HMassWD->SetTitle("W Mass (0e3#mu);M_{W}^{0e3#mu};Event count");
   HMassWD->Draw();
   HMassWD->Write("HMassWD");
-  ch->Print(Form("%s_HMassW.png",SampleName.Data()));
+  ch->Print(getFullPath("HMassW"));
   chc->cd();
   TH1F HMassW = *HMassWA + *HMassWB + *HMassWC + *HMassWD;
   HMassW.SetTitle("MassW;#slash{M}_{W};Event count");
   HMassW.SetName("HMassW");
   HMassW.Write();
   HMassW.Draw();
-  chc->Print(Form("%s_HMassW_SUM.png",SampleName.Data()));
+  chc->Print(getFullPath("HMassW_SUM"));
 
   ch->cd(1);
   HMassZA->SetTitle("Z Mass (3e0#mu);M_{Z}^{3e0#mu};Event count");
@@ -1726,13 +1736,13 @@ void PreSelector::Terminate() {
   HMassZD->SetTitle("Z Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
   HMassZD->Draw();
   HMassZD->Write("HMassZD");
-  ch->Print(Form("%s_HMassZ.png",SampleName.Data()));
+  ch->Print(getFullPath("HMassZ"));
   TH1F HMassZ = *HMassZA + *HMassZB + *HMassZC + *HMassZD;
   HMassZ.SetTitle("MassZ;#slash{M}_{Z};Event count");
   HMassZ.SetName("HMassZ");
   HMassZ.Write();
   HMassZ.Draw();
-  chc->Print(Form("%s_HMassZ_SUM.png",SampleName.Data()));
+  chc->Print(getFullPath("HMassZ_SUM"));
 
   ch->cd(1);
   HMassTWA->SetTitle("M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count");
@@ -1750,13 +1760,13 @@ void PreSelector::Terminate() {
   HMassTWD->SetTitle("M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count");
   HMassTWD->Draw();
   HMassTWD->Write("HMassTWD");
-  ch->Print(Form("%s_HMassTW.png",SampleName.Data()));
+  ch->Print(getFullPath("%s_HMassTW.png"));
   TH1F HMassTW = *HMassTWA + *HMassTWB + *HMassTWC + *HMassTWD;
   HMassTW.SetTitle("MassTW;#slash{M}_{WT};Event count");
   HMassTW.Draw();
   HMassTW.SetName("HMassTW");
   HMassTW.Write();
-  chc->Print(Form("%s_HMassTW_SUM.png",SampleName.Data()));
+  chc->Print(getFullPath("HMassTW_SUM"));
 
 #ifndef CMSDATA
 
@@ -1776,7 +1786,7 @@ void PreSelector::Terminate() {
   HMassZD_SFUp->SetTitle("Z Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
   HMassZD_SFUp->Draw();
   HMassZD_SFUp->Write();
-  ch->Print(Form("%s_HMassZ_SFUp.png",SampleName.Data()));
+  ch->Print(getFullPath("HMassZ_SFUp"));
 
   ch->cd(1);
   HMassWA_SFUp->SetTitle("W Mass (3e0#mu);M_{W}^{3e0#mu};Event count");
@@ -1871,7 +1881,7 @@ void PreSelector::Terminate() {
   HMassZD_SFDown->SetTitle("Z Mass (0e3#mu);M_{Z}^{0e3#mu};Event count");
   HMassZD_SFDown->Draw();
   HMassZD_SFDown->Write();
-  ch->Print(Form("%s_HMassZ_SFDown.png",SampleName.Data()));
+  ch->Print(getFullPath("HMassZ_SFDown"));
 
   HLtA_SFDown->Write();
   HLtB_SFDown->Write();
@@ -1970,13 +1980,13 @@ void PreSelector::Terminate() {
   HGenPartFD->LabelsDeflate();
   HGenPartFD->Write("HGenPartFD");
   HGenPartFD->Draw();
-  ch->Print(Form("%s_PdgIdFinal.png",SampleName.Data()));
+  ch->Print(getFullPath("PdgIdFinal"));
 
 
   ch->Clear();
   HLog->Draw("HIST TEXT45");
   HLog->Write();
-  ch->Print(Form("%s_HLog.png",SampleName.Data()));
+  ch->Print(getFullPath("HLog"));
 #endif
 
   ch->Clear();
@@ -1997,13 +2007,13 @@ void PreSelector::Terminate() {
   HMassWZD->SetTitle("WZ Mass (0e3#mu);M_{WZ}^{0e3#mu};Event count");
   HMassWZD->Draw();
   HMassWZD->Write("HMassWZD");
-  ch->Print(Form("%s_HMassWZ.png",SampleName.Data()));
+  ch->Print(getFullPath("HMassWZ"));
   TH1F HMassWZ = *HMassWZA + *HMassWZB + *HMassWZC + *HMassWZD;
   HMassWZ.SetTitle("MassWZ;#slash{M}_{WZ};Event count");
   HMassWZ.SetName("HMassWZ");
   HMassWZ.Write();
   HMassWZ.Draw();
-  chc->Print(Form("%s_HMassWZ_SUM.png",SampleName.Data()));
+  chc->Print(getFullPath("HMassWZ_SUM"));
 
   auto DrawPdgIdHisto = [](TH1F* hz, TH1F* hw){
     hz->LabelsDeflate();
@@ -2045,14 +2055,14 @@ void PreSelector::Terminate() {
   DrawPdgIdHisto(HGenPartZD,HGenPartWD);
   HGenPartZD->Write("HGenPartZD");
   HGenPartWD->Write("HGenPartWD");
-  ch->Print(Form("%s_GenPartMother.png",SampleName.Data()));
+  ch->Print(getFullPath("GenPartMother"));
 
   ch->Clear();
   ch->cd();
   HScaleFactors->SetTitle("ScaleFactors Distribution; SF; Event count");
   HScaleFactors->Draw();
   HScaleFactors->Write("HScaleFactors");
-  ch->Print(Form("%s_HScaleFactors.png",SampleName.Data()));
+  ch->Print(getFullPath("HScaleFactors"));
 
   ch->Clear();
   ch->Divide(2,2);
@@ -2068,7 +2078,7 @@ void PreSelector::Terminate() {
   ch->cd(4);
   HPileupD_SFUp->Draw();
   HPileupD_SFUp->Write();
-  ch->Print(Form("%s_HPileup_SFUpSFUp.png",SampleName.Data()));
+  ch->Print(getFullPath("HPileup_SFUp"));
 
   ch->cd(1);
   HPileupA_SFDown->Draw();
@@ -2082,7 +2092,7 @@ void PreSelector::Terminate() {
   ch->cd(4);
   HPileupD_SFDown->Draw();
   HPileupD_SFDown->Write();
-  ch->Print(Form("%s_HPileup_SFDown.png",SampleName.Data()));
+  ch->Print(getFullPath("HPileup_SFDown"));
 
 #endif
 
@@ -2104,18 +2114,18 @@ void PreSelector::Terminate() {
   gPad->SetLogz();
   HNLepD->SetTitle("# Leptons (0e3#mu); GoodMuon Size; GoodElectron Size");
   HNLepD->Draw("COLZ");
-  ch->Print(Form("%s_NGoodLeptons.png",SampleName.Data()));
+  ch->Print(getFullPath("NGoodLeptons")):
 
   ch->cd(0);
   HOverlap->Draw();
   HOverlap->Write("HOverlap");
-  ch->Print(Form("%s_Overlap.png",SampleName.Data()));
+  ch->Print(getFullPath("Overlap"));
 
   ch->Clear();
   ch->cd();
   HPileup->Draw();
   HPileup->Write("HPileup");
-  ch->Print(Form("%s_HPileupPriorToCuts.png",SampleName.Data()));
+  ch->Print(getFullPath("HPileupPriorToCuts"));
 
   ch->Clear();
   ch->Divide(2,2);
@@ -2131,7 +2141,7 @@ void PreSelector::Terminate() {
   ch->cd(4);
   HPileupD->Draw();
   HPileupD->Write("HPileupD");
-  ch->Print(Form("%s_HPileup.png",SampleName.Data()));
+  ch->Print(getFullPath("HPileup"));
 
   ch->Clear();
   gStyle->SetOptStat(0);
@@ -2144,7 +2154,7 @@ void PreSelector::Terminate() {
   gPad->SetLogz();
   HNMu->SetTitle("nMuon vs size(GoodMuon); nMuon; size(GoodMuon)");
   HNMu->Draw("COL,TEXT");
-  ch->Print(Form("%s_CheckGoodLeptons.png",SampleName.Data()));
+  ch->Print(getFullPath("CheckGoodLeptons"));
 
   fOut->Write();
   fOut->Close();

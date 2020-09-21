@@ -41,9 +41,20 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunBCDE
 ### Pileup distribution
 
 ```
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/PileupWeights.root
+```
+
+```
 #2016
 wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2016-69200ub.root
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/PileupWeights.root
+
+#2017
+wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2017-69200ub.root
+
+
+#2018
+wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2018-69200ub.root
+
 ```
 
 The pileup scalefactors `PileupWeights.root` is computed by using:
