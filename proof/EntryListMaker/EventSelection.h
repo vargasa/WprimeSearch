@@ -5,6 +5,7 @@
 #include "TSelector.h"
 #include "TH2F.h"
 #include "TH2D.h"
+#include "../IsData.h"
 
 class EventSelection : public TSelector{
 
@@ -14,7 +15,7 @@ class EventSelection : public TSelector{
   std::vector<const char*> BranchNamesList;
   const char *MakeBranchList(const char *bname);
 
-
+#ifdef Y2016
   TTreeReaderValue<Bool_t> HLT_Ele27_WPTight_Gsf = {fReader, MakeBranchList("HLT_Ele27_WPTight_Gsf")};
   TTreeReaderValue<Bool_t> HLT_Photon175 = {fReader, MakeBranchList("HLT_Photon175")};
   TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, MakeBranchList("HLT_Mu50")};
@@ -28,8 +29,17 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, MakeBranchList("Flag_BadPFMuonSummer16Filter")};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, MakeBranchList("Flag_HBHENoiseFilter")};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, MakeBranchList("Flag_HBHENoiseIsoFilter")};
-  TTreeReaderValue<Int_t> PV_npvsGood = {fReader, MakeBranchList("PV_npvsGood")}; // total number of reconstructed primary vertices
+#endif
 
+#ifdef Y2017
+  // 2017 HLTs && Flags
+#endif
+
+#ifdef Y2018
+  // 2018 HLTs && Flags
+#endif
+
+  TTreeReaderValue<Int_t> PV_npvsGood = {fReader, MakeBranchList("PV_npvsGood")}; // total number of reconstructed primary vertices
   TTreeReaderValue<UInt_t> nMuon = {fReader, MakeBranchList("nMuon")};
   TTreeReaderValue<UInt_t> nElectron = {fReader, MakeBranchList("nElectron")};
   Int_t Year;
@@ -67,14 +77,14 @@ void EventSelection::Init(TTree *tree)
     }
   }
 
-  if (Year == 2016) {
-    if (IsMissingBranch){
-      std::clog << Form("Superseeding branch content: %s <- %s\n", HLT_TkMu50.GetBranchName(),HLT_Mu50.GetBranchName());
-      HLT_TkMu50 = HLT_Mu50;
-    } else {
-      HLT_TkMu50 = Dummy_TkMu50;
-    }
+#ifdef Y2016
+  if (IsMissingBranch){
+    std::clog << Form("Superseeding branch content: %s <- %s\n", HLT_TkMu50.GetBranchName(),HLT_Mu50.GetBranchName());
+    HLT_TkMu50 = HLT_Mu50;
+  } else {
+    HLT_TkMu50 = Dummy_TkMu50;
   }
+#endif
 
   fReader.SetTree(tree);
 
@@ -82,7 +92,11 @@ void EventSelection::Init(TTree *tree)
 
 Bool_t EventSelection::Notify() {
   std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
-  if (Year == 2016) std::clog << Form("Branch being processed: %s\n", HLT_TkMu50.GetBranchName());
+
+#ifdef Y2016
+  std::clog << Form("Branch being processed: %s\n", HLT_TkMu50.GetBranchName());
+#endif
+
   return kTRUE;
 }
 
@@ -97,25 +111,25 @@ void EventSelection::ReadEntry(const Long64_t& entry){
 
   MinLeptons = (*nElectron + *nMuon) > 2;
 
-  if(Year == 2016){
-    ElectronHLTs = (*HLT_Ele27_WPTight_Gsf||*HLT_Photon175);
-    MuonHLTs = (*HLT_Mu50||*HLT_TkMu50);
-    Flags = *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
-      *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
-      && *PV_npvsGood > 0;
-  } else if (Year == 2017) {
-    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonHLT2017
-    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2017
-    // https://twiki.cern.ch/twiki/bin/view/CMS/EgHLTScaleFactorMeasurements
-    // ElectronHLTs = (*HLT_Ele35_WPTight_Gsf || *HLT_Photon200);
-    // MuonHLTs = *HLT_Mu50;
-    // Flags = true;
-  } else if (Year == 2018) {
-    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2018
-    // ElectronHLTs = (*HLT_Ele32_WPTight_Gsf || *HLT_Photon200);
-    // MuonHLTs = (*HLT_Mu50 || *HLT_OldMu100 || *HLT_TkMu1100);
-    // Flags = true;
-  }
+#ifdef Y2016
+  ElectronHLTs = (*HLT_Ele27_WPTight_Gsf||*HLT_Photon175);
+  MuonHLTs = (*HLT_Mu50||*HLT_TkMu50);
+  Flags = *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
+    *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
+    && *PV_npvsGood > 0;
+#elif defined(Y2017)
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MuonHLT2017
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2017
+  // https://twiki.cern.ch/twiki/bin/view/CMS/EgHLTScaleFactorMeasurements
+  // ElectronHLTs = (*HLT_Ele35_WPTight_Gsf || *HLT_Photon200);
+  // MuonHLTs = *HLT_Mu50;
+  // Flags = true;
+#elif defined(Y2018)
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffs2018
+  // ElectronHLTs = (*HLT_Ele32_WPTight_Gsf || *HLT_Photon200);
+  // MuonHLTs = (*HLT_Mu50 || *HLT_OldMu100 || *HLT_TkMu1100);
+  // Flags = true;
+#endif
 
 }
 #endif

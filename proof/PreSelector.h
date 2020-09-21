@@ -336,12 +336,17 @@ class PreSelector : public EventSelection {
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
 
   TList *SFDb;
+#ifdef Y2016
   TH2F* SFMuonTriggerBF;
   TH2F* SFMuonTriggerGH;
   TH2D* SFMuonIDBF;
   TH2D* SFMuonIDGH;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
+#elif defined(Y2017);
+  // SF Objects may be year-dependant;
+#elif defined(Y2018);
+  //
 #endif
 
   std::pair<UInt_t,UInt_t> GetLeptonPair(const Leptons&, const std::vector<UInt_t>&) const;

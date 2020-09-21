@@ -47,11 +47,16 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   fProof->SetParameter("Year",year);
   fProof->SetParameter("SampleName",sample.c_str());
 
+
+
 #ifndef CMSDATA
+
+  TList *SFDb = new TList();
+
+#ifdef Y2016
   TFile *f1 = TFile::Open("EfficienciesAndSF_RunBtoF.root","READ");
   auto SFMuonTriggerBF = static_cast<TH2F*>(f1->Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesMC/abseta_pt_MC"));
   SFMuonTriggerBF->SetName("SFMuonTriggerBF");
-  TList *SFDb = new TList();
   SFDb->SetName("SFDb");
   SFDb->Add(SFMuonTriggerBF);
   TFile *f2 = TFile::Open("EfficienciesAndSF_Period4.root","READ");
@@ -79,6 +84,11 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
   SFDb->Add(SFPileup);
   fProof->AddInputData(SFDb);
+#elif defined(Y2017);
+  //
+#elif defined(Y2018);
+  //
+#endif
 #endif
 
   fChain->SetProof();

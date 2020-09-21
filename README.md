@@ -67,14 +67,30 @@ Which takes as input `WprimeHistos.root` and `PileupHistogram-goldenJSON-13tev-2
 
 ```bash
 cd proof/
-echo "" > IsData.h # Make sure CMSDATA is undefined
+# Copy paste formulas:
+
+echo "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2016/*.txt #Loop over set of the list files
 for i in $FILES
 do
  root -l -b -q "Selector.C(\"$i\", 8)"; # 8 Workers
 done
 
+echo "#define Y2017" > IsData.h # Make sure CMSDATA is undefined
+FILES=files/mc/2017/*.txt #Loop over set of the list files
+for i in $FILES
+do
+ root -l -b -q "Selector.C(\"$i\", 8)"; # 8 Workers
+done
+
+echo "#define Y2018" > IsData.h # Make sure CMSDATA is undefined
+FILES=files/mc/2018/*.txt #Loop over set of the list files
+for i in $FILES
+do
+ root -l -b -q "Selector.C(\"$i\", 8)"; # 8 Workers
+done
 ```
+
 ### Setup for Data
 
 Turns out the different datasets have overlapping events, meaning the same event is found
@@ -90,7 +106,7 @@ create the required `EntryLists.root` file.
 
 ```bash
 cd proof/
-echo "#define CMSDATA" > IsData.h # Make sure CMSDATA is defined
+echo -e "#define Y2016\n#define CMSDATA" > IsData.h # Make sure CMSDATA is defined
 root -l -b -q "Selector.C(\"files/data/2016/SinglePhoton.txt+files/data/2016/SingleElectron.txt+files/data/2016/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")"; # 8 Workers
 ```
 

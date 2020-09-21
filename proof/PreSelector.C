@@ -261,14 +261,18 @@ Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-  if(Year == 2016){
-    /* 2 bins in pt */
-    if( pt < 175.){
-      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
-    } else {
-      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
-    }
+#ifdef Y2016
+  /* 2 bins in pt */
+  if( pt < 175.){
+    sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+  } else {
+    sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
   }
+#elif defined(Y2017)
+  //
+#elif defined(Y2018)
+  //
+#endif
 
   return sf;
 
@@ -283,19 +287,24 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-  if (Year == 2016) {
-    /*FixMe*/
-    const Double_t LumiBF = 3.11; //fb-1
-    const Double_t LumiGH = 5.54;
+#ifdef Y2016
+  /*FixMe*/
+  const Double_t LumiBF = 3.11; //fb-1
+  const Double_t LumiGH = 5.54;
 
-    Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
-    Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
-    Double_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt,option);
-    Double_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt,option);
+  Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
+  Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
+  Double_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt,option);
+  Double_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt,option);
 
-    sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
-    sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
-  }
+  sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
+  sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
+
+#elif defined(Y2017)
+  //
+#elif defined(Y2018)
+  //
+#endif
 
   return sf;
 
@@ -687,18 +696,22 @@ void PreSelector::SlaveBegin(TTree *tree) {
     SFDb = dynamic_cast<TList*>(fInput->FindObject("SFDb"));
   }
 
-  if (Year == 2016){
-    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-    SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
-    SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
-    SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
-    SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
-    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-    SFPileup = static_cast<TH1D*>(l->FindObject(SampleName.Data()));
-    if(!SFPileup) 
-      std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
-  }
+#ifdef Y2016
+  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
+  SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
+  SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
+  SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
+  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
+  SFPileup = static_cast<TH1D*>(l->FindObject(SampleName.Data()));
+  if(!SFPileup)
+    std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
+#elif defined(Y2016)
+  //
+#elif defined(Y2017)
+  //
+#endif
 
   HScaleFactors = new TH1F("HScaleFactors","HScaleFactors",60,0.,6.);
   fOutput->Add(HScaleFactors);
