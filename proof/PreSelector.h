@@ -343,10 +343,11 @@ class PreSelector : public EventSelection {
   TH2D* SFMuonIDGH;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
-#elif defined(Y2017);
+#elif defined(Y2017)
   // SF Objects may be year-dependant;
-#elif defined(Y2018);
+#elif defined(Y2018)
   //
+#endif
 #endif
 
   std::pair<UInt_t,UInt_t> GetLeptonPair(const Leptons&, const std::vector<UInt_t>&) const;

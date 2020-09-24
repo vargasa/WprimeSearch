@@ -84,9 +84,9 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
   SFDb->Add(SFPileup);
   fProof->AddInputData(SFDb);
-#elif defined(Y2017);
+#elif defined(Y2017)
   //
-#elif defined(Y2018);
+#elif defined(Y2018)
   //
 #endif
 #endif

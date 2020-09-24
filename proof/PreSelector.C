@@ -1516,7 +1516,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 void PreSelector::Terminate() {
 
-  auto getFullPath() = [&](const std::string name){
+  auto getFullPath = [&](const std::string name){
     const std::string dir = "plots";
     return Form("%s/%d/%s_%s.png",dir.c_str(),Year,SampleName.Data(),name.c_str());
   };
@@ -2127,7 +2127,7 @@ void PreSelector::Terminate() {
   gPad->SetLogz();
   HNLepD->SetTitle("# Leptons (0e3#mu); GoodMuon Size; GoodElectron Size");
   HNLepD->Draw("COLZ");
-  ch->Print(getFullPath("NGoodLeptons")):
+  ch->Print(getFullPath("NGoodLeptons"));
 
   ch->cd(0);
   HOverlap->Draw();
