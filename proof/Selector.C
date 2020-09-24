@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile = "", Int_t year = 2016){
+Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile = ""){
 
   TChain* fChain = new TChain("Events");
 
@@ -44,7 +44,6 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   }
 
   fProof->SetProgressDialog(false);
-  fProof->SetParameter("Year",year);
   fProof->SetParameter("SampleName",sample.c_str());
 
 

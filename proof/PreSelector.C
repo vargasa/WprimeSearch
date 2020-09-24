@@ -678,12 +678,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
 
-  if (fInput->FindObject("Year")) {
-    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
-    Year = p->GetVal();
-    std::clog << Form("PreSelector::SlaveBegin() Year Set: %d\n",Year);
-  }
-
 #ifndef CMSDATA
 
   if (fInput->FindObject("SampleName")) {
@@ -707,17 +701,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFPileup = static_cast<TH1D*>(l->FindObject(SampleName.Data()));
   if(!SFPileup)
     std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
-#elif defined(Y2016)
-  //
 #elif defined(Y2017)
+  //
+#elif defined(Y2018)
   //
 #endif
 
   HScaleFactors = new TH1F("HScaleFactors","HScaleFactors",60,0.,6.);
   fOutput->Add(HScaleFactors);
 #endif
-
-  std::clog << Form("PreSelector::SlaveBegin Year: %d\n",Year);
 
 }
 
@@ -1515,6 +1507,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
 }
 
 void PreSelector::Terminate() {
+
+#ifdef Y2016
+  const Int_t Year = 2016;
+#elif defined(Y2017)
+  const Int_t Year = 2017;
+#elif defined(Y2018)
+  const Int_t Year = 2018;
+#endif
 
   auto getFullPath = [&](const std::string name){
     const std::string dir = "plots";
