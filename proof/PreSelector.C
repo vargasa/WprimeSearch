@@ -992,6 +992,9 @@ void PreSelector::FillA(){
                                         Electron_pdgId[l2]).second));
   HGenPartWA->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
                                         Electron_pdgId[l3]).second));
+  /* Default to 1. if it fails */
+  if( wup < 0 ) wup = 1.;
+  if( wdown < 0 ) wdown = 1.;
 
   HPileupA_SFUp->Fill(*PV_npvs,wup);
   HMetA_SFUp->Fill(*MET_pt,wup);
@@ -1056,6 +1059,9 @@ void PreSelector::FillB(){
                                        Electron_pdgId[l2]).second));
   HGenPartWB->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
                                        Muon_pdgId[l3]).second));
+  /* Default to 1. if it fails */
+  if( wup < 0 ) wup = 1.;
+  if( wdown < 0 ) wdown = 1.;
 
   HPileupB_SFUp->Fill(*PV_npvs,wup);
   HMetB_SFUp->Fill(*MET_pt,wup);
@@ -1118,6 +1124,11 @@ void PreSelector::FillC(){
                                         Muon_pdgId[l2]).second));
   HGenPartWC->FillS(Form("%d",GetMother(Electron_genPartIdx[l3],
                                         Electron_pdgId[l3]).second));
+
+  /* Default to 1. if it fails */
+  if( wup < 0 ) wup = 1.;
+  if( wdown < 0 ) wdown = 1.;
+
   HPileupC_SFUp->Fill(*PV_npvs,wup);
   HMetC_SFUp->Fill(*MET_pt,wup);
   HMassWC_SFUp->Fill(wb.M(),wup);
@@ -1181,6 +1192,11 @@ void PreSelector::FillD(){
                                         Muon_pdgId[l2]).second));
   HGenPartWD->FillS(Form("%d",GetMother(Muon_genPartIdx[l3],
                                         Muon_pdgId[l3]).second));
+
+  /* Default to 1. if it fails */
+  if( wup < 0 ) wup = 1.;
+  if( wdown < 0 ) wdown = 1.;
+
   HPileupD_SFUp->Fill(*PV_npvs,wup);
   HMetD_SFUp->Fill(*MET_pt,wup);
   HMassWD_SFUp->Fill(wb.M(),wup);
@@ -1536,9 +1552,8 @@ void PreSelector::Terminate() {
 
   std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
-  fOut->cd(Form("%d",Year));
-  fOut->mkdir(SampleName);
-  fOut->cd(SampleName);
+  fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
+  fOut->cd(Form("%d/%s",Year,SampleName.Data()));
 
   HLtA->Write();
   HLtB->Write();
