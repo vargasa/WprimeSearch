@@ -1,71 +1,125 @@
+// It requires the Pileup profiles from data
+// Named as: Form("PileupHistogram-goldenJSON-13tev-%d-69200ub.root",year)
+// and WprimeHistos.root/Year/SampleName
+
 Int_t PileupReweighing(){
 
   TFile *mcFile = TFile::Open("WprimeHistos.root","READ");
-  const int year = 2016;
-  //PileupHistogram-goldenJSON-13tev-2017-69200ub.root
-  //PileupHistogram-goldenJSON-13tev-2018-69200ub.root
-  TFile *dataFile = TFile::Open("PileupHistogram-goldenJSON-13tev-2016-69200ub.root");
 
-  auto dataPileup = static_cast<TH1D*>(dataFile->Get("pileup"));
-  TH1D* mcPileup;
-  TH1D* weights;
-
-  std::vector<std::string> BgNames =
+  std::multimap<int, std::vector<std::string>> BgNames =
     {
-      "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-      "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-      "DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-      "DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-      "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-      "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-      "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-      "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
-      "WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",
-      "WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",
-      "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-      "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
-      "ZGToLLG_01J_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-      "ZZTo4L_13TeV_powheg_pythia8",
-      "WZ1400.root",
+      {
+        2016,
+        {
+          "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+          "DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+          "DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+          "DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+          "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+          "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+          "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
+          "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
+          "WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",
+          "WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",
+          "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+          "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
+          "ZGToLLG_01J_5f_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+          "ZZTo4L_13TeV_powheg_pythia8"
+        }
+      },
+      {
+        2017,
+        {
+          "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",
+          "TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",
+          "WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",
+          "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",
+          "ZZTo4L_13TeV_powheg_pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8"
+        }
+      },
+      {
+        2018,
+        {
+          "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",
+          "TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",
+          "WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",
+          "ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8",
+          "ZZTo4L_13TeV_powheg_pythia8_TuneCP5",
+          "WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8"
+        }
+      }
     };
 
+  int year;
   auto list = new TList();
   list->SetName("PileupSFList");
   auto f = std::make_unique<TFile>("PileupWeights.root","RECREATE");
 
-  f.mkdir(Form("%d",year));
-  f.cd(Form("%d",year));
+  for( std::multimap<int,std::vector<std::string>>::iterator i = BgNames.begin();
+        i != BgNames.end(); ++i) {
+    year = (*i).first;
 
-  for(auto& sample: BgNames){
-    std::clog << Form("Processing: %s:\n", sample.c_str());
-    mcPileup = static_cast<TH1D*>(mcFile->Get(Form("%s/HPileup",sample.c_str())));
-    mcPileup = static_cast<TH1D*>(mcPileup->Clone());
-    mcPileup->Scale(1./mcPileup->Integral());
+    TFile *dataFile = TFile::Open(Form("PileupHistogram-goldenJSON-13tev-%d-69200ub.root",year));
 
-    dataPileup = static_cast<TH1D*>(dataPileup->Clone());
-    dataPileup->Scale(1./dataPileup->Integral());
+    auto dataPileup = static_cast<TH1D*>(dataFile->Get("pileup"));
+    TH1D* mcPileup;
+    TH1D* weights;
 
-    weights = static_cast<TH1D*>(dataPileup->Clone());
-    weights->Divide(mcPileup);
-    weights->SetName("lumiWeights");
+    f->mkdir(Form("%d", year));
 
-    f->mkdir(Form("%s", sample.c_str()));
-    f->cd(Form("%s", sample.c_str()));
-    weights->Write();
+    for(auto& sample: (*i).second) {
+      std::clog << Form("Processing: %d/%s:\n", year, sample.c_str());
+      mcPileup = static_cast<TH1D*>(mcFile->Get(Form("%d/%s/HPileup",year,sample.c_str())));
+      mcPileup = static_cast<TH1D*>(mcPileup->Clone());
+      mcPileup->Scale(1./mcPileup->Integral());
 
-    weights->SetName(sample.c_str());
-    list->Add(weights);
+      dataPileup = static_cast<TH1D*>(dataPileup->Clone());
+      dataPileup->Scale(1./dataPileup->Integral());
+
+      weights = static_cast<TH1D*>(dataPileup->Clone());
+      weights->Divide(mcPileup);
+      weights->SetName("lumiWeights");
+
+      f->mkdir(Form("%d/%s", year, sample.c_str()));
+      f->cd(Form("%d/%s", year, sample.c_str()));
+      weights->Write();
+
+      weights->SetName(Form("%s_%d",sample.c_str(),year));
+      list->Add(weights);
+    }
   }
 
   f->cd("/");
