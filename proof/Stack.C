@@ -15,30 +15,67 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   // ShortName, DasName, kColor, Style, XSection, nEvents
-  std::vector<BackgroundInfo> BgNames = {
-    BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-                   kOrange,4.43}, /*XSDB 2nd Sample is 0*/
-    BackgroundInfo{"WZ EXT1","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
-                   kOrange,4.43}, /*XSDB 2nd Sample is 0*/
-    BackgroundInfo{"DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                   kOrange+7,57.3},
-    BackgroundInfo{"DYJetsToLL_AEXT1","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-                   kOrange+7,57.3},
-    BackgroundInfo{"DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                   kOrange+7,6.733},
-    BackgroundInfo{"DYJetsToLL_BEXT1","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                   kOrange+7,6.733},
-    BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                   kBlue-2,56.86},
-    BackgroundInfo{"t#bar{t} EXT1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-                   kBlue-4,56.86},
-    BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-                   kRed+3,123.8}, /*AN2019_252_v1*/
-    BackgroundInfo{"Z#gamma EXT1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
-                   kRed+3,123.8},
-    BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
-                   kBlue,1.256}
-  };
+  std::multimap<int, std::vector<BackgroundInfo>> BgNames =
+    {
+      {
+        2016,
+        {
+          BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
+            kOrange,4.43}, /*XSDB 2nd Sample is 0*/
+          BackgroundInfo{"WZ EXT1","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
+            kOrange,4.43}, /*XSDB 2nd Sample is 0*/
+          BackgroundInfo{"DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+            kOrange+7,57.3},
+          BackgroundInfo{"DYJetsToLL_AEXT1","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+            kOrange+7,57.3},
+          BackgroundInfo{"DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+            kOrange+7,6.733},
+          BackgroundInfo{"DYJetsToLL_BEXT1","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+            kOrange+7,6.733},
+          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+            kBlue-2,56.86},
+          BackgroundInfo{"t#bar{t} EXT1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
+            kBlue-4,56.86},
+          BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+            kRed+3,123.8}, /*AN2019_252_v1*/
+          BackgroundInfo{"Z#gamma EXT1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
+            kRed+3,123.8},
+          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
+            kBlue,1.256}
+        }
+      },
+      {
+        2017,
+        {
+          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kOrange+7,1.},
+          BackgroundInfo{"TTJets","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
+            kBlue-2,1.},
+          BackgroundInfo{"WZ","WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+            kOrange,1.},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kRed+3,1.},
+          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
+            kBlue,1.}
+        }
+      },
+      {
+        2018,
+        {
+          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kOrange+7,1.},
+          BackgroundInfo{"TTJets","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
+            kBlue-2,1.},
+          BackgroundInfo{"WZ","WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+            kOrange,1.},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kRed+3,1.},
+          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8_TuneCP5",
+            kBlue,1.}
+        }
+      }
+    };
+
 
   struct SignalInfo {
     std::string legendName;
@@ -46,20 +83,59 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     Float_t xsec;
   };
 
-  std::vector<SignalInfo> SignalSamples = {
-    SignalInfo{"W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",14490.0},
-    SignalInfo{"W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",3197.0},
-    SignalInfo{"W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",1227.0},
-    SignalInfo{"W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",589.6},
-    SignalInfo{"W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",319.6},
-    SignalInfo{"W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",185.9},
-    SignalInfo{"W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",113.5},
-    SignalInfo{"W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",71.67},
-    SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",24.66},
-    SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",8.971},
-    SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",3.304},
-    SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",1.221},
-    SignalInfo{"W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",0.4574}
+  std::multimap<int, std::vector<SignalInfo>> SignalSamples = {
+    {
+      2016,
+      {
+        SignalInfo{"W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",14490.0},
+        SignalInfo{"W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",3197.0},
+        SignalInfo{"W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",1227.0},
+        SignalInfo{"W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M-1200_13TeV-madgraph",589.6},
+        SignalInfo{"W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M-1400_13TeV-madgraph",319.6},
+        SignalInfo{"W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M-1600_13TeV-madgraph",185.9},
+        SignalInfo{"W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M-1800_13TeV-madgraph",113.5},
+        SignalInfo{"W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M-2000_13TeV-madgraph",71.67},
+        SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M-2500_13TeV-madgraph",24.66},
+        SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M-3000_13TeV-madgraph",8.971},
+        SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",3.304},
+        SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",1.221},
+        SignalInfo{"W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",0.4574}
+      }
+    },
+    {
+      2017,
+      {
+        SignalInfo{"W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",1.},
+      }
+    },
+    {
+      2018,
+      {
+        SignalInfo{"W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",1.},
+        SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",1.},
+      }
+    }
   };
 
   auto f1 = TFile::Open(FileName.c_str(),"READ");
@@ -246,10 +322,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return h;
   };
 
-  auto getBGStack = [&](std::string hname, TLegend* legend = NULL){
+  auto getBGStack = [&](int yr, std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
-    for (auto BGN: BgNames) {
-      auto h = getMCHisto(BGN.folderName,hname,BGN.xsec);
+    for (auto BGN: BgNames.find(yr)->second) {
+      auto h = getMCHisto(Form("%d/%s",yr,BGN.folderName.c_str()),hname,BGN.xsec);
       h->SetFillStyle(1001);
       h->SetTitle(BGN.legendName.c_str());
       h->SetFillColor(BGN.color);
@@ -261,9 +337,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return hstck;
   };
 
-  auto getDataHisto = [&](std::string hName){
+  auto getDataHisto = [&](int yr, std::string hName){
     const char* DataName = "SinglePhotonSingleElectronSingleMuon";
-    auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,hName.c_str())));
+    auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName,hName.c_str())));
     if (!hdata) {
       std::string tmp = hName;
       tmp = tmp.substr(0,tmp.find("_SF"));
@@ -274,144 +350,149 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return hdata;
   };
 
-  auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
 
-  for (auto signal: SignalSamples) {
 
-    Int_t WpMass;
-    std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
-    std::smatch sm;
-    if(std::regex_search(signal.folderName,sm,rexp1)){
-      WpMass = std::stoi(sm[3]);
-    }
+  for (auto& item: SignalSamples){
+    const int year = item.first;
 
-    c1->Clear();
-    c1->Divide(2,2);
-    Int_t j = 1;
+    auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
 
-    for (auto HN : HistNames) {
+    for (auto signal: item.second) {
+      Int_t WpMass;
+      std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
+      std::smatch sm;
+      if(std::regex_search(signal.folderName,sm,rexp1)){
+        WpMass = std::stoi(sm[3]);
+      }
 
-      Int_t r = (j-1)%4;
-      c1->cd(r+1);
-      const char *hName = HN.name.c_str();
+      c1->Clear();
+      c1->Divide(2,2);
+      Int_t j = 1;
 
-      const Float_t leftMargin = 0.12;
-      const Float_t rightMargin = 0.12;
-      const Float_t topMargin = 0.12;
-      const Float_t bottomMargin = 0.5;
+      for (auto HN : HistNames) {
 
-      auto mainPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"mainPad",0.,0.25,1.,1.);
-      mainPad->Draw();
-      mainPad->SetLeftMargin(leftMargin);
-      mainPad->SetRightMargin(rightMargin);
-      mainPad->SetBottomMargin(1e-3);
-      mainPad->SetLogy();
-      mainPad->SetTickx();
-      mainPad->SetTicky();
+        Int_t r = (j-1)%4;
+        c1->cd(r+1);
+        const char *hName = HN.name.c_str();
 
-      auto subPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"subPad",0.,0.,1.,0.25);
-      subPad->Draw();
-      subPad->SetLeftMargin(leftMargin);
-      subPad->SetRightMargin(rightMargin);
-      subPad->SetTopMargin(1e-3);
-      subPad->SetBottomMargin(bottomMargin);
+        const Float_t leftMargin = 0.12;
+        const Float_t rightMargin = 0.12;
+        const Float_t topMargin = 0.12;
+        const Float_t bottomMargin = 0.5;
 
-      auto legend = new TLegend(0.3, 0.66, .87, .89);
-      legend->SetNColumns(2);
+        auto mainPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"mainPad",0.,0.25,1.,1.);
+        mainPad->Draw();
+        mainPad->SetLeftMargin(leftMargin);
+        mainPad->SetRightMargin(rightMargin);
+        mainPad->SetBottomMargin(1e-3);
+        mainPad->SetLogy();
+        mainPad->SetTickx();
+        mainPad->SetTicky();
 
-      THStack *hs = new THStack("hs","");
-      hs = getBGStack(hName,legend);
+        auto subPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"subPad",0.,0.,1.,0.25);
+        subPad->Draw();
+        subPad->SetLeftMargin(leftMargin);
+        subPad->SetRightMargin(rightMargin);
+        subPad->SetTopMargin(1e-3);
+        subPad->SetBottomMargin(bottomMargin);
+ 
+        auto legend = new TLegend(0.3, 0.66, .87, .89);
+        legend->SetNColumns(2);
 
-      auto hsig = getMCHisto(signal.folderName.c_str(),hName,signal.xsec);
-      legend->AddEntry(hsig,signal.legendName.c_str(),"L");
-      hsig->Draw("SAME");
-      hs->SetTitle(HN.title.c_str());
+        THStack *hs = new THStack("hs","");
+        hs = getBGStack(year,hName,legend);
 
-      fixYRange(hs);
-      legend->SetBorderSize(0);
+        auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName,signal.xsec);
+        legend->AddEntry(hsig,signal.legendName.c_str(),"L");
+        hsig->Draw("SAME");
+        hs->SetTitle(HN.title.c_str());
 
+        fixYRange(hs);
+        legend->SetBorderSize(0);
+
+        gStyle->SetOptStat(0);
+
+        mainPad->cd();
+        hs->Draw("HIST");
+
+        // auto hdata = getDataHisto(year,hName);
+        // hdata->SetMarkerStyle(kFullCircle);
+        // hdata->Draw("SAME P");
+        // TH1F* herror = getErrorHisto(hs);
+        // herror->Draw("SAME E2");
+        // legend->AddEntry(hdata, Form("Data%d",year));
+
+        // auto hcdata = getRatio(hdata,hs);
+        // subPad->cd();
+        // hcdata->SetMaximum(2.);
+        // hcdata->SetMinimum(0.);
+        // hcdata->Draw();
+        // TLine *line = new TLine(hdata->GetXaxis()->GetXmin(),1.,
+        //                      hdata->GetXaxis()->GetXmax(),1.);
+        // line->SetLineColor(kBlack);
+        // line->Draw();
+
+        ++j;
+        mainPad->cd();
+        legend->Draw();
+        if( r+1 == 4 ){
+          c1->Print(Form("plots/%d/Stack_%s_Wprime%d_Data.png",year,hName,WpMass));
+          c1->Clear();
+          c1->Divide(2,2);
+        }
+      }
+
+      /*** NonStackedHistos ***/
+
+      c1->Clear();
+      c1->Divide(2,2);
+      UInt_t canvasPos = 1;
       gStyle->SetOptStat(0);
 
-      mainPad->cd();
-      hs->Draw("HIST");
+      j = 1;
+      for(auto hp: NonStackedHistos){
+        Int_t r = (j-1)%4;
+        auto legend = new TLegend(0.11, 0.7, .89, .89);
+        legend->SetNColumns(3);
+        c1->cd(r+1);
+        for(auto BGN: (BgNames.find(year))->second ){
+          std::cout << Form("Getting %d/%s/%s\n",year,BGN.folderName.c_str(),hp.name.c_str());
+          auto h = (TH1F*)f1->Get(Form("%d/%s/%s",year,BGN.folderName.c_str(),hp.name.c_str()));
+          h = (TH1F*)h->Clone();
+          legend->AddEntry(h,BGN.legendName.c_str(), "L");
+          legend->SetBorderSize(0);
+          h->SetTitle(hp.title.c_str());
+          h->SetLineColor(BGN.color);
+          h->GetXaxis()->SetRangeUser(0., 800.);
+          normalizeHisto(h);
+          h->SetMaximum(1.5);
+          h->Draw("HIST SAME");
+        }
 
-      auto hdata = getDataHisto(hName);
-      hdata->SetMarkerStyle(kFullCircle);
-      hdata->Draw("SAME P");
-      TH1F* herror = getErrorHisto(hs);
-      herror->Draw("SAME E2");
-      legend->AddEntry(hdata, "Data2016");
+        auto hsig = (TH1F*)f1->Get(Form("%d/%s/%s",year,signal.folderName.c_str(),hp.name.c_str()));
+        hsig = (TH1F*)hsig->Clone();
+        hsig->SetLineColor(kBlack);
+        hsig->SetLineWidth(2);
+        normalizeHisto(hsig);
+        hsig->Draw("HIST SAME");
+        legend->AddEntry(hsig,signal.legendName.c_str(), "L");
 
-      auto hcdata = getRatio(hdata,hs);
-      subPad->cd();
-      hcdata->SetMaximum(2.);
-      hcdata->SetMinimum(0.);
-      hcdata->Draw();
-      TLine *line = new TLine(hdata->GetXaxis()->GetXmin(),1.,
-                              hdata->GetXaxis()->GetXmax(),1.);
-      line->SetLineColor(kBlack);
-      line->Draw();
+        if(hp.name == "HPileup"){
+          // auto hdata = getDataHisto(year,hp.name);
+          // hdata->SetLineColor(kRed);
+          // hdata->SetLineWidth(2);
+          // normalizeHisto(hdata);
+          // hdata->Draw("HIST SAME");
+          // legend->AddEntry(hdata,"Data","L");
+        }
 
-      ++j;
-      mainPad->cd();
-      legend->Draw();
-      if( r+1 == 4 ){
-        c1->Print(Form("Stack_%s_Wprime%d_Data.png",hName,WpMass));
-        c1->Clear();
-        c1->Divide(2,2);
-      }
-    }
-
-    /*** NonStackedHistos ***/
-
-    c1->Clear();
-    c1->Divide(2,2);
-    UInt_t canvasPos = 1;
-    gStyle->SetOptStat(0);
-
-    j = 1;
-    for(auto hp: NonStackedHistos){
-      Int_t r = (j-1)%4;
-      auto legend = new TLegend(0.11, 0.7, .89, .89);
-      legend->SetNColumns(3);
-      c1->cd(r+1);
-      for(auto BGN: BgNames){
-        std::cout << Form("Getting %s/%s\n",BGN.folderName.c_str(),hp.name.c_str());
-        auto h = (TH1F*)f1->Get(Form("%s/%s",BGN.folderName.c_str(),hp.name.c_str()));
-        h = (TH1F*)h->Clone();
-        legend->AddEntry(h,BGN.legendName.c_str(), "L");
-        legend->SetBorderSize(0);
-        h->SetTitle(hp.title.c_str());
-        h->SetLineColor(BGN.color);
-        h->GetXaxis()->SetRangeUser(0., 800.);
-        normalizeHisto(h);
-        h->SetMaximum(1.5);
-        h->Draw("HIST SAME");
-      }
-
-      auto hsig = (TH1F*)f1->Get(Form("%s/%s",signal.folderName.c_str(),hp.name.c_str()));
-      hsig = (TH1F*)hsig->Clone();
-      hsig->SetLineColor(kBlack);
-      hsig->SetLineWidth(2);
-      normalizeHisto(hsig);
-      hsig->Draw("HIST SAME");
-      legend->AddEntry(hsig,signal.legendName.c_str(), "L");
-
-      if(hp.name == "HPileup"){
-        auto hdata = getDataHisto(hp.name);
-        hdata->SetLineColor(kRed);
-        hdata->SetLineWidth(2);
-        normalizeHisto(hdata);
-        hdata->Draw("HIST SAME");
-        legend->AddEntry(hdata,"Data","L");
-      }
-
-      ++j;
-      legend->Draw();
-      if( r+1 == 4 ){
-        c1->Print(Form("Stack_%s_Wprime%d.png",hp.name.c_str(),WpMass));
-        c1->Clear();
-        c1->Divide(2,2);
+        ++j;
+        legend->Draw();
+        if( r+1 == 4 ){
+          c1->Print(Form("plots/%d/Stack_%s_Wprime%d.png",year,hp.name.c_str(),WpMass));
+          c1->Clear();
+          c1->Divide(2,2);
+        }
       }
     }
   }
