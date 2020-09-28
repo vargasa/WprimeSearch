@@ -29,13 +29,13 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, MakeBranchList("Flag_BadPFMuonSummer16Filter")};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, MakeBranchList("Flag_HBHENoiseFilter")};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, MakeBranchList("Flag_HBHENoiseIsoFilter")};
-#endif
-
-#ifdef Y2017
+#elif defined(Y2017)
   // 2017 HLTs && Flags
   TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, MakeBranchList("HLT_Mu50")};
   TTreeReaderValue<Bool_t> HLT_OldMu100 = {fReader, MakeBranchList("HLT_OldMu100")};
+  TTreeReaderValue<Bool_t> Dummy_OldMu100 = {fReader, "HLT_OldMu100"}; /*Do not dereference*/
   TTreeReaderValue<Bool_t> HLT_TkMu100 = {fReader, MakeBranchList("HLT_TkMu100")};
+  TTreeReaderValue<Bool_t> Dummy_TkMu100 = {fReader, "HLT_TkMu100"}; /*Do not dereference*/
   TTreeReaderValue<Bool_t> HLT_Ele35_WPTight_Gsf = {fReader, MakeBranchList("HLT_Ele35_WPTight_Gsf")};
   TTreeReaderValue<Bool_t> HLT_Photon200 = {fReader, MakeBranchList("HLT_Photon200")};
   TTreeReaderValue<Bool_t> Flag_goodVertices = {fReader, MakeBranchList("Flag_goodVertices")};
@@ -46,9 +46,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
   TTreeReaderValue<Bool_t> Flag_BadChargedCandidateFilter = {fReader, MakeBranchList("Flag_BadChargedCandidateFilter")};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
-#endif
-
-#ifdef Y2018
+#elif defined(Y2018)
   // 2018 HLTs && Flags
   TTreeReaderValue<Bool_t> HLT_Ele32_WPTight_Gsf = {fReader, MakeBranchList("HLT_Ele32_WPTight_Gsf")};
   TTreeReaderValue<Bool_t> HLT_Photon200 = {fReader, MakeBranchList("HLT_Photon200")};
@@ -110,6 +108,18 @@ void EventSelection::Init(TTree *tree)
   } else {
     HLT_TkMu50 = Dummy_TkMu50;
   }
+#elif defined(Y2017)
+  if (IsMissingBranch) {
+    std::clog <<  Form("Superseeding branch content: %s <- %s\n", HLT_TkMu100.GetBranchName(),HLT_Mu50.GetBranchName());
+    HLT_TkMu100 = HLT_Mu50;
+    std::clog <<  Form("Superseeding branch content: %s <- %s\n", HLT_OldMu100.GetBranchName(),HLT_Mu50.GetBranchName());
+    HLT_OldMu100 = HLT_Mu50;
+  } else {
+    HLT_TkMu100 = Dummy_TkMu100;
+    HLT_OldMu100 = Dummy_OldMu100;
+  }
+#elif defined(Y2018)
+  //
 #endif
 
   fReader.SetTree(tree);
@@ -120,9 +130,11 @@ Bool_t EventSelection::Notify() {
   std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
 
 #ifdef Y2016
-  std::clog << Form("Branch being processed: %s\n", HLT_TkMu50.GetBranchName());
+  std::clog << Form("Branch being processed (HLT_TkMu50): %s\n", HLT_TkMu50.GetBranchName());
+#elif defined(Y2017)
+  std::clog << Form("Branch being processed (HLT_OldMu100): %s\n", HLT_OldMu100.GetBranchName());
+  std::clog << Form("Branch being processed (HLT_TkMu100): %s\n", HLT_TkMu100.GetBranchName());
 #endif
-
   return kTRUE;
 }
 

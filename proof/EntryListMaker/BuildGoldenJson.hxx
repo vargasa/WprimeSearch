@@ -4,6 +4,7 @@
 void EventIDMaker::BuildGoldenJson(){
 
 #ifdef Y2016
+    std::clog << "Building 2016 Golden Map\n";
     std::vector<std::pair<UInt_t,UInt_t>> vv1;
     vv1.emplace_back(std::make_pair(1,2));
     GoldenJson[276584] = vv1;
@@ -1423,6 +1424,7 @@ void EventIDMaker::BuildGoldenJson(){
     GoldenJson[275920] = vv1;
     vv1 = {};
 #elif defined(Y2017)
+    std::clog << "Building 2017 Golden Map\n";
     std::unordered_map<Int_t, std::vector<std::pair<Int_t,Int_t>>> GoldenJson;
     std::vector<std::pair<Int_t,Int_t>> vv1;
     vv1.emplace_back(std::make_pair(69,149));
@@ -3190,6 +3192,7 @@ void EventIDMaker::BuildGoldenJson(){
     GoldenJson[306170] = vv1;
     vv1 = {};
 #elif defined(Y2018)
+    std::clog << "Building 2018 Golden Map\n";
     std::unordered_map<Int_t, std::vector<std::pair<Int_t,Int_t>>> GoldenJson;
     std::vector<std::pair<Int_t,Int_t>> vv1;
     vv1.emplace_back(std::make_pair(1,1475));
