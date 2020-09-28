@@ -2,10 +2,25 @@
 ### Build 1st TEntryList and TTrees
 
 ```bash
+echo -e "#define CMSDATA\n#define Y2016">../IsData.h
 FILES=../files/data/2016/*.txt
 for i in $FILES
 do
- root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4,2016)"
+done
+
+echo -e "#define CMSDATA\n#define Y2017">../IsData.h
+FILES=../files/data/2017/*.txt
+for i in $FILES
+do
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4,2017)"
+done
+
+echo -e "#define CMSDATA\n#define Y2018">../IsData.h
+FILES=../files/data/2018/*.txt
+for i in $FILES
+do
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4,2018)"
 done
 ```
 
