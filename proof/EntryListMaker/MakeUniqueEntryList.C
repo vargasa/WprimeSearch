@@ -23,7 +23,7 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2, Int_t year 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
 
   // Send TTrees to build EventIndex
-  // Order taken SingleElectron -> SingleMuon -> SinglePhoton
+  // Order taken 2016/2017 SingleElectron -> SingleMuon -> SinglePhoton
   // Takes sizeof(tree) memory PER worker
   // As it is: Works for SingleMuon and Commented: SinglePhoton
   TFile *f1 = TFile::Open("EventIDTree.root","READ");

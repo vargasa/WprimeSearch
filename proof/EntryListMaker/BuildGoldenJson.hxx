@@ -1425,8 +1425,7 @@ void EventIDMaker::BuildGoldenJson(){
     vv1 = {};
 #elif defined(Y2017)
     std::clog << "Building 2017 Golden Map\n";
-    std::unordered_map<Int_t, std::vector<std::pair<Int_t,Int_t>>> GoldenJson;
-    std::vector<std::pair<Int_t,Int_t>> vv1;
+    std::vector<std::pair<UInt_t,UInt_t>> vv1;
     vv1.emplace_back(std::make_pair(69,149));
     GoldenJson[304737] = vv1;
     vv1 = {};
@@ -3193,8 +3192,7 @@ void EventIDMaker::BuildGoldenJson(){
     vv1 = {};
 #elif defined(Y2018)
     std::clog << "Building 2018 Golden Map\n";
-    std::unordered_map<Int_t, std::vector<std::pair<Int_t,Int_t>>> GoldenJson;
-    std::vector<std::pair<Int_t,Int_t>> vv1;
+    std::vector<std::pair<UInt_t,UInt_t>> vv1;
     vv1.emplace_back(std::make_pair(1,1475));
     GoldenJson[321396] = vv1;
     vv1 = {};
