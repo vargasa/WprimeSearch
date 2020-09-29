@@ -63,12 +63,14 @@ Bool_t EventIDMaker::IsGold(const UInt_t& Run,const UInt_t& LuminosityBlock) {
 }
 
 Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) const{
-  if ( run > 3e5 or event > 6e9) {
+  if ( run > 33e4 or event > 8e9) {
     hlog->FillS("EventIDOutOfRange");
     std::cerr << Form("EventIDMaker::GetEventIndex() Unexpected range for run[%d] or event[%llu]\n",
                       run,event);
   }
-  return std::stol(std::to_string(run)+std::to_string(event));
+  Long64_t uid = std::stoll(std::to_string(run)+std::to_string(event));
+  assert(uid<numeric_limits<Long64_t>::max());
+  return uid;
 }
 
 Bool_t EventIDMaker::Process(Long64_t entry) {

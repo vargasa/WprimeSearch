@@ -64,7 +64,9 @@ void UniqueEntryListMaker::AddTreeToEventIndex(std::string_view treeName){
   }
 }
 Long64_t UniqueEntryListMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) {
-  return std::stol(std::to_string(run)+std::to_string(event));
+  Long64_t uid = std::stoll(std::to_string(run)+std::to_string(event));
+  assert(uid<numeric_limits<Long64_t>::max());
+  return uid;
 }
 
 Bool_t UniqueEntryListMaker::Process(Long64_t entry) {

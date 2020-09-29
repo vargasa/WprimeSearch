@@ -27,7 +27,7 @@ Int_t MakeEventIDTree(std::string file = "", Int_t fWorkers = 2, Int_t year = 20
   fProof->SetParameter("Year", year);
 
   fChain->SetProof();
-  fChain->Process("EventIDMaker.C+");
+  fChain->Process("EventIDMaker.C+g");
   fProof->Print("a");
 
   return 0;

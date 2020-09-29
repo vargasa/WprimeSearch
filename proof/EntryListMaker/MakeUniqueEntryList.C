@@ -45,7 +45,7 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2, Int_t year 
   fChain->SetEntryList(l2);
   //fChain->SetEntryList(l3);
   fChain->SetProof();
-  fChain->Process("UniqueEntryListMaker.C+");
+  fChain->Process("UniqueEntryListMaker.C+g");
   fProof->Print("a");
 
   return 0;
