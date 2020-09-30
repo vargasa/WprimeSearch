@@ -48,6 +48,11 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   fProof->AddInput(EventTree);
   //fProof->AddInput(EventTree2);
 
+  // Orden taken 2018  SingleMuon -> EGamma
+  // TTree *EventTree = (TTree*)f1->Get(Form("SingleMuon_%d/eTree;1",year));
+  // TEntryList *l2 = (TEntryList*)f2->Get(Form("EGamma_%d/EntryList;1",year));
+  // EventTree->SetName("EventIndexTree1");
+  // fProof->AddInput(EventTree);
 
   fProof->SetProgressDialog(false);
   fProof->SetParameter("SampleName",sample.c_str());
