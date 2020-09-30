@@ -5,7 +5,7 @@
 #include <memory>
 #include "TEntryList.h"
 #include "EventSelection.h"
-#include "TH1F.h"
+#include "TH1D.h"
 
 class EventIDMaker : public EventSelection {
 
@@ -25,7 +25,7 @@ class EventIDMaker : public EventSelection {
   TTree *EventIndexTree;
   std::unordered_set<Long64_t> EventIndex;
 
-  TH1F *hlog;
+  TH1D *hlog;
 
  public :
 

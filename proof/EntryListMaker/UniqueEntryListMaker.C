@@ -26,13 +26,18 @@ void UniqueEntryListMaker::Begin(TTree *tree) {
     fInput->Add(EntryList);
   }
 
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+  }
+
   std::clog << "SampleName: " << SampleName << std::endl;
   std::clog << "EntryList: " << EntryList << std::endl;
 }
 
 void UniqueEntryListMaker::SlaveBegin(TTree *tree) {
 
-  hlog = new TH1F("hlog","hlog",100,0,100);
+  hlog = new TH1D("hlog","hlog",100,0.,100.);
   fOutput->Add(hlog);
 
   if (fInput->FindObject("SampleName")) {
@@ -96,6 +101,8 @@ void UniqueEntryListMaker::Terminate() {
   std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists_Unique.root","UPDATE"));
   fEntryList->mkdir(SampleName);
   fEntryList->cd(SampleName);
+  hlog->SetName(Form("hlog_%s_%d",SampleName.Data(),Year));
+  hlog->Write();
   EntryList->Write();
   fEntryList->Close();
 

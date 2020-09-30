@@ -2,8 +2,19 @@
 #include <array>
 #include <string>
 #include <fstream>
+#include "../IsData.h"
 
-Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2, Int_t year = 2016){
+Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
+
+  Int_t year;
+
+#ifdef Y2016
+  year = 2016;
+#elif defined(Y2017)
+  year = 2017;
+#elif defined(Y2018)
+  year = 2018;
+#endif
 
   TChain* fChain = new TChain("Events");
 

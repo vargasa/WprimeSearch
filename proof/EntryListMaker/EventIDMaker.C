@@ -50,7 +50,7 @@ void EventIDMaker::SlaveBegin(TTree *tree) {
 
   std::clog << Form("EventIDMaker::SlaveBegin Year:%d \n", Year);
 
-  hlog = new TH1F("hlog","hlog",100,0,100); /*Ranges are meaningless here*/
+  hlog = new TH1D("hlog","hlog",100,0.,100.); /*Ranges are meaningless here*/
   fOutput->Add(hlog);
 
 } 
@@ -134,6 +134,8 @@ void EventIDMaker::Terminate() {
   fEntryList->mkdir(dirName.c_str());
   fEntryList->cd(dirName.c_str());
   EntryList->Write("EntryList");
+  hlog->SetName(Form("hlog_%s_%d",SampleName.Data(),Year));
+  hlog->Write();
   fEntryList->Close();
 
 }
