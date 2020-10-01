@@ -105,9 +105,22 @@ new `TEntryList`. Check `proof/EntryListMaker/README.md` for further details on 
 create the required `EntryLists.root` file.
 
 ```bash
+# 2016
 cd proof/
-echo -e "#define Y2016\n#define CMSDATA" > IsData.h # Make sure CMSDATA is defined
+# Make sure CMSDATA is defined and Year is provided
+echo -e "#define Y2016\n#define CMSDATA" > IsData.h
 root -l -b -q "Selector.C(\"files/data/2016/SinglePhoton.txt+files/data/2016/SingleElectron.txt+files/data/2016/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")"; # 8 Workers
+# SampleName is not commutative ;)
+# It will look for: SinglePhotonSingleElectronSingleMuon/EntryList into EntryLists_Unique
+
+# 2017
+echo -e "#define Y2017\n#define CMSDATA" > IsData.h
+root -l -b -q "Selector.C(\"files/data/2017/SinglePhoton.txt+files/data/2017/SingleElectron.txt+files/data/2017/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")";
+
+# 2018
+echo -e "#define Y2018\n#define CMSDATA" > IsData.h
+root -l -b -q "Selector.C(\"files/data/2018/EGamma.txt+files/data/2018/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")";
+
 ```
 
 This will create `WprimeHistos.root` file which will contain all the histograms

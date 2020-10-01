@@ -6,12 +6,18 @@
 UniqueEntryListMaker::UniqueEntryListMaker(TTree *)
 {
   EntryList = 0;
+  hlog = 0;
 }
 
 void UniqueEntryListMaker::Init(TTree *tree)
 {
   //Called every time a new TTree is attached.
   fReader.SetTree(tree);
+}
+
+Bool_t UniqueEntryListMaker::Notify() {
+  std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+  return true;
 }
 
 void UniqueEntryListMaker::Begin(TTree *tree) {
@@ -65,7 +71,8 @@ void UniqueEntryListMaker::AddTreeToEventIndex(std::string_view treeName){
 
   while(fReader1.Next()){
     hlog->Fill(treeName.data(),1.);
-    EventIndex.insert(*EvID);
+    if (!(EventIndex.insert(*EvID).second))
+      std::clog << Form("\tDuplicated EvID: %s %lld\n",treeName.data(),*EvID) ;
   }
 }
 Long64_t UniqueEntryListMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) {
@@ -95,12 +102,12 @@ void UniqueEntryListMaker::Terminate() {
   gPad->SetLogy();
   hlog->LabelsDeflate();
   hlog->Draw("HIST TEXT45");
-  ch->Print(Form("UniqueEntryListMaker_%s_hlog.png",SampleName.Data()));
+  ch->Print(Form("UniqueEntryListMaker_%s_%d_hlog.png",SampleName.Data(),Year));
 
   EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
   std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists_Unique.root","UPDATE"));
-  fEntryList->mkdir(SampleName);
-  fEntryList->cd(SampleName);
+  fEntryList->mkdir(Form("%s_%d",SampleName.Data(),Year));
+  fEntryList->cd(Form("%s_%d",SampleName.Data(),Year));
   hlog->SetName(Form("hlog_%s_%d",SampleName.Data(),Year));
   hlog->Write();
   EntryList->Write();

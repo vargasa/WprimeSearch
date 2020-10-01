@@ -6,21 +6,21 @@ echo -e "#define CMSDATA\n#define Y2016">../IsData.h
 FILES=../files/data/2016/*.txt
 for i in $FILES
 do
- root -l -b -q "MakeEventIDTree.C(\"$i\",4,2016)"
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
 done
 
 echo -e "#define CMSDATA\n#define Y2017">../IsData.h
 FILES=../files/data/2017/*.txt
 for i in $FILES
 do
- root -l -b -q "MakeEventIDTree.C(\"$i\",4,2017)"
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
 done
 
 echo -e "#define CMSDATA\n#define Y2018">../IsData.h
 FILES=../files/data/2018/*.txt
 for i in $FILES
 do
- root -l -b -q "MakeEventIDTree.C(\"$i\",4,2018)"
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
 done
 ```
 
@@ -43,24 +43,21 @@ in each dataset as we need to make sure the index object fits in memory.
 ## 2016
 echo -e "#define CMSDATA\n#define Y2016">../IsData.h
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/SingleElectron.txt\",4)"
-# Edit MakeUniqueEntryList.C to include SingleElectron Tree and EntryList
-root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/SingleMuon.txt\",2)"
+root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/SingleMuon.txt\",4)"
 
 ## 2017
 echo -e "#define CMSDATA\n#define Y2017">../IsData.h
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/SingleElectron.txt\",4)"
-# Edit MakeUniqueEntryList.C to include SingleElectron Tree and EntryList
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/SingleMuon.txt\",2)"
 
 ## 2018
 # We take all the events from SingleMuon and filter out duplicated events in EGamma
-# Edit MakeUniqueEntryList.C to process 2018
 echo -e "#define CMSDATA\n#define Y2018">../IsData.h
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2018/EGamma.txt\",2)"
 ```
 
 Creating one file `EntryLists_Unique.root` containing `TEntryLists` for each dataset
-with one unique entry per event. 
+with one unique entry per event.
 
 We reduce the number of jobs as the index keeping track of the events already included
 grows in size.
@@ -101,8 +98,8 @@ f1.Close();
 f0.Close();
 
 //2018
-auto t1 = (TEntryList*)f0.Get("SingleMuon_2017/EntryList;1");
-auto t2 = (TEntryList*)f1.Get("EGamma_2017/EntryList;1");
+auto t1 = (TEntryList*)f0.Get("SingleMuon_2018/EntryList;1");
+auto t2 = (TEntryList*)f1.Get("EGamma_2018/EntryList;1");
 TEntryList *t4 = new TEntryList("EntryList","SingleMuon+EGamma");
 t4->Add(t1);
 t4->Add(t2);

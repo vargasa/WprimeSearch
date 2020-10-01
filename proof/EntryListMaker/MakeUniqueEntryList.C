@@ -39,27 +39,45 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   // As it is: Works for SingleMuon and Commented: SinglePhoton
   TFile *f1 = TFile::Open("EventIDTree.root","READ");
   TFile *f2 = TFile::Open("EntryLists.root","READ");
-  TTree *EventTree = (TTree*)f1->Get(Form("SinglePhoton_%d/eTree;1",year));
-  //TTree *EventTree2 = (TTree*)f1->Get(Form("SingleElectron_%d/eTree;1",year));
-  TEntryList *l2 = (TEntryList*)f2->Get(Form("SingleElectron_%d/EntryList;1",year));
-  //TEntryList *l3 = (TEntryList*)f2->Get(Form("SingleMuon_%d/EntryList;1",year));
-  EventTree->SetName("EventIndexTree1");
-  //EventTree2->SetName("EventIndexTree2");
-  fProof->AddInput(EventTree);
-  //fProof->AddInput(EventTree2);
 
-  // Orden taken 2018  SingleMuon -> EGamma
-  // TTree *EventTree = (TTree*)f1->Get(Form("SingleMuon_%d/eTree;1",year));
-  // TEntryList *l2 = (TEntryList*)f2->Get(Form("EGamma_%d/EntryList;1",year));
-  // EventTree->SetName("EventIndexTree1");
-  // fProof->AddInput(EventTree);
+  TTree *EventTree = nullptr;
+  TTree *EventTree2 = nullptr;
+
+  TEntryList *l2 = nullptr;
+  TEntryList *l3 = nullptr;
+
+  if ( (year == 2016) or (year == 2017) ) {
+    EventTree = (TTree*)f1->Get(Form("SinglePhoton_%d/eTree;1",year));
+    if (!sample.compare("SingleElectron")){
+      l2 = (TEntryList*)f2->Get(Form("SingleElectron_%d/EntryList;1",year));
+      std::clog << Form("Setting EntryList: %s\n",l2->GetName());
+      fChain->SetEntryList(l2);
+    } else if (!sample.compare("SingleMuon")) {
+      EventTree2 = (TTree*)f1->Get(Form("SingleElectron_%d/eTree;1",year));
+      l3 = (TEntryList*)f2->Get(Form("SingleMuon_%d/EntryList;1",year));
+      std::clog << Form("Setting EntryList: %s\n",l3->GetName());
+      fChain->SetEntryList(l3);
+    }
+  } else if ( year == 2018 and (!sample.compare("EGamma")) ) {
+    EventTree = (TTree*)f1->Get(Form("SingleMuon_%d/eTree;1",year));
+    l2 = (TEntryList*)f2->Get(Form("EGamma_%d/EntryList;1",year));
+  }
+
+  EventTree->SetName("EventIndexTree1");
+  std::clog << Form("Adding EventIDTree: %s\n",EventTree->GetName());
+  fProof->AddInput(EventTree);
+
+  if (EventTree2) {
+    std::clog << Form("Adding EventIDTree: %s\n",EventTree->GetName());
+    EventTree2->SetName("EventIndexTree2");
+    fProof->AddInput(EventTree2);
+  }
 
   fProof->SetProgressDialog(false);
   fProof->SetParameter("SampleName",sample.c_str());
   fProof->SetParameter("Year", year);
 
-  fChain->SetEntryList(l2);
-  //fChain->SetEntryList(l3);
+
   fChain->SetProof();
   fChain->Process("UniqueEntryListMaker.C+g");
   fProof->Print("a");
