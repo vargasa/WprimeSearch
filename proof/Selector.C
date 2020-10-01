@@ -6,6 +6,15 @@
 
 Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile = ""){
 
+  int Year;
+#ifdef Y2016
+  Year = 2016;
+#elif defined(Y2017)
+  Year = 2017;
+#elif defined(Y2018)
+  Year = 2018;
+#endif
+
   TChain* fChain = new TChain("Events");
 
   istringstream f(files);
@@ -31,15 +40,15 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   if(!elistfile.empty()){
     fProof->SetParameter("EntryListSet",1);
     fProof->SetParameter("MakeEventIDTree",1);
-    FileEList = TFile::Open(elistfile.c_str(),"READ");
 #ifdef CMSDATA
-    EList = (TEntryList*)FileEList->Get(Form("%s/EntryList",sample.c_str()));
-#else
-    EList = (TEntryList*)FileEList->Get(sample.c_str());
+    FileEList = TFile::Open(elistfile.c_str(),"READ");
+    EList = (TEntryList*)FileEList->Get(Form("%s_%d/EntryList",sample.c_str(),Year));
 #endif
     if(EList){
-      std::cout << Form("Info: Using EntryList %s from %s\n",sample.c_str(),elistfile.c_str());
+      std::clog << Form("Info: Using EntryList %s_%d from %s\n",sample.c_str(),Year,elistfile.c_str());
       fChain->SetEntryList(EList);
+    } else {
+      std::clog << "EntryList empty, looping through all events\n";
     }
   }
 
