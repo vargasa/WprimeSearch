@@ -14,28 +14,38 @@ Scale factors: Additional notes [here](https://avargash.web.cern.ch/avargash/ana
 
 ```
 #[2016 - LowPt Bin]
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root
 #[2016 - HighPt Bin]
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root
 ```
 
 #### Muon Trigger:
 
 ```
 #[2016 GH]
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/EfficienciesAndSF_Period4.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesAndSF_Period4.root
 #[2016 B-F]
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/EfficienciesAndSF_RunBtoF.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesAndSF_RunBtoF.root
+#[2017 BCDEF]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root
+#[2018 ABCD]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root
+
 ````
+
 #### Muon ID:
 
 Download filename differs from the one shown in the URL
 
 ```
 #[2016 GH]
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunGH_SF_ID.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunGH_SF_ID.root
 #[2016 B-F]
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/RunBCDEF_SF_ID.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunBCDEF_SF_ID.root
+#[2017 BCDEF]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/RunBCDEF_SF_ID.root
+#[2018 ABCD]
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/RunABCD_SF_ID.root
 ```
 
 ### Pileup distribution
@@ -47,11 +57,8 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/PileupW
 ```
 #2016
 wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2016-69200ub.root
-
 #2017
 wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2017-69200ub.root
-
-
 #2018
 wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2018-69200ub.root
 
