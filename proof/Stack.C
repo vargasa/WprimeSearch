@@ -338,13 +338,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   auto getDataHisto = [&](int yr, std::string hName){
-    const char* DataName = "SinglePhotonSingleElectronSingleMuon";
-    auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName,hName.c_str())));
+    std::string DataName;
+    if (yr == 2016 or yr == 2017){
+      DataName = "SinglePhotonSingleElectronSingleMuon";
+    } else if ( yr == 2018 ){
+      DataName = "SingleMuonEGamma";
+    }
+    std::cout <<  Form("Getting CMSDATA: %d/%s/%s\n",yr,DataName.c_str(),hName.c_str());
+    auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),hName.c_str())));
     if (!hdata) {
       std::string tmp = hName;
       tmp = tmp.substr(0,tmp.find("_SF"));
       std::clog << Form("Printing data on %s (from %s) plot\n",tmp.c_str(),hName.c_str());
-      hdata = static_cast<TH1F*>(f1->Get(Form("%s/%s",DataName,tmp.c_str())));
+      hdata = static_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),tmp.c_str())));
     }
     hdata = static_cast<TH1F*>(hdata->Clone());
     return hdata;
@@ -415,22 +421,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         mainPad->cd();
         hs->Draw("HIST");
 
-        // auto hdata = getDataHisto(year,hName);
-        // hdata->SetMarkerStyle(kFullCircle);
-        // hdata->Draw("SAME P");
-        // TH1F* herror = getErrorHisto(hs);
-        // herror->Draw("SAME E2");
-        // legend->AddEntry(hdata, Form("Data%d",year));
+        auto hdata = getDataHisto(year,hName);
+        hdata->SetMarkerStyle(kFullCircle);
+        hdata->Draw("SAME P");
+        TH1F* herror = getErrorHisto(hs);
+        herror->Draw("SAME E2");
+        legend->AddEntry(hdata, Form("Data%d",year));
 
-        // auto hcdata = getRatio(hdata,hs);
-        // subPad->cd();
-        // hcdata->SetMaximum(2.);
-        // hcdata->SetMinimum(0.);
-        // hcdata->Draw();
-        // TLine *line = new TLine(hdata->GetXaxis()->GetXmin(),1.,
-        //                      hdata->GetXaxis()->GetXmax(),1.);
-        // line->SetLineColor(kBlack);
-        // line->Draw();
+        auto hcdata = getRatio(hdata,hs);
+        subPad->cd();
+        hcdata->SetMaximum(2.);
+        hcdata->SetMinimum(0.);
+        hcdata->Draw();
+        TLine *line = new TLine(hdata->GetXaxis()->GetXmin(),1.,
+                              hdata->GetXaxis()->GetXmax(),1.);
+        line->SetLineColor(kBlack);
+        line->Draw();
 
         ++j;
         mainPad->cd();
