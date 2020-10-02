@@ -89,6 +89,14 @@ class EventSelection : public TSelector{
 void EventSelection::Init(TTree *tree)
 {
 
+#ifdef Y2016
+  Year = 2016;
+#elif defined(Y2017)
+  Year = 2017;
+#elif defined(Y2018)
+  Year = 2018;
+#endif
+
   IsMissingBranch = false;
 
   for(auto brn: BranchNamesList){

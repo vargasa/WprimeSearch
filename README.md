@@ -43,7 +43,7 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/Ru
 #[2016 B-F]
 wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunBCDEF_SF_ID.root
 #[2017 BCDEF]
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/RunBCDEF_SF_ID.root
+wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/RunBCDEF_SF_ID_2017.root
 #[2018 ABCD]
 wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/RunABCD_SF_ID.root
 ```
@@ -116,17 +116,17 @@ create the required `EntryLists.root` file.
 cd proof/
 # Make sure CMSDATA is defined and Year is provided
 echo -e "#define Y2016\n#define CMSDATA" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2016/SinglePhoton.txt+files/data/2016/SingleElectron.txt+files/data/2016/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")"; # 8 Workers
+root -l -b -q "Selector.C(\"files/data/2016/SinglePhoton.txt+files/data/2016/SingleElectron.txt+files/data/2016/SingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")"; # 8 Workers
 # SampleName is not commutative ;)
 # It will look for: SinglePhotonSingleElectronSingleMuon/EntryList into EntryLists_Unique
 
 # 2017
 echo -e "#define Y2017\n#define CMSDATA" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2017/SinglePhoton.txt+files/data/2017/SingleElectron.txt+files/data/2017/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")";
+root -l -b -q "Selector.C(\"files/data/2017/SinglePhoton.txt+files/data/2017/SingleElectron.txt+files/data/2017/SingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
 
 # 2018
 echo -e "#define Y2018\n#define CMSDATA" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2018/EGamma.txt+files/data/2018/SingleMuon.txt\", 8, \"EntryLists_Unique.root\")";
+root -l -b -q "Selector.C(\"files/data/2018/SingleMuon.txt+files/data/2018/EGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
 
 ```
 
