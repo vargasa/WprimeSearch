@@ -698,13 +698,13 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
   SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-  SFPileup = static_cast<TH1D*>(l->FindObject("%s_2016",SampleName.Data()));
+  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
 #elif defined(Y2017)
   //
-  SFPileup = static_cast<TH1D*>(l->FindObject("%s_2017",SampleName.Data()));
+  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
 #elif defined(Y2018)
   //
-  SFPileup = static_cast<TH1D*>(l->FindObject("%s_2018",SampleName.Data()));
+  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2018",SampleName.Data())));
 #endif
   if(!SFPileup)
     std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());

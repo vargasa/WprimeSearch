@@ -4,8 +4,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   TH1::SetDefaultSumw2();
 
-  const Float_t luminosity = 35.9e15; /* 35.9fb^-1 2016 */
   const Float_t pbFactor = 1e-12; /*pico prefix*/
+
+  std::unordered_map<int, float> luminosity = {
+    {2016, 35.9e15},
+    {2017, 41.4e15},
+    {2018, 35.9e15}
+  };
+
+  /*Run2 Luminosity: 137.4 fb^-1*/
 
   struct BackgroundInfo {
     std::string legendName;
@@ -133,7 +140,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",22.14 /*17*/},
         SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",7.866 /*17*/},
         SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",2.936 /*17*/},
-        SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",1.169 /*17*/.},
+        SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",1.169 /*17*/},
       }
     }
   };
@@ -310,6 +317,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   auto getMCHisto = [&](std::string folder, std::string hName, Float_t xsec){
+    Int_t yr = std::stoi(folder.substr(0,folder.rfind("/")+1));
     std::string hpath = Form("%s/%s",folder.c_str(),hName.c_str());
     std::clog << "Getting MCHisto: " << hpath << std::endl;
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
@@ -317,7 +325,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
     auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
     std::clog << "\tnEvents Processed :" << nEvents << std::endl;
-    h->Scale(luminosity*xsec*pbFactor/nEvents);
+    h->Scale(luminosity[yr]*xsec*pbFactor/nEvents);
     std::clog << "\tIntegral: " << h->Integral() << std::endl;
     return h;
   };
