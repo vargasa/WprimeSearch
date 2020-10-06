@@ -1,10 +1,36 @@
 ## Instructions for running on cms-lpc7.fnal.gov
 
-```
+```bash
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 source /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-nmpfii/bin/thisroot.sh
 voms-proxy-init --voms cms --debug #Set up proxy
 ```
+
+### Cleanup
+
+```bash
+rm -rf plots/2016/*.png
+rm -rf plots/2017/*.png
+rm -rf plots/2018/*.png
+
+# WARNING: Deletes Everything!
+echo "TFile *f = TFile::Open(\"WprimeHistos.root\",\"UPDATE\");gDirectory->rmdir(\"2018;1\");throw" | root -l -b
+echo "TFile *f = TFile::Open(\"WprimeHistos.root\",\"UPDATE\");gDirectory->rmdir(\"2017;1\");throw" | root -l -b
+echo "TFile *f = TFile::Open(\"WprimeHistos.root\",\"UPDATE\");gDirectory->rmdir(\"2016;1\");throw" | root -l -b
+```
+
+```cpp
+TFile *f = TFile::Open("WprimeHistos.root","UPDATE");
+std::string year = "2017";
+f->cd(year.c_str());
+for (auto i: *(gDirectory->GetListOfKeys())) {
+  if ( i->GetName()[0] != 'S' ){ /*Do not delete CMSDATA plots just MC*/
+    std::cout << Form("%s/%s;1",year.c_str(),i->GetName()) << std::endl;
+    gDirectory->Delete(Form("%s;1",i->GetName()));
+  }
+}
+```
+
 
 ### Setup for MC
 
@@ -12,7 +38,7 @@ Scale factors: Additional notes [here](https://avargash.web.cern.ch/avargash/ana
 
 #### Electron Trigger
 
-```
+```bash
 #[2016 - LowPt Bin]
 wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root
 #[2016 - HighPt Bin]
@@ -21,7 +47,7 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/El
 
 #### Muon Trigger:
 
-```
+```bash
 #[2016 GH]
 wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesAndSF_Period4.root
 #[2016 B-F]
@@ -37,7 +63,7 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/Ef
 
 Download filename differs from the one shown in the URL
 
-```
+```bash
 #[2016 GH]
 wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunGH_SF_ID.root
 #[2016 B-F]
@@ -50,11 +76,11 @@ wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/Ru
 
 ### Pileup distribution
 
-```
+```bash
 wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/PileupWeights.root
 ```
 
-```
+```bash
 #2016
 wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2016-69200ub.root
 #2017
@@ -66,7 +92,7 @@ wget -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Co
 
 The pileup scalefactors `PileupWeights.root` is computed by using:
 
-```
+```bash
 root -l PileupReweighing.C
 ```
 
