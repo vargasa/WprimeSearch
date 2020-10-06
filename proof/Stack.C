@@ -63,6 +63,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kRed+3,55.48},
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
+            kBlue,1.325},
+          BackgroundInfo{"ZZ_EXT1","ZZTo4L_13TeV_powheg_pythia8_EXT1",
+            kBlue,1.325},
+          BackgroundInfo{"ZZ_EXT2","ZZTo4L_13TeV_powheg_pythia8_EXT2",
             kBlue,1.325}
         }
       },
@@ -77,8 +81,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kOrange,5.052},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kRed+3,147.6},
-          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8_TuneCP5",
-            kBlue,1./*not xsdb availability*/}
+          BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kBlue,1.369}
         }
       }
     };
