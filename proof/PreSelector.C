@@ -166,6 +166,19 @@ PreSelector::PreSelector(TTree *)
   HPtl2 = 0;
   HPtl3 = 0;
 
+  HEtal1 = 0;
+  HEtal2 = 0;
+  HEtal3 = 0;
+
+  HPtEtal1 = 0;
+  HPtEtal2 = 0;
+  HPtEtal3 = 0;
+
+  HPhil1 = 0;
+  HPhil2 = 0;
+  HPhil3 = 0;
+  HMetPhi = 0;
+
   HNLepA=0;
   HNLepB=0;
   HNLepC=0;
@@ -678,6 +691,54 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     MetBins,MinMet,MaxMet);
   fOutput->Add(HMetPt);
 
+  const Float_t MaxEta = 3.;
+  const Int_t EtaBins = 100;
+
+  HEtal1 = new TH1F("HEtal1","Eta l1",
+                    EtaBins,-1*MaxEta,MaxEta);
+  fOutput->Add(HEtal1);
+
+  HEtal2 = new TH1F("HEtal2","Eta l2",
+                    EtaBins,-1*MaxEta,MaxEta);
+  fOutput->Add(HEtal2);
+
+  HEtal3 = new TH1F("HEtal3","Eta l3",
+                    EtaBins,-1*MaxEta,MaxEta);
+  fOutput->Add(HEtal3);
+
+  HPtEtal1 = new TH2F("HPtEtal1","PtEta l1",
+                      MetBins,0, MaxPt,
+                      EtaBins,-1*MaxEta,MaxEta);
+  fOutput->Add(HPtEtal1);
+  HPtEtal2 = new TH2F("HPtEtal2","PtEta l2",
+                      MetBins,0, MaxPt,
+                      EtaBins,-1*MaxEta,MaxEta);
+  fOutput->Add(HPtEtal2);
+  HPtEtal3 = new TH2F("HPtEtal3","PtEta l3",
+                      MetBins,0, MaxPt,
+                      EtaBins,-1*MaxEta,MaxEta);
+  fOutput->Add(HPtEtal3);
+
+  const Float_t MaxPhi = TMath::Pi();
+  const Int_t PhiBins = 50;
+
+  HPhil1 = new TH1F("HPhil1","Phi l1",
+                    PhiBins,-1*MaxPhi,MaxPhi);
+  fOutput->Add(HPhil1);
+
+  HPhil2 = new TH1F("HPhil2","Phi l2",
+                    PhiBins,-1*MaxPhi,MaxPhi);
+  fOutput->Add(HPhil2);
+
+  HPhil3 = new TH1F("HPhil3","Phi l3",
+                    PhiBins,-1*MaxPhi,MaxPhi);
+  fOutput->Add(HPhil3);
+
+  HMetPhi = new TH1F("HMetPhi","MET Phi",
+                     PhiBins,-1*MaxPhi,MaxPhi);
+  fOutput->Add(HMetPhi);
+
+
 #ifndef CMSDATA
 
   if (fInput->FindObject("SampleName")) {
@@ -724,8 +785,10 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
     return GoodIndex;
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 10.;
-  if(abs(Mu.eta[0])> MaxEta)
+  if(abs(Mu.eta[0]) >= MaxEta){
+    HCutFlow->FillS("LeadingMuOut");
     return GoodIndex;
+  }
   GoodIndex.reserve(10);
   for (UInt_t i=0; i<*Mu.n;i++){
     if(Mu.tightId[i] &&
@@ -741,7 +804,10 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
   if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
-  if(abs(El.eta[0]) > MaxEta) return GoodIndex;
+  if(abs(El.eta[0]) >= MaxEta){
+    HCutFlow->FillS("LeadingElOut");
+    return GoodIndex;
+  }
   GoodIndex.reserve(10);
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
@@ -946,6 +1012,16 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HPtl1->Fill(lz.pt[l1]);
   HPtl2->Fill(lz.pt[l2]);
   HPtl3->Fill(lw.pt[l3]);
+  HEtal1->Fill(lz.eta[l1]);
+  HEtal2->Fill(lz.eta[l2]);
+  HEtal3->Fill(lw.eta[l3]);
+  HPtEtal1->Fill(lz.pt[l1],lz.eta[l1]);
+  HPtEtal2->Fill(lz.pt[l2],lz.eta[l2]);
+  HPtEtal3->Fill(lz.pt[l3],lz.eta[l3]);
+  HPhil1->Fill(lz.phi[l1]);
+  HPhil2->Fill(lz.phi[l2]);
+  HPhil3->Fill(lw.phi[l3]);
+
   HDistl1l2->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
                                       lz.eta[l2],lz.phi[l2]));
   HDistl1l3->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
@@ -953,6 +1029,7 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HDistl2l3->Fill(GetEtaPhiDistance(lz.eta[l2],lz.phi[l2],
                                       lw.eta[l3],lw.phi[l3]));
   HMetPt->Fill(*MET_pt);
+  HMetPhi->Fill(*MET_phi);
 
   HMassZTW->Fill(zb.M(),wmt);
   HDeltaRPtZ->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Eta(),
@@ -1648,6 +1725,52 @@ void PreSelector::Terminate() {
   HMetPt->Draw("HIST");
   HMetPt->Write();
   ch->Print(getFullPath("LeptonsPt"));
+
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HEtal1->Draw("HIST");
+  HEtal1->Write();
+  ch->cd(2);
+  HEtal2->Draw("HIST");
+  HEtal2->Write();
+  ch->cd(3);
+  HEtal3->Draw("HIST");
+  HEtal3->Write();
+  ch->cd(4);
+  ch->Print(getFullPath("LeptonsEta"));
+
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HPtEtal1->Draw("COLZ");
+  HPtEtal1->Write();
+  ch->cd(2);
+  HPtEtal2->Draw("COLZ");
+  HPtEtal2->Write("COLZ");
+  ch->cd(3);
+  HPtEtal3->Draw("COLZ");
+  HPtEtal3->Write();
+  ch->cd(4);
+  HPtEtal3->Draw("COLZ");
+  HPtEtal3->Write();
+  ch->Print(getFullPath("LeptonsPtEtaMap"));
+
+  ch->Clear();
+  ch->Divide(2,2);
+  ch->cd(1);
+  HPhil1->Draw("HIST");
+  HPhil1->Write();
+  ch->cd(2);
+  HPhil2->Draw("HIST");
+  HPhil2->Write();
+  ch->cd(3);
+  HPhil3->Draw("HIST");
+  HPhil3->Write();
+  ch->cd(4);
+  HMetPhi->Draw("HIST");
+  HMetPhi->Write();
+  ch->Print(getFullPath("LeptonsPhi"));
 
   THStack *hsA = new THStack("hsA","");
   THStack *hsB = new THStack("hsB","");

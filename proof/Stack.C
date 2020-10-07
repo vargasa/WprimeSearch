@@ -235,7 +235,17 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HDistl2l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"},
     HistoInfo{"HWZDist","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"},
     /*Next series*/
+    HistoInfo{"HEtal1","Eta Distribution l1; Eta; Normalized events"},
+    HistoInfo{"HEtal2","Eta Distribution l2; Eta; Normalized events"},
+    HistoInfo{"HEtal3","Eta Distribution l3; Eta; Normalized events"},
     HistoInfo{"HScaleFactors","Scale Factors; Scale Factor; Normalized events"},
+    /*Next series*/
+    HistoInfo{"HPhil1","Phi Distribution l1; Eta; Normalized events"},
+    HistoInfo{"HPhil2","Phi Distribution l2; Eta; Normalized events"},
+    HistoInfo{"HPhil3","Phi Distribution l3; Eta; Normalized events"},
+    HistoInfo{"HMetPhi","Phi Distribution MET; MET; Normalized events"},
+    /*Next series*/
+    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
     HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
     HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
     HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},

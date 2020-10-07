@@ -272,6 +272,19 @@ class PreSelector : public EventSelection {
   TH1F *HPtl3;
   TH1F *HMetPt;
 
+  TH1F *HEtal1;
+  TH1F *HEtal2;
+  TH1F *HEtal3;
+
+  TH2F *HPtEtal1;
+  TH2F *HPtEtal2;
+  TH2F *HPtEtal3;
+
+  TH1F *HPhil1;
+  TH1F *HPhil2;
+  TH1F *HPhil3;
+  TH1F *HMetPhi;
+
   TH1F *HWZDist;
   TH1F *HWZPt;
   TH2F *HWZPtDist;
