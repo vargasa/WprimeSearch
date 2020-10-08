@@ -3,7 +3,7 @@
 ```bash
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 source /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-nmpfii/bin/thisroot.sh
-voms-proxy-init --voms cms --debug #Set up proxy
+voms-proxy-init --valid 72:00 --voms cms --debug #Set up proxy
 ```
 
 ### Cleanup

@@ -90,6 +90,9 @@ class PreSelector : public EventSelection {
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_all = {fReader, "Electron_miniPFRelIso_all"};
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_chg = {fReader, "Electron_miniPFRelIso_chg"};
 
+  // nJets
+  TTreeReaderValue<UInt_t> nJet = {fReader, "nJet"};
+
   // GenPart
 #ifndef CMSDATA
   TTreeReaderArray<Int_t> Electron_genPartIdx = {fReader, "Electron_genPartIdx"};
@@ -123,6 +126,8 @@ class PreSelector : public EventSelection {
   TH1I *HnMuB;
   TH1I *HnMuC;
   TH1I *HnMuD;
+
+  TH1I *HnJet;
 
   TH1F *HMassTWA;
   TH1F *HMassTWB;

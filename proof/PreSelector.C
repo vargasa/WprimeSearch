@@ -27,6 +27,8 @@ PreSelector::PreSelector(TTree *)
   HnMuC=0;
   HnMuD=0;
 
+  HnJet=0;
+
   HMassWA=0;
   HMassWB=0;
   HMassWC=0;
@@ -378,6 +380,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuB = new TH1I("HnMuB","",nLepBins,MinnLep,MaxnLep);
   HnMuC = new TH1I("HnMuC","",nLepBins,MinnLep,MaxnLep);
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
+
+  HnJet = new TH1I("HnJet","",nLepBins,MinnLep,MaxnLep);
+  fOutput->Add(HnJet);
 
   const Float_t MinMass = 0.;
   const Float_t MaxMass = 2200.;
@@ -1021,6 +1026,8 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HPhil1->Fill(lz.phi[l1]);
   HPhil2->Fill(lz.phi[l2]);
   HPhil3->Fill(lw.phi[l3]);
+
+  HnJet->Fill(*nJet);
 
   HDistl1l2->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
                                       lz.eta[l2],lz.phi[l2]));
@@ -1849,6 +1856,14 @@ void PreSelector::Terminate() {
   hsD->Draw();
   ch->Print(getFullPath("nGoodLeptons"));
 
+  ch->Clear();
+  HnJet->SetTitle("nJet;nJet;Event count");
+  HnJet->Draw("HIST");
+  HnJet->Write();
+  ch->Print(getFullPath("nJet"));
+
+  ch->Clear();
+  ch->Divide(2,2);
   ch->cd(1);
   HMassWA->SetTitle("W Mass (3e0#mu);M_{W}^{3e0#mu};Event count");
   HMassWA->Draw();
