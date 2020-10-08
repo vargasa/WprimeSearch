@@ -80,9 +80,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kOrange,5.052},
           BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8_EXT1",
-            KOrange+1,5.052},
-          BackgroundInfo{"Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kOrange+1,5.052},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_EXT1",
             kRed+3,147.6},
+          BackgroundInfo{"Z#gamma Opt2","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kRed+3,55.48},
           BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kBlue,1.369}
         }
