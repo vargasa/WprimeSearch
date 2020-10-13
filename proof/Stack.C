@@ -29,24 +29,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         {
           BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
             kOrange,4.43}, /*XSDB 2nd Sample is 0*/
-          BackgroundInfo{"WZ EXT1","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8_EXT1",
-            kOrange,4.43}, /*XSDB 2nd Sample is 0*/
           BackgroundInfo{"DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
             kOrange+7,57.3},
-          BackgroundInfo{"DYJetsToLL_AEXT1","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-            kOrange+7,57.3},
           BackgroundInfo{"DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-            kOrange+7,6.733},
-          BackgroundInfo{"DYJetsToLL_BEXT1","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-            kOrange+7,6.733},
+            kOrange+9,6.733},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
             kBlue-2,56.86},
-          BackgroundInfo{"t#bar{t} EXT1","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_EXT1",
-            kBlue-4,56.86},
           BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
             kRed+3,123.8}, /*AN2019_252_v1*/
-          BackgroundInfo{"Z#gamma EXT1","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_EXT1",
-            kRed+3,123.8},
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
             kBlue,1.256}
         }
@@ -64,10 +54,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kRed+3,55.48},
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
             kBlue,1.325},
-          BackgroundInfo{"ZZ_EXT1","ZZTo4L_13TeV_powheg_pythia8_EXT1",
-            kBlue,1.325},
-          BackgroundInfo{"ZZ_EXT2","ZZTo4L_13TeV_powheg_pythia8_EXT2",
-            kBlue,1.325}
         }
       },
       {
@@ -79,11 +65,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kBlue-2,0.1495},
           BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kOrange,5.052},
-          BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8_EXT1",
-            kOrange+1,5.052},
-          BackgroundInfo{"Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_EXT1",
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kRed+3,147.6},
-          BackgroundInfo{"Z#gamma Opt2","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          BackgroundInfo{"Z#gamma Opt2","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_EXT1",
             kRed+3,55.48},
           BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kBlue,1.369}
@@ -343,6 +327,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
     auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
     std::clog << "\tnEvents Processed :" << nEvents << std::endl;
+    std::clog << "\tLuminosity SF: " << luminosity[yr]*xsec*pbFactor/nEvents << std::endl;
     h->Scale(luminosity[yr]*xsec*pbFactor/nEvents);
     std::clog << "\tIntegral: " << h->Integral() << std::endl;
     return h;
