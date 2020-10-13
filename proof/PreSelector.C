@@ -421,8 +421,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMassTWC);
   fOutput->Add(HMassTWD);
 
-  const Float_t MaxWZMass = 2000.;
-  const Int_t WZMassBins = 20;
+  const Float_t MaxWZMass = 8500.;
+  const Int_t WZMassBins = 85;
   HMassWZA = new TH1F("HMassWZA","",WZMassBins,0.,MaxWZMass);
   HMassWZB = new TH1F("HMassWZB","",WZMassBins,0.,MaxWZMass);
   HMassWZC = new TH1F("HMassWZC","",WZMassBins,0.,MaxWZMass);
