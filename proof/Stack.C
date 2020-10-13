@@ -382,6 +382,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return hdata;
   };
 
+  auto AddSelectionRatio = [&](TGraph* ga, TGraph* gb, TGraph* gc, TGraph* gd,
+                               const std::string& sample, const float& sampleMass){
+    std::cout << "AddSelectionRatio:  " << sample << std::endl;
+    auto ha = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZA",sample.c_str())));
+    auto hb = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZB",sample.c_str())));
+    auto hc = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZC",sample.c_str())));
+    auto hd = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZD",sample.c_str())));
+    auto hcf = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",sample.c_str())));
+    auto nEvents = (Float_t)hcf->GetBinContent(1);
+    ga->SetPoint(ga->GetN(), sampleMass, ha->Integral()/nEvents);
+    gb->SetPoint(gb->GetN(), sampleMass, hb->Integral()/nEvents);
+    gc->SetPoint(gc->GetN(), sampleMass, hc->Integral()/nEvents);
+    gd->SetPoint(gd->GetN(), sampleMass, hd->Integral()/nEvents);
+  };
+
 
 
   for (auto& item: SignalSamples){
@@ -389,12 +404,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
 
+    TGraph* GSelRatioA = new TGraph();
+    GSelRatioA->SetTitle("eee#nu");
+    TGraph* GSelRatioB = new TGraph();
+    GSelRatioB->SetTitle("ee#mu#nu");
+    TGraph* GSelRatioC = new TGraph();
+    GSelRatioC->SetTitle("e#mu#mu#nu");
+    TGraph* GSelRatioD = new TGraph();
+    GSelRatioD->SetTitle("#mu#mu#mu#nu");
+
     for (auto signal: item.second) {
       Int_t WpMass;
       std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
       std::smatch sm;
       if(std::regex_search(signal.folderName,sm,rexp1)){
         WpMass = std::stoi(sm[3]);
+        AddSelectionRatio(GSelRatioA,GSelRatioB,GSelRatioC,GSelRatioD,
+                          Form("%d/%s",year,signal.folderName.c_str()),WpMass);
       }
 
       c1->Clear();
@@ -527,6 +553,47 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         }
       }
     }
+
+
+    c1->Clear();
+    c1->cd();
+    TGraph GInclusive = TGraph(14);
+    GInclusive.SetTitle("Inclusive");
+    auto addToInclusive = [&](TGraph* g){
+      Double_t* xi = GInclusive.GetX();
+      Double_t* yi = GInclusive.GetY();
+      Double_t xx = 0.;
+      Double_t yy = 0.;
+      for(int i = 0; i < g->GetN(); ++i){
+        g->GetPoint(i,xx,yy);
+        xi[i] = xx;
+        yi[i] += yy;
+      }
+    };
+    GSelRatioA->SetMarkerStyle(20);
+    GSelRatioA->SetMarkerColor(kBlue);
+    GSelRatioB->SetMarkerStyle(21);
+    GSelRatioB->SetMarkerColor(kOrange);
+    GSelRatioC->SetMarkerStyle(22);
+    GSelRatioC->SetMarkerColor(kGreen);
+    GSelRatioD->SetMarkerStyle(23);
+    GSelRatioD->SetMarkerColor(kViolet);
+    addToInclusive(GSelRatioA);
+    addToInclusive(GSelRatioB);
+    addToInclusive(GSelRatioC);
+    addToInclusive(GSelRatioD);
+    GInclusive.SetMarkerColor(kRed);
+    GInclusive.SetMarkerStyle(24);
+    GInclusive.GetYaxis()->SetTitle("#epsilon");
+    GInclusive.GetXaxis()->SetTitle("M_{WZ}");
+    GInclusive.Draw("AP");
+    GInclusive.GetYaxis()->SetRangeUser(0.0,0.4);
+    GSelRatioA->Draw("P");
+    GSelRatioB->Draw("P");
+    GSelRatioC->Draw("P");
+    GSelRatioD->Draw("P");
+    gPad->BuildLegend(0.7,0.8,0.7,0.8);
+    c1->Print(Form("plots/%d/%d_SelectionRatio.png",year,year));
   }
 
 }
