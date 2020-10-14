@@ -444,6 +444,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
         THStack *hs = new THStack("hs","");
         hs = getBGStack(year,hName,legend);
+        TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
+
 
         auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName,signal.xsec);
         legend->AddEntry(hsig,signal.legendName.c_str(),"L");
@@ -457,6 +459,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
         mainPad->cd();
         hs->Draw("HIST");
+        double maxx = last->GetXaxis()->GetBinWidth(0) * (last->FindLastBinAbove(0.)+1);
+        double minx = last->GetXaxis()->GetBinWidth(0) * (last->FindFirstBinAbove(0.)-1);
+        hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
 
         auto hdata = getDataHisto(year,hName);
         hdata->SetMarkerStyle(kFullCircle);
@@ -469,6 +474,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         subPad->cd();
         hcdata->SetMaximum(2.);
         hcdata->SetMinimum(0.);
+        hcdata->GetXaxis()->SetRangeUser(minx,maxx);
         hcdata->Draw();
         TLine *line = new TLine(hdata->GetXaxis()->GetXmin(),1.,
                               hdata->GetXaxis()->GetXmax(),1.);
