@@ -29,10 +29,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         {
           BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
             kOrange,4.43}, /*XSDB 2nd Sample is 0*/
-          BackgroundInfo{"DYJetsToLL_A","DYJetsToLL_Zpt-100to200_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-            kOrange+7,57.3},
-          BackgroundInfo{"DYJetsToLL_B","DYJetsToLL_Zpt-200toInf_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-            kOrange+9,6.733},
+          BackgroundInfo{"DYJetsToLL_M-10to50","DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+            kOrange+9,18610.},
+          BackgroundInfo{"DYJetsToLL_M-50","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+            kOrange+7,6024.},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
             kBlue-2,56.86},
           BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
