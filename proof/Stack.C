@@ -325,7 +325,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
-    auto nEvents = (Float_t)hCutFlow->GetBinContent(1);
+    auto nEvents = (Float_t)hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin("NoCuts"));
     std::clog << "\tnEvents Processed :" << nEvents << std::endl;
     std::clog << "\tLuminosity SF: " << luminosity[yr]*xsec*pbFactor/nEvents << std::endl;
     h->Scale(luminosity[yr]*xsec*pbFactor/nEvents);
@@ -382,7 +382,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     gd->SetPoint(gd->GetN(), sampleMass, hd->Integral()/nEvents);
   };
 
-
+  auto AddTgEff = [&] (TGraph* g, const std::string& sample,
+                       const char* cutLabel, const char* totalLabel, const float& sampleMass) {
+    TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",sample.c_str())));
+    Double_t nPass = hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(cutLabel));
+    Double_t nEvents = hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(totalLabel));
+    g->SetPoint(g->GetN(), sampleMass, nPass/nEvents);
+  };
 
   for (auto& item: SignalSamples){
     const int year = item.first;
@@ -398,6 +404,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TGraph* GSelRatioD = new TGraph();
     GSelRatioD->SetTitle("#mu#mu#mu#nu");
 
+    TGraph* GElTgEff = new TGraph();
+    GElTgEff->SetTitle(Form("Electron HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",year));
+    TGraph* GMuTgEff = new TGraph();
+    GMuTgEff->SetTitle(Form("Muon HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",year));
+    TGraph* GHLTEff = new TGraph();
+    GHLTEff->SetTitle(Form("HLT Efficiency (El OR Mu) on Signal;Wprime Mass Point %d;Ratio",year));
+
     for (auto signal: item.second) {
       Int_t WpMass;
       std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
@@ -405,7 +418,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       if(std::regex_search(signal.folderName,sm,rexp1)){
         WpMass = std::stoi(sm[3]);
         AddSelectionRatio(GSelRatioA,GSelRatioB,GSelRatioC,GSelRatioD,
-                          Form("%d/%s",year,signal.folderName.c_str()),WpMass);
+                          Form("%d/%s",year,signal.folderName.c_str()), WpMass);
+        AddTgEff(GElTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
+        AddTgEff(GMuTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
+        AddTgEff(GHLTEff, Form("%d/%s",year,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
       }
 
       c1->Clear();
@@ -548,7 +564,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     c1->Clear();
     c1->cd();
-    TGraph GInclusive = TGraph(14);
+    const Int_t nMassPoints = 14;
+    TGraph GInclusive = TGraph(nMassPoints);
     GInclusive.SetTitle("Inclusive");
     auto addToInclusive = [&](TGraph* g){
       Double_t* xi = GInclusive.GetX();
@@ -585,6 +602,37 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GSelRatioD->Draw("P");
     gPad->BuildLegend(0.7,0.8,0.7,0.8);
     c1->Print(Form("plots/%d/%d_SelectionRatio.png",year,year));
+
+
+    c1->Clear();
+    c1->cd();
+    auto invertGraph = [] (TGraph *g){
+      Double_t* xi = g->GetX();
+      Double_t* yi = g->GetY();
+      Double_t xx = 0.;
+      Double_t yy = 0.;
+      for(int i = 0; i < g->GetN(); ++i){
+        g->GetPoint(i,xx,yy);
+        xi[i] = xx;
+        yi[i] = 1 - yy;
+      }
+    };
+    GElTgEff->SetMarkerStyle(22);
+    GElTgEff->SetMarkerColor(kBlack);
+    invertGraph(GElTgEff);
+    GElTgEff->Draw("AP");
+    GElTgEff->GetYaxis()->SetRangeUser(0, 1.);
+    GMuTgEff->SetMarkerStyle(23);
+    GMuTgEff->SetMarkerColor(kBlue);
+    invertGraph(GMuTgEff);
+    GMuTgEff->Draw("P");
+    GHLTEff->SetMarkerStyle(24);
+    GHLTEff->SetMarkerColor(kRed);
+    invertGraph(GHLTEff);
+    GHLTEff->Draw("P");
+    gPad->BuildLegend();
+    c1->Print(Form("plots/%d/%d_SignalTriggerEfficiency.png",year,year));
+
   }
 
 }
