@@ -367,22 +367,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return hdata;
   };
 
-  auto AddSelectionRatio = [&](TGraph* ga, TGraph* gb, TGraph* gc, TGraph* gd,
-                               const std::string& sample, const float& sampleMass){
-    std::cout << "AddSelectionRatio:  " << sample << std::endl;
-    auto ha = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZA",sample.c_str())));
-    auto hb = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZB",sample.c_str())));
-    auto hc = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZC",sample.c_str())));
-    auto hd = static_cast<TH1F*>(f1->Get(Form("%s/HMassWZD",sample.c_str())));
-    auto hcf = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",sample.c_str())));
-    auto nEvents = (Float_t)hcf->GetBinContent(1);
-    ga->SetPoint(ga->GetN(), sampleMass, ha->Integral()/nEvents);
-    gb->SetPoint(gb->GetN(), sampleMass, hb->Integral()/nEvents);
-    gc->SetPoint(gc->GetN(), sampleMass, hc->Integral()/nEvents);
-    gd->SetPoint(gd->GetN(), sampleMass, hd->Integral()/nEvents);
-  };
-
-  auto AddTgEff = [&] (TGraph* g, const std::string& sample,
+  auto addCutEff = [&] (TGraph* g, const std::string& sample,
                        const char* cutLabel, const char* totalLabel, const float& sampleMass) {
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",sample.c_str())));
     Double_t nPass = hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(cutLabel));
@@ -417,11 +402,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       std::smatch sm;
       if(std::regex_search(signal.folderName,sm,rexp1)){
         WpMass = std::stoi(sm[3]);
-        AddSelectionRatio(GSelRatioA,GSelRatioB,GSelRatioC,GSelRatioD,
-                          Form("%d/%s",year,signal.folderName.c_str()), WpMass);
-        AddTgEff(GElTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
-        AddTgEff(GMuTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
-        AddTgEff(GHLTEff, Form("%d/%s",year,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
+        addCutEff(GSelRatioA, Form("%d/%s",year,signal.folderName.c_str()), "3e0mu", "NoCuts", WpMass);
+        addCutEff(GSelRatioB, Form("%d/%s",year,signal.folderName.c_str()), "2e1mu", "NoCuts", WpMass);
+        addCutEff(GSelRatioC, Form("%d/%s",year,signal.folderName.c_str()), "1e2mu", "NoCuts", WpMass);
+        addCutEff(GSelRatioD, Form("%d/%s",year,signal.folderName.c_str()), "0e3mu", "NoCuts", WpMass);
+        addCutEff(GElTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
+        addCutEff(GMuTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
+        addCutEff(GHLTEff, Form("%d/%s",year,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
       }
 
       c1->Clear();
@@ -614,7 +601,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       for(int i = 0; i < g->GetN(); ++i){
         g->GetPoint(i,xx,yy);
         xi[i] = xx;
-        yi[i] = 1 - yy;
+        yi[i] = 1. - yy;
       }
     };
     GElTgEff->SetMarkerStyle(22);
