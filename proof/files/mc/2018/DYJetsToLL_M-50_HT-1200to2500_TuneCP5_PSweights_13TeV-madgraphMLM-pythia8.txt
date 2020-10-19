@@ -1,0 +1,5 @@
+# dasgoclient --query="file dataset=/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv6-Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/NANOAODSIM">DYJetsToLL_
+M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
+# 0.1937
+/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/40000/4588C218-C132-DA49-8FA0-E8DC56434E93.root
+/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/40000/0BFE34AB-1F3D-2549-9C34-90A4B671C3D7.root
