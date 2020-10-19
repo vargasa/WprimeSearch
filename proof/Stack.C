@@ -29,9 +29,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         {
           BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
             kOrange,4.43}, /*XSDB 2nd Sample is 0*/
-          BackgroundInfo{"DYJetsToLL_M-10to50","DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-            kOrange+9,18610.},
-          BackgroundInfo{"DYJetsToLL_M-50","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+          BackgroundInfo{"DY","DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+            kOrange+7,18610.},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
             kOrange+7,6024.},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
             kBlue-2,56.86},
@@ -343,6 +343,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   auto getBGStack = [&](int yr, std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
+    Int_t prevColor = -1;
     for (auto BGN: BgNames.find(yr)->second) {
       auto h = getMCHisto(Form("%d/%s",yr,BGN.folderName.c_str()),hname,BGN.xsec);
       h->SetFillStyle(1001);
@@ -350,8 +351,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->SetFillColor(BGN.color);
       h->SetLineWidth(0);
       hstck->Add(h);
-      if(legend)
+      if(legend and (prevColor != BGN.color))
         legend->AddEntry(h,BGN.legendName.c_str(),"F");
+      prevColor = BGN.color;
     }
     return hstck;
   };
