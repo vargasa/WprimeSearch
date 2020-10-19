@@ -209,7 +209,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HPileupB","Number of Good Primary Vertices;nPvs;Event count"},
     HistoInfo{"HPileupC","Number of Good Primary Vertices;nPvs;Event count"},
     HistoInfo{"HPileupD","Number of Good Primary Vertices;nPvs;Event count"},
-
+    /* Another Series */
+    HistoInfo{"HMet","MET (Combined);#slash{E}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMassTW","M_{T}^{W} (Combined);M_{WT};Event count/5GeV"},
+    HistoInfo{"HMassZ","Z Mass (Combined);M_{Z}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassWZ","WZ Mass (Combined);M_{Z}(GeV);Event count/100GeV"},
   };
 
   std::vector<HistoInfo> NonStackedHistos = {
@@ -325,11 +329,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
-    auto nEvents = (Float_t)hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin("NoCuts"));
-    std::clog << "\tnEvents Processed :" << nEvents << std::endl;
-    std::clog << "\tLuminosity SF: " << luminosity[yr]*xsec*pbFactor/nEvents << std::endl;
-    h->Scale(luminosity[yr]*xsec*pbFactor/nEvents);
-    std::clog << "\tIntegral: " << h->Integral() << std::endl;
+    Double_t nEvents = (Double_t)hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin("NoCuts"));
+    Double_t lumiSF = luminosity[yr]*xsec*pbFactor/nEvents;
+    h->Scale(lumiSF);
+    std::cout << "Sample: " << folder.substr(0,30)
+    << "\t" << hName.substr(0,10)
+    << "\tnEvents :" << (long int)nEvents
+    << "\txsec: " << xsec
+    << "\tLumiSF: " << lumiSF
+    << "\tIntegral: " << h->Integral() << std::endl;
     return h;
   };
 
@@ -355,7 +363,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     } else if ( yr == 2018 ){
       DataName = "SingleMuonEGamma";
     }
-    std::cout <<  Form("Getting CMSDATA: %d/%s/%s\n",yr,DataName.c_str(),hName.c_str());
+    std::clog <<  Form("Getting CMSDATA: %d/%s/%s\n",yr,DataName.c_str(),hName.c_str());
     auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),hName.c_str())));
     if (!hdata) {
       std::string tmp = hName;
@@ -364,6 +372,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hdata = static_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),tmp.c_str())));
     }
     hdata = static_cast<TH1F*>(hdata->Clone());
+    std::cout << "Data Integral " << hName << "\t" << hdata->Integral() << std::endl;
     return hdata;
   };
 
@@ -390,7 +399,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GSelRatioD->SetTitle("#mu#mu#mu#nu");
 
     TGraph* GElTgEff = new TGraph();
-    GElTgEff->SetTitle(Form("Electron HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",year));
+    GElTgEff->SetTitle(Form("Electron HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio [EventsPassingHLTs/EventsGenerated]",year));
     TGraph* GMuTgEff = new TGraph();
     GMuTgEff->SetTitle(Form("Muon HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",year));
     TGraph* GHLTEff = new TGraph();
@@ -549,6 +558,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
 
 
+    // Selection Efficiency Plot
     c1->Clear();
     c1->cd();
     const Int_t nMassPoints = 14;
@@ -590,7 +600,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     gPad->BuildLegend(0.7,0.8,0.7,0.8);
     c1->Print(Form("plots/%d/%d_SelectionRatio.png",year,year));
 
-
+    // Trigger efficiency plot
     c1->Clear();
     c1->cd();
     auto invertGraph = [] (TGraph *g){
