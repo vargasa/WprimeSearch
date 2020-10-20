@@ -89,7 +89,7 @@ Int_t PileupReweighing(){
         i != BgNames.end(); ++i) {
     year = (*i).first;
 
-    TFile *dataFile = TFile::Open(Form("PileupHistogram-goldenJSON-13tev-%d-69200ub.root",year));
+    TFile *dataFile = TFile::Open(Form("files/mc/%d/sf/PileupHistogram-goldenJSON-13tev-%d-69200ub.root",year,year));
 
     auto dataPileup = static_cast<TH1D*>(dataFile->Get("pileup"));
     TH1D* mcPileup;
