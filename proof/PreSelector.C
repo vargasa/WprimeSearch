@@ -283,10 +283,13 @@ Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
   } else {
     sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
   }
-#elif defined(Y2017)
-  //
-#elif defined(Y2018)
-  //
+#elif defined(Y2017) || defined(Y2018)
+  /* 2 bins in Pt */
+  if (pt < 200.){
+    sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+  } else {
+    sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
+  }
 #endif
 
   return sf;
@@ -315,10 +318,9 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
   sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
   sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
 
-#elif defined(Y2017)
-  //
-#elif defined(Y2018)
-  //
+#elif defined(Y2017) || defined(Y2018)
+  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
+  sf *= GetSFFromHisto(SFMuonID,eta,pt,option);
 #endif
 
   return sf;
@@ -766,10 +768,18 @@ void PreSelector::SlaveBegin(TTree *tree) {
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
 #elif defined(Y2017)
-  //
+  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+  SFMuonID = static_cast<TH2D*>(SFDb->FindObject("SFMuonID"));
+  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
 #elif defined(Y2018)
-  //
+  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+  SFMuonID = static_cast<TH2D*>(SFDb->FindObject("SFMuonID"));
+  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2018",SampleName.Data())));
 #endif
   if(!SFPileup)

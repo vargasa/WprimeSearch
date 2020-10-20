@@ -43,6 +43,14 @@ Scale factors: Additional notes [here](https://avargash.web.cern.ch/avargash/ana
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root 
 #[2016 - HighPt Bin]
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root
+#[2017 - LowPt Bin]
+wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root
+#[2017 - HighPt Bin]
+wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root
+#[2018 - LowPt Bin]
+wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root
+#[2018 - HighPt Bin]
+wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root
 ```
 
 #### Muon Trigger:

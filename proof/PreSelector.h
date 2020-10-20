@@ -362,10 +362,11 @@ class PreSelector : public EventSelection {
   TH2D* SFMuonIDGH;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
-#elif defined(Y2017)
-  // SF Objects may be year-dependant;
-#elif defined(Y2018)
-  //
+#elif defined(Y2017) || defined(Y2018)
+  TH2F* SFMuonTrigger;
+  TH2D* SFMuonID;
+  TGraphAsymmErrors* SFElectronTrigger1;
+  TGraphAsymmErrors* SFElectronTrigger2;
 #endif
 #endif
 

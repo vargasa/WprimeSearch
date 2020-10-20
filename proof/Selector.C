@@ -64,12 +64,12 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
 
 #ifdef Y2016
   TFile *f1 = TFile::Open("files/mc/2016/sf/EfficienciesAndSF_RunBtoF.root","READ");
-  auto SFMuonTriggerBF = static_cast<TH2F*>(f1->Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesMC/abseta_pt_MC"));
+  auto SFMuonTriggerBF = static_cast<TH2F*>(f1->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio"));
   SFMuonTriggerBF->SetName("SFMuonTriggerBF");
   SFDb->SetName("SFDb");
   SFDb->Add(SFMuonTriggerBF);
   TFile *f2 = TFile::Open("files/mc/2016/sf/EfficienciesAndSF_Period4.root","READ");
-  auto SFMuonTriggerGH = static_cast<TH2F*>(f2->Get("Mu50_OR_TkMu50_PtEtaBins/efficienciesMC/abseta_pt_MC"));
+  auto SFMuonTriggerGH = static_cast<TH2F*>(f2->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio"));
   SFMuonTriggerGH->SetName("SFMuonTriggerGH");
   SFDb->Add(SFMuonTriggerGH);
   fProof->AddInputData(SFDb);
@@ -89,17 +89,50 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
   SFElectronTrigger2->SetName("SFElectronTrigger2");
   SFDb->Add(SFElectronTrigger2);
-  //TFile *f7 = TFile::Open("PileupWeights.root","READ");
-  //auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
-  //SFDb->Add(SFPileup);
-  //fProof->AddInputData(SFDb);
 #elif defined(Y2017)
-  //
+  TFile *f1 = TFile::Open("files/mc/2017/sf/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root","READ");
+  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_PtEtaBins/abseta_pt_ratio"));
+  SFMuonTriggerBF->SetName("SFMuonTrigger");
+  SFDb->SetName("SFDb");
+  SFDb->Add(SFMuonTrigger);
+  TFile *f3 = TFile::Open("files/mc/2017/sf/RunBCDEF_SF_ID_2017.root","READ");
+  auto SFMuonID = static_cast<TH2D*>(f3->Get("NUM_TightID_DEN_genTracks_pt_abseta"));
+  SFMuonID->SetName("SFMuonID");
+  SFDb->Add(SFMuonID);
+  TFile *f5 = TFile::Open("files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
+  auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
+  SFElectronTrigger1->SetName("SFElectronTrigger1");
+  SFDb->Add(SFElectronTrigger1);
+  TFile *f6 = TFile::Open("files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","READ");
+  auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
+  SFElectronTrigger2->SetName("SFElectronTrigger2");
+  SFDb->Add(SFElectronTrigger2);
 #elif defined(Y2018)
-  //
+  TFile *f1 = TFile::Open("files/mc/2018/sf/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root","READ");
+  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/efficienciesMC/abseta_pt_MC"));
+  SFMuonTriggerBF->SetName("SFMuonTrigger");
+  SFDb->SetName("SFDb");
+  SFDb->Add(SFMuonTrigger);
+  TFile *f3 = TFile::Open("files/mc/2017/sf/RunBCDEF_SF_ID_2017.root","READ");
+  auto SFMuonID = static_cast<TH2D*>(f3->Get("NUM_TightID_DEN_genTracks_pt_abseta"));
+  SFMuonID->SetName("SFMuonID");
+  SFDb->Add(SFMuonID);
+  TFile *f5 = TFile::Open("files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
+  auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
+  SFElectronTrigger1->SetName("SFElectronTrigger1");
+  SFDb->Add(SFElectronTrigger1);
+  TFile *f6 = TFile::Open("files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","READ");
+  auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
+  SFElectronTrigger2->SetName("SFElectronTrigger2");
+  SFDb->Add(SFElectronTrigger2);
 #endif
 #endif
+  TFile *f7 = TFile::Open("PileupWeights.root","READ");
+  auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
+  SFDb->Add(SFPileup);
+  fProof->AddInputData(SFDb);
 
+  fProof->AddInputData(SFDb);
   fChain->SetProof();
   fChain->Process("PreSelector.C+g");
   fProof->Print("a");
