@@ -28,61 +28,51 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         2016,
         {
           BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-            kOrange,4.43}, /*XSDB 2nd Sample is 0*/
+            kOrange,5.052},
           BackgroundInfo{"DY","DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
             kOrange+7,18610.},
           BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-            kOrange+7,6024.},
+            kOrange+7,5765.},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-            kBlue-2,56.86},
+            kBlue-2,87.315},
           BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-            kRed+3,123.8}, /*AN2019_252_v1*/
+            kRed+3,123.9},
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
-            kBlue,1.256}
+            kBlue,1.325}
         }
       },
       {
         2017,
         {
+          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
+            kOrange+7,18610.},
           BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kOrange+7,6529.},
+            kOrange+7,5765.},
           BackgroundInfo{"TTJets","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
-            kBlue-2,54.23},
+            kBlue-2,87.315},
           BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kOrange,5.052},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kRed+3,55.48},
+            kRed+3,123.9},
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
-            kBlue,1.325},
+            kBlue,0.1325},
         }
       },
       {
         2018,
         {
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-            kOrange+7,160.81},
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-            kOrange+7,48.63},
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-            kOrange+7,6.975},
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-            kOrange+7,1.756},
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-            kOrange+7,0.8094},
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-            kOrange+7,0.1937},
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-            kOrange+7,0.00353},
-          BackgroundInfo{"TTJets","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kBlue-2,831.76},
-          BackgroundInfo{"WZ","WZ_TuneCP5_13TeV-pythia8",
-            kOrange,47.13},
-          BackgroundInfo{"Z#gamma","ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kRed+3,147.6},
-          BackgroundInfo{"Z#gamma Opt2","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_EXT1",
-            kRed+3,55.48},
+          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
+            kOrange+7,18610.},
+          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kOrange+7,5765.},
+          BackgroundInfo{"TTJets","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
+            kBlue-2,87.315},
+          BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kOrange,5.052},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kRed+3,123.9},
           BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kBlue,1.369}
+            kBlue,1.325}
         }
       }
     };

@@ -1,9 +1,0 @@
-# dasgoclient --query="file dataset=/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv6-Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/NANOAODSIM">DYJetsToLL_M
--50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
-# 0.8094
-/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/30000/40ADA108-0850-354D-9854-95340254DA9F.root
-/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/30000/65D1BA23-8911-B849-B238-3FEA058E6D0C.root
-/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/30000/08603746-692A-1A4A-B5CF-41F5A844106A.root
-/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/30000/DDA2FB83-1718-FB4A-AA09-A9E0397CA2F9.root
-/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/30000/768B7E79-58EB-F947-B223-C73C4D695023.root
-/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/30000/D0DD5605-3A98-0C4D-B2EA-D2E1BA6C638F.root

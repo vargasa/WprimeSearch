@@ -1,3 +1,6 @@
+# AN2018_291_v9
+# xsec 1.325
+# http://cms.cern.ch/iCMS/analysisadmin/cadilines?line=EXO-19-002
 /store/mc/RunIISummer16NanoAODv6/ZZTo4L_13TeV_powheg_pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/270000/5ABA60D9-BB01-1947-A123-DE9B4A44A6BC.root
 /store/mc/RunIISummer16NanoAODv6/ZZTo4L_13TeV_powheg_pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/270000/2EC85E66-B3D8-E243-8C1F-CE3CFA44F223.root
 /store/mc/RunIISummer16NanoAODv6/ZZTo4L_13TeV_powheg_pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/270000/4B31627F-C63F-614D-B688-886671D226D1.root

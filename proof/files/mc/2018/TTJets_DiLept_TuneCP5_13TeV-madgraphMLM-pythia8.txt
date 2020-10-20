@@ -1,3 +1,5 @@
+# AN2019_252_v9
+# xsec 87.315
 /store/mc/RunIIAutumn18NanoAODv6/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/240000/7EA75567-EC2C-4444-8E00-758991D90A6A.root
 /store/mc/RunIIAutumn18NanoAODv6/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/60000/AF2405EC-2325-3A44-B7C2-AE7616557973.root
 /store/mc/RunIIAutumn18NanoAODv6/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/60000/D99BDD5D-6F50-3447-9C0C-A27F33735047.root
