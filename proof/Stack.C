@@ -323,22 +323,58 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       return hcdata;
   };
 
+  std::function<double(const std::string&, std::string)> getCutCount = [&] (const std::string& folder, std::string cutLabel){
+    double count = 0;
+
+    // Accepts strings like "+a+b+c-d-e-f" not like "+a-b-c+d-e+h"
+
+    while (cutLabel.find("-") != std::string::npos) {
+      std::string lastLabel = cutLabel.substr(cutLabel.find_last_of("-")+1,cutLabel.length());
+      count -= getCutCount(folder,lastLabel);
+      cutLabel = cutLabel.substr(0, cutLabel.find_last_of("-"));
+
+    }
+
+    while (cutLabel.find("+") != std::string::npos){
+      std::string lastLabel = cutLabel.substr(cutLabel.find_last_of("+")+1,cutLabel.length());
+      count += getCutCount(folder,lastLabel);
+      cutLabel = cutLabel.substr(0, cutLabel.find_last_of("+"));
+    }
+
+    TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
+    count += hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(cutLabel.c_str()));
+
+    return count;
+  };
+
   auto getMCHisto = [&](std::string folder, std::string hName, Float_t xsec){
     Int_t yr = std::stoi(folder.substr(0,folder.rfind("/")+1));
     std::string hpath = Form("%s/%s",folder.c_str(),hName.c_str());
     std::clog << "Getting MCHisto: " << hpath << std::endl;
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
-    TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
-    Double_t nEvents = (Double_t)hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin("NoCuts"));
+
+    Double_t nEvents = getCutCount(folder,"NoCuts");
     Double_t lumiSF = luminosity[yr]*xsec*pbFactor/nEvents;
     h->Scale(lumiSF);
+
     std::cout << "Sample: " << folder.substr(0,30)
     << "\t" << hName.substr(0,10)
     << "\tnEvents :" << (long int)nEvents
     << "\txsec: " << xsec
     << "\tLumiSF: " << lumiSF
     << "\tIntegral: " << h->Integral() << std::endl;
+
+    double zSel = getCutCount(folder,"+NoCuts-FailHLT-FailFlags-Met_pt<30-lep<3-goodLep<3-NoPairs-FailZMassWindow");
+    double wSel =  zSel - getCutCount(folder,"+FailZl1PtCut+FailZDistCut");
+    double wzSel = wSel - getCutCount(folder,"+FailZHighPtIdCut+Faill1l3DistCut+Faill2l3DistCut");
+    double nChannel = getCutCount(folder,"+0e3mu+1e2mu+2e1mu+3e0mu");
+    std::cout << "CutFlow: " << folder.substr(0,30)
+    << "\tZ Selection: " << zSel/getCutCount(folder,"NoCuts")
+    << "\tW Selection: " << wSel/getCutCount(folder,"NoCuts")
+    << "\tWZ Selection: " << wzSel/getCutCount(folder,"NoCuts")
+    << "\tnChannel: " << nChannel/getCutCount(folder,"NoCuts") << std::endl;
+
     return h;
   };
 
@@ -381,9 +417,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   auto addCutEff = [&] (TGraph* g, const std::string& sample,
                        const char* cutLabel, const char* totalLabel, const float& sampleMass) {
-    TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",sample.c_str())));
-    Double_t nPass = hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(cutLabel));
-    Double_t nEvents = hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(totalLabel));
+    Double_t nPass = getCutCount(sample.c_str(),cutLabel);
+    Double_t nEvents = getCutCount(sample.c_str(),totalLabel);
     g->SetPoint(g->GetN(), sampleMass, nPass/nEvents);
   };
 
