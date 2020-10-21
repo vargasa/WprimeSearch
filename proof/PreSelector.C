@@ -1346,6 +1346,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   ReadEntry(entry);
 
   HCutFlow->FillS("NoCuts");
+  HCutFlow->Fill("genWeight",*genWeight);
 
   HPileup->Fill(static_cast<Double_t>(*PV_npvs));
 

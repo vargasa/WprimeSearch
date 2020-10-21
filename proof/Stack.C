@@ -330,7 +330,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
-    Double_t nEvents = (Double_t)hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin("NoCuts"));
+    Double_t nEvents = (Double_t)hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin("genWeight"));
     Double_t lumiSF = luminosity[yr]*xsec*pbFactor/nEvents;
     h->Scale(lumiSF);
     std::cout << "Sample: " << folder.substr(0,30)

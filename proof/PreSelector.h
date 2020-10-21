@@ -95,6 +95,7 @@ class PreSelector : public EventSelection {
 
   // GenPart
 #ifndef CMSDATA
+  TTreeReaderValue<Float_t> genWeight = {fReader, "genWeight"};
   TTreeReaderArray<Int_t> Electron_genPartIdx = {fReader, "Electron_genPartIdx"};
   TTreeReaderArray<Int_t> Muon_genPartIdx = {fReader, "Muon_genPartIdx"};
   TTreeReaderArray<Float_t> GenPart_eta = {fReader, "GenPart_eta"};
