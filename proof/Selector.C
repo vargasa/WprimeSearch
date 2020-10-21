@@ -91,11 +91,13 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFDb->Add(SFElectronTrigger2);
 #elif defined(Y2017)
   TFile *f1 = TFile::Open("files/mc/2017/sf/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root","READ");
-  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_PtEtaBins/abseta_pt_ratio"));
-  SFMuonTriggerBF->SetName("SFMuonTrigger");
+  // To be in sync with SFMuonID we provide also TH2 with x(pt) y(abseta)
+  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_PtEtaBins/pt_abseta_ratio"));
+  SFMuonTrigger->SetName("SFMuonTrigger");
   SFDb->SetName("SFDb");
   SFDb->Add(SFMuonTrigger);
   TFile *f3 = TFile::Open("files/mc/2017/sf/RunBCDEF_SF_ID_2017.root","READ");
+  // SDMuonID provides TH2 x(pt) y(abseta)
   auto SFMuonID = static_cast<TH2D*>(f3->Get("NUM_TightID_DEN_genTracks_pt_abseta"));
   SFMuonID->SetName("SFMuonID");
   SFDb->Add(SFMuonID);
@@ -109,8 +111,8 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFDb->Add(SFElectronTrigger2);
 #elif defined(Y2018)
   TFile *f1 = TFile::Open("files/mc/2018/sf/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root","READ");
-  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/efficienciesMC/abseta_pt_MC"));
-  SFMuonTriggerBF->SetName("SFMuonTrigger");
+  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/pt_abseta_ratio"));
+  SFMuonTrigger->SetName("SFMuonTrigger");
   SFDb->SetName("SFDb");
   SFDb->Add(SFMuonTrigger);
   TFile *f3 = TFile::Open("files/mc/2017/sf/RunBCDEF_SF_ID_2017.root","READ");
@@ -132,7 +134,6 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFDb->Add(SFPileup);
   fProof->AddInputData(SFDb);
 
-  fProof->AddInputData(SFDb);
   fChain->SetProof();
   fChain->Process("PreSelector.C+g");
   fProof->Print("a");

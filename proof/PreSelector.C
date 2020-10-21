@@ -242,9 +242,18 @@ Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
 Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
                                     const Int_t& option) const {
   assert(h!= NULL);
+#if defined(Y2016)
+  /* Check for eta */
+  /* 2016 provides x(eta) and y(pt)  */
   assert(x < h->GetXaxis()->GetXmax() && x > h->GetXaxis()->GetXmin());
   if(y > h->GetYaxis()->GetXmax())
     return GetSFFromHisto(h,x,h->GetYaxis()->GetXmax() - 1e-3,option);
+#elif defined(Y2017) || defined(Y2018)
+  /* 2017/2018 SFMuonID, SFMuonTrigger provides x(pt) and y(eta)  */
+  assert(y < h->GetYaxis()->GetXmax() && y > h->GetYaxis()->GetXmin());
+  if(x > h->GetXaxis()->GetXmax())
+    return GetSFFromHisto(h,h->GetXaxis()->GetXmax() - 1e-3,y,option);
+#endif
   Int_t nbin = h->FindBin(x,y);
   Double_t sf = h->GetBinContent(nbin);
   switch(option){
@@ -319,8 +328,8 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
   sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
 
 #elif defined(Y2017) || defined(Y2018)
-  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
-  sf *= GetSFFromHisto(SFMuonID,eta,pt,option);
+  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
+  sf *= GetSFFromHisto(SFMuonID,pt,abs(eta),option);
 #endif
 
   return sf;
@@ -1337,6 +1346,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   ReadEntry(entry);
 
   HCutFlow->FillS("NoCuts");
+  HCutFlow->Fill("genWeight",*genWeight);
 
   HPileup->Fill(static_cast<Double_t>(*PV_npvs));
 
