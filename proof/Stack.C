@@ -7,9 +7,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   const Float_t pbFactor = 1e-12; /*pico prefix*/
 
   std::unordered_map<int, float> luminosity = {
-    {2016, 35.9e15},
-    {2017, 41.4e15},
-    {2018, 35.9e15}
+    {2016, 35.92e15},
+    {2017, 41.43e15},
+    {2018, 59.74e15}
   };
 
   /*Run2 Luminosity: 137.4 fb^-1*/
@@ -365,7 +365,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     << "\tLumiSF: " << lumiSF
     << "\tIntegral: " << h->Integral() << std::endl;
 
-    double zSel = getCutCount(folder,"+NoCuts-FailHLT-FailFlags-Met_pt<30-lep<3-goodLep<3-NoPairs-FailZMassWindow");
+    double zSel = getCutCount(folder,"+NoCuts-FailHLT-FailFlags-MET_pt<30-lep<3-goodLep<3-NoPairs-FailZMassWindow");
     double wSel =  zSel - getCutCount(folder,"+FailZl1PtCut+FailZDistCut");
     double wzSel = wSel - getCutCount(folder,"+FailZHighPtIdCut+Faill1l3DistCut+Faill2l3DistCut");
     double nChannel = getCutCount(folder,"+0e3mu+1e2mu+2e1mu+3e0mu");
@@ -422,7 +422,58 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     g->SetPoint(g->GetN(), sampleMass, nPass/nEvents);
   };
 
-  for (auto& item: SignalSamples){
+
+  std::function<void(const int&, const SignalInfo&)> printCutFlowStack = [&] (const int& year, const SignalInfo& signal){
+    auto c2 = new TCanvas("c2","c2");
+    THStack *hstc = new THStack("hstc","");
+    auto legend = new TLegend();
+    legend->SetBorderSize(0);
+
+    auto fillCutH = [&] (TH1* h, std::string& folder){
+      h->Fill("nEvents", 1.);
+      double zSel = getCutCount(folder,"+NoCuts-FailHLT-FailFlags-MET_pt<30-lep<3-goodLep<3-NoPairs-FailZMassWindow");
+      h->Fill("ZSelection",zSel/getCutCount(folder,"NoCuts"));
+      double wSel =  zSel - getCutCount(folder,"+FailZl1PtCut+FailZDistCut");
+      h->Fill("WSelection",wSel/getCutCount(folder,"NoCuts"));
+      double wzSel = wSel - getCutCount(folder,"+FailZHighPtIdCut+Faill1l3DistCut+Faill2l3DistCut");
+      h->Fill("WZSelection",wzSel/getCutCount(folder,"NoCuts"));
+      double nChannel = getCutCount(folder,"+0e3mu+1e2mu+2e1mu+3e0mu");
+      h->Fill("InChannel",nChannel/getCutCount(folder,"NoCuts"));
+      h->LabelsDeflate();
+    };
+
+    for(const auto& BGN: (BgNames.find(year))->second){
+      TH1D* HTCutFlow = new TH1D(Form("HTCutFlow_%s",BGN.folderName.c_str()),"HT",10,0., 10.);
+      std::string folder = Form("%d/%s",year,BGN.folderName.c_str());
+      std::cout << "Ploting Wirdo: " << folder << std::endl;
+      fillCutH(HTCutFlow,folder);
+      HTCutFlow->SetMarkerColor(BGN.color);
+      HTCutFlow->SetMarkerStyle((BGN.color)%28);
+      HTCutFlow->SetLineWidth(0);
+      hstc->Add(HTCutFlow);
+      legend->AddEntry(HTCutFlow,BGN.legendName.c_str(),"P");
+    }
+
+    TH1D* HTCutFlow = new TH1D(Form("HTCutFlow_%s",signal.folderName.c_str()),"HT",10,0., 10.);
+    std::string folder = Form("%d/%s",year,signal.folderName.c_str());
+    fillCutH(HTCutFlow,folder);
+    HTCutFlow->SetMarkerColor(kBlack);
+    HTCutFlow->SetMarkerStyle(22);
+    HTCutFlow->SetLineWidth(0);
+    hstc->Add(HTCutFlow);
+    legend->AddEntry(HTCutFlow,signal.legendName.c_str(),"P");
+
+    c2->SetLogy();
+    hstc->SetTitle("Ratio [%] of events passing set of cuts");
+    hstc->Draw("NOSTACK");
+    legend->Draw();
+    c2->Print(Form("%d_%s_HTCutFlow.png",year,signal.folderName.c_str()));
+
+    delete c2;
+  };
+
+
+  for (auto& item: SignalSamples) {
     const int year = item.first;
 
     auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
@@ -447,6 +498,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       Int_t WpMass;
       std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
       std::smatch sm;
+      printCutFlowStack(year,signal);
       if(std::regex_search(signal.folderName,sm,rexp1)){
         WpMass = std::stoi(sm[3]);
         addCutEff(GSelRatioA, Form("%d/%s",year,signal.folderName.c_str()), "3e0mu", "NoCuts", WpMass);
