@@ -21,12 +21,14 @@ echo "TFile *f = TFile::Open(\"WprimeHistos.root\",\"UPDATE\");gDirectory->rmdir
 
 ```cpp
 TFile *f = TFile::Open("WprimeHistos.root","UPDATE");
-std::string year = "2017";
-f->cd(year.c_str());
-for (auto i: *(gDirectory->GetListOfKeys())) {
-  if ( i->GetName()[0] != 'S' ){ /*Do not delete CMSDATA plots just MC*/
-    std::cout << Form("%s/%s;1",year.c_str(),i->GetName()) << std::endl;
-    gDirectory->Delete(Form("%s;1",i->GetName()));
+std::vector<int> years = {2016,2017,2018};
+for(const auto& year: years){
+  f->cd(Form("%d",year));
+  for (auto i: *(gDirectory->GetListOfKeys())) {
+    if ( i->GetName()[0] != 'S' ){ /*Do not delete CMSDATA plots just MC*/
+      std::cout << Form("%d/%s;1",year,i->GetName()) << std::endl;
+      gDirectory->Delete(Form("%s;1",i->GetName()));
+    }
   }
 }
 ```

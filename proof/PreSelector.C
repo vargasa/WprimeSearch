@@ -640,7 +640,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HLog);
 
 #endif
-  HCutFlow = new TH1F("HCutFlow","",BinsPdgId,PdgIdMin,PdgIdMax);  /* Limits are meaningless here */
+  HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
   fOutput->Add(HCutFlow);
 
   fOutput->Add(HMassZA);

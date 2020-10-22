@@ -266,7 +266,7 @@ class PreSelector : public EventSelection {
   TH1F* HLog;
 
 #endif
-  TH1F *HCutFlow;
+  TH1D *HCutFlow;
 
   TH2I *HNLepA;
   TH2I *HNLepB;
