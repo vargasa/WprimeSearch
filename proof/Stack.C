@@ -244,6 +244,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
   };
 
+  std::function<void(TH1* h,const Double_t&)> blindHisto = [](TH1* h, const Double_t& wpmass) {
+    Int_t nBin = h->FindBin(wpmass);
+    h->SetBinContent(nBin,0.);
+    h->SetBinContent(nBin+1,0.);
+    h->SetBinContent(nBin-1,0.);
+  };
+
+  auto blindStack = [&](THStack * hst, const Double_t& wpmass) {
+
+    TObjLink *lnk = hst->GetHists()->FirstLink();
+    while (lnk) {
+      blindHisto(static_cast<TH1*>(lnk->GetObject()),wpmass);
+      lnk = lnk->Next();
+    }
+  };
+
   auto getErrorHisto = [](THStack* hst){
     TList* lst = hst->GetHists();
     auto h1 = static_cast<TH1F*>((hst->GetStack()->Last())->Clone());
@@ -546,6 +562,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
         THStack *hs = new THStack("hs","");
         hs = getBGStack(year,hName,legend);
+        blindStack(hs,WpMass);
         TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
 
@@ -570,6 +587,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         hdata->Draw("SAME P");
         TH1F* herror = getErrorHisto(hs);
         herror->Draw("SAME E2");
+        blindHisto(hdata,WpMass);
         legend->AddEntry(hdata, Form("Data%d",year));
 
         auto hcdata = getRatio(hdata,hs);
