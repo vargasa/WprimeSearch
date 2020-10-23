@@ -434,10 +434,31 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   const Float_t MaxWZMass = 8500.;
   const Int_t WZMassBins = 85;
+
   HMassWZA = new TH1F("HMassWZA","",WZMassBins,0.,MaxWZMass);
   HMassWZB = new TH1F("HMassWZB","",WZMassBins,0.,MaxWZMass);
   HMassWZC = new TH1F("HMassWZC","",WZMassBins,0.,MaxWZMass);
   HMassWZD = new TH1F("HMassWZD","",WZMassBins,0.,MaxWZMass);
+
+  auto exx = [](const float& x){
+    /* grow bin size exponentially */
+    return 25.*pow(TMath::E(), 6.0e-4 *x*x*x);
+  };
+
+  const int nb = 20;
+  Double_t bins[nb];
+
+  Double_t prev = 0.;
+  bins[0] = 0;
+  for(int i = 1; i <= nb;++i){
+    bins[i] = exx(static_cast<float>(i)) + prev;
+    prev = bins[i];
+  }
+
+  HMassWZA->SetBins(nb,bins);
+  HMassWZB->SetBins(nb,bins);
+  HMassWZC->SetBins(nb,bins);
+  HMassWZD->SetBins(nb,bins);
 
   fOutput->Add(HMassWZA);
   fOutput->Add(HMassWZB);
@@ -1346,7 +1367,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
   ReadEntry(entry);
 
   HCutFlow->FillS("NoCuts");
+#ifndef CMSDATA
   HCutFlow->Fill("genWeight",*genWeight);
+#endif
 
   HPileup->Fill(static_cast<Double_t>(*PV_npvs));
 
