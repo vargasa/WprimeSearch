@@ -21,6 +21,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     Float_t xsec;
   };
 
+  std::unordered_map<int, std::string> DataSampleNames = {
+    {2016, "SinglePhotonSingleElectronSingleMuon"},
+    {2017, "SinglePhotonSingleElectronSingleMuon"},
+    {2018, "SingleMuonEGamma"}
+  };
+
   // ShortName, DasName, kColor, Style, XSection, nEvents
   std::multimap<int, std::vector<BackgroundInfo>> BgNames =
     {
@@ -411,13 +417,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return hstck;
   };
 
-  auto getDataHisto = [&](int yr, std::string hName){
-    std::string DataName;
-    if (yr == 2016 or yr == 2017){
-      DataName = "SinglePhotonSingleElectronSingleMuon";
-    } else if ( yr == 2018 ){
-      DataName = "SingleMuonEGamma";
-    }
+  auto getDataHisto = [&](const int& yr, const std::string& hName){
+    std::string DataName = DataSampleNames[yr];
     std::clog <<  Form("Getting CMSDATA: %d/%s/%s\n",yr,DataName.c_str(),hName.c_str());
     auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),hName.c_str())));
     if (!hdata) {
@@ -484,7 +485,37 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     hstc->Draw("NOSTACK");
     legend->Draw();
     c2->Print(Form("%d_%s_HTCutFlow.png",year,signal.folderName.c_str()));
+    delete c2;
+  };
 
+  std::function<void(const int&, const SignalInfo&, const std::string&)>
+    printH2Comb = [&] (const int& yr, const SignalInfo& signal,
+                     const std::string& histoLabel){
+    TCanvas* c2 = new TCanvas("c2","c2");
+    TH2F* h2BgSum = nullptr;
+    for(const auto& BGN: (BgNames.find(yr))->second){
+      std::string folder = Form("%d/%s",yr,BGN.folderName.c_str());
+      auto h2 = static_cast<TH2F*>(f1->Get(Form("%s/%s",folder.c_str(),histoLabel.c_str())));
+      if(!h2BgSum) {
+        h2BgSum = static_cast<TH2F*>(h2->Clone());
+      } else {
+        h2BgSum->Add(static_cast<TH2F*>(h2->Clone()));
+      }
+    }
+    h2BgSum->SetMarkerColor(kRed);
+    TH2F* h2Sig = static_cast<TH2F*>(f1->Get(Form("%d/%s/%s",yr,signal.folderName.c_str(),histoLabel.c_str()))->Clone());
+    h2Sig->SetMarkerColor(kGreen);
+    TH2F* h2Data = static_cast<TH2F*>(f1->Get(Form("%d/%s/%s",yr,DataSampleNames[yr].c_str(),histoLabel.c_str()))->Clone());
+    h2Data->SetMarkerColor(kBlack);
+    c2->Divide(2,1);
+    c2->cd(1);
+    h2BgSum->Draw("");
+    h2Data->Draw("SAME");
+    h2Sig->Draw("SAME");
+    c2->cd(2);
+    h2BgSum->Draw("");
+    h2Data->Draw("SAME");
+    c2->Print(Form("plots/%d/%s_%s.png",yr,signal.folderName.c_str(),histoLabel.c_str()));
     delete c2;
   };
 
@@ -525,6 +556,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         addCutEff(GMuTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
         addCutEff(GHLTEff, Form("%d/%s",year,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
       }
+
+      printH2Comb(year, signal, "HPtWPtZ");
+      printH2Comb(year, signal, "HDeltaRPtZ");
+      printH2Comb(year, signal, "HLtMWZ");
+
+      continue;
 
       c1->Clear();
       c1->Divide(2,2);
