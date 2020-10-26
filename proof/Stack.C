@@ -37,7 +37,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kOrange,5.052},
           BackgroundInfo{"DY","DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
             kOrange+7,18610.},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_NEWPMX",
             kOrange+7,5765.},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
             kBlue-2,87.315},
