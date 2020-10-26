@@ -170,14 +170,15 @@ void EventSelection::ReadEntry(const Long64_t& entry){
     and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
     and *Flag_EcalDeadCellTriggerPrimitiveFilter
     and *Flag_BadPFMuonFilter and *Flag_BadChargedCandidateFilter
-    and *Flag_eeBadScFilter;
+    and *Flag_eeBadScFilter and *PV_npvsGood > 0;
 #elif defined(Y2018)
   ElectronHLTs = *HLT_Ele32_WPTight_Gsf or *HLT_Photon200;
   MuonHLTs = *HLT_Mu50 or *HLT_OldMu100 or *HLT_TkMu100;
   Flags = *Flag_goodVertices and *Flag_globalSuperTightHalo2016Filter
     and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
     and *Flag_EcalDeadCellTriggerPrimitiveFilter and *Flag_BadPFMuonFilter
-    and *Flag_BadChargedCandidateFilter and *Flag_eeBadScFilter;
+    and *Flag_BadChargedCandidateFilter and *Flag_eeBadScFilter
+    and *PV_npvsGood > 0;
 #endif
 
 }
