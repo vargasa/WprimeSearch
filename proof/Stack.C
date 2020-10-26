@@ -4,12 +4,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   TH1::SetDefaultSumw2();
 
-  const Float_t pbFactor = 1e-12; /*pico prefix*/
 
   std::unordered_map<int, float> luminosity = {
-    {2016, 35.92e15},
-    {2017, 41.43e15},
-    {2018, 59.74e15}
+    {2016, 35.92},
+    {2017, 41.43},
+    {2018, 59.74}
   };
 
   /*Run2 Luminosity: 137.4 fb^-1*/
@@ -376,8 +375,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
 
-    Double_t nEvents = getCutCount(folder,"genWeight");
-    Double_t lumiSF = luminosity[yr]*xsec*pbFactor/nEvents;
+    Double_t nEvents = getCutCount(folder,"NoCuts");
+    Double_t lumiSF = luminosity[yr]*xsec*1e3/nEvents; /* pico*femto^-1=1e-12*1e15=1e3 */
     h->Scale(lumiSF);
 
     std::cout << "Sample: " << folder.substr(0,30)
@@ -399,6 +398,63 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     return h;
   };
+
+  std::function<void(const std::string)> diffSampleYear = [&] (const std::string& histoName) {
+
+    TCanvas* c =  new TCanvas("c","c",1200,1200);
+    TPad* p1 = new TPad("p1","p1",0.0,0.2,0.5,1.); p1->Draw();
+    TPad* p2 = new TPad("p2","p2",0.5,0.2,1.,1.); p2->Draw();
+    TPad* p3 = new TPad("p3","p3",0.0,0.0,1.0,0.2); p3->Draw();
+
+    std::vector<int> years = { 2016, 2017, 2018 };
+
+    auto getSampleName = [&] (const std::string& legend, const int& yy) {
+      for (auto BGN: BgNames.find(yy)->second) {
+        if (BGN.legendName == legend) return BGN.folderName;
+      }
+      return std::string("");
+    };
+
+    for (auto BGN: BgNames.find(years[0])->second) {
+      THStack* hs = new THStack("hs",histoName.c_str());
+      TLegend* l = new TLegend(0,0,1,1);
+      TH1F* hn = new TH1F("hn","nEvents",3,0.,3.);
+      TH1F* hgw = new TH1F("hgw","genWeight",3,0.,3.);
+      std::string category = BGN.legendName;
+      for(const auto& yy: years){
+        std::string sampleName = getSampleName(category,yy);
+        if (sampleName.size()==0) continue;
+        std::clog << Form("** Printing: %d: %s", yy, sampleName.c_str()) << std::endl;
+        std::string folder = Form("%d/%s",yy,sampleName.c_str());
+        TH1* h = static_cast<TH1*>(getMCHisto(folder,histoName,BGN.xsec)->Clone());
+        h->SetLineColor(yy%2015);
+        h->SetMarkerColor(yy%2015);
+        hn->Fill(Form("%d",yy), getCutCount(Form("%d/%s",yy,sampleName.c_str()),"NoCuts"));
+        hgw->Fill(Form("%d",yy), getCutCount(Form("%d/%s",yy,sampleName.c_str()),"genWeight"));
+        h->SetTitle(Form("%d: %s",yy,sampleName.c_str()));
+        h->SetMarkerStyle(28 + (yy%2016));
+        hs->Add(h,"HIST PL");
+        l->AddEntry(h);
+      }
+      ((TH1*)hs->GetStack()->Last())->GetXaxis()->SetRangeUser(0.,2000.);
+      p1->cd();
+      hs->Draw("NOSTACK");
+      p2->cd();
+      hn->SetLineColor(kBlack);
+      hn->Draw("HIST TEXT45");
+      hgw->SetLineColor(kRed);
+      hgw->Draw("HIST SAME");
+      p3->cd();
+      l->SetTextFont(42);
+      l->Draw();
+      c->Print(Form("plots/SampleDiff_%s_%s.png",category.c_str(),histoName.c_str()));
+      delete hs;
+    }
+
+    delete c;
+  };
+
+  diffSampleYear("HMassWZ");
 
   auto getBGStack = [&](int yr, std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
