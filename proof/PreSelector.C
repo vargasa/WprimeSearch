@@ -203,7 +203,7 @@ PreSelector::PreSelector(TTree *)
 
 #ifndef CMSDATA
 Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
-				     const Int_t& option) const {
+                                     const Int_t& option) const {
 
   assert(g!=NULL);
 
@@ -808,7 +808,7 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   if(Mu.pt[0] < 52.)  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
     return GoodIndex;
   const Float_t MaxEta = 2.4;
-  const Float_t MinPt = 10.;
+  const Float_t MinPt = 20.;
   if(abs(Mu.eta[0]) >= MaxEta){
     HCutFlow->FillS("LeadingMuOut");
     return GoodIndex;
@@ -1260,11 +1260,25 @@ void PreSelector::FillC(){
   HLtC->Fill(lt);
 }
 
-void PreSelector::DefineW(Leptons l){
+bool PreSelector::DefineW(Leptons l){
+
+  const Double_t MinRemPt = 20.;
+
+  if (l.pt[l3]< MinRemPt) {
+    /* We should see none here
+       as defined in GoodMuon,
+       GoodElectron */
+    HCutFlow->FillS("FailMinRemPt");
+    return false;
+  }
+
   lep3 = PtEtaPhiMVector(l.pt[l3], l.eta[l3], l.phi[l3], l.mass);
   wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
   nu = PreSelector::GetNu4V(lep3, wmt);
   wb = (lep3 + nu[0]);
+
+  return true;
+
 }
 
 void PreSelector::FillD(){
@@ -1392,7 +1406,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  const Double_t MinRemPt = 20.;
+
 
   Bool_t IsA{},IsB{},IsC{},IsD{};
   Bool_t PairEl{}, PairMu{};
@@ -1496,8 +1510,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodElectron[0];
     }
 
-    if(IsC) DefineW(Els);
-    if(IsD) DefineW(Mus);
+    if(IsC)
+      if(!DefineW(Els))
+        return kFALSE;
+
+    if(IsD)
+      if(!DefineW(Mus))
+        return kFALSE;
 
 #ifndef CMSDATA
     ELPass->Enter(entry);
@@ -1525,29 +1544,19 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 0e3mu
     if(IsD){
-      if(Muon_pt[l3]>MinRemPt){
-        if(Muon_highPtId[l3] == 2){
-          FillCommon(Mus,Mus);
-          FillD();
-        } else {
-          IsD = false;
-          HCutFlow->FillS("Fail0e3muHighPtId");
-        }
+      if(Muon_highPtId[l3] == 2){
+        FillCommon(Mus,Mus);
+        FillD();
       } else {
         IsD = false;
-        HCutFlow->FillS("Fail0e3muMinRemPt");
+        HCutFlow->FillS("Fail0e3muHighPtId");
       }
     }
 
     // 1e2Mu
     if(IsC){
-      if(Electron_pt[l3]>MinRemPt){
-        FillCommon(Mus,Els);
-        FillC();
-      } else {
-        HCutFlow->FillS("Fail1e2muMinRemPt");
-        IsC = false;
-      }
+      FillCommon(Mus,Els);
+      FillC();
     }
   }
 
@@ -1576,8 +1585,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
       l3 = GoodMuon[0];
     }
 
-    if (IsA) DefineW(Els);
-    if (IsB) DefineW(Mus);
+    if (IsA)
+      if (!DefineW(Els))
+        return kFALSE;
+    if (IsB)
+      if (!DefineW(Mus))
+        return kFALSE;
 
 #ifndef CMSDATA
     ELPass->Enter(entry);
@@ -1599,29 +1612,19 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 2e1mu
     if(IsB){
-      if(Muon_pt[l3]>MinRemPt){
-        if(Muon_highPtId[l3] == 2){
-          FillCommon(Els,Mus);
-          FillB();
-        } else {
-          IsB = false;
-          HCutFlow->FillS("Fail2e1muHighPtId");
-        }
+      if(Muon_highPtId[l3] == 2){
+        FillCommon(Els,Mus);
+        FillB();
       } else {
         IsB = false;
-        HCutFlow->FillS("Fail2e1muMinRemPt");
+        HCutFlow->FillS("Fail2e1muHighPtId");
       }
     }
 
     //3e0mu
     if(IsA){
-      if(Electron_pt[l3]>MinRemPt){
-        FillCommon(Els,Els);
-        FillA();
-      } else {
-        IsA = false;
-        HCutFlow->FillS("Fail3e0muMinRemPt");
-      }
+      FillCommon(Els,Els);
+      FillA();
     }
   }
 
@@ -1776,7 +1779,7 @@ void PreSelector::Terminate() {
   HPtEtal1->Write();
   ch->cd(2);
   HPtEtal2->Draw("COLZ");
-  HPtEtal2->Write("COLZ");
+  HPtEtal2->Write();
   ch->cd(3);
   HPtEtal3->Draw("COLZ");
   HPtEtal3->Write();

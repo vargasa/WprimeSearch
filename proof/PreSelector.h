@@ -330,7 +330,7 @@ class PreSelector : public EventSelection {
   std::vector<UInt_t> GetGoodMuon(const Muons&);
   std::vector<UInt_t> GetGoodElectron(const Electrons&);
 
-  void DefineW(Leptons l);
+  bool DefineW(Leptons l);
   Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&) const;
   Bool_t CheckMuonPair(const std::pair<UInt_t,UInt_t>&) const;
   Float_t GetEtaPhiDistance(const float&,const float&,const float&,const float&) const;
