@@ -315,9 +315,14 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
   Double_t sf = -1;
 
 #ifdef Y2016
-  /*FixMe*/
-  const Double_t LumiBF = 3.11; //fb-1
-  const Double_t LumiGH = 5.54;
+  /*
+
+    B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
+    G->H : 7.576 + 8.651                         //fb-1
+    From AN_2019_245_v12
+  */
+  const Double_t LumiBF = 19.689;
+  const Double_t LumiGH = 16.227;
 
   Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
   Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
