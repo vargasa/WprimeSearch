@@ -168,6 +168,31 @@ root -l -b -q "Selector.C(\"files/data/2018/SingleMuon.txt+files/data/2018/EGamm
 This will create `WprimeHistos.root` file which will contain all the histograms
 created on `PreSelector.C` classified by the sample name as a root directory.
 
+
+#### For reference
+```cpp
+// Copy Data histos to different root file
+TFile* fileFrom = TFile::Open("WprimeHistos_Data.root");
+TFile* fileTo = TFile::Open("WprimeHistos_MC.root","UPDATE");
+std::vector<std::string> dirNames = {
+   "2016/SinglePhotonSingleElectronSingleMuon",
+   "2017/SinglePhotonSingleElectronSingleMuon",
+   "2018/SingleMuonEGamma",
+}
+
+for(const auto& dir: dirNames){
+  fileTo->mkdir(dir.c_str());
+  fileFrom->cd(dir.c_str());
+  TObjLink* l = gDirectory->GetListOfKeys()->FirstLink();
+  fileTo->cd(dir.c_str());
+  while(l){
+    std::cout << fileFrom->Get(Form("%s/%s",dir.c_str(),l->GetObject()->GetName()))->Write() << std::endl;
+    l = l->Next();
+  }
+}
+```
+
+
 ### Stack
 
 ```bash
