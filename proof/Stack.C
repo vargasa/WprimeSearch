@@ -451,6 +451,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       l->SetTextFont(42);
       l->Draw();
       c->Print(Form("plots/SampleDiff_%s_%s.png",category.c_str(),histoName.c_str()));
+      hgw->Delete();
+      hn->Delete();
       delete hs;
     }
 
@@ -519,7 +521,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     };
 
     for(const auto& BGN: (BgNames.find(year))->second){
-      TH1D* HTCutFlow = new TH1D(Form("HTCutFlow_%s",BGN.folderName.c_str()),"HT",10,0., 10.);
+      TH1D* HTCutFlow = new TH1D(Form("HTCF_%d_%s",year,BGN.folderName.c_str()),"HT",10,0., 10.);
       std::string folder = Form("%d/%s",year,BGN.folderName.c_str());
       std::cout << "Ploting Wirdo: " << folder << std::endl;
       fillCutH(HTCutFlow,folder);
@@ -530,7 +532,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       legend->AddEntry(HTCutFlow,BGN.legendName.c_str(),"P");
     }
 
-    TH1D* HTCutFlow = new TH1D(Form("HTCutFlow_%s",signal.folderName.c_str()),"HT",10,0., 10.);
+    TH1D* HTCutFlow = new TH1D(Form("HTCF_%d_%s",year,signal.folderName.c_str()),"HT",10,0., 10.);
     std::string folder = Form("%d/%s",year,signal.folderName.c_str());
     fillCutH(HTCutFlow,folder);
     HTCutFlow->SetMarkerColor(kBlack);
@@ -544,6 +546,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     hstc->Draw("NOSTACK");
     legend->Draw();
     c2->Print(Form("%d_%s_HTCutFlow.png",year,signal.folderName.c_str()));
+    delete HTCutFlow;
     delete c2;
   };
 
