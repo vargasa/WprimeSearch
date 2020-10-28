@@ -1913,7 +1913,6 @@ void PreSelector::Terminate() {
   ch->Print(getFullPath("HMassW"));
   chc->cd();
   TH1F HMassW = *HMassWA + *HMassWB + *HMassWC + *HMassWD;
-  HMassW.SetTitle("MassW;#slash{M}_{W};Event count");
   HMassW.SetName("HMassW");
   HMassW.Write();
   HMassW.Draw();
@@ -1937,7 +1936,6 @@ void PreSelector::Terminate() {
   HMassZD->Write("HMassZD");
   ch->Print(getFullPath("HMassZ"));
   TH1F HMassZ = *HMassZA + *HMassZB + *HMassZC + *HMassZD;
-  HMassZ.SetTitle("MassZ;#slash{M}_{Z};Event count");
   HMassZ.SetName("HMassZ");
   HMassZ.Write();
   HMassZ.Draw();
@@ -1961,7 +1959,6 @@ void PreSelector::Terminate() {
   HMassTWD->Write("HMassTWD");
   ch->Print(getFullPath("%s_HMassTW.png"));
   TH1F HMassTW = *HMassTWA + *HMassTWB + *HMassTWC + *HMassTWD;
-  HMassTW.SetTitle("MassTW;#slash{M}_{WT};Event count");
   HMassTW.Draw();
   HMassTW.SetName("HMassTW");
   HMassTW.Write();

@@ -145,10 +145,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   std::vector<HistoInfo> HistNames = {
-    HistoInfo{"HMassZA","3e0#mu;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZB","2e1#mu;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZC","1e2#mu;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZD","0e3#mu;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZA","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZB","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZC","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZD","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
     HistoInfo{"HMassZA_SFUp","3e0#mu SFUp;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
     HistoInfo{"HMassZB_SFUp","2e1#mu SFUp;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
@@ -190,10 +190,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HMassTWC_SFDown","M_{T}^{W} SFDown (1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
     HistoInfo{"HMassTWD_SFDown","M_{T}^{W} SFDown (0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
     /* Another series */
-    HistoInfo{"HMassWZA","WZ Mass (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZB","WZ Mass (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZC","WZ Mass (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZD","WZ Mass (0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZA","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{WZ}^{3e0#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZB","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{WZ}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZC","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{WZ}^{1e2#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZD","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{WZ}^{0e3#mu};Event count/100GeV"},
     /* Another series */
     HistoInfo{"HMassWZA_SFUp","WZ Mass SFUp (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"},
     HistoInfo{"HMassWZB_SFUp","WZ Mass SFUp (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"},
@@ -210,10 +210,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HPileupC","Number of Good Primary Vertices;nPvs;Event count"},
     HistoInfo{"HPileupD","Number of Good Primary Vertices;nPvs;Event count"},
     /* Another Series */
-    HistoInfo{"HMet","MET (Combined);#slash{E}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMassTW","M_{T}^{W} (Combined);M_{WT};Event count/5GeV"},
-    HistoInfo{"HMassZ","Z Mass (Combined);M_{Z}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassWZ","WZ Mass (Combined);M_{Z}(GeV);Event count/100GeV"},
+    HistoInfo{"HMet","MET lll#nu; #slash{E_{T}}(GeV);Event count/10GeV"},
+    HistoInfo{"HMassTW","M_{WT}^{lll#nu}; M_{WT}(GeV);Event count/5GeV"},
+    HistoInfo{"HMassZ","M_{Z}^{lll#nu}; M_{Z}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassWZ","M_{WZ}^{lll#nu}; M_{WZ}(GeV);Event count/100GeV"},
   };
 
   std::vector<HistoInfo> NonStackedHistos = {
@@ -246,8 +246,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::function<void(TH1* h,const Double_t&)> blindHisto = [](TH1* h, const Double_t& wpmass) {
     Int_t nBin = h->FindBin(wpmass);
     h->SetBinContent(nBin,0.);
+    h->SetBinError(nBin,0.);
     h->SetBinContent(nBin+1,0.);
+    h->SetBinError(nBin+1,0.);
     h->SetBinContent(nBin-1,0.);
+    h->SetBinError(nBin-1,0.);
   };
 
   auto blindStack = [&](THStack * hst, const Double_t& wpmass) {
@@ -280,11 +283,17 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     h1->Scale(1./maxBinContent);
   };
 
-  auto fixYRange = [](THStack* hss){
-    TH1 *last = (TH1*)hss->GetStack()->Last();
+  auto getMaxY = [](TH1* h){
+    return h->GetBinContent(h->GetMaximumBin());
+  };
+
+  auto fixYRange = [&](THStack* hss, Double_t maxY = -1.){
     const Float_t LegendSpace = 10.; // Log Scale ;/
-    const Float_t MaxY = last->GetBinContent(last->GetMaximumBin()) * LegendSpace;
-    hss->SetMaximum(MaxY);
+    if ( maxY<0 ) {
+      TH1 *last = (TH1*)hss->GetStack()->Last();
+      maxY = getMaxY(last);
+    }
+    hss->SetMaximum(maxY * LegendSpace);
   };
 
   auto sortStack = [](THStack* hss){
@@ -369,7 +378,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
 
-    Double_t nEvents = getCutCount(folder,"NoCuts");
+    Double_t nEvents = getCutCount(folder,"genWeight");
     Double_t lumiSF = luminosity[yr]*xsec*1e3/nEvents; /* pico*femto^-1=1e-12*1e15=1e3 */
     h->Scale(lumiSF);
 
@@ -573,7 +582,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   for (auto& item: SignalSamples) {
     const int year = item.first;
 
-    auto c1 = new TCanvas("cs","cs",10,10,2400,1200);
+    auto c1 = new TCanvas("cs","cs",10,10,1500,1200);
 
     TGraph* GSelRatioA = new TGraph();
     GSelRatioA->SetTitle("eee#nu");
@@ -611,8 +620,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       printH2Comb(year, signal, "HDeltaRPtZ");
       printH2Comb(year, signal, "HLtMWZ");
 
-      continue;
-
       c1->Clear();
       c1->Divide(2,2);
       Int_t j = 1;
@@ -637,6 +644,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         mainPad->SetTickx();
         mainPad->SetTicky();
 
+        auto cmsLabel = new TPaveText(0.11,0.93,0.3,1.0,"NDC");
+        cmsLabel->SetFillColor(0);
+        cmsLabel->SetBorderSize(0);
+        cmsLabel->AddText("CMS Preliminary");
+        cmsLabel->SetTextAlign(12);
+        cmsLabel->Draw();
+
+        auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
+        lumiLabel->SetFillColor(0);
+        lumiLabel->SetBorderSize(0);
+        lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[year]));
+        lumiLabel->SetTextAlign(12);
+        lumiLabel->Draw();
+
         auto subPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"subPad",0.,0.,1.,0.25);
         subPad->Draw();
         subPad->SetLeftMargin(leftMargin);
@@ -649,28 +670,31 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
         THStack *hs = new THStack("hs","");
         hs = getBGStack(year,hName,legend);
-        blindStack(hs,WpMass);
+        //blindStack(hs,WpMass);
         TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
 
         auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName,signal.xsec);
         legend->AddEntry(hsig,signal.legendName.c_str(),"L");
-        hsig->Draw("SAME");
+        hsig->SetLineColor(kBlue);
+        hsig->SetLineWidth(3);
+        hsig->SetFillColor(0);
         hs->SetTitle(HN.title.c_str());
 
-        fixYRange(hs);
         legend->SetBorderSize(0);
 
         gStyle->SetOptStat(0);
 
         mainPad->cd();
         hs->Draw("HIST");
-        double maxx = last->GetXaxis()->GetBinWidth(0) * (last->FindLastBinAbove(0.)+1);
-        double minx = last->GetXaxis()->GetBinWidth(0) * (last->FindFirstBinAbove(0.)-1);
+        hsig->Draw("HIST SAME");
+        double maxx = last->GetXaxis()->GetBinWidth(0) * (last->FindLastBinAbove(0.25)+1);
+        double minx = last->GetXaxis()->GetBinWidth(0) * (last->FindFirstBinAbove(0.25)-1);
         hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
 
         auto hdata = getDataHisto(year,hName);
         hdata->SetMarkerStyle(kFullCircle);
+        fixYRange(hs,getMaxY(hdata));
         hdata->Draw("SAME P");
         TH1F* herror = getErrorHisto(hs);
         herror->Draw("SAME E2");
@@ -679,14 +703,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
         auto hcdata = getRatio(hdata,hs);
         subPad->cd();
-        hcdata->SetMaximum(2.);
-        hcdata->SetMinimum(0.);
-        hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+        subPad->SetGrid();
+        hcdata->SetMaximum(1.9);
+        hcdata->SetMinimum(0.1);
         hcdata->Draw();
-        TLine *line = new TLine(hdata->GetXaxis()->GetXmin(),1.,
-                              hdata->GetXaxis()->GetXmax(),1.);
-        line->SetLineColor(kBlack);
-        line->Draw();
+        subPad->SetFrameLineWidth(1);
+        hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+        hcdata->GetYaxis()->SetLabelSize(0.15);
+        hcdata->GetYaxis()->SetTitleOffset(2.5);
+        hcdata->GetXaxis()->SetTitleOffset(9.0);
 
         ++j;
         mainPad->cd();
