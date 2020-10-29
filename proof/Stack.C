@@ -34,44 +34,44 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         {
           BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
             kOrange,5.052},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-            kOrange+7,5765.},
+          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
+            kBlue,1.325},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
             kBlue-2,87.315},
           BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
             kRed+3,123.9},
-          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
-            kBlue,1.325}
+          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+            kOrange+7,5765.},
         }
       },
       {
         2017,
         {
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_NEWPMX",
-            kOrange+7,5765.},
-          BackgroundInfo{"TTJets","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_NEWPMX",
-            kBlue-2,831.76},
           BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
             kOrange,62.17},
+          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
+            kBlue,1.325},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_NEWPMX",
+            kBlue-2,831.76},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kRed+3,123.9},
-          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
-            kBlue,0.1325},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_NEWPMX",
+            kOrange+7,5765.},
         }
       },
       {
         2018,
         {
-          BackgroundInfo{"DYJetsToLL","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kOrange+7,5765.},
-          BackgroundInfo{"TTJets","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kBlue-2,831.76},
           BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kOrange,5.052},
+          BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kBlue,1.325},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kBlue-2,831.76},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kRed+3,123.9},
-          BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kBlue,1.325}
+          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kOrange+7,5765.},
         }
       }
     };
@@ -150,30 +150,30 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HMassZC","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
     HistoInfo{"HMassZD","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
-    HistoInfo{"HMassZA_SFUp","3e0#mu SFUp;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZB_SFUp","2e1#mu SFUp;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZC_SFUp","1e2#mu SFUp;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZD_SFUp","0e3#mu SFUp;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZA_SFUp","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZB_SFUp","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZC_SFUp","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZD_SFUp","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
-    HistoInfo{"HMassZA_SFDown","3e0#mu SFDown;M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZB_SFDown","2e1#mu SFDown;M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZC_SFDown","1e2#mu SFDown;M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZD_SFDown","0e3#mu SFDown;M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZA_SFDown","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZB_SFDown","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZC_SFDown","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZD_SFDown","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
-    HistoInfo{"HMetA","3e0#mu;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetB","2e1#mu;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetC","1e2#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetD","0e3#mu;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetA","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetB","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetC","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetD","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
     /* Another series */
-    HistoInfo{"HMetA_SFUp","3e0#mu SFUp;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetB_SFUp","2e1#mu SFUp;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetC_SFUp","1e2#mu SFUp;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetD_SFUp","0e3#mu SFUp;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetA_SFUp","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetB_SFUp","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetC_SFUp","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T};#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetD_SFUp","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
     /* Another series */
-    HistoInfo{"HMetA_SFDown","3e0#mu SFDown;#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetB_SFDown","2e1#mu SFDown;#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetC_SFDown","1e2#mu SFDown;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetD_SFDown","0e3#mu SFDown;#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetA_SFDown","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetB_SFDown","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetC_SFDown","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T};#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMetD_SFDown","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
     /* Another series */
     HistoInfo{"HMassTWA","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
     HistoInfo{"HMassTWB","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
@@ -195,15 +195,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HMassWZC","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{WZ}^{1e2#mu};Event count/100GeV"},
     HistoInfo{"HMassWZD","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{WZ}^{0e3#mu};Event count/100GeV"},
     /* Another series */
-    HistoInfo{"HMassWZA_SFUp","WZ Mass SFUp (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZB_SFUp","WZ Mass SFUp (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZC_SFUp","WZ Mass SFUp (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZD_SFUp","WZ Mass SFUp (0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"}, 
+    HistoInfo{"HMassWZA_SFUp","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{Z}^{3e0#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZB_SFUp","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{Z}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZC_SFUp","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{Z}^{1e2#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZD_SFUp","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{Z}^{0e3#mu};Event count/100GeV"}, 
     /* Another series */
-    HistoInfo{"HMassWZA_SFDown","WZ Mass SFDown (3e0#mu);M_{Z}^{3e0#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZB_SFDown","WZ Mass SFDown (2e1#mu);M_{Z}^{2e1#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZC_SFDown","WZ Mass SFDown (1e2#mu);M_{Z}^{1e2#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZD_SFDown","WZ Mass SFDown(0e3#mu);M_{Z}^{0e3#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZA_SFDown","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{Z}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZB_SFDown","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{Z}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZC_SFDown","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{Z}^{1e2#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZD_SFDown","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{Z}^{0e3#mu};Event count/100GeV"},
     /* Another series */
     HistoInfo{"HPileupA","Number of Good Primary Vertices;nPvs;Event count"},
     HistoInfo{"HPileupB","Number of Good Primary Vertices;nPvs;Event count"},
@@ -245,12 +245,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   std::function<void(TH1* h,const Double_t&)> blindHisto = [](TH1* h, const Double_t& wpmass) {
     Int_t nBin = h->FindBin(wpmass);
-    h->SetBinContent(nBin,0.);
-    h->SetBinError(nBin,0.);
-    h->SetBinContent(nBin+1,0.);
-    h->SetBinError(nBin+1,0.);
-    h->SetBinContent(nBin-1,0.);
-    h->SetBinError(nBin-1,0.);
+    for(int i = -1; i < 20; ++i){
+      h->SetBinContent(nBin+i,0.);
+      h->SetBinError(nBin+i,0.);
+    }
   };
 
   auto blindStack = [&](THStack * hst, const Double_t& wpmass) {
@@ -378,7 +376,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
 
-    Double_t nEvents = getCutCount(folder,"genWeight");
+    Double_t nEvents = getCutCount(folder,"NoCuts");
     Double_t lumiSF = luminosity[yr]*xsec*1e3/nEvents; /* pico*femto^-1=1e-12*1e15=1e3 */
     h->Scale(lumiSF);
 
@@ -509,7 +507,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     auto fillCutH = [&] (TH1* h, std::string& folder){
       h->Fill("nEvents", 1.);
-      double zSel = getCutCount(folder,"+NoCuts-FailHLT-FailFlags-MET_pt<30-lep<3-goodLep<3-NoPairs-FailZMassWindow");
+      double pSel = getCutCount(folder,"+NoCuts-FailHLT-FailFlags");
+      h->Fill("HLTs & Flags",pSel/getCutCount(folder,"NoCuts"));
+      pSel -= getCutCount(folder,"+MET_pt<30+lep<3+goodLep<3");
+      h->Fill("PreSelection",pSel/getCutCount(folder,"NoCuts"));
+      double zSel = pSel - getCutCount(folder,"+NoPairs+FailZMassWindow");
       h->Fill("ZSelection",zSel/getCutCount(folder,"NoCuts"));
       double wSel =  zSel - getCutCount(folder,"+FailZl1PtCut+FailZDistCut");
       h->Fill("WSelection",wSel/getCutCount(folder,"NoCuts"));
@@ -523,10 +525,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     for(const auto& BGN: (BgNames.find(year))->second){
       TH1D* HTCutFlow = new TH1D(Form("HTCF_%d_%s",year,BGN.folderName.c_str()),"HT",10,0., 10.);
       std::string folder = Form("%d/%s",year,BGN.folderName.c_str());
-      std::cout << "Ploting Wirdo: " << folder << std::endl;
       fillCutH(HTCutFlow,folder);
       HTCutFlow->SetMarkerColor(BGN.color);
-      HTCutFlow->SetMarkerStyle((BGN.color)%28);
+      HTCutFlow->SetMarkerStyle(4);
       HTCutFlow->SetLineWidth(0);
       hstc->Add(HTCutFlow);
       legend->AddEntry(HTCutFlow,BGN.legendName.c_str(),"P");
@@ -679,7 +680,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
         auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName,signal.xsec);
         legend->AddEntry(hsig,signal.legendName.c_str(),"L");
-        hsig->SetLineColor(kBlue);
+        hsig->SetLineColor(kBlack);
         hsig->SetLineWidth(3);
         hsig->SetFillColor(0);
         hs->SetTitle(HN.title.c_str());
