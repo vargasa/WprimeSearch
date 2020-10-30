@@ -820,7 +820,7 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   }
   GoodIndex.reserve(10);
   for (UInt_t i=0; i<*Mu.n;i++){
-    if(Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
+    if( Muon_highPtId[i] >=1 && Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
   return GoodIndex;
@@ -1414,8 +1414,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
   Bool_t IsA{},IsB{},IsC{},IsD{};
   Bool_t PairEl{}, PairMu{};
 
-  Float_t MinZMass = 70.;
-  Float_t MaxZMass = 111.;
+  const Float_t MinZMass = 70.;
+  const Float_t MaxZMass = 111.;
 
   ZPairInfo *zt = nullptr;
   ZPairInfo ztel;
@@ -1490,13 +1490,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairMu){
 
-    Bool_t TrkHighPt = (Muon_highPtId[l1] >= 1) and (Muon_highPtId[l2] >= 1);
-
-    if (!TrkHighPt) {
-      HCutFlow->FillS("FailZTrkHighPt");
-      return kFALSE;
-    }
-
     Bool_t GlobalHighPtl1 = (Muon_highPtId[l1] == 2);
     Bool_t GlobalHighPtl2 = (Muon_highPtId[l2] == 2);
 
@@ -1515,7 +1508,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     for(auto i: GoodMuon){
       if(i!=l1 && i!=l2)
-        if(Muon_highPtId[GoodMuon[i]] == 2)
+        if(Muon_highPtId[i] == 2)
           WCand.emplace_back(i);
     }
 

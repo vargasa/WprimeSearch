@@ -25,8 +25,8 @@ using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
 struct ZPairInfo{
 
-  Float_t Delta = -1;
-  Float_t Mass = -1;
+  Float_t Delta = -1.f;
+  Float_t Mass = -1.f;
   std::pair<UInt_t,UInt_t> Pair;
 
   Bool_t empty(){
