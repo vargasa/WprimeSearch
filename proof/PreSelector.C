@@ -820,8 +820,7 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   }
   GoodIndex.reserve(10);
   for (UInt_t i=0; i<*Mu.n;i++){
-    if(Mu.tightId[i] &&
-       Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
+    if(Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
   return GoodIndex;
@@ -1412,13 +1411,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
 
-
   Bool_t IsA{},IsB{},IsC{},IsD{};
   Bool_t PairEl{}, PairMu{};
 
   Float_t MinZMass = 70.;
   Float_t MaxZMass = 111.;
-
 
   ZPairInfo *zt = nullptr;
   ZPairInfo ztel;
@@ -1493,8 +1490,33 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairMu){
 
+    Bool_t TrkHighPt = (Muon_highPtId[l1] >= 1) and (Muon_highPtId[l2] >= 1);
+
+    if (!TrkHighPt) {
+      HCutFlow->FillS("FailZTrkHighPt");
+      return kFALSE;
+    }
+
+    Bool_t GlobalHighPtl1 = (Muon_highPtId[l1] == 2);
+    Bool_t GlobalHighPtl2 = (Muon_highPtId[l2] == 2);
+
+    if (!(GlobalHighPtl1 or GlobalHighPtl2)) {
+      HCutFlow->FillS("FailZGlbHighPt");
+      return kFALSE;
+    } else {
+      if (GlobalHighPtl1 and !Muon_isPFcand[l1]) {
+        HCutFlow->FillS("FailZGlbHighPt&PFCand");
+        return kFALSE;
+      } else if (GlobalHighPtl2 and !Muon_isPFcand[l2]) {
+        HCutFlow->FillS("FailZGlbHighPt&PFCand");
+        return kFALSE;
+      }
+    }
+
     for(auto i: GoodMuon){
-      if(i!=l1 && i!=l2) WCand.emplace_back(i);
+      if(i!=l1 && i!=l2)
+        if(Muon_highPtId[GoodMuon[i]] == 2)
+          WCand.emplace_back(i);
     }
 
     if(WCand.size() > 0) {
@@ -1527,12 +1549,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     ELPass->Enter(entry);
 #endif
 
-    Bool_t ZHighPtIdCut = Muon_highPtId[l1]>=1 && Muon_highPtId[l2]>=2;
-    if(!ZHighPtIdCut){
-      HCutFlow->FillS("FailZHighPtIdCut");
-      return kFALSE;
-    }
-
     const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
     Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
     if(l1l3DistCut){
@@ -1554,7 +1570,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
         FillD();
       } else {
         IsD = false;
-        HCutFlow->FillS("Fail0e3muHighPtId");
+        HCutFlow->FillS("FailWMuonGlbHighPt");
       }
     }
 
@@ -1568,6 +1584,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairEl){
 
+    auto WMuonOk = [&](){
+      Bool_t ok{};
+      for (const auto& i: GoodMuon) {
+        if (Muon_highPtId[GoodMuon[i]] == 2) {
+          l3 = GoodMuon[i];
+          ok = true;
+          break;
+        }
+      }
+      return ok;
+    };
+
     for(auto i: GoodElectron){
       if(i!=l1 && i!=l2) WCand.emplace_back(i);
     }
@@ -1576,7 +1604,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
       if(GoodMuon.size() > 0){
         if(Muon_pt[GoodMuon[0]] > Electron_pt[WCand[0]] ){
           IsB = true;
-          l3 = GoodMuon[0];
+          if (!WMuonOk()) {
+            HCutFlow->FillS("FailWMuonGlbHighPt");
+            return kFALSE;
+          }
         } else {
           IsA = true;
           l3 = WCand[0];

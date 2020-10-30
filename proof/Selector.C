@@ -74,11 +74,11 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFDb->Add(SFMuonTriggerGH);
   fProof->AddInputData(SFDb);
   TFile *f3 = TFile::Open("files/mc/2016/sf/RunBCDEF_SF_ID.root","READ");
-  auto SFMuonIDBF = static_cast<TH2D*>(f3->Get("NUM_TightID_DEN_genTracks_eta_pt"));
+  auto SFMuonIDBF = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"));
   SFMuonIDBF->SetName("SFMuonIDBF");
   SFDb->Add(SFMuonIDBF);
   TFile *f4 = TFile::Open("files/mc/2016/sf/RunGH_SF_ID.root","READ");
-  auto SFMuonIDGH = static_cast<TH2D*>(f4->Get("NUM_TightID_DEN_genTracks_eta_pt"));
+  auto SFMuonIDGH = static_cast<TH2D*>(f4->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"));
   SFMuonIDGH->SetName("SFMuonIDGH");
   SFDb->Add(SFMuonIDGH);
   TFile *f5 = TFile::Open("files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","READ");
@@ -98,7 +98,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFDb->Add(SFMuonTrigger);
   TFile *f3 = TFile::Open("files/mc/2017/sf/RunBCDEF_SF_ID_2017.root","READ");
   // SDMuonID provides TH2 x(pt) y(abseta)
-  auto SFMuonID = static_cast<TH2D*>(f3->Get("NUM_TightID_DEN_genTracks_pt_abseta"));
+  auto SFMuonID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_genTracks_pair_newTuneP_probe_pt_abseta"));
   SFMuonID->SetName("SFMuonID");
   SFDb->Add(SFMuonID);
   TFile *f5 = TFile::Open("files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
@@ -115,8 +115,8 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFMuonTrigger->SetName("SFMuonTrigger");
   SFDb->SetName("SFDb");
   SFDb->Add(SFMuonTrigger);
-  TFile *f3 = TFile::Open("files/mc/2017/sf/RunBCDEF_SF_ID_2017.root","READ");
-  auto SFMuonID = static_cast<TH2D*>(f3->Get("NUM_TightID_DEN_genTracks_pt_abseta"));
+  TFile *f3 = TFile::Open("files/mc/2018/sf/RunABCD_SF_ID.root","READ");
+  auto SFMuonID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_pair_newTuneP_probe_pt_abseta"));
   SFMuonID->SetName("SFMuonID");
   SFDb->Add(SFMuonID);
   TFile *f5 = TFile::Open("files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
