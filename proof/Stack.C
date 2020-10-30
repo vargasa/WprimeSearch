@@ -582,6 +582,33 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c2;
   };
 
+  std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
+
+    TCanvas* cc = new TCanvas("cc","cc");
+    TH1D* hc = new TH1D("hc",Form("BG Contribution %d",year),6,0.,6.);
+
+    TIter b = hsbg->begin();
+
+    Double_t total = 0.;
+
+    while(b.Next()){
+      auto histo = static_cast<TH1F*>(*b);
+      hc->Fill(histo->GetTitle(),histo->Integral());
+      total += histo->Integral();
+    }
+
+    if(hsig){
+      hc->Fill("W'",hsig->Integral());
+      total += hsig->Integral();
+    }
+
+    hc->Scale(1/total);
+    hc->Draw("HIST TEXT45");
+    cc->Print(Form("plots/%d/%d_BGContrib.png",year,year));
+    delete hc;
+    delete cc;
+  };
+
 
   for (auto& item: SignalSamples) {
     const int year = item.first;
@@ -684,6 +711,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         hsig->SetLineWidth(3);
         hsig->SetFillColor(0);
         hs->SetTitle(HN.title.c_str());
+        if (std::string(hName).compare("HMassWZ")==0) printBgContrib(year,hs,hsig);
 
         legend->SetBorderSize(0);
 
