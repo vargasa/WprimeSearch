@@ -11,10 +11,11 @@ Int_t PileupReweighing(){
       {
         2016,
         {
-          "DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-          "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-          "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
           "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
+          "ZZTo4L_13TeV_powheg_pythia8",
+          "TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
+          "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
+          "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
           "WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph",
           "WprimeToWZToWlepZlep_narrow_M-800_13TeV-madgraph",
           "WprimeToWZToWlepZlep_narrow_M-1000_13TeV-madgraph",
@@ -28,40 +29,16 @@ Int_t PileupReweighing(){
           "WprimeToWZToWlepZlep_narrow_M-3500_13TeV-madgraph",
           "WprimeToWZToWlepZlep_narrow_M-4000_13TeV-madgraph",
           "WprimeToWZToWlepZlep_narrow_M-4500_13TeV-madgraph",
-          "ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-          "ZZTo4L_13TeV_powheg_pythia8"
         }
       },
       {
         2017,
         {
-          "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
-          "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-          "TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
-          "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8"
-          "WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",
-          "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
           "ZZTo4L_13TeV_powheg_pythia8",
-        }
-      },
-      {
-        2018,
-        {
-          "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
-          "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-          "TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
-          "WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+          "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_NEWPMX",
+          "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_NEWPMX",
           "WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",
           "WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",
           "WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",
@@ -74,8 +51,28 @@ Int_t PileupReweighing(){
           "WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",
           "WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",
           "WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",
-          "ZGToLLG_01J_LoosePtlPtg_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-          "ZZTo4L_13TeV_powheg_pythia8_TuneCP5",
+        }
+      },
+      {
+        2018,
+        {
+          "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",
         }
       }
     };

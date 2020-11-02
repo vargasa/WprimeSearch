@@ -791,12 +791,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         legend->AddEntry(hsig,signal.legendName.c_str(), "L");
 
         if(hp.name == "HPileup"){
-          // auto hdata = getDataHisto(year,hp.name);
-          // hdata->SetLineColor(kRed);
-          // hdata->SetLineWidth(2);
-          // normalizeHisto(hdata);
-          // hdata->Draw("HIST SAME");
-          // legend->AddEntry(hdata,"Data","L");
+           auto hdata = getDataHisto(year,hp.name);
+           hdata->SetLineColor(kRed);
+           hdata->SetLineWidth(2);
+           normalizeHisto(hdata);
+           hdata->Draw("HIST SAME");
+           legend->AddEntry(hdata,"Data","L");
         }
 
         ++j;
