@@ -1,3 +1,5 @@
+#include <iostream>
+#include <fstream>
 #include "THStack.h"
 
 void Stack(std::string FileName = "WprimeHistos_all.root"){
@@ -546,7 +548,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     hstc->SetTitle("Ratio [%] of events passing set of cuts");
     hstc->Draw("NOSTACK");
     legend->Draw();
-    c2->Print(Form("%d_%s_HTCutFlow.png",year,signal.folderName.c_str()));
+    c2->Print(Form("plots/%d/%s_HTCutFlow.png",year,signal.folderName.c_str()));
     delete HTCutFlow;
     delete c2;
   };
@@ -580,6 +582,50 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     h2Data->Draw("SAME");
     c2->Print(Form("plots/%d/%s_%s.png",yr,signal.folderName.c_str(),histoLabel.c_str()));
     delete c2;
+  };
+
+  auto printDataCard = [&] (const int& year, const int& wpmass,
+                            THStack* hsbg, TH1* hsig, TH1* hdata) {
+    ofstream dcFile;
+    dcFile.open(Form("plots/%d/%d_%d_DataCard.txt", year, year, wpmass));
+
+    std::unordered_map<Int_t, Float_t> lumiSyst = {
+      { 2016, 0.025 }, /*AN2018_298_v14*/
+      { 2017, 0.023 },
+      { 2018, 0.025 },
+    };
+
+    std::string binName = "modA";
+    std::string bin = "bin\t" + binName + "\t";
+    std::string process  = Form("process\t%s_%d\t","Wp",wpmass);
+    std::string processn = "process\t0\t";
+    std::string rate     = Form("rate\t%.2f\t",hsig->Integral());
+    std::string unc1     = Form("lumi_13TeV\tlnN\t%.4f\t",1. + lumiSyst[year]);
+
+    for(uint i = 1; i <= hsbg->GetNhists(); ++i){
+      bin += binName + "\t";
+      processn += Form("%d\t",i);
+      unc1 += Form("%.4f\t",1. + lumiSyst[year]);
+    }
+
+    TIter b = hsbg->begin();
+
+    while(b.Next()){
+      auto histo = static_cast<TH1F*>(*b);
+      process += Form("%s\t",histo->GetTitle());
+      rate += Form("%.2f\t", histo->Integral());
+    }
+
+    dcFile << "imax\t1\njmax\t" << hsbg->GetNhists() << "\nkmax\t1\n";
+    dcFile << "------------\n";
+    dcFile<< "bin\t" << binName << std::endl;
+    dcFile << "observation\t" << hdata->Integral() << std::endl;
+    dcFile << "------------\n";
+    dcFile << bin << std::endl << process << std::endl
+    << processn << std::endl << rate << std::endl;
+    dcFile << "------------\n";
+    dcFile << unc1 << std::endl;
+
   };
 
   std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
@@ -711,7 +757,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         hsig->SetLineWidth(3);
         hsig->SetFillColor(0);
         hs->SetTitle(HN.title.c_str());
-        if (std::string(hName).compare("HMassWZ")==0) printBgContrib(year,hs,hsig);
 
         legend->SetBorderSize(0);
 
@@ -732,6 +777,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         herror->Draw("SAME E2");
         blindHisto(hdata,WpMass);
         legend->AddEntry(hdata, Form("Data%d",year));
+
+        if (std::string(hName).compare("HMassWZ")==0){
+          printBgContrib(year,hs,hsig);
+          printDataCard(year,WpMass,hs,hsig,hdata);
+        }
+
 
         auto hcdata = getRatio(hdata,hs);
         subPad->cd();

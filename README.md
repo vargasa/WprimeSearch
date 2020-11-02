@@ -199,6 +199,13 @@ for(const auto& dir: dirNames){
 root -l -b -1 "Stack.C(\"WprimeHistos_all.root\")";
 ```
 
+### Fix names for DataCards
+
+```bash
+sed -i 's/t#bar{t}/TT/' plots/*/*.txt
+sed -i 's/Z#gamma/ZG/' plots/*/*.txt
+```
+
 Where "_all" stands for MC + Data.
 
 ### References:
