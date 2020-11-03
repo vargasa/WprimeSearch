@@ -371,34 +371,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return count;
   };
 
-  auto getMCHisto = [&](std::string folder, std::string hName, Float_t xsec){
+  auto applyLumiSF = [&](TH1* h, std::string folder, const Float_t& xsec){
     Int_t yr = std::stoi(folder.substr(0,folder.rfind("/")+1));
+    Double_t nEvents = getCutCount(folder,"NoCuts");
+    Double_t lumiSF = luminosity[yr]*xsec*1e3/nEvents; /* pico*femto^-1=1e-12*1e15=1e3 */
+    h->Scale(lumiSF);
+  };
+
+  auto getMCHisto = [&](std::string folder, std::string hName){
     std::string hpath = Form("%s/%s",folder.c_str(),hName.c_str());
     std::clog << "Getting MCHisto: " << hpath << std::endl;
     auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1F*>(h->Clone());
-
-    Double_t nEvents = getCutCount(folder,"NoCuts");
-    Double_t lumiSF = luminosity[yr]*xsec*1e3/nEvents; /* pico*femto^-1=1e-12*1e15=1e3 */
-    h->Scale(lumiSF);
-
-    std::cout << "Sample: " << folder.substr(0,30)
-    << "\t" << hName.substr(0,10)
-    << "\tnEvents :" << (long int)nEvents
-    << "\txsec: " << xsec
-    << "\tLumiSF: " << lumiSF
-    << "\tIntegral: " << h->Integral() << std::endl;
-
-    double zSel = getCutCount(folder,"+NoCuts-FailHLT-FailFlags-MET_pt<30-lep<3-goodLep<3-NoPairs-FailZMassWindow");
-    double wSel =  zSel - getCutCount(folder,"+FailZl1PtCut+FailZDistCut");
-    double wzSel = wSel - getCutCount(folder,"+FailZHighPtIdCut+Faill1l3DistCut+Faill2l3DistCut");
-    double nChannel = getCutCount(folder,"+0e3mu+1e2mu+2e1mu+3e0mu");
-    std::cout << "CutFlow: " << folder.substr(0,30)
-    << "\tZ Selection: " << zSel/getCutCount(folder,"NoCuts")
-    << "\tW Selection: " << wSel/getCutCount(folder,"NoCuts")
-    << "\tWZ Selection: " << wzSel/getCutCount(folder,"NoCuts")
-    << "\tnChannel: " << nChannel/getCutCount(folder,"NoCuts") << std::endl;
-
     return h;
   };
 
@@ -429,7 +413,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         if (sampleName.size()==0) continue;
         std::clog << Form("** Printing: %d: %s", yy, sampleName.c_str()) << std::endl;
         std::string folder = Form("%d/%s",yy,sampleName.c_str());
-        TH1* h = static_cast<TH1*>(getMCHisto(folder,histoName,BGN.xsec)->Clone());
+        TH1* h = static_cast<TH1*>(getMCHisto(folder,histoName)->Clone());
+        applyLumiSF(h, folder, BGN.xsec);
         h->SetLineColor(yy%2015);
         h->SetMarkerColor(yy%2015);
         hn->Fill(Form("%d",yy), getCutCount(Form("%d/%s",yy,sampleName.c_str()),"NoCuts"));
@@ -465,7 +450,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     THStack* hstck = new THStack();
     Int_t prevColor = -1;
     for (auto BGN: BgNames.find(yr)->second) {
-      auto h = getMCHisto(Form("%d/%s",yr,BGN.folderName.c_str()),hname,BGN.xsec);
+      auto h = getMCHisto(Form("%d/%s",yr,BGN.folderName.c_str()),hname);
+      applyLumiSF(h, Form("%d/%s",yr,BGN.folderName.c_str()), BGN.xsec);
       h->SetFillStyle(1001);
       h->SetTitle(BGN.legendName.c_str());
       h->SetFillColor(BGN.color);
@@ -489,7 +475,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hdata = static_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),tmp.c_str())));
     }
     hdata = static_cast<TH1F*>(hdata->Clone());
-    std::cout << "Data Integral " << hName << "\t" << hdata->Integral() << std::endl;
     return hdata;
   };
 
@@ -750,9 +735,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         //blindStack(hs,WpMass);
         TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
-
-        auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName,signal.xsec);
-        legend->AddEntry(hsig,signal.legendName.c_str(),"L");
+        auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName);
+        applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+        hsig->SetTitle(signal.legendName.c_str());
+        legend->AddEntry( hsig,signal.legendName.c_str(),"L");
         hsig->SetLineColor(kBlack);
         hsig->SetLineWidth(3);
         hsig->SetFillColor(0);
