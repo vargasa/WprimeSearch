@@ -640,6 +640,55 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete cc;
   };
 
+  auto getIntegral = [](TH1* h, const float& xmin, const float& xmax){
+
+    Double_t integral = 0.;
+    if (xmax < xmin) throw;
+
+    const int startBin = h->FindBin(xmin);
+    const int endBin   = h->FindBin(xmax);
+    if (startBin > endBin) throw;
+
+    for(int i = startBin; i <= endBin; ++i){
+      integral += h->GetBinContent(i);
+    }
+
+    return integral;
+  };
+
+  auto getPunziSignificance = [&](THStack* hsbg,
+                                  const std::string signalFolder,
+                                  const std::string histoName){
+
+    Int_t wpmass;
+    std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
+    std::smatch sm;
+    if(std::regex_search(signalFolder,sm,rexp1)){
+      wpmass = std::stoi(sm[3]);
+    } else {
+      throw("Punzi w/o signal");
+    }
+
+    auto hsig = getMCHisto(signalFolder,histoName);
+    const float width = 0.15; /* 15% Window */
+    const float massMin = wpmass * (1-width);
+    const float massMax = wpmass * (1+width);
+
+    TIter b = hsbg->begin();
+
+    Double_t bgIntegral = 0.;
+
+    while(b.Next()){
+      auto histo = static_cast<TH1F*>(*b);
+      bgIntegral += getIntegral(histo, massMin, massMax);
+    }
+
+    Double_t sigIntegral = getIntegral(hsig, massMin, massMax) / getCutCount(signalFolder,"NoCuts");
+
+    return (sigIntegral / ( 1. + sqrt(bgIntegral)));
+
+  };
+
 
   for (auto& item: SignalSamples) {
     const int year = item.first;
@@ -661,6 +710,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GMuTgEff->SetTitle(Form("Muon HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",year));
     TGraph* GHLTEff = new TGraph();
     GHLTEff->SetTitle(Form("HLT Efficiency (El OR Mu) on Signal;Wprime Mass Point %d;Ratio",year));
+
+    TGraph* GPunziS = new TGraph();
+    GPunziS->SetTitle(Form("Punzi Significance vs M(WZ) %d; M(WZ); Punzi Significance", year));
 
     for (auto signal: item.second) {
       Int_t WpMass;
@@ -736,6 +788,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
         auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName);
+        if (std::string(hName).compare("HMassWZ") == 0)
+          GPunziS->SetPoint(GPunziS->GetN(), WpMass,
+                            getPunziSignificance(hs, Form("%d/%s",year,signal.folderName.c_str()), hName));
         applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
         hsig->SetTitle(signal.legendName.c_str());
         legend->AddEntry( hsig,signal.legendName.c_str(),"L");
@@ -918,6 +973,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GHLTEff->Draw("P");
     gPad->BuildLegend();
     c1->Print(Form("plots/%d/%d_SignalTriggerEfficiency.png",year,year));
+
+    // Punzi Significance plot
+    c1->Clear();
+    c1->cd();
+    GPunziS->SetMarkerStyle(20);
+    GPunziS->Draw("AP");
+    c1->Print(Form("plots/%d/%d_PonziSignificance.png",year,year));
 
   }
 
