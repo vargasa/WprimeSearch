@@ -723,12 +723,61 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  for (auto& item: SignalSamples) {
-    const int year = item.first;
+  std::function<void(const int&)> plotHLTSelectionRatio = [&] (const int& yr) {
 
-    auto c1 = new TCanvas("cs","cs",10,10,1500,1200);
+    TCanvas* c1 = new TCanvas("c1","c1");
 
-    plotPunziSignificance(year);
+    TGraph* GElTgEff = new TGraph();
+    GElTgEff->SetTitle(Form("Electron HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio [EventsPassingHLTs/EventsGenerated]",yr));
+    TGraph* GMuTgEff = new TGraph();
+    GMuTgEff->SetTitle(Form("Muon HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",yr));
+    TGraph* GHLTEff = new TGraph();
+    GHLTEff->SetTitle(Form("HLT Efficiency (El OR Mu) on Signal;Wprime Mass Point %d;Ratio",yr));
+
+    for (auto& signal: SignalSamples.find(yr)->second) {
+      const Int_t WpMass = getWpMassFromName(signal.folderName);
+      addCutEff(GElTgEff, Form("%d/%s",yr,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
+      addCutEff(GMuTgEff, Form("%d/%s",yr,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
+      addCutEff(GHLTEff, Form("%d/%s",yr,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
+    }
+
+    auto invertGraph = [] (TGraph *g){
+      Double_t* xi = g->GetX();
+      Double_t* yi = g->GetY();
+      Double_t xx = 0.;
+      Double_t yy = 0.;
+      for(int i = 0; i < g->GetN(); ++i){
+        g->GetPoint(i,xx,yy);
+        xi[i] = xx;
+        yi[i] = 1. - yy;
+      }
+    };
+
+    GElTgEff->SetMarkerStyle(22);
+    GElTgEff->SetMarkerColor(kBlack);
+    invertGraph(GElTgEff);
+    GElTgEff->Draw("AP");
+    GElTgEff->GetYaxis()->SetRangeUser(0, 1.);
+    GMuTgEff->SetMarkerStyle(23);
+    GMuTgEff->SetMarkerColor(kBlue);
+    invertGraph(GMuTgEff);
+    GMuTgEff->Draw("P");
+    GHLTEff->SetMarkerStyle(24);
+    GHLTEff->SetMarkerColor(kRed);
+    invertGraph(GHLTEff);
+    GHLTEff->Draw("P");
+    gPad->BuildLegend();
+    c1->Print(Form("plots/%d/%d_SignalTriggerEfficiency.png",yr,yr));
+
+    delete c1;
+  };
+
+  std::function<void(const int&)> plotSelectionRatio = [&] (const int& yr) {
+
+    const std::string fromHisto = "HMassWZ";
+    const Int_t nMassPoints = 14;
+
+    TCanvas* c1 = new TCanvas("c1","c1");
 
     TGraph* GSelRatioA = new TGraph();
     GSelRatioA->SetTitle("eee#nu");
@@ -739,25 +788,74 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TGraph* GSelRatioD = new TGraph();
     GSelRatioD->SetTitle("#mu#mu#mu#nu");
 
-    TGraph* GElTgEff = new TGraph();
-    GElTgEff->SetTitle(Form("Electron HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio [EventsPassingHLTs/EventsGenerated]",year));
-    TGraph* GMuTgEff = new TGraph();
-    GMuTgEff->SetTitle(Form("Muon HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",year));
-    TGraph* GHLTEff = new TGraph();
-    GHLTEff->SetTitle(Form("HLT Efficiency (El OR Mu) on Signal;Wprime Mass Point %d;Ratio",year));
+    for (auto& signal: SignalSamples.find(yr)->second) {
+      const Int_t WpMass = getWpMassFromName(signal.folderName);
+      addCutEff(GSelRatioA, Form("%d/%s",yr,signal.folderName.c_str()), "3e0mu", "NoCuts", WpMass);
+      addCutEff(GSelRatioB, Form("%d/%s",yr,signal.folderName.c_str()), "2e1mu", "NoCuts", WpMass);
+      addCutEff(GSelRatioC, Form("%d/%s",yr,signal.folderName.c_str()), "1e2mu", "NoCuts", WpMass);
+      addCutEff(GSelRatioD, Form("%d/%s",yr,signal.folderName.c_str()), "0e3mu", "NoCuts", WpMass);
+    }
 
+    TGraph GInclusive = TGraph(nMassPoints);
+    GInclusive.SetTitle("Inclusive");
+
+    auto addToInclusive = [&](TGraph* g){
+      Double_t* xi = GInclusive.GetX();
+      Double_t* yi = GInclusive.GetY();
+      Double_t xx = 0.;
+      Double_t yy = 0.;
+      for(int i = 0; i < g->GetN(); ++i){
+        g->GetPoint(i,xx,yy);
+        xi[i] = xx;
+        yi[i] += yy;
+      }
+    };
+
+    GSelRatioA->SetMarkerStyle(20);
+    GSelRatioA->SetMarkerColor(kBlue);
+    GSelRatioB->SetMarkerStyle(21);
+    GSelRatioB->SetMarkerColor(kOrange);
+    GSelRatioC->SetMarkerStyle(22);
+    GSelRatioC->SetMarkerColor(kGreen);
+    GSelRatioD->SetMarkerStyle(23);
+    GSelRatioD->SetMarkerColor(kViolet);
+
+    addToInclusive(GSelRatioA);
+    addToInclusive(GSelRatioB);
+    addToInclusive(GSelRatioC);
+    addToInclusive(GSelRatioD);
+
+    GInclusive.SetMarkerColor(kRed);
+    GInclusive.SetMarkerStyle(24);
+    GInclusive.GetYaxis()->SetTitle("#epsilon");
+    GInclusive.GetXaxis()->SetTitle("M_{WZ}");
+    GInclusive.Draw("AP");
+    GInclusive.GetYaxis()->SetRangeUser(0.0,0.4);
+
+    GSelRatioA->Draw("P");
+    GSelRatioB->Draw("P");
+    GSelRatioC->Draw("P");
+    GSelRatioD->Draw("P");
+    gPad->BuildLegend(0.7,0.8,0.7,0.8);
+    c1->Print(Form("plots/%d/%d_SelectionRatio.png",yr,yr));
+
+    delete c1;
+  };
+
+  for (auto& item: SignalSamples) {
+    const int year = item.first;
+
+    auto c1 = new TCanvas("cs","cs",10,10,1500,1200);
+
+    plotPunziSignificance(year);
+    plotSelectionRatio(year);
+    plotHLTSelectionRatio(year);
 
     for (auto signal: item.second) {
-      Int_t WpMass = getWpMassFromName(signal.folderName);
-      printCutFlowStack(year,signal);
 
-      addCutEff(GSelRatioA, Form("%d/%s",year,signal.folderName.c_str()), "3e0mu", "NoCuts", WpMass);
-      addCutEff(GSelRatioB, Form("%d/%s",year,signal.folderName.c_str()), "2e1mu", "NoCuts", WpMass);
-      addCutEff(GSelRatioC, Form("%d/%s",year,signal.folderName.c_str()), "1e2mu", "NoCuts", WpMass);
-      addCutEff(GSelRatioD, Form("%d/%s",year,signal.folderName.c_str()), "0e3mu", "NoCuts", WpMass);
-      addCutEff(GElTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
-      addCutEff(GMuTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
-      addCutEff(GHLTEff, Form("%d/%s",year,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
+      const Int_t WpMass = getWpMassFromName(signal.folderName);
+
+      printCutFlowStack(year,signal);
 
       printH2Comb(year, signal, "HPtWPtZ");
       printH2Comb(year, signal, "HDeltaRPtZ");
@@ -928,77 +1026,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
 
 
-    // Selection Efficiency Plot
-    c1->Clear();
-    c1->cd();
-    const Int_t nMassPoints = 14;
-    TGraph GInclusive = TGraph(nMassPoints);
-    GInclusive.SetTitle("Inclusive");
-    auto addToInclusive = [&](TGraph* g){
-      Double_t* xi = GInclusive.GetX();
-      Double_t* yi = GInclusive.GetY();
-      Double_t xx = 0.;
-      Double_t yy = 0.;
-      for(int i = 0; i < g->GetN(); ++i){
-        g->GetPoint(i,xx,yy);
-        xi[i] = xx;
-        yi[i] += yy;
-      }
-    };
-    GSelRatioA->SetMarkerStyle(20);
-    GSelRatioA->SetMarkerColor(kBlue);
-    GSelRatioB->SetMarkerStyle(21);
-    GSelRatioB->SetMarkerColor(kOrange);
-    GSelRatioC->SetMarkerStyle(22);
-    GSelRatioC->SetMarkerColor(kGreen);
-    GSelRatioD->SetMarkerStyle(23);
-    GSelRatioD->SetMarkerColor(kViolet);
-    addToInclusive(GSelRatioA);
-    addToInclusive(GSelRatioB);
-    addToInclusive(GSelRatioC);
-    addToInclusive(GSelRatioD);
-    GInclusive.SetMarkerColor(kRed);
-    GInclusive.SetMarkerStyle(24);
-    GInclusive.GetYaxis()->SetTitle("#epsilon");
-    GInclusive.GetXaxis()->SetTitle("M_{WZ}");
-    GInclusive.Draw("AP");
-    GInclusive.GetYaxis()->SetRangeUser(0.0,0.4);
-    GSelRatioA->Draw("P");
-    GSelRatioB->Draw("P");
-    GSelRatioC->Draw("P");
-    GSelRatioD->Draw("P");
-    gPad->BuildLegend(0.7,0.8,0.7,0.8);
-    c1->Print(Form("plots/%d/%d_SelectionRatio.png",year,year));
-
-    // Trigger efficiency plot
-    c1->Clear();
-    c1->cd();
-    auto invertGraph = [] (TGraph *g){
-      Double_t* xi = g->GetX();
-      Double_t* yi = g->GetY();
-      Double_t xx = 0.;
-      Double_t yy = 0.;
-      for(int i = 0; i < g->GetN(); ++i){
-        g->GetPoint(i,xx,yy);
-        xi[i] = xx;
-        yi[i] = 1. - yy;
-      }
-    };
-    GElTgEff->SetMarkerStyle(22);
-    GElTgEff->SetMarkerColor(kBlack);
-    invertGraph(GElTgEff);
-    GElTgEff->Draw("AP");
-    GElTgEff->GetYaxis()->SetRangeUser(0, 1.);
-    GMuTgEff->SetMarkerStyle(23);
-    GMuTgEff->SetMarkerColor(kBlue);
-    invertGraph(GMuTgEff);
-    GMuTgEff->Draw("P");
-    GHLTEff->SetMarkerStyle(24);
-    GHLTEff->SetMarkerColor(kRed);
-    invertGraph(GHLTEff);
-    GHLTEff->Draw("P");
-    gPad->BuildLegend();
-    c1->Print(Form("plots/%d/%d_SignalTriggerEfficiency.png",year,year));
   }
 
 }
