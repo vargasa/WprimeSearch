@@ -689,11 +689,46 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
+  auto getWpMassFromName = [] (const std::string& signalName) {
+    Int_t WpMass = -1;
+    std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
+    std::smatch sm;
+    if(std::regex_search(signalName,sm,rexp1)) WpMass = std::stoi(sm[3]);
+    return WpMass;
+  };
+
+  auto plotPunziSignificance = [&] (const int& yr) {
+
+    const std::string fromHisto = "HMassWZ";
+    TCanvas* c1 = new TCanvas("c1","c1");
+
+    THStack *hs = new THStack("hs","");
+    hs = getBGStack(yr, "HMassWZ");
+
+    TGraph* GPunziS = new TGraph();
+    GPunziS->SetTitle(Form("Punzi Significance vs M(WZ) %d; M(WZ); Punzi Significance", yr));
+
+    for (auto& signal: SignalSamples.find(yr)->second) {
+        GPunziS->SetPoint(GPunziS->GetN(),
+                          getWpMassFromName(signal.folderName),
+                          getPunziSignificance(hs, Form("%d/%s",yr,signal.folderName.c_str()), fromHisto));
+    }
+
+    GPunziS->SetMarkerStyle(20);
+    GPunziS->Draw("AP");
+    c1->Print(Form("plots/%d/%d_PonziSignificance.png",yr,yr));
+
+    delete hs;
+    delete c1;
+  };
+
 
   for (auto& item: SignalSamples) {
     const int year = item.first;
 
     auto c1 = new TCanvas("cs","cs",10,10,1500,1200);
+
+    plotPunziSignificance(year);
 
     TGraph* GSelRatioA = new TGraph();
     GSelRatioA->SetTitle("eee#nu");
@@ -711,24 +746,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TGraph* GHLTEff = new TGraph();
     GHLTEff->SetTitle(Form("HLT Efficiency (El OR Mu) on Signal;Wprime Mass Point %d;Ratio",year));
 
-    TGraph* GPunziS = new TGraph();
-    GPunziS->SetTitle(Form("Punzi Significance vs M(WZ) %d; M(WZ); Punzi Significance", year));
 
     for (auto signal: item.second) {
-      Int_t WpMass;
-      std::regex rexp1("(Wprime)([A-Za-z_-]+)([0-9]+)(.*)");
-      std::smatch sm;
+      Int_t WpMass = getWpMassFromName(signal.folderName);
       printCutFlowStack(year,signal);
-      if(std::regex_search(signal.folderName,sm,rexp1)){
-        WpMass = std::stoi(sm[3]);
-        addCutEff(GSelRatioA, Form("%d/%s",year,signal.folderName.c_str()), "3e0mu", "NoCuts", WpMass);
-        addCutEff(GSelRatioB, Form("%d/%s",year,signal.folderName.c_str()), "2e1mu", "NoCuts", WpMass);
-        addCutEff(GSelRatioC, Form("%d/%s",year,signal.folderName.c_str()), "1e2mu", "NoCuts", WpMass);
-        addCutEff(GSelRatioD, Form("%d/%s",year,signal.folderName.c_str()), "0e3mu", "NoCuts", WpMass);
-        addCutEff(GElTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
-        addCutEff(GMuTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
-        addCutEff(GHLTEff, Form("%d/%s",year,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
-      }
+
+      addCutEff(GSelRatioA, Form("%d/%s",year,signal.folderName.c_str()), "3e0mu", "NoCuts", WpMass);
+      addCutEff(GSelRatioB, Form("%d/%s",year,signal.folderName.c_str()), "2e1mu", "NoCuts", WpMass);
+      addCutEff(GSelRatioC, Form("%d/%s",year,signal.folderName.c_str()), "1e2mu", "NoCuts", WpMass);
+      addCutEff(GSelRatioD, Form("%d/%s",year,signal.folderName.c_str()), "0e3mu", "NoCuts", WpMass);
+      addCutEff(GElTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
+      addCutEff(GMuTgEff, Form("%d/%s",year,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
+      addCutEff(GHLTEff, Form("%d/%s",year,signal.folderName.c_str()), "FailHLT", "NoCuts", WpMass);
 
       printH2Comb(year, signal, "HPtWPtZ");
       printH2Comb(year, signal, "HDeltaRPtZ");
@@ -788,9 +817,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
         auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName);
-        if (std::string(hName).compare("HMassWZ") == 0)
-          GPunziS->SetPoint(GPunziS->GetN(), WpMass,
-                            getPunziSignificance(hs, Form("%d/%s",year,signal.folderName.c_str()), hName));
         applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
         hsig->SetTitle(signal.legendName.c_str());
         legend->AddEntry( hsig,signal.legendName.c_str(),"L");
@@ -973,14 +999,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GHLTEff->Draw("P");
     gPad->BuildLegend();
     c1->Print(Form("plots/%d/%d_SignalTriggerEfficiency.png",year,year));
-
-    // Punzi Significance plot
-    c1->Clear();
-    c1->cd();
-    GPunziS->SetMarkerStyle(20);
-    GPunziS->Draw("AP");
-    c1->Print(Form("plots/%d/%d_PonziSignificance.png",year,year));
-
   }
 
 }
