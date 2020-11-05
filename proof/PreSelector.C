@@ -1873,7 +1873,6 @@ void PreSelector::Terminate() {
   ch->Print(getFullPath("HMet"));
   chc->cd();
   TH1F HMet = *HMetA + *HMetB + *HMetC + *HMetD;
-  HMet.SetTitle("MET;#slash{M}_{T};Event count");
   HMet.SetName("HMet");
   HMet.Write();
   HMet.Draw();
@@ -2229,7 +2228,6 @@ void PreSelector::Terminate() {
   HMassWZD->Write("HMassWZD");
   ch->Print(getFullPath("HMassWZ"));
   TH1F HMassWZ = *HMassWZA + *HMassWZB + *HMassWZC + *HMassWZD;
-  HMassWZ.SetTitle("MassWZ;#slash{M}_{WZ};Event count");
   HMassWZ.SetName("HMassWZ");
   HMassWZ.Write();
   HMassWZ.Draw();

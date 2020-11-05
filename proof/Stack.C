@@ -4,8 +4,16 @@
 
 void Stack(std::string FileName = "WprimeHistos_all.root"){
 
+  std::string fileLabel;
+  std::regex rexp("(WprimeHistos_)([A-Za-z_-]+)(.root)");
+  std::smatch sm;
+  if(std::regex_search(FileName,sm,rexp))
+    fileLabel = sm[2];
+
   TH1::SetDefaultSumw2();
 
+  TFile* f1 = TFile::Open(FileName.c_str(),"READ");
+  TFile* fOutput = TFile::Open(Form("WprimeStack_%s.root",fileLabel.c_str()),"RECREATE");
 
   std::unordered_map<int, float> luminosity = {
     {2016, 35.92},
@@ -138,8 +146,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
     }
   };
-
-  auto f1 = TFile::Open(FileName.c_str(),"READ");
 
   struct HistoInfo {
     std::string name;
@@ -435,7 +441,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       p3->cd();
       l->SetTextFont(42);
       l->Draw();
-      c->Print(Form("plots/SampleDiff_%s_%s.png",category.c_str(),histoName.c_str()));
+      c->Print(Form("plots/%s_SampleDiff_%s_%s.png",fileLabel.c_str(),category.c_str(),histoName.c_str()));
       hgw->Delete();
       hn->Delete();
       delete hs;
@@ -533,7 +539,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     hstc->SetTitle("Ratio [%] of events passing set of cuts");
     hstc->Draw("NOSTACK");
     legend->Draw();
-    c2->Print(Form("plots/%d/%s_HTCutFlow.png",year,signal.folderName.c_str()));
+    c2->Print(Form("plots/%d/%s_%s_HTCutFlow.png",year,fileLabel.c_str(),signal.folderName.c_str()));
     delete HTCutFlow;
     delete c2;
   };
@@ -565,7 +571,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c2->cd(2);
     h2BgSum->Draw("");
     h2Data->Draw("SAME");
-    c2->Print(Form("plots/%d/%s_%s.png",yr,signal.folderName.c_str(),histoLabel.c_str()));
+    c2->Print(Form("plots/%d/%s_%s_%s.png",yr,fileLabel.c_str(),signal.folderName.c_str(),histoLabel.c_str()));
     delete c2;
   };
 
@@ -613,7 +619,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
-  std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
+  std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [&](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
 
     TCanvas* cc = new TCanvas("cc","cc");
     TH1D* hc = new TH1D("hc",Form("BG Contribution %d",year),6,0.,6.);
@@ -635,7 +641,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     hc->Scale(1/total);
     hc->Draw("HIST TEXT45");
-    cc->Print(Form("plots/%d/%d_BGContrib.png",year,year));
+    cc->Print(Form("plots/%d/%s_%d_BGContrib.png",year,fileLabel.c_str(),year));
     delete hc;
     delete cc;
   };
@@ -716,7 +722,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     GPunziS->SetMarkerStyle(20);
     GPunziS->Draw("AP");
-    c1->Print(Form("plots/%d/%d_PonziSignificance.png",yr,yr));
+    GPunziS->Write(Form("%d_%s_GPunziS",yr,fileLabel.c_str()));
+    c1->Print(Form("plots/%d/%s_%d_PonziSignificance.png",yr,fileLabel.c_str(),yr));
+
 
     delete hs;
     delete c1;
@@ -767,7 +775,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     invertGraph(GHLTEff);
     GHLTEff->Draw("P");
     gPad->BuildLegend();
-    c1->Print(Form("plots/%d/%d_SignalTriggerEfficiency.png",yr,yr));
+    c1->Print(Form("plots/%d/%s_%d_SignalTriggerEfficiency.png",yr,fileLabel.c_str(),yr));
+    c1->Write(Form("%d_%s_SignalTriggerEfficiency",yr,fileLabel.c_str()));
 
     delete c1;
   };
@@ -837,7 +846,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GSelRatioC->Draw("P");
     GSelRatioD->Draw("P");
     gPad->BuildLegend(0.7,0.8,0.7,0.8);
-    c1->Print(Form("plots/%d/%d_SelectionRatio.png",yr,yr));
+    c1->Print(Form("plots/%d/%s_%d_SelectionRatio.png",yr,fileLabel.c_str(),yr));
+    c1->Write(Form("%s_%d_SelectionRatio.png",fileLabel.c_str(),yr));
 
     delete c1;
   };
@@ -965,7 +975,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         mainPad->cd();
         legend->Draw();
         if( r+1 == 4 ){
-          c1->Print(Form("plots/%d/Stack_%s_Wprime%d_Data.png",year,hName,WpMass));
+          c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),hName,WpMass));
+          c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName,WpMass));
           c1->Clear();
           c1->Divide(2,2);
         }
@@ -1018,7 +1029,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         ++j;
         legend->Draw();
         if( r+1 == 4 ){
-          c1->Print(Form("plots/%d/Stack_%s_Wprime%d.png",year,hp.name.c_str(),WpMass));
+          c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d.png",year,fileLabel.c_str(),hp.name.c_str(),WpMass));
+          c1->Write(Form("%d_%s_%s_Wprime%d",year,fileLabel.c_str(),hp.name.c_str(),WpMass));
           c1->Clear();
           c1->Divide(2,2);
         }

@@ -199,14 +199,66 @@ for(const auto& dir: dirNames){
 root -l -b -1 "Stack.C(\"WprimeHistos_all.root\")";
 ```
 
-### Fix names for DataCards
+Where "_all" stands for MC + Data. It creates a file `WprimeStack_all.root` (or `_label`)
+where all the stack plots are produced. Plots are also saved in `png` format in the
+`plots/[year]` directory.
+
+### Combine
 
 ```bash
+# Fix names for DataCards
 sed -i 's/t#bar{t}/TT/' plots/*/*.txt
 sed -i 's/Z#gamma/ZG/' plots/*/*.txt
+
+for i in 600 800 1000 1200 \
+  1400 1600 1800 2000 2500 \
+  3000 3500 4000
+do
+  combine  -m 125 -n "."$i -M AsymptoticLimits -d "datacards/2016_"$i"_DataCard.txt"
+done
 ```
 
-Where "_all" stands for MC + Data.
+### Comparing graphs for different set of cuts:
+
+```cpp
+TFile* f1 = TFile::Open("WprimeStack_TightId.root");
+TFile* f2 = TFile::Open("WprimeStack_highPtId.root");
+
+auto c1 = new TCanvas("c1","c1");
+
+auto l = new TLegend(0.69,0.16,0.87,0.26);
+l->SetLineWidth(0);
+
+auto g1 = static_cast<TGraph*>(f1->Get("2016_TightId_GPunziS"));
+g1->SetTitle("Muon TightId");
+g1->SetLineColor(kBlue);
+g1->SetMarkerStyle(20);
+g1->SetMarkerColor(kBlack);
+g1->SetLineWidth(2);
+l->AddEntry(g1);
+
+auto g2 = static_cast<TGraph*>(f2->Get("2016_highPtId_GPunziS"));
+g2->SetTitle("Muon highPtId");
+g2->SetLineColor(kRed);
+g2->SetMarkerStyle(20);
+g2->SetMarkerColor(kBlack);
+g2->SetLineWidth(2);
+l->AddEntry(g2);
+
+auto mg = new TMultiGraph();
+mg->SetTitle("Punzi Significance ; M(WZ); #frac{#epsilon}{1+#sqrt{B}}");
+mg->Add(g1)
+mg->Add(g2)
+
+mg->Draw("APL");
+c1->SetGridx();
+c1->SetGridy();
+c1->SetTickx();
+c1->SetTicky();
+l->Draw();
+
+c1->Print("2016_PunziTest.png")
+```
 
 ### References:
 
