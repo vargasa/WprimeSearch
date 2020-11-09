@@ -285,7 +285,7 @@ Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-#ifdef Y2016
+#if defined(Y2016)
   /* 2 bins in pt */
   if( pt < 175.){
     sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
@@ -314,7 +314,7 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-#ifdef Y2016
+#if defined(Y2016)
   /*
 
     B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
@@ -397,7 +397,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuC = new TH1I("HnMuC","",nLepBins,MinnLep,MaxnLep);
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
-  HnJet = new TH1I("HnJet","",nLepBins,MinnLep,MaxnLep);
+  const Int_t nJetBins = 15;
+  HnJet = new TH1I("HnJet","",nJetBins,0,(float)nJetBins);
   fOutput->Add(HnJet);
 
   const Float_t MinMass = 0.;
@@ -828,15 +829,27 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
 
 std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MaxEta = 2.5;
-  const Float_t MinPt = 20.;
+
+#if defined(Y2016)
+  const Float_t MinPt = 27.;
+#elif defined(Y2017)
+  const Float_t MinPt = 35.;
+#elif defined(Y2018)
+  const Float_t MinPt = 32.;
+#endif
+
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
   if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
+
+  if( El.pt[0] < MinPt ) return GoodIndex;
+
   if(abs(El.eta[0]) >= MaxEta){
     HCutFlow->FillS("LeadingElOut");
     return GoodIndex;
   }
   GoodIndex.reserve(10);
+
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
     if(El.cutBased[i]==4 && El.pt[i]>MinPt &&
@@ -976,9 +989,9 @@ std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(const ROOT::Math::Pt
   Float_t c = k*(k + 4.*lep.Pt()*(*MET_pt));
   if (c<0) return GetNu4VFix(lep,Wmt);
   Float_t d = lep.P()*TMath::Sqrt(c);
-  NuPz = (lep.Pz()*b + d)/(2.*lep.Pt()*lep.Pt());
-  s.emplace_back(Get4V(NuPz));
   NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt());
+  s.emplace_back(Get4V(NuPz));
+  NuPz = (lep.Pz()*b + d)/(2.*lep.Pt()*lep.Pt());
   s.emplace_back(Get4V(NuPz));
   return s;
 
@@ -1266,15 +1279,7 @@ void PreSelector::FillC(){
 
 bool PreSelector::DefineW(Leptons l){
 
-  const Double_t MinRemPt = 20.;
-
-  if (l.pt[l3]< MinRemPt) {
-    /* We should see none here
-       as defined in GoodMuon,
-       GoodElectron */
-    HCutFlow->FillS("FailMinRemPt");
-    return false;
-  }
+  assert(l.pt[l3] > 20.); // MinPt
 
   lep3 = PtEtaPhiMVector(l.pt[l3], l.eta[l3], l.phi[l3], l.mass);
   wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
@@ -1348,7 +1353,15 @@ void PreSelector::FillD(){
 }
 
 Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
+
+#if defined(Y2016)
+  const Float_t MinPt = 27.;
+#elif defined(Y2017)
   const Float_t MinPt = 35.;
+#elif defined(Y2018)
+  const Float_t MinPt = 32.;
+#endif
+
   if (Electron_pt[p.first] < MinPt || Electron_pt[p.second] < MinPt) return kFALSE;
   return kTRUE;
 }
@@ -1542,20 +1555,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     ELPass->Enter(entry);
 #endif
 
-    const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
-    Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
-    if(l1l3DistCut){
-      HCutFlow->FillS("Faill1l3DistCut");
-      return kFALSE;
-    }
-
-    const float l2l3Dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
-    Bool_t l2l3DistCut = l2l3Dist < 1.2 or l2l3Dist > 5.;
-    if(l2l3DistCut){
-      HCutFlow->FillS("Faill2l3DistCut");
-      return kFALSE;
-    }
-
     // 0e3mu
     if(IsD){
       if(Muon_highPtId[l3] == 2){
@@ -1624,20 +1623,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 #ifndef CMSDATA
     ELPass->Enter(entry);
 #endif
-
-    const float l1l3Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
-    Bool_t l1l3DistCut = l1l3Dist < 1.4 or l1l3Dist > 5.;
-    if(l1l3DistCut){
-      HCutFlow->FillS("Faill1l3DistCut");
-      return kFALSE;
-    }
-
-    const float l2l3Dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
-    Bool_t l2l3DistCut = l2l3Dist < 1.2 or l2l3Dist > 5.;
-    if(l2l3DistCut){
-      HCutFlow->FillS("Faill2l3DistCut");
-      return kFALSE;
-    }
 
     // 2e1mu
     if(IsB){
