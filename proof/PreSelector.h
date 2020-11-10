@@ -172,6 +172,11 @@ class PreSelector : public EventSelection {
   TH1F *HDistl1l3;
   TH1F *HDistl2l3;
 
+  TH1F *HDistl1l2A;
+  TH1F *HDistl1l2B;
+  TH1F *HDistl1l2C;
+  TH1F *HDistl1l2D;
+
   TH1F *HOverlap;
 
 #ifndef CMSDATA

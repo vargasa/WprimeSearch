@@ -71,6 +71,11 @@ PreSelector::PreSelector(TTree *)
   HDistl1l3=0;
   HDistl2l3=0;
 
+  HDistl1l2A=0;
+  HDistl1l2B=0;
+  HDistl1l2C=0;
+  HDistl1l2D=0;
+
 #ifndef CMSDATA
   ELPass=0;
   HGenPartZA=0;
@@ -355,6 +360,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   TH1::SetDefaultSumw2();
 
+  auto copyHisto = [](TH1F** hcopy, TH1F *h, const std::string& idstr){
+    *hcopy = static_cast<TH1F*>(h->Clone());
+    (*hcopy)->SetName(Form("%s_%s",h->GetName(),idstr.c_str()));
+    return *hcopy;
+  };
+
   const Double_t MaxMet = 600.;
   const Double_t MinMet = 0.;
   const Int_t MetBins = 60;
@@ -369,10 +380,17 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   HDistl1l2 = new TH1F("HDistl1l2","Distance in EtaPhi l1,l2",DistBins,0.,MaxDist);
   fOutput->Add(HDistl1l2);
+
+  fOutput->Add(copyHisto(&HDistl1l2A,HDistl1l2,"A"));
+  fOutput->Add(copyHisto(&HDistl1l2B,HDistl1l2,"B"));
+  fOutput->Add(copyHisto(&HDistl1l2C,HDistl1l2,"C"));
+  fOutput->Add(copyHisto(&HDistl1l2D,HDistl1l2,"D"));
+
   HDistl1l3 = new TH1F("HDistl1l3","Eta-Phi Distance l1,l3",DistBins,0.,MaxDist);
   fOutput->Add(HDistl1l3);
   HDistl2l3 = new TH1F("HDistl2l3","Eta-Phi Distance l2,l3",DistBins,0.,MaxDist);
   fOutput->Add(HDistl2l3);
+
 
   HWZDist = new TH1F("HWZDist","HWZDist",DistBins,0.,MaxDist);
   fOutput->Add(HWZDist);
@@ -565,12 +583,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HGenPartFB);
   fOutput->Add(HGenPartFC);
   fOutput->Add(HGenPartFD);
-
-  auto copyHisto = [](TH1F** hcopy, TH1F *h, const std::string& idstr){
-    *hcopy = static_cast<TH1F*>(h->Clone());
-    (*hcopy)->SetName(Form("%s_%s",h->GetName(),idstr.c_str()));
-    return *hcopy;
-  };
 
   fOutput->Add(copyHisto(&HMetA_SFUp,HMetA,"SFUp"));
   fOutput->Add(copyHisto(&HMetB_SFUp,HMetB,"SFUp"));
@@ -1091,6 +1103,10 @@ void PreSelector::FillA(){
   HMassZWZA->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("3e0mu");
 
+  HDistl1l2A->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
+                                     lep2.Pt(),lep2.Phi()));
+
+
 #ifndef CMSDATA
   Double_t wup = 1.;
   Double_t wdown = 1.;
@@ -1153,6 +1169,10 @@ void PreSelector::FillB(){
   HnMuB->Fill(GoodMuon.size());
   HMassZWZB->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("2e1mu");
+
+  HDistl1l2B->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
+                                     lep2.Pt(),lep2.Phi()));
+
 
 #ifndef CMSDATA
   Double_t wup = 1.;
@@ -1218,6 +1238,10 @@ void PreSelector::FillC(){
   HnMuC->Fill(GoodMuon.size());
   HMassZWZC->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("1e2mu");
+
+  HDistl1l2C->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
+                                     lep2.Pt(),lep2.Phi()));
+
 
 #ifndef CMSDATA
   Double_t wup = 1.;
@@ -1297,6 +1321,10 @@ void PreSelector::FillD(){
   HnMuD->Fill(GoodMuon.size());
   HMassZWZD->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("0e3mu");
+
+  HDistl1l2D->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
+                                     lep2.Pt(),lep2.Phi()));
+
 
 #ifndef CMSDATA
   Double_t wup = 1.;
@@ -1755,6 +1783,11 @@ void PreSelector::Terminate() {
   HDistl2l3->Draw("Hist");
   HDistl2l3->Write();
   ch->Print(getFullPath("HDistLeptons"));
+
+  HDistl1l2A->Write("HDistl1l2A");
+  HDistl1l2B->Write("HDistl1l2B");
+  HDistl1l2C->Write("HDistl1l2C");
+  HDistl1l2D->Write("HDistl1l2D");
 
   ch->Clear();
   ch->Divide(2,2);
