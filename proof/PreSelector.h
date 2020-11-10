@@ -129,7 +129,7 @@ class PreSelector : public EventSelection {
   TH1I *HnMuC;
   TH1I *HnMuD;
 
-  TH1I *HnJet;
+  TH1F *HnJet;
 
   TH1F *HMassTWA;
   TH1F *HMassTWB;
@@ -172,7 +172,7 @@ class PreSelector : public EventSelection {
   TH1F *HDistl1l3;
   TH1F *HDistl2l3;
 
-  TH1I *HOverlap;
+  TH1F *HOverlap;
 
 #ifndef CMSDATA
   TEntryList *ELPass;

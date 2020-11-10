@@ -222,6 +222,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HMassTW","M_{WT}^{lll#nu}; M_{WT}(GeV);Event count/5GeV"},
     HistoInfo{"HMassZ","M_{Z}^{lll#nu}; M_{Z}(GeV);Event count/2GeV"},
     HistoInfo{"HMassWZ","M_{WZ}^{lll#nu}; M_{WZ}(GeV);Event count/100GeV"},
+    /* Another Series */
+    HistoInfo{"HLtA","eee#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
+    HistoInfo{"HLtB","ee#mu#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
+    HistoInfo{"HLtC","#mu#mu e#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
+    HistoInfo{"HLtD","#mu#mu#mu#nu;P_{T}^{Lep} (GeV);Event count/100GeV"},
   };
 
   std::vector<HistoInfo> NonStackedHistos = {
@@ -246,7 +251,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HMetPhi","Phi Distribution MET; MET; Normalized events"},
     /*Next series*/
     HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
-    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
+    HistoInfo{"HnJet","Number of Jets; nJet; Normalized events"},
     HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
     HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
   };

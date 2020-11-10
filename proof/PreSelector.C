@@ -398,7 +398,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HnMuD = new TH1I("HnMuD","",nLepBins,MinnLep,MaxnLep);
 
   const Int_t nJetBins = 15;
-  HnJet = new TH1I("HnJet","",nJetBins,0,(float)nJetBins);
+  HnJet = new TH1F("HnJet","",nJetBins,0,(float)nJetBins);
   fOutput->Add(HnJet);
 
   const Float_t MinMass = 0.;
@@ -499,7 +499,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
                     NBinsWZM,MinWZM,MaxWZM);
   fOutput->Add(HLtMWZ);
 
-  HOverlap = new TH1I("HOverlap","Overlapping events."
+  HOverlap = new TH1F("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
   fOutput->Add(HOverlap);
 
