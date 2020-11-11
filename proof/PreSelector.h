@@ -226,11 +226,7 @@ class PreSelector : public EventSelection {
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
 
-  void Fill_(const Int_t& nch, const Leptons& lz,const Leptons& lw);
-  void FillA();
-  void FillB();
-  void FillC();
-  void FillD();
+  void FillCategory(const Int_t& nch, const Leptons& lz,const Leptons& lw);
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
