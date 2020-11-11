@@ -113,9 +113,8 @@ class PreSelector : public EventSelection {
   TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
   TTreeReaderValue<Float_t> MET_significance = {fReader, "MET_significance"};
 
-  void InitHVec(std::vector<TH1F*>& vec,
-                std::string_view name,
-                Int_t nBins, Double_t xmin, Double_t xmax);
+  template<typename T, typename... Args>
+  void InitHVec(std::vector<T*>& vec, std::string_view name, Args... args);
 
 
   // THs
