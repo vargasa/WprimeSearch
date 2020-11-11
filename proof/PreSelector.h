@@ -129,10 +129,7 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HMassZ_;
   std::vector<TH1F*> HMassW;
 
-  TH2F *HMassZWZA;
-  TH2F *HMassZWZB;
-  TH2F *HMassZWZC;
-  TH2F *HMassZWZD;
+  std::vector<TH2F*> HMassZWZ;
 
   TH2F* HMassZTW;
   TH2F* HDeltaRPtZ;
@@ -165,10 +162,7 @@ class PreSelector : public EventSelection {
 #endif
   TH1D *HCutFlow;
 
-  TH2I *HNLepA;
-  TH2I *HNLepB;
-  TH2I *HNLepC;
-  TH2I *HNLepD;
+  std::vector<TH2I*> HNLep;
 
   TH1F *HPtl1;
   TH1F *HPtl2;

@@ -14,10 +14,6 @@ PreSelector::PreSelector(TTree *)
 
   HnJet=0;
 
-  HMassZWZA=0;
-  HMassZWZB=0;
-  HMassZWZC=0;
-  HMassZWZD=0;
 
   HMassZTW=0;
   HDeltaRPtZ=0;
@@ -57,11 +53,6 @@ PreSelector::PreSelector(TTree *)
   HPhil2 = 0;
   HPhil3 = 0;
   HMetPhi = 0;
-
-  HNLepA=0;
-  HNLepB=0;
-  HNLepC=0;
-  HNLepD=0;
 
   HWZDist = 0;
   HWZPtDist = 0;
@@ -317,15 +308,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t NLtBins = 20;
   InitHVec<TH1F>(HLt,"HLt",NLtBins,0.,MaxLt);
 
-  HMassZWZA = new TH2F("HMassZWZA","3e0mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
-  fOutput->Add(HMassZWZA);
-  HMassZWZB = new TH2F("HMassZWZB","2e1mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
-  fOutput->Add(HMassZWZB);
-  HMassZWZC = new TH2F("HMassZWZC","1e2mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
-  fOutput->Add(HMassZWZC);
-  HMassZWZD = new TH2F("HMassZWZD","0e3mu;Z Mass;WZ Mass",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
-  fOutput->Add(HMassZWZD);
-
+  InitHVec<TH2F>(HMassZWZ,"HMassZWZ",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
 
   const Float_t MaxDeltaR = 6.f;
   const Int_t NBinsDeltaR = 10;
@@ -393,19 +376,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t MinLep = 0.;
   const Float_t MaxLep = 10.;
 
-  HNLepA = new TH2I("HNLepA","",BinsLep,MinLep,MaxLep,
-                    BinsLep,MinLep,MaxLep);
-  HNLepB = new TH2I("HNLepB","",BinsLep,MinLep,MaxLep,
-                    BinsLep,MinLep,MaxLep);
-  HNLepC = new TH2I("HNLepC","",BinsLep,MinLep,MaxLep,
-                    BinsLep,MinLep,MaxLep);
-  HNLepD = new TH2I("HNLepD","",BinsLep,MinLep,MaxLep,
-                    BinsLep,MinLep,MaxLep);
-
-  fOutput->Add(HNLepA);
-  fOutput->Add(HNLepB);
-  fOutput->Add(HNLepC);
-  fOutput->Add(HNLepD);
+  InitHVec<TH2I>(HNLep,"HNLep",BinsLep,MinLep,MaxLep,BinsLep,MinLep,MaxLep);
 
   HNEl = new TH2I("HNEl","",BinsLep,MinLep,MaxLep,
                   BinsLep,MinLep,MaxLep);
@@ -803,10 +774,10 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
 
 void PreSelector::FillA(){
   Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
-  HNLepA->Fill(GoodMuon.size(),GoodElectron.size());
+  HNLep[0]->Fill(GoodMuon.size(),GoodElectron.size());
   HnEl[0]->Fill(GoodElectron.size());
   HnMu[0]->Fill(GoodMuon.size());
-  HMassZWZA->Fill(PairZMass,(wb+zb).M());
+  HMassZWZ[0]->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("3e0mu");
 
   HDistl1l2[0]->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
@@ -870,10 +841,10 @@ void PreSelector::FillA(){
 
 void PreSelector::FillB(){
   Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
-  HNLepB->Fill(GoodMuon.size(),GoodElectron.size());
+  HNLep[1]->Fill(GoodMuon.size(),GoodElectron.size());
   HnEl[1]->Fill(GoodElectron.size());
   HnMu[1]->Fill(GoodMuon.size());
-  HMassZWZB->Fill(PairZMass,(wb+zb).M());
+  HMassZWZ[1]->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("2e1mu");
 
   HDistl1l2[1]->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
@@ -939,10 +910,10 @@ void PreSelector::FillB(){
 
 void PreSelector::FillC(){
   Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
-  HNLepC->Fill(GoodMuon.size(),GoodElectron.size());
+  HNLep[2]->Fill(GoodMuon.size(),GoodElectron.size());
   HnEl[2]->Fill(GoodElectron.size());
   HnMu[2]->Fill(GoodMuon.size());
-  HMassZWZC->Fill(PairZMass,(wb+zb).M());
+  HMassZWZ[2]->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("1e2mu");
 
   HDistl1l2[2]->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
@@ -1022,10 +993,10 @@ bool PreSelector::DefineW(Leptons l){
 
 void PreSelector::FillD(){
   Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
-  HNLepD->Fill(GoodMuon.size(),GoodElectron.size());
+  HNLep[3]->Fill(GoodMuon.size(),GoodElectron.size());
   HnEl[3]->Fill(GoodElectron.size());
   HnMu[3]->Fill(GoodMuon.size());
-  HMassZWZD->Fill(PairZMass,(wb+zb).M());
+  HMassZWZ[3]->Fill(PairZMass,(wb+zb).M());
   HCutFlow->FillS("0e3mu");
 
   HDistl1l2[3]->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
