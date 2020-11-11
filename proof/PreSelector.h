@@ -119,78 +119,75 @@ class PreSelector : public EventSelection {
 
   // THs
   std::vector<TH1F*> HMet_;
-
   std::vector<TH1F*> HnEl;
   std::vector<TH1F*> HnMu;
-
-  TH1F *HnJet;
-
   std::vector<TH1F*> HMassTW_;
   std::vector<TH1F*> HMassZ_;
   std::vector<TH1F*> HMassW;
+  std::vector<TH1F*> HMassWZ;
+  std::vector<TH1F*> HLt;
+  std::vector<TH1F*> HDistl1l2;
+  std::vector<TH1F*> HDistl1l3;
+  std::vector<TH1F*> HDistl2l3;
+  std::vector<TH1F*> HnJet;
 
   std::vector<TH2F*> HMassZWZ;
 
-  TH2F* HMassZTW;
-  TH2F* HDeltaRPtZ;
-  TH2F* HPtWPtZ;
-  TH2F* HDeltaRMWZ;
-  TH2F* HLtMWZ;
-
-  std::vector<TH1F*> HMassWZ;
-  std::vector<TH1F*> HLt;
+  std::vector<TH2F*> HMassZTW;
+  std::vector<TH2F*> HDeltaRPtZ;
+  std::vector<TH2F*> HPtWPtZ;
+  std::vector<TH2F*> HDeltaRMWZ;
+  std::vector<TH2F*> HLtMWZ;
 
   //Angular
-  TH1F *HDistl1l3;
-  TH1F *HDistl2l3;
 
-  std::vector<TH1F*> HDistl1l2;
 
   TH1F *HOverlap;
 
 #ifndef CMSDATA
   TEntryList *ELPass;
+
   std::vector<TH1F*> HGenPartZ;
   std::vector<TH1F*> HGenPartW;
   std::vector<TH1F*> HGenPartF;
 
-  TH1F *HScaleFactors;
+  std::vector<TH1F*> HScaleFactors;
   TH1D *SFPileup;
 
   TH1F* HLog;
-
 #endif
+
   TH1D *HCutFlow;
 
   std::vector<TH2I*> HNLep;
 
-  TH1F *HPtl1;
-  TH1F *HPtl2;
-  TH1F *HPtl3;
-  TH1F *HMetPt;
+  std::vector<TH1F*> HPtl1;
+  std::vector<TH1F*> HPtl2;
+  std::vector<TH1F*> HPtl3;
+  std::vector<TH1F*> HMetPt;
 
-  TH1F *HEtal1;
-  TH1F *HEtal2;
-  TH1F *HEtal3;
+  std::vector<TH1F*> HEtal1;
+  std::vector<TH1F*> HEtal2;
+  std::vector<TH1F*> HEtal3;
 
-  TH2F *HPtEtal1;
-  TH2F *HPtEtal2;
-  TH2F *HPtEtal3;
+  std::vector<TH2F*> HPtEtal1;
+  std::vector<TH2F*> HPtEtal2;
+  std::vector<TH2F*> HPtEtal3;
 
-  TH1F *HPhil1;
-  TH1F *HPhil2;
-  TH1F *HPhil3;
-  TH1F *HMetPhi;
+  std::vector<TH1F*> HPhil1;
+  std::vector<TH1F*> HPhil2;
+  std::vector<TH1F*> HPhil3;
+  std::vector<TH1F*> HMetPhi;
 
-  TH1F *HWZDist;
-  TH1F *HWZPt;
-  TH2F *HWZPtDist;
+  std::vector<TH1F*> HWZDist;
+  std::vector<TH1F*> HWZPt;
+  std::vector<TH2F*> HWZPtDist;
 
   TH1D *HPileup;
   std::vector<TH1F*> HPileup_;
 
-  TH2I *HNEl;
-  TH2I *HNMu;
+  TH2I* HNEl;
+  TH2I* HNMu;
 
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
   Float_t wmt; // W Transverse mass;
