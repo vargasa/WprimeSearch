@@ -113,11 +113,13 @@ class PreSelector : public EventSelection {
   TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
   TTreeReaderValue<Float_t> MET_significance = {fReader, "MET_significance"};
 
+  void InitHVec(std::vector<TH1F*>& vec,
+                std::string_view name,
+                Int_t nBins, Double_t xmin, Double_t xmax);
+
+
   // THs
-  TH1F *HMetA;
-  TH1F *HMetB;
-  TH1F *HMetC;
-  TH1F *HMetD;
+  std::vector<TH1F*> HMet_;
 
   TH1I *HnElA;
   TH1I *HnElB;

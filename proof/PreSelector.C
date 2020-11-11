@@ -10,11 +10,6 @@
 PreSelector::PreSelector(TTree *)
 {
 
-  HMetA=0;
-  HMetB=0;
-  HMetC=0;
-  HMetD=0;
-
   HMetPt=0;
 
   HnElA=0;
@@ -100,10 +95,6 @@ PreSelector::PreSelector(TTree *)
   HPileupC_SFUp = 0;
   HPileupD_SFUp = 0;
 
-  HMetA_SFUp=0;
-  HMetB_SFUp=0;
-  HMetC_SFUp=0;
-  HMetD_SFUp=0;
 
   HMassWA_SFUp=0;
   HMassWB_SFUp=0;
@@ -135,10 +126,6 @@ PreSelector::PreSelector(TTree *)
   HPileupC_SFDown = 0;
   HPileupD_SFDown = 0;
 
-  HMetA_SFDown=0;
-  HMetB_SFDown=0;
-  HMetC_SFDown=0;
-  HMetD_SFDown=0;
 
   HMassWA_SFDown=0;
   HMassWB_SFDown=0;
@@ -356,6 +343,27 @@ void PreSelector::Begin(TTree *tree) {
   }
 }
 
+void PreSelector::InitHVec(std::vector<TH1F*>& vec,
+			   std::string_view name,
+			   Int_t nBins, Double_t xmin, Double_t xmax){
+
+  std::vector<std::string> idst = {
+    "A", "B", "C", "D",
+    "A_Up","B_Up","C_Up","D_Up", /* +4 */
+    "A_Down","B_Down","C_Down","D_Down" /* +8 */
+  };
+
+  for(auto id: idst){
+    vec.emplace_back(new TH1F(Form("%s%s",name.data(),id.c_str()),name.data(),
+                              nBins, xmin, xmax));
+  }
+
+  for(auto h: vec){
+    fOutput->Add(h);
+  }
+
+}
+
 void PreSelector::SlaveBegin(TTree *tree) {
 
   TH1::SetDefaultSumw2();
@@ -370,10 +378,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Double_t MinMet = 0.;
   const Int_t MetBins = 60;
 
-  HMetA = new TH1F("HMetA","",MetBins,MinMet,MaxMet);
-  HMetB = new TH1F("HMetB","",MetBins,MinMet,MaxMet);
-  HMetC = new TH1F("HMetC","",MetBins,MinMet,MaxMet);
-  HMetD = new TH1F("HMetD","",MetBins,MinMet,MaxMet);
+  InitHVec(HMet_,"HMet_",MetBins,MinMet,MaxMet);
 
   const Int_t DistBins = 100;
   const Float_t MaxDist = 2.01*TMath::Pi();
@@ -584,11 +589,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HGenPartFC);
   fOutput->Add(HGenPartFD);
 
-  fOutput->Add(copyHisto(&HMetA_SFUp,HMetA,"SFUp"));
-  fOutput->Add(copyHisto(&HMetB_SFUp,HMetB,"SFUp"));
-  fOutput->Add(copyHisto(&HMetC_SFUp,HMetC,"SFUp"));
-  fOutput->Add(copyHisto(&HMetD_SFUp,HMetD,"SFUp"));
-
   fOutput->Add(copyHisto(&HPileupA_SFUp,HPileupA,"SFUp"));
   fOutput->Add(copyHisto(&HPileupB_SFUp,HPileupB,"SFUp"));
   fOutput->Add(copyHisto(&HPileupC_SFUp,HPileupC,"SFUp"));
@@ -618,11 +618,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(copyHisto(&HMassTWB_SFUp,HMassTWB,"SFUp"));
   fOutput->Add(copyHisto(&HMassTWC_SFUp,HMassTWC,"SFUp"));
   fOutput->Add(copyHisto(&HMassTWD_SFUp,HMassTWD,"SFUp"));
-
-  fOutput->Add(copyHisto(&HMetA_SFDown,HMetA,"SFDown"));
-  fOutput->Add(copyHisto(&HMetB_SFDown,HMetB,"SFDown"));
-  fOutput->Add(copyHisto(&HMetC_SFDown,HMetC,"SFDown"));
-  fOutput->Add(copyHisto(&HMetD_SFDown,HMetD,"SFDown"));
 
   fOutput->Add(copyHisto(&HPileupA_SFDown,HPileupA,"SFDown"));
   fOutput->Add(copyHisto(&HPileupB_SFDown,HPileupB,"SFDown"));
@@ -665,11 +660,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HMassZB);
   fOutput->Add(HMassZC);
   fOutput->Add(HMassZD);
-
-  fOutput->Add(HMetA);
-  fOutput->Add(HMetB);
-  fOutput->Add(HMetC);
-  fOutput->Add(HMetD);
 
   fOutput->Add(HnElA);
   fOutput->Add(HnElB);
@@ -1136,7 +1126,7 @@ void PreSelector::FillA(){
   if( wdown < 0 ) wdown = 1.;
 
   HPileupA_SFUp->Fill(*PV_npvs,wup);
-  HMetA_SFUp->Fill(*MET_pt,wup);
+  HMet_[0+4]->Fill(*MET_pt,wup);
   HMassWA_SFUp->Fill(wb.M(),wup);
   HMassWZA_SFUp->Fill((wb+zb).M(),wup);
   HLtA_SFUp->Fill(lt,wup);
@@ -1144,7 +1134,7 @@ void PreSelector::FillA(){
   HMassTWA_SFUp->Fill(wmt,wup);
 
   HPileupA_SFDown->Fill(*PV_npvs,wdown);
-  HMetA_SFDown->Fill(*MET_pt,wdown);
+  HMet_[0+8]->Fill(*MET_pt,wdown);
   HMassWA_SFDown->Fill(wb.M(),wdown);
   HMassWZA_SFDown->Fill((wb+zb).M(),wdown);
   HLtA_SFDown->Fill(lt,wdown);
@@ -1154,7 +1144,7 @@ void PreSelector::FillA(){
 #endif
 
   HPileupA->Fill(*PV_npvs);
-  HMetA->Fill(*MET_pt);
+  HMet_[0]->Fill(*MET_pt);
   HMassWA->Fill(wb.M());
   HMassWZA->Fill((wb+zb).M());
   HMassZA->Fill(PairZMass);
@@ -1207,7 +1197,7 @@ void PreSelector::FillB(){
   if( wdown < 0 ) wdown = 1.;
 
   HPileupB_SFUp->Fill(*PV_npvs,wup);
-  HMetB_SFUp->Fill(*MET_pt,wup);
+  HMet_[1]->Fill(*MET_pt,wup);
   HMassWB_SFUp->Fill(wb.M(),wup);
   HMassWZB_SFUp->Fill((wb+zb).M(),wup);
   HLtB_SFUp->Fill(lt,wup);
@@ -1215,7 +1205,7 @@ void PreSelector::FillB(){
   HMassTWB_SFUp->Fill(wmt,wup);
 
   HPileupB_SFDown->Fill(*PV_npvs,wdown);
-  HMetB_SFDown->Fill(*MET_pt,wdown);
+  HMet_[1+4]->Fill(*MET_pt,wdown);
   HMassWB_SFDown->Fill(wb.M(),wdown);
   HMassWZB_SFDown->Fill((wb+zb).M(),wdown);
   HLtB_SFDown->Fill(lt,wdown);
@@ -1223,7 +1213,7 @@ void PreSelector::FillB(){
   HMassTWB_SFDown->Fill(wmt,wdown);
 #endif
   HPileupB->Fill(*PV_npvs);
-  HMetB->Fill(*MET_pt);
+  HMet_[1+8]->Fill(*MET_pt);
   HMassWB->Fill(wb.M());
   HMassWZB->Fill((wb+zb).M());
   HMassZB->Fill(PairZMass);
@@ -1277,7 +1267,7 @@ void PreSelector::FillC(){
   if( wdown < 0 ) wdown = 1.;
 
   HPileupC_SFUp->Fill(*PV_npvs,wup);
-  HMetC_SFUp->Fill(*MET_pt,wup);
+  HMet_[2+4]->Fill(*MET_pt,wup);
   HMassWC_SFUp->Fill(wb.M(),wup);
   HMassWZC_SFUp->Fill((wb+zb).M(),wup);
   HLtC_SFUp->Fill(lt,wup);
@@ -1285,7 +1275,7 @@ void PreSelector::FillC(){
   HMassTWC_SFUp->Fill(wmt,wup);
 
   HPileupC_SFDown->Fill(*PV_npvs,wdown);
-  HMetC_SFDown->Fill(*MET_pt,wdown);
+  HMet_[2+8]->Fill(*MET_pt,wdown);
   HMassWC_SFDown->Fill(wb.M(),wdown);
   HMassWZC_SFDown->Fill((wb+zb).M(),wdown);
   HLtC->Fill(lt,wdown);
@@ -1293,7 +1283,7 @@ void PreSelector::FillC(){
   HMassTWC_SFDown->Fill(wmt,wdown);
 #endif
   HPileupC->Fill(*PV_npvs);
-  HMetC->Fill(*MET_pt);
+  HMet_[2]->Fill(*MET_pt);
   HMassWC->Fill(wb.M());
   HMassWZC->Fill((wb+zb).M());
   HMassZC->Fill(PairZMass);
@@ -1355,7 +1345,7 @@ void PreSelector::FillD(){
   if( wdown < 0 ) wdown = 1.;
 
   HPileupD_SFUp->Fill(*PV_npvs,wup);
-  HMetD_SFUp->Fill(*MET_pt,wup);
+  HMet_[3+4]->Fill(*MET_pt,wup);
   HMassWD_SFUp->Fill(wb.M(),wup);
   HMassWZD_SFUp->Fill((wb+zb).M(),wup);
   HLtD_SFUp->Fill(lt,wup);
@@ -1363,7 +1353,7 @@ void PreSelector::FillD(){
   HMassTWD_SFUp->Fill(wmt,wup);
 
   HPileupD_SFDown->Fill(*PV_npvs,wdown);
-  HMetD_SFDown->Fill(*MET_pt,wdown);
+  HMet_[3+8]->Fill(*MET_pt,wdown);
   HMassWD_SFDown->Fill(wb.M(),wdown);
   HMassWZD_SFDown->Fill((wb+zb).M(),wdown);
   HLtD_SFDown->Fill(lt,wdown);
@@ -1372,7 +1362,7 @@ void PreSelector::FillD(){
 
 #endif
   HPileupD->Fill(*PV_npvs);
-  HMetD->Fill(*MET_pt);
+  HMet_[3]->Fill(*MET_pt);
   HMassWD->Fill(wb.M());
   HMassWZD->Fill((wb+zb).M());
   HMassZD->Fill(PairZMass);
@@ -1868,29 +1858,10 @@ void PreSelector::Terminate() {
   ch->Divide(2,2);
 
 
-  ch->cd(1);
-  SetStyle(HMetA);
-  HMetA->Draw();
-  HMetA->Write("HMetA");
-  ch->cd(2);
-  SetStyle(HMetB);
-  HMetB->Draw();
-  HMetB->Write("HMetB");
-  ch->cd(3);
-  SetStyle(HMetC);
-  HMetC->Draw();
-  HMetC->Write("HMetC");
-  ch->cd(4);
-  SetStyle(HMetD);
-  HMetD->Draw();
-  HMetD->Write("HMetD");
-  ch->Print(getFullPath("HMet"));
-  chc->cd();
-  TH1F HMet = *HMetA + *HMetB + *HMetC + *HMetD;
-  HMet.SetName("HMet");
-  HMet.Write();
-  HMet.Draw();
-  chc->Print(getFullPath("HMet_SUM"));
+  std::cout << "VECTOR SIZE: " << HMet_.size() << std::endl;
+  for(auto h: HMet_){
+    h->Write();
+  }
 
   ch->cd(1);
   gStyle->SetOptStat(1111111);
@@ -2031,23 +2002,6 @@ void PreSelector::Terminate() {
   HMassTWD_SFUp->Write("");
 
   ch->cd(1);
-  SetStyle(HMetA_SFUp);
-  HMetA_SFUp->Draw();
-  HMetA_SFUp->Write();
-  ch->cd(2);
-  SetStyle(HMetB_SFUp);
-  HMetB_SFUp->Draw();
-  HMetB_SFUp->Write();
-  ch->cd(3);
-  SetStyle(HMetC_SFUp);
-  HMetC_SFUp->Draw();
-  HMetC_SFUp->Write();
-  ch->cd(4);
-  SetStyle(HMetD_SFUp);
-  HMetD_SFUp->Draw();
-  HMetD_SFUp->Write();
-
-  ch->cd(1);
   HMassWZA_SFUp->Draw();
   HMassWZA_SFUp->Write();
   ch->cd(2);
@@ -2109,23 +2063,6 @@ void PreSelector::Terminate() {
   ch->cd(4);
   HMassTWD_SFDown->Draw();
   HMassTWD_SFDown->Write("");
-
-  ch->cd(1);
-  SetStyle(HMetA_SFDown);
-  HMetA_SFDown->Draw();
-  HMetA_SFDown->Write();
-  ch->cd(2);
-  SetStyle(HMetB_SFDown);
-  HMetB_SFDown->Draw();
-  HMetB_SFDown->Write();
-  ch->cd(3);
-  SetStyle(HMetC_SFDown);
-  HMetC_SFDown->Draw();
-  HMetC_SFDown->Write();
-  ch->cd(4);
-  SetStyle(HMetD_SFDown);
-  HMetD_SFDown->Draw();
-  HMetD_SFDown->Write();
 
   ch->cd(1);
   HMassWZA_SFDown->Draw();
