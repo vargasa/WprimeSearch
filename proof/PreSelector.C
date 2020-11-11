@@ -258,6 +258,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   HDistl1l3 = new TH1F("HDistl1l3","Eta-Phi Distance l1,l3",DistBins,0.,MaxDist);
   fOutput->Add(HDistl1l3);
+
   HDistl2l3 = new TH1F("HDistl2l3","Eta-Phi Distance l2,l3",DistBins,0.,MaxDist);
   fOutput->Add(HDistl2l3);
 
@@ -737,7 +738,8 @@ Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
   return sqrt(pow(eta2-eta1,2.)+pow(dphi,2.));
 }
 
-void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
+void PreSelector::Fill_(const Int_t& nch, const Leptons& lz,const Leptons& lw){
+
   HWZPtDist->Fill((wb+zb).Pt(),GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
   HWZPt->Fill((wb+zb).Pt());
   HWZDist->Fill(GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
@@ -753,16 +755,13 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HPhil1->Fill(lz.phi[l1]);
   HPhil2->Fill(lz.phi[l2]);
   HPhil3->Fill(lw.phi[l3]);
-
   HnJet->Fill(*nJet);
-
   HDistl1l3->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
                                       lw.eta[l3],lw.phi[l3]));
   HDistl2l3->Fill(GetEtaPhiDistance(lz.eta[l2],lz.phi[l2],
                                       lw.eta[l3],lw.phi[l3]));
   HMetPt->Fill(*MET_pt);
   HMetPhi->Fill(*MET_phi);
-
   HMassZTW->Fill(zb.M(),wmt);
   HDeltaRPtZ->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Eta(),
                                      lep3.Phi(),lep3.Phi()),zb.Pt());
@@ -770,7 +769,113 @@ void PreSelector::FillCommon(const Leptons& lz,const Leptons& lw){
   HDeltaRMWZ->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Eta(),
                                      lep3.Phi(),lep3.Phi()),(wb+zb).M());
   HLtMWZ->Fill(lep1.Pt()+lep2.Pt()+lep3.Pt(),(wb+zb).M());
+
+  Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
+  HNLep[nch]->Fill(GoodMuon.size(),GoodElectron.size());
+  HnEl[nch]->Fill(GoodElectron.size());
+  HnMu[nch]->Fill(GoodMuon.size());
+  HMassZWZ[nch]->Fill(PairZMass,(wb+zb).M());
+
+  HCutFlow->FillS(Form("%d",nch));
+
+  HDistl1l2[nch]->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
+                                         lep2.Pt(),lep2.Phi()));
+
+#ifndef CMSDATA
+
+  HGenPartF[nch]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l1]]));
+  HGenPartF[nch]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l2]]));
+  HGenPartF[nch]->FillS(Form("%d",GenPart_pdgId[lw.genPartIdx[l3]]));
+
+  HGenPartZ[nch]->FillS(Form("%d",GetMother(lz.genPartIdx[l1],
+                                            lz.pdgId[l1]).second));
+  HGenPartZ[nch]->FillS(Form("%d",GetMother(lz.genPartIdx[l2],
+                                            lz.pdgId[l2]).second));
+  HGenPartW[nch]->FillS(Form("%d",GetMother(lw.genPartIdx[l3],
+                                            lw.pdgId[l3]).second));
+
+
+  Double_t wup = 1.;
+  Double_t wdown = 1.;
+
+  switch(nch){
+  case 0:
+    wup = GetElectronSF(Electron_eta[0], Electron_pt[0],1);
+    if (wup < 0.) HLog->FillS("ElectronSFUpFail_A");
+    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown = GetElectronSF(Electron_eta[0], Electron_pt[0],-1);
+    if (wdown < 0.) HLog->FillS("ElectronSFDownFail_A");
+    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
+    break;
+  case 1:
+    wup = GetElectronSF(Electron_eta[0],Electron_pt[0],1);
+    if (wup < 0.) HLog->FillS("ElectronSFUpFail_B");
+    wup *= GetMuonSF(Muon_eta[0],Muon_pt[0],1);
+    if (wup < 0.) HLog->FillS("MuonSFUpFail_B");
+    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown = GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
+    if (wdown < 0.) HLog->FillS("ElectronSFDownFail_B");
+    wdown *= GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
+    if (wdown < 0.) HLog->FillS("MuonSFDownFail_B");
+    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
+    break;
+  case 2:
+    wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
+    if (wup < 0.) HLog->FillS("MuonSFUpFail_C");
+    wup *= GetElectronSF(Electron_eta[0],Electron_pt[0],1);
+    if (wup < 0.) HLog->FillS("ElectronSFUpFail_C");
+    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+
+    wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
+    if (wdown < 0.) HLog->FillS("MuonSFDownFail_C");
+    wdown *= GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
+    if (wdown < 0.) HLog->FillS("ElectronSFDownFail_C");
+    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
+    break;
+  case 3:
+    wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
+    if (wup < 0.) HLog->FillS("MuonSFUpFail_D");
+    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
+    if (wdown < 0.) HLog->FillS("MuonSFUpFail_D");
+    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
+    break;
+  }
+
+  HScaleFactors->Fill(wup);
+  HScaleFactors->Fill(wdown);
+
+  /* Default to 1. if it fails */
+  if( wup < 0 ) wup = 1.;
+  if( wdown < 0 ) wdown = 1.;
+
+  HPileup_[nch+4]->Fill(*PV_npvs,wup);
+  HMet_[nch+4]->Fill(*MET_pt,wup);
+  HMassW[nch+4]->Fill(wb.M(),wup);
+  HMassWZ[nch+4]->Fill((wb+zb).M(),wup);
+  HLt[nch+4]->Fill(lt,wup);
+  HMassZ_[nch+4]->Fill(PairZMass,wup);
+  HMassTW_[nch+4]->Fill(wmt,wup);
+
+  HPileup_[nch+8]->Fill(*PV_npvs,wdown);
+  HMet_[nch+8]->Fill(*MET_pt,wdown);
+  HMassW[nch+8]->Fill(wb.M(),wdown);
+  HMassWZ[nch+8]->Fill((wb+zb).M(),wdown);
+  HLt[nch+8]->Fill(lt,wdown);
+  HMassZ_[nch+8]->Fill(PairZMass,wdown);
+  HMassTW_[nch+8]->Fill(wmt,wdown);
+
+#endif
+
+  HPileup_[nch]->Fill(*PV_npvs);
+  HMet_[nch]->Fill(*MET_pt);
+  HMassW[nch]->Fill(wb.M());
+  HMassWZ[nch]->Fill((wb+zb).M());
+  HMassZ_[nch]->Fill(PairZMass);
+  HMassTW_[nch]->Fill(wmt);
+  HLt[nch]->Fill(lt);
 }
+
 
 void PreSelector::FillA(){
   Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
@@ -1110,11 +1215,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,
-            Muon_tightId);
+            Muon_tightId, Muon_genPartIdx, Muon_pdgId);
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
                 Electron_charge,Electron_dxy,Electron_dz,
-                Electron_cutBased);
+                Electron_cutBased, Electron_genPartIdx, Electron_pdgId);
 
   GoodElectron = PreSelector::GetGoodElectron(Els);
   GoodMuon = PreSelector::GetGoodMuon(Mus);
@@ -1262,8 +1367,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     // 0e3mu
     if(IsD){
       if(Muon_highPtId[l3] == 2){
-        FillCommon(Mus,Mus);
-        FillD();
+        Fill_(3,Mus,Mus);
       } else {
         IsD = false;
         HCutFlow->FillS("FailWMuonGlbHighPt");
@@ -1272,8 +1376,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     // 1e2Mu
     if(IsC){
-      FillCommon(Mus,Els);
-      FillC();
+      Fill_(2,Mus,Els);
     }
   }
 
@@ -1331,8 +1434,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     // 2e1mu
     if(IsB){
       if(Muon_highPtId[l3] == 2){
-        FillCommon(Els,Mus);
-        FillB();
+        Fill_(1,Els,Mus);
       } else {
         IsB = false;
         HCutFlow->FillS("Fail2e1muHighPtId");
@@ -1341,8 +1443,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
     //3e0mu
     if(IsA){
-      FillCommon(Els,Els);
-      FillA();
+      Fill_(0,Els,Els);
     }
   }
 

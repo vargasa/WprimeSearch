@@ -3,7 +3,7 @@
 
 using RVUI = TTreeReaderValue<UInt_t>&;
 using RAF = TTreeReaderArray<Float_t>&;
-using RVI = TTreeReaderArray<Int_t>&;
+using RAI = TTreeReaderArray<Int_t>&;
 
 class Leptons{
  public:
@@ -11,19 +11,22 @@ class Leptons{
   RAF pt;
   RAF eta;
   RAF phi;
-  RVI charge;
+  RAI charge;
   RAF dxy;
   RAF dz;
   Float_t mass;
+  RAI genPartIdx;
+  RAI pdgId;
 
  protected:
   Leptons(RVUI n, Float_t mass, RAF pt, RAF eta, RAF phi,
-          RVI charge, RAF dxy, RAF dz);
+          RAI charge, RAF dxy, RAF dz, RAI gpIdx, RAI pdgId);
 };
 
 Leptons::Leptons(RVUI n, Float_t mass, RAF pt, RAF eta, RAF phi,
-                 RVI charge, RAF dxy, RAF dz ) :
-n(n),mass(mass),pt(pt),eta(eta),phi(phi),charge(charge),dxy(dxy),dz(dz)
+                 RAI charge, RAF dxy, RAF dz, RAI gpIdx, RAI pdgId ) :
+  n(n),mass(mass),pt(pt),eta(eta),phi(phi),charge(charge),
+  dxy(dxy),dz(dz),genPartIdx(gpIdx),pdgId(pdgId)
 {
 
 }

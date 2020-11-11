@@ -12,7 +12,7 @@ using RAB = TTreeReaderArray<Bool_t>&;
 class Muons : public Leptons{
  public:
   Muons(RVUI, RAF, RAF, RAF, RAI, RAF,
-        RAF, RAB);
+        RAF, RAB, RAI, RAI);
   ~Muons() {};
 
   RAB tightId;
@@ -22,7 +22,8 @@ class Muons : public Leptons{
 
 Muons::Muons(TTreeReaderValue<UInt_t>& n, RAF pt, RAF eta,
              RAF phi, RAI charge,
-             RAF dxy, RAF dz, RAB tightId) :
-Leptons(n,mass,pt,eta,phi,charge,dxy,dz), tightId(tightId){
+             RAF dxy, RAF dz, RAB tightId, RAI gpIdx, RAI pdgId) :
+  Leptons(n,mass,pt,eta,phi,charge,dxy,dz,gpIdx,pdgId),
+  tightId(tightId){
 
 }

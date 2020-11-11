@@ -226,7 +226,7 @@ class PreSelector : public EventSelection {
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
 
-  void FillCommon(const Leptons& lz,const Leptons& lw);
+  void Fill_(const Int_t& nch, const Leptons& lz,const Leptons& lw);
   void FillA();
   void FillB();
   void FillC();
