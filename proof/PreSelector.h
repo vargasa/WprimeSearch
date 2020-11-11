@@ -121,32 +121,14 @@ class PreSelector : public EventSelection {
   // THs
   std::vector<TH1F*> HMet_;
 
-  TH1I *HnElA;
-  TH1I *HnElB;
-  TH1I *HnElC;
-  TH1I *HnElD;
-
-  TH1I *HnMuA;
-  TH1I *HnMuB;
-  TH1I *HnMuC;
-  TH1I *HnMuD;
+  std::vector<TH1F*> HnEl;
+  std::vector<TH1F*> HnMu;
 
   TH1F *HnJet;
 
-  TH1F *HMassTWA;
-  TH1F *HMassTWB;
-  TH1F *HMassTWC;
-  TH1F *HMassTWD;
-
-  TH1F *HMassZA;
-  TH1F *HMassZB;
-  TH1F *HMassZC;
-  TH1F *HMassZD;
-
-  TH1F *HMassWA;
-  TH1F *HMassWB;
-  TH1F *HMassWC;
-  TH1F *HMassWD;
+  std::vector<TH1F*> HMassTW_;
+  std::vector<TH1F*> HMassZ_;
+  std::vector<TH1F*> HMassW;
 
   TH2F *HMassZWZA;
   TH2F *HMassZWZB;
@@ -159,117 +141,25 @@ class PreSelector : public EventSelection {
   TH2F* HDeltaRMWZ;
   TH2F* HLtMWZ;
 
-  TH1F *HMassWZA;
-  TH1F *HMassWZB;
-  TH1F *HMassWZC;
-  TH1F *HMassWZD;
-
-  TH1F* HLtA;
-  TH1F* HLtB;
-  TH1F* HLtC;
-  TH1F* HLtD;
+  std::vector<TH1F*> HMassWZ;
+  std::vector<TH1F*> HLt;
 
   //Angular
-  TH1F *HDistl1l2;
   TH1F *HDistl1l3;
   TH1F *HDistl2l3;
 
-  TH1F *HDistl1l2A;
-  TH1F *HDistl1l2B;
-  TH1F *HDistl1l2C;
-  TH1F *HDistl1l2D;
+  std::vector<TH1F*> HDistl1l2;
 
   TH1F *HOverlap;
 
 #ifndef CMSDATA
   TEntryList *ELPass;
-  TH1F *HGenPartZA;
-  TH1F *HGenPartZB;
-  TH1F *HGenPartZC;
-  TH1F *HGenPartZD;
+  std::vector<TH1F*> HGenPartZ;
+  std::vector<TH1F*> HGenPartW;
+  std::vector<TH1F*> HGenPartF;
 
-  TH1F *HGenPartWA;
-  TH1F *HGenPartWB;
-  TH1F *HGenPartWC;
-  TH1F *HGenPartWD;
-
-  TH1F *HGenPartFA;
-  TH1F *HGenPartFB;
-  TH1F *HGenPartFC;
-  TH1F *HGenPartFD;
   TH1F *HScaleFactors;
   TH1D *SFPileup;
-
-
-  TH1F *HPileupA_SFUp;
-  TH1F *HPileupB_SFUp;
-  TH1F *HPileupC_SFUp;
-  TH1F *HPileupD_SFUp;
-
-  TH1F *HMetA_SFUp;
-  TH1F *HMetB_SFUp;
-  TH1F *HMetC_SFUp;
-  TH1F *HMetD_SFUp;
-
-  TH1F *HMassWA_SFUp;
-  TH1F *HMassWB_SFUp;
-  TH1F *HMassWC_SFUp;
-  TH1F *HMassWD_SFUp;
-
-  TH1F *HMassWZA_SFUp;
-  TH1F *HMassWZB_SFUp;
-  TH1F *HMassWZC_SFUp;
-  TH1F *HMassWZD_SFUp;
-
-  TH1F* HLtA_SFUp;
-  TH1F* HLtB_SFUp;
-  TH1F* HLtC_SFUp;
-  TH1F* HLtD_SFUp;
-
-  TH1F *HMassZA_SFUp;
-  TH1F *HMassZB_SFUp;
-  TH1F *HMassZC_SFUp;
-  TH1F *HMassZD_SFUp;
-
-  TH1F *HMassTWA_SFUp;
-  TH1F *HMassTWB_SFUp;
-  TH1F *HMassTWC_SFUp;
-  TH1F *HMassTWD_SFUp;
-
-  TH1F *HPileupA_SFDown;
-  TH1F *HPileupB_SFDown;
-  TH1F *HPileupC_SFDown;
-  TH1F *HPileupD_SFDown;
-
-  TH1F *HMetA_SFDown;
-  TH1F *HMetB_SFDown;
-  TH1F *HMetC_SFDown;
-  TH1F *HMetD_SFDown;
-
-  TH1F *HMassWA_SFDown;
-  TH1F *HMassWB_SFDown;
-  TH1F *HMassWC_SFDown;
-  TH1F *HMassWD_SFDown;
-
-  TH1F *HMassWZA_SFDown;
-  TH1F *HMassWZB_SFDown;
-  TH1F *HMassWZC_SFDown;
-  TH1F *HMassWZD_SFDown;
-
-  TH1F* HLtA_SFDown;
-  TH1F* HLtB_SFDown;
-  TH1F* HLtC_SFDown;
-  TH1F* HLtD_SFDown;
-
-  TH1F *HMassZA_SFDown;
-  TH1F *HMassZB_SFDown;
-  TH1F *HMassZC_SFDown;
-  TH1F *HMassZD_SFDown;
-
-  TH1F *HMassTWA_SFDown;
-  TH1F *HMassTWB_SFDown;
-  TH1F *HMassTWC_SFDown;
-  TH1F *HMassTWD_SFDown;
 
   TH1F* HLog;
 
@@ -304,11 +194,7 @@ class PreSelector : public EventSelection {
   TH2F *HWZPtDist;
 
   TH1D *HPileup;
-
-  TH1F *HPileupA;
-  TH1F *HPileupB;
-  TH1F *HPileupC;
-  TH1F *HPileupD;
+  std::vector<TH1F*> HPileup_;
 
   TH2I *HNEl;
   TH2I *HNMu;
