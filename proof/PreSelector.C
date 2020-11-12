@@ -20,6 +20,8 @@ PreSelector::PreSelector(TTree *)
   HLog = 0;
 #endif
   HCutFlow = 0;
+  HNEl = 0;
+  HNMu = 0;
 
   HPileup = 0;
 
@@ -852,6 +854,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+#ifndef CMSDATA
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,
             Muon_tightId, Muon_genPartIdx, Muon_pdgId);
@@ -859,6 +862,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
                 Electron_charge,Electron_dxy,Electron_dz,
                 Electron_cutBased, Electron_genPartIdx, Electron_pdgId);
+#else
+  Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+            Muon_charge,Muon_dxy,Muon_dz,
+            Muon_tightId);
+
+  Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
+                Electron_charge,Electron_dxy,Electron_dz,
+                Electron_cutBased);
+#endif
 
   GoodElectron = PreSelector::GetGoodElectron(Els);
   GoodMuon = PreSelector::GetGoodMuon(Mus);
