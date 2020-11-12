@@ -153,107 +153,67 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   std::vector<HistoInfo> HistNames = {
-    HistoInfo{"HMassZA","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZB","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZC","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZD","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZ_A","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZ_B","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZ_C","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassZ_D","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
-    HistoInfo{"HMassZA_SFUp","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZB_SFUp","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZC_SFUp","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZD_SFUp","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMet_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMet_B","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMet_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMet_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
     /* Another series */
-    HistoInfo{"HMassZA_SFDown","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZB_SFDown","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZC_SFDown","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassZD_SFDown","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassTW_A","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
+    HistoInfo{"HMassTW_B","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
+    HistoInfo{"HMassTW_C","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
+    HistoInfo{"HMassTW_D","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
     /* Another series */
-    HistoInfo{"HMetA","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetB","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetC","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetD","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    HistoInfo{"HMassWZ_A","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{WZ}^{3e0#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZ_B","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{WZ}^{2e1#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZ_C","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{WZ}^{1e2#mu};Event count/100GeV"},
+    HistoInfo{"HMassWZ_D","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{WZ}^{0e3#mu};Event count/100GeV"},
     /* Another series */
-    HistoInfo{"HMetA_SFUp","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetB_SFUp","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetC_SFUp","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T};#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetD_SFUp","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
-    /* Another series */
-    HistoInfo{"HMetA_SFDown","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetB_SFDown","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetC_SFDown","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T};#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    HistoInfo{"HMetD_SFDown","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
-    /* Another series */
-    HistoInfo{"HMassTWA","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWB","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWC","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWD","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
-    /* Another series */
-    HistoInfo{"HMassTWA_SFUp","M_{T}^{W} SFUp (3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWB_SFUp","M_{T}^{W} SFUp (2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWC_SFUp","M_{T}^{W} SFUp (1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWD_SFUp","M_{T}^{W} SFUp (0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
-    /* Another series */
-    HistoInfo{"HMassTWA_SFDown","M_{T}^{W} SFDown (3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWB_SFDown","M_{T}^{W} SFDown (2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWC_SFDown","M_{T}^{W} SFDown (1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
-    HistoInfo{"HMassTWD_SFDown","M_{T}^{W} SFDown (0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
-    /* Another series */
-    HistoInfo{"HMassWZA","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{WZ}^{3e0#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZB","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{WZ}^{2e1#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZC","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{WZ}^{1e2#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZD","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{WZ}^{0e3#mu};Event count/100GeV"},
-    /* Another series */
-    HistoInfo{"HMassWZA_SFUp","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{Z}^{3e0#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZB_SFUp","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{Z}^{2e1#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZC_SFUp","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{Z}^{1e2#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZD_SFUp","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{Z}^{0e3#mu};Event count/100GeV"}, 
-    /* Another series */
-    HistoInfo{"HMassWZA_SFDown","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{Z}^{2e1#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZB_SFDown","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{Z}^{2e1#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZC_SFDown","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{Z}^{1e2#mu};Event count/100GeV"},
-    HistoInfo{"HMassWZD_SFDown","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{Z}^{0e3#mu};Event count/100GeV"},
-    /* Another series */
-    HistoInfo{"HPileupA","Number of Good Primary Vertices;nPvs;Event count"},
-    HistoInfo{"HPileupB","Number of Good Primary Vertices;nPvs;Event count"},
-    HistoInfo{"HPileupC","Number of Good Primary Vertices;nPvs;Event count"},
-    HistoInfo{"HPileupD","Number of Good Primary Vertices;nPvs;Event count"},
+    HistoInfo{"HPileup_A","Number of Good Primary Vertices;nPvs;Event count"},
+    HistoInfo{"HPileup_B","Number of Good Primary Vertices;nPvs;Event count"},
+    HistoInfo{"HPileup_C","Number of Good Primary Vertices;nPvs;Event count"},
+    HistoInfo{"HPileup_D","Number of Good Primary Vertices;nPvs;Event count"},
     /* Another Series */
-    HistoInfo{"HMet","MET lll#nu; #slash{E_{T}}(GeV);Event count/10GeV"},
-    HistoInfo{"HMassTW","M_{WT}^{lll#nu}; M_{WT}(GeV);Event count/5GeV"},
-    HistoInfo{"HMassZ","M_{Z}^{lll#nu}; M_{Z}(GeV);Event count/2GeV"},
-    HistoInfo{"HMassWZ","M_{WZ}^{lll#nu}; M_{WZ}(GeV);Event count/100GeV"},
+    HistoInfo{"HMet_+ABCD","MET lll#nu; #slash{E_{T}}(GeV);Event count/10GeV"},
+    HistoInfo{"HMassTW_+ABCD","M_{WT}^{lll#nu}; M_{WT}(GeV);Event count/5GeV"},
+    HistoInfo{"HMassZ_+ABCD","M_{Z}^{lll#nu}; M_{Z}(GeV);Event count/2GeV"},
+    HistoInfo{"HMassWZ_+ABCD","M_{WZ}^{lll#nu}; M_{WZ}(GeV);Event count/100GeV"},
     /* Another Series */
-    HistoInfo{"HLtA","eee#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
-    HistoInfo{"HLtB","ee#mu#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
-    HistoInfo{"HLtC","#mu#mu e#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
-    HistoInfo{"HLtD","#mu#mu#mu#nu;P_{T}^{Lep} (GeV);Event count/100GeV"},
+    HistoInfo{"HLt_A","eee#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
+    HistoInfo{"HLt_B","ee#mu#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
+    HistoInfo{"HLt_C","#mu#mu e#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
+    HistoInfo{"HLt_D","#mu#mu#mu#nu;P_{T}^{Lep} (GeV);Event count/100GeV"},
   };
 
   std::vector<HistoInfo> NonStackedHistos = {
-    HistoInfo{"HPtl1","Z Lepton highest pt;Pt;Normalized Events"},
-    HistoInfo{"HPtl2","Z Second Lepton pt;Pt;Normalized Events"},
-    HistoInfo{"HPtl3","W Lepton Pt;Pt;Normalized Events"},
-    HistoInfo{"HMetPt","Met Pt;Pt;Normalized Events"},
+    HistoInfo{"HPtl1_+ABCD","Z Lepton highest pt;Pt;Normalized Events"},
+    HistoInfo{"HPtl2_+ABCD","Z Second Lepton pt;Pt;Normalized Events"},
+    HistoInfo{"HPtl3_+ABCD","W Lepton Pt;Pt;Normalized Events"},
+    HistoInfo{"HMetPt_+ABCD","Met Pt;Pt;Normalized Events"},
     /*Next series*/
-    HistoInfo{"HDistl1l2","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"},
-    HistoInfo{"HDistl1l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"},
-    HistoInfo{"HDistl2l3","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"},
-    HistoInfo{"HWZDist","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"},
+    HistoInfo{"HDistl1l2_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"},
+    HistoInfo{"HDistl1l3_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"},
+    HistoInfo{"HDistl2l3_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"},
+    HistoInfo{"HWZDist_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"},
     /*Next series*/
-    HistoInfo{"HEtal1","Eta Distribution l1; Eta; Normalized events"},
-    HistoInfo{"HEtal2","Eta Distribution l2; Eta; Normalized events"},
-    HistoInfo{"HEtal3","Eta Distribution l3; Eta; Normalized events"},
-    HistoInfo{"HScaleFactors","Scale Factors; Scale Factor; Normalized events"},
+    HistoInfo{"HEtal1_+ABCD","Eta Distribution l1; Eta; Normalized events"},
+    HistoInfo{"HEtal2_+ABCD","Eta Distribution l2; Eta; Normalized events"},
+    HistoInfo{"HEtal3_+ABCD","Eta Distribution l3; Eta; Normalized events"},
+    HistoInfo{"HScaleFactors_+ABCD","Scale Factors; Scale Factor; Normalized events"},
     /*Next series*/
-    HistoInfo{"HPhil1","Phi Distribution l1; Eta; Normalized events"},
-    HistoInfo{"HPhil2","Phi Distribution l2; Eta; Normalized events"},
-    HistoInfo{"HPhil3","Phi Distribution l3; Eta; Normalized events"},
-    HistoInfo{"HMetPhi","Phi Distribution MET; MET; Normalized events"},
+    HistoInfo{"HPhil1_+ABCD","Phi Distribution l1; Eta; Normalized events"},
+    HistoInfo{"HPhil2_+ABCD","Phi Distribution l2; Eta; Normalized events"},
+    HistoInfo{"HPhil3_+ABCD","Phi Distribution l3; Eta; Normalized events"},
+    HistoInfo{"HMetPhi_+ABCD","Phi Distribution MET; MET; Normalized events"},
     /*Next series*/
-    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
-    HistoInfo{"HnJet","Number of Jets; nJet; Normalized events"},
-    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
-    HistoInfo{"HPileup","Number of primary vertices; Npvs; Normalized events"},
+    HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
+    HistoInfo{"HnJet_+ABCD","Number of Jets; nJet; Normalized events"},
+    HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
+    HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
   };
 
   std::function<void(TH1* h,const Double_t&)> blindHisto = [](TH1* h, const Double_t& wpmass) {
@@ -336,7 +296,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  auto getRatio = [](TH1F* hhdata, THStack *hss){
+  auto getRatio = [](TH1* hhdata, THStack *hss){
       auto hcdata = static_cast<TH1*>(hhdata->Clone());
       hcdata->Divide(static_cast<TH1*>(hss->GetStack()->Last()));
       hcdata->SetMarkerColor(kBlack);
@@ -389,11 +349,28 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     h->Scale(lumiSF);
   };
 
-  auto getMCHisto = [&](std::string folder, std::string hName){
+  std::function<TH1*(std::string,std::string)> getHistoFromFile = [&](std::string folder, std::string hName){
     std::string hpath = Form("%s/%s",folder.c_str(),hName.c_str());
-    std::clog << "Getting MCHisto: " << hpath << std::endl;
-    auto h = static_cast<TH1F*>(f1->Get(hpath.c_str()));
-    h = static_cast<TH1F*>(h->Clone());
+    std::clog << "Getting Histo From File: " << hpath << std::endl;
+    if(hName.find("_+") != std::string::npos){
+      std::vector<std::string> chn;
+      chn.reserve(6);
+      for(const auto ch: hName.substr(hName.find("_+")+2)){
+        chn.emplace_back(Form("%c",ch));
+      }
+      TH1* hAll = nullptr;
+      for(const auto& ch: chn){
+        std::string hn = hName.substr(0,hName.find("_+"));
+        if(!hAll){
+          hAll = static_cast<TH1*>(getHistoFromFile(folder,hn + "_" + ch));
+        } else {
+          hAll->Add(static_cast<TH1*>(getHistoFromFile(folder,hn + "_" + ch)));
+        }
+      }
+      return hAll;
+    }
+    auto h = static_cast<TH1*>(f1->Get(hpath.c_str()));
+    h = static_cast<TH1*>(h->Clone());
     return h;
   };
 
@@ -424,7 +401,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         if (sampleName.size()==0) continue;
         std::clog << Form("** Printing: %d: %s", yy, sampleName.c_str()) << std::endl;
         std::string folder = Form("%d/%s",yy,sampleName.c_str());
-        TH1* h = static_cast<TH1*>(getMCHisto(folder,histoName)->Clone());
+        TH1* h = static_cast<TH1*>(getHistoFromFile(folder,histoName)->Clone());
         applyLumiSF(h, folder, BGN.xsec);
         h->SetLineColor(yy%2015);
         h->SetMarkerColor(yy%2015);
@@ -455,13 +432,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c;
   };
 
-  diffSampleYear("HMassWZ");
+  diffSampleYear("HMassWZ_+ABCD");
 
   auto getBGStack = [&](int yr, std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
     Int_t prevColor = -1;
     for (auto BGN: BgNames.find(yr)->second) {
-      auto h = getMCHisto(Form("%d/%s",yr,BGN.folderName.c_str()),hname);
+      auto h = getHistoFromFile(Form("%d/%s",yr,BGN.folderName.c_str()),hname);
       applyLumiSF(h, Form("%d/%s",yr,BGN.folderName.c_str()), BGN.xsec);
       h->SetFillStyle(1001);
       h->SetTitle(BGN.legendName.c_str());
@@ -475,19 +452,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     return hstck;
   };
 
-  auto getDataHisto = [&](const int& yr, const std::string& hName){
-    std::string DataName = DataSampleNames[yr];
-    std::clog <<  Form("Getting CMSDATA: %d/%s/%s\n",yr,DataName.c_str(),hName.c_str());
-    auto hdata = dynamic_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),hName.c_str())));
-    if (!hdata) {
-      std::string tmp = hName;
-      tmp = tmp.substr(0,tmp.find("_SF"));
-      std::clog << Form("Printing data on %s (from %s) plot\n",tmp.c_str(),hName.c_str());
-      hdata = static_cast<TH1F*>(f1->Get(Form("%d/%s/%s",yr,DataName.c_str(),tmp.c_str())));
-    }
-    hdata = static_cast<TH1F*>(hdata->Clone());
-    return hdata;
-  };
 
   auto addCutEff = [&] (TGraph* g, const std::string& sample,
                        const char* cutLabel, const char* totalLabel, const float& sampleMass) {
@@ -556,7 +520,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TH2F* h2BgSum = nullptr;
     for(const auto& BGN: (BgNames.find(yr))->second){
       std::string folder = Form("%d/%s",yr,BGN.folderName.c_str());
-      auto h2 = static_cast<TH2F*>(f1->Get(Form("%s/%s",folder.c_str(),histoLabel.c_str())));
+      auto h2 = static_cast<TH2F*>(getHistoFromFile(folder.c_str(),histoLabel.c_str()));
       if(!h2BgSum) {
         h2BgSum = static_cast<TH2F*>(h2->Clone());
       } else {
@@ -564,9 +528,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
     }
     h2BgSum->SetMarkerColor(kRed);
-    TH2F* h2Sig = static_cast<TH2F*>(f1->Get(Form("%d/%s/%s",yr,signal.folderName.c_str(),histoLabel.c_str()))->Clone());
+    TH2F* h2Sig = static_cast<TH2F*>(getHistoFromFile(Form("%d/%s",yr,signal.folderName.c_str()),histoLabel));
     h2Sig->SetMarkerColor(kGreen);
-    TH2F* h2Data = static_cast<TH2F*>(f1->Get(Form("%d/%s/%s",yr,DataSampleNames[yr].c_str(),histoLabel.c_str()))->Clone());
+    TH2F* h2Data = static_cast<TH2F*>(getHistoFromFile(Form("%d/%s",yr,DataSampleNames[yr].c_str()),histoLabel));
     h2Data->SetMarkerColor(kBlack);
     c2->Divide(2,1);
     c2->cd(1);
@@ -680,7 +644,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       throw("Punzi w/o signal");
     }
 
-    auto hsig = getMCHisto(signalFolder,histoName);
+    auto hsig = getHistoFromFile(signalFolder,histoName);
     const float width = 0.15; /* 15% Window */
     const float massMin = wpmass * (1-width);
     const float massMax = wpmass * (1+width);
@@ -710,11 +674,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   auto plotPunziSignificance = [&] (const int& yr) {
 
-    const std::string fromHisto = "HMassWZ";
+    const std::string fromHisto = "HMassWZ_+ABCD";
     TCanvas* c1 = new TCanvas("c1","c1");
 
     THStack *hs = new THStack("hs","");
-    hs = getBGStack(yr, "HMassWZ");
+    hs = getBGStack(yr, fromHisto);
 
     TGraph* GPunziS = new TGraph();
     GPunziS->SetTitle(Form("Punzi Significance vs M(WZ) %d; M(WZ); Punzi Significance", yr));
@@ -788,7 +752,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   std::function<void(const int&)> plotSelectionRatio = [&] (const int& yr) {
 
-    const std::string fromHisto = "HMassWZ";
+    const std::string fromHisto = "HMassWZ_+ABCD";
     const Int_t nMassPoints = 14;
 
     TCanvas* c1 = new TCanvas("c1","c1");
@@ -872,9 +836,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       printCutFlowStack(year,signal);
 
-      printH2Comb(year, signal, "HPtWPtZ");
-      printH2Comb(year, signal, "HDeltaRPtZ");
-      printH2Comb(year, signal, "HLtMWZ");
+      printH2Comb(year, signal, "HPtWPtZ_+ABCD");
+      printH2Comb(year, signal, "HDeltaRPtZ_+ABCD");
+      printH2Comb(year, signal, "HLtMWZ_+ABCD");
 
       c1->Clear();
       c1->Divide(2,2);
@@ -929,7 +893,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         //blindStack(hs,WpMass);
         TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
-        auto hsig = getMCHisto(Form("%d/%s",year,signal.folderName.c_str()),hName);
+        auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
         applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
         hsig->SetTitle(signal.legendName.c_str());
         legend->AddEntry( hsig,signal.legendName.c_str(),"L");
@@ -949,7 +913,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         double minx = last->GetXaxis()->GetBinWidth(0) * (last->FindFirstBinAbove(0.25)-1);
         hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
 
-        auto hdata = getDataHisto(year,hName);
+        auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),hName);
         hdata->SetMarkerStyle(kFullCircle);
         fixYRange(hs,getMaxY(hdata));
         hdata->Draw("SAME P");
@@ -958,7 +922,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         blindHisto(hdata,WpMass);
         legend->AddEntry(hdata, Form("Data%d",year));
 
-        if (std::string(hName).compare("HMassWZ")==0){
+        if (std::string(hName).compare("HMassWZ_+ABCD")==0){
           printBgContrib(year,hs,hsig);
           printDataCard(year,WpMass,hs,hsig,hdata);
         }
@@ -1002,8 +966,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         c1->cd(r+1);
         for(auto BGN: (BgNames.find(year))->second ){
           std::cout << Form("Getting %d/%s/%s\n",year,BGN.folderName.c_str(),hp.name.c_str());
-          auto h = (TH1F*)f1->Get(Form("%d/%s/%s",year,BGN.folderName.c_str(),hp.name.c_str()));
-          h = (TH1F*)h->Clone();
+          auto h = (TH1F*)getHistoFromFile(Form("%d/%s",year,BGN.folderName.c_str()),hp.name);
           legend->AddEntry(h,BGN.legendName.c_str(), "L");
           legend->SetBorderSize(0);
           h->SetTitle(hp.title.c_str());
@@ -1014,8 +977,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           h->Draw("HIST SAME");
         }
 
-        auto hsig = (TH1F*)f1->Get(Form("%d/%s/%s",year,signal.folderName.c_str(),hp.name.c_str()));
-        hsig = (TH1F*)hsig->Clone();
+        auto hsig = (TH1F*)getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hp.name.c_str());
         hsig->SetLineColor(kBlack);
         hsig->SetLineWidth(2);
         normalizeHisto(hsig);
@@ -1023,7 +985,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         legend->AddEntry(hsig,signal.legendName.c_str(), "L");
 
         if(hp.name == "HPileup"){
-           auto hdata = getDataHisto(year,hp.name);
+           auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),hp.name);
            hdata->SetLineColor(kRed);
            hdata->SetLineWidth(2);
            normalizeHisto(hdata);
