@@ -118,11 +118,11 @@ class PreSelector : public EventSelection {
 
 
   // THs
-  std::vector<TH1F*> HMet_;
+  std::vector<TH1F*> HMet;
   std::vector<TH1F*> HnEl;
   std::vector<TH1F*> HnMu;
-  std::vector<TH1F*> HMassTW_;
-  std::vector<TH1F*> HMassZ_;
+  std::vector<TH1F*> HMassTW;
+  std::vector<TH1F*> HMassZ;
   std::vector<TH1F*> HMassW;
   std::vector<TH1F*> HMassWZ;
   std::vector<TH1F*> HLt;
@@ -145,8 +145,6 @@ class PreSelector : public EventSelection {
   TH1F *HOverlap;
 
 #ifndef CMSDATA
-  TEntryList *ELPass;
-
   std::vector<TH1F*> HGenPartZ;
   std::vector<TH1F*> HGenPartW;
   std::vector<TH1F*> HGenPartF;
@@ -154,7 +152,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HScaleFactors;
   TH1D *SFPileup;
 
-  TH1F* HLog;
 #endif
 
   TH1D *HCutFlow;

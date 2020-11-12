@@ -13,11 +13,7 @@ PreSelector::PreSelector(TTree *)
   HOverlap=0;
 
 #ifndef CMSDATA
-  ELPass=0;
-
   SFPileup = 0;
-
-  HLog = 0;
 #endif
   HCutFlow = 0;
   HNEl = 0;
@@ -208,7 +204,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Double_t MinMet = 0.;
   const Int_t MetBins = 60;
 
-  InitHVec<TH1F>(HMet_,"HMet",MetBins,MinMet,MaxMet);
+  InitHVec<TH1F>(HMet,"HMet",MetBins,MinMet,MaxMet);
 
   const Int_t DistBins = 100;
   const Float_t MaxDist = 2.01*TMath::Pi();
@@ -243,11 +239,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t HMaxZMass = 120.;
   const Float_t HMinZMass = 60.;
   const Int_t ZMassBins = 30;
-  InitHVec<TH1F>(HMassZ_,"HMassZ",ZMassBins,HMinZMass,HMaxZMass);
+  InitHVec<TH1F>(HMassZ,"HMassZ",ZMassBins,HMinZMass,HMaxZMass);
 
   const Float_t MaxTWMass = 250.;
   const Int_t TWMassBins = 50;
-  InitHVec<TH1F>(HMassTW_,"HMassTW",TWMassBins,0.,MaxTWMass);
+  InitHVec<TH1F>(HMassTW,"HMassTW",TWMassBins,0.,MaxTWMass);
 
   const Float_t MaxWZMass = 8500.;
   const Int_t WZMassBins = 85;
@@ -307,15 +303,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t PdgIdMax = 50.;
 
 #ifndef CMSDATA
-  ELPass = new TEntryList("ELPass","Events Passing Full Selection");
-  fOutput->Add(ELPass);
-
   InitHVec<TH1F>(HGenPartZ,"HGenPartZ",BinsPdgId,PdgIdMin,PdgIdMax);
   InitHVec<TH1F>(HGenPartW,"HGenPartW",BinsPdgId,PdgIdMin,PdgIdMax);
   InitHVec<TH1F>(HGenPartF,"HGenPartF",BinsPdgId,PdgIdMin,PdgIdMax);
-
-  HLog = new TH1F("HLog","",50,0,50.); /* Limits are meaningless here */
-  fOutput->Add(HLog);
 
 #endif
   HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
@@ -406,7 +396,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   if(!SFPileup)
     std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
 
-  InitHVec<TH1F>(HScaleFactors,"HScaleFactors",60,0.,6.);
+  InitHVec<TH1F>(HScaleFactors,"HScaleFactors",70,-1.,6.);
 #endif
 
 }
@@ -655,34 +645,37 @@ void PreSelector::FillCategory(const Int_t& nch, const Leptons& lz,const Leptons
   HWZPtDist[nch]->Fill((wb+zb).Pt(),GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
   HWZPt[nch]->Fill((wb+zb).Pt());
   HWZDist[nch]->Fill(GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
-  HPtl1[nch]->Fill(lz.pt[l1]);
-  HPtl2[nch]->Fill(lz.pt[l2]);
-  HPtl3[nch]->Fill(lw.pt[l3]);
-  HEtal1[nch]->Fill(lz.eta[l1]);
-  HEtal2[nch]->Fill(lz.eta[l2]);
-  HEtal3[nch]->Fill(lw.eta[l3]);
-  HPtEtal1[nch]->Fill(lz.pt[l1],lz.eta[l1]);
-  HPtEtal2[nch]->Fill(lz.pt[l2],lz.eta[l2]);
-  HPtEtal3[nch]->Fill(lz.pt[l3],lz.eta[l3]);
-  HPhil1[nch]->Fill(lz.phi[l1]);
-  HPhil2[nch]->Fill(lz.phi[l2]);
-  HPhil3[nch]->Fill(lw.phi[l3]);
+  HPtl1[nch]->Fill(lep1.Pt());
+  HPtl2[nch]->Fill(lep2.Pt());
+  HPtl3[nch]->Fill(lep3.Pt());
+  HEtal1[nch]->Fill(lep1.Eta());
+  HEtal2[nch]->Fill(lep2.Eta());
+  HEtal3[nch]->Fill(lep3.Eta());
+  HPtEtal1[nch]->Fill(lep1.Pt(),lep1.Eta());
+  HPtEtal2[nch]->Fill(lep2.Pt(),lep2.Eta());
+  HPtEtal3[nch]->Fill(lep3.Pt(),lep3.Eta());
+  HPhil1[nch]->Fill(lep1.Phi());
+  HPhil2[nch]->Fill(lep2.Phi());
+  HPhil3[nch]->Fill(lep3.Phi());
   HnJet[nch]->Fill(*nJet);
-  HDistl1l3[nch]->Fill(GetEtaPhiDistance(lz.eta[l1],lz.phi[l1],
-                                      lw.eta[l3],lw.phi[l3]));
-  HDistl2l3[nch]->Fill(GetEtaPhiDistance(lz.eta[l2],lz.phi[l2],
-                                      lw.eta[l3],lw.phi[l3]));
+  HDistl1l2[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),
+                                         lep2.Eta(),lep2.Phi()));
+  HDistl1l3[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),
+                                         lep3.Eta(),lep3.Phi()));
+  HDistl2l3[nch]->Fill(GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),
+                                         lep3.Eta(),lep3.Phi()));
   HMetPt[nch]->Fill(*MET_pt);
   HMetPhi[nch]->Fill(*MET_phi);
   HMassZTW[nch]->Fill(zb.M(),wmt);
-  HDeltaRPtZ[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Eta(),
-                                     lep3.Phi(),lep3.Phi()),zb.Pt());
+  HDeltaRPtZ[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),
+                                          lep3.Eta(),lep3.Phi()),zb.Pt());
   HPtWPtZ[nch]->Fill(wb.Pt(),zb.Pt());
-  HDeltaRMWZ[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Eta(),
-                                     lep3.Phi(),lep3.Phi()),(wb+zb).M());
-  HLtMWZ[nch]->Fill(lep1.Pt()+lep2.Pt()+lep3.Pt(),(wb+zb).M());
+  HDeltaRMWZ[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),
+                                          lep3.Eta(),lep3.Phi()),(wb+zb).M());
 
   Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
+  HLtMWZ[nch]->Fill(lt,(wb+zb).M());
+
   HNLep[nch]->Fill(GoodMuon.size(),GoodElectron.size());
   HnEl[nch]->Fill(GoodElectron.size());
   HnMu[nch]->Fill(GoodMuon.size());
@@ -690,11 +683,8 @@ void PreSelector::FillCategory(const Int_t& nch, const Leptons& lz,const Leptons
 
   HCutFlow->FillS(Form("%d",nch));
 
-  HDistl1l2[nch]->Fill(GetEtaPhiDistance(lep1.Pt(),lep1.Phi(),
-                                         lep2.Pt(),lep2.Phi()));
 
 #ifndef CMSDATA
-
   HGenPartF[nch]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l1]]));
   HGenPartF[nch]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l2]]));
   HGenPartF[nch]->FillS(Form("%d",GenPart_pdgId[lw.genPartIdx[l3]]));
@@ -713,43 +703,30 @@ void PreSelector::FillCategory(const Int_t& nch, const Leptons& lz,const Leptons
   switch(nch){
   case 0:
     wup = GetElectronSF(Electron_eta[0], Electron_pt[0],1);
-    if (wup < 0.) HLog->FillS("ElectronSFUpFail_A");
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
     wdown = GetElectronSF(Electron_eta[0], Electron_pt[0],-1);
-    if (wdown < 0.) HLog->FillS("ElectronSFDownFail_A");
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   case 1:
     wup = GetElectronSF(Electron_eta[0],Electron_pt[0],1);
-    if (wup < 0.) HLog->FillS("ElectronSFUpFail_B");
     wup *= GetMuonSF(Muon_eta[0],Muon_pt[0],1);
-    if (wup < 0.) HLog->FillS("MuonSFUpFail_B");
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
     wdown = GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
-    if (wdown < 0.) HLog->FillS("ElectronSFDownFail_B");
     wdown *= GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
-    if (wdown < 0.) HLog->FillS("MuonSFDownFail_B");
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   case 2:
     wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
-    if (wup < 0.) HLog->FillS("MuonSFUpFail_C");
     wup *= GetElectronSF(Electron_eta[0],Electron_pt[0],1);
-    if (wup < 0.) HLog->FillS("ElectronSFUpFail_C");
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-
     wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
-    if (wdown < 0.) HLog->FillS("MuonSFDownFail_C");
     wdown *= GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
-    if (wdown < 0.) HLog->FillS("ElectronSFDownFail_C");
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   case 3:
     wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
-    if (wup < 0.) HLog->FillS("MuonSFUpFail_D");
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
     wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
-    if (wdown < 0.) HLog->FillS("MuonSFUpFail_D");
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   }
@@ -762,29 +739,29 @@ void PreSelector::FillCategory(const Int_t& nch, const Leptons& lz,const Leptons
   if( wdown < 0 ) wdown = 1.;
 
   HPileup_[nch+4]->Fill(*PV_npvs,wup);
-  HMet_[nch+4]->Fill(*MET_pt,wup);
+  HMet[nch+4]->Fill(*MET_pt,wup);
   HMassW[nch+4]->Fill(wb.M(),wup);
   HMassWZ[nch+4]->Fill((wb+zb).M(),wup);
   HLt[nch+4]->Fill(lt,wup);
-  HMassZ_[nch+4]->Fill(PairZMass,wup);
-  HMassTW_[nch+4]->Fill(wmt,wup);
+  HMassZ[nch+4]->Fill(PairZMass,wup);
+  HMassTW[nch+4]->Fill(wmt,wup);
 
   HPileup_[nch+8]->Fill(*PV_npvs,wdown);
-  HMet_[nch+8]->Fill(*MET_pt,wdown);
+  HMet[nch+8]->Fill(*MET_pt,wdown);
   HMassW[nch+8]->Fill(wb.M(),wdown);
   HMassWZ[nch+8]->Fill((wb+zb).M(),wdown);
   HLt[nch+8]->Fill(lt,wdown);
-  HMassZ_[nch+8]->Fill(PairZMass,wdown);
-  HMassTW_[nch+8]->Fill(wmt,wdown);
+  HMassZ[nch+8]->Fill(PairZMass,wdown);
+  HMassTW[nch+8]->Fill(wmt,wdown);
 
 #endif
 
   HPileup_[nch]->Fill(*PV_npvs);
-  HMet_[nch]->Fill(*MET_pt);
+  HMet[nch]->Fill(*MET_pt);
   HMassW[nch]->Fill(wb.M());
   HMassWZ[nch]->Fill((wb+zb).M());
-  HMassZ_[nch]->Fill(PairZMass);
-  HMassTW_[nch]->Fill(wmt);
+  HMassZ[nch]->Fill(PairZMass);
+  HMassTW[nch]->Fill(wmt);
   HLt[nch]->Fill(lt);
 }
 
@@ -1011,10 +988,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
       if(!DefineW(Mus))
         return kFALSE;
 
-#ifndef CMSDATA
-    ELPass->Enter(entry);
-#endif
-
     // 0e3mu
     if(IsD){
       if(Muon_highPtId[l3] == 2){
@@ -1078,10 +1051,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
       if (!DefineW(Mus))
         return kFALSE;
 
-#ifndef CMSDATA
-    ELPass->Enter(entry);
-#endif
-
     // 2e1mu
     if(IsB){
       if(Muon_highPtId[l3] == 2){
@@ -1119,12 +1088,6 @@ void PreSelector::Terminate() {
     return Form("%s/%d/%s_%s.png",dir.c_str(),Year,SampleName.Data(),name.c_str());
   };
 
-#ifndef CMSDATA
-  std::unique_ptr<TFile> fELOut(TFile::Open("MCEntryLists.root","UPDATE"));
-  ELPass->SetName(SampleName.Data());
-  ELPass->Write(SampleName.Data());
-  fELOut->Close();
-#endif
 
   gStyle->SetOptStat(1111111);
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
@@ -1147,14 +1110,6 @@ void PreSelector::Terminate() {
   gPad->SetLogy();
   HCutFlow->Draw("HIST TEXT45");
   ch->Print(getFullPath("HCutFlow"));
-
-#ifndef CMSDATA
-
-  ch->Clear();
-  HLog->Draw("HIST TEXT45");
-  ch->Print(getFullPath("HLog"));
-#endif
-
 
   ch->cd(0);
   HOverlap->Draw();
