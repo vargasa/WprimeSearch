@@ -196,6 +196,8 @@ class PreSelector : public EventSelection {
 
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
+  std::vector<UInt_t> SameFlvWCand;
+  Bool_t PairEl{}, PairMu{};
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
   std::vector<ROOT::Math::PxPyPzMVector> nu;
 
