@@ -180,6 +180,11 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HWZPt;
   std::vector<TH2F*> HWZPtDist;
 
+  std::vector<TH2F*> HZlepIdx;
+  std::vector<TH1F*> HWlepIdx;
+  std::vector<TH3F*> HlepIdx;
+
+
   TH1D *HPileup;
   std::vector<TH1F*> HPileup_;
 

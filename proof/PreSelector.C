@@ -311,6 +311,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
   fOutput->Add(HCutFlow);
 
+  InitHVec<TH2F>(HZlepIdx,"HZlepIdx",10,0.,10.,10,0.,10.);
+  InitHVec<TH1F>(HWlepIdx,"HWlepIdx",10,0.,10.);
+  InitHVec<TH3F>(HlepIdx,"HlepIdx",10,0.,10.,10,0.,10.,10,0.,10.);
+
   const Int_t BinsLep = 10;
   const Float_t MinLep = 0.;
   const Float_t MaxLep = 10.;
@@ -642,6 +646,9 @@ Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
 
 void PreSelector::FillCategory(const Int_t& nch, const Leptons& lz,const Leptons& lw){
 
+  HZlepIdx[nch]->Fill(l1,l2);
+  HWlepIdx[nch]->Fill(l3);
+  HlepIdx[nch]->Fill(l1,l2,l3);
   HWZPtDist[nch]->Fill((wb+zb).Pt(),GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
   HWZPt[nch]->Fill((wb+zb).Pt());
   HWZDist[nch]->Fill(GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi()));
