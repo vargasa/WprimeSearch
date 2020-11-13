@@ -8,6 +8,7 @@
 #include "TParameter.h"
 #include "TH1I.h"
 #include "TH2I.h"
+#include "TH3F.h"
 #include "TStyle.h"
 #include "THStack.h"
 #include "Electrons.h"
@@ -194,6 +195,8 @@ class PreSelector : public EventSelection {
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
   Float_t wmt; // W Transverse mass;
 
+  Bool_t IsA_{},IsB{},IsC{},IsD{};
+
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
   std::vector<UInt_t> SameFlvWCand;
@@ -218,7 +221,7 @@ class PreSelector : public EventSelection {
   std::vector<UInt_t> GetGoodMuon(const Muons&);
   std::vector<UInt_t> GetGoodElectron(const Electrons&);
 
-  bool DefineW(Leptons l);
+  bool DefineW(const Leptons& l);
   Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&) const;
   Bool_t CheckMuonPair(const std::pair<UInt_t,UInt_t>&) const;
   Float_t GetEtaPhiDistance(const float&,const float&,const float&,const float&) const;
@@ -255,6 +258,9 @@ class PreSelector : public EventSelection {
 #endif
 #endif
 
+  Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);
+  Bool_t PairMuDefineW(const Electrons& Els, const Muons& Mus);
+  void FillRegion(const int regOffset, const Electrons& Els, const Muons& Mus);
   std::pair<UInt_t,UInt_t> GetLeptonPair(const Leptons&, const std::vector<UInt_t>&) const;
   ZPairInfo FindZ(const Leptons&,const std::vector<UInt_t>&) const;
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(const ROOT::Math::PtEtaPhiMVector&,const Float_t&);
