@@ -179,12 +179,12 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                            Args... args){
 
   std::vector<std::string> idst = {
-    "A", "B", "C", "D",
-    "A_Up","B_Up","C_Up","D_Up", /* +4 */
-    "A_Down","B_Down","C_Down","D_Down", /* +8 */
-    "A_CR1","B_CR1","C_CR1","D_CR1", /* +12 */
-    "A_CR1_Up","B_CR1_Up","C_CR1_Up","D_CR1_Up", /* +16 */
-    "A_CR1_Down","B_CR1_Down","C_CR1_Down","D_CR1_Down" /* +20 */
+    "A",          "B",          "C",          "D",
+    "A_Up",       "B_Up",       "C_Up",       "D_Up",      /* +4 */
+    "A_Down",     "B_Down",     "C_Down",     "D_Down",    /* +8 */
+    "A_CR1",      "B_CR1",      "C_CR1",      "D_CR1",     /* +12 */
+    "A_CR1_Up",   "B_CR1_Up",   "C_CR1_Up",   "D_CR1_Up",  /* +16 */
+    "A_CR1_Down", "B_CR1_Down", "C_CR1_Down", "D_CR1_Down" /* +20 */
   };
 
   for(auto id: idst){
@@ -863,16 +863,20 @@ Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
     if(!DefineW(Mus))
       return kFALSE;
 
+  std::cout << "PairMuDefineW [Ok]\n";
+
   return kTRUE;
 }
 
 Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
 
+  std::cout << "PairElDefineW\n";
+
   auto WMuonOk = [&](){
     Bool_t ok{};
     for (const auto& i: GoodMuon) {
-      if (Muon_highPtId[GoodMuon[i]] == 2) {
-        l3 = GoodMuon[i];
+      if (Muon_highPtId[i] == 2) {
+        l3 = i;
         ok = true;
         break;
       }
@@ -916,7 +920,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
 }
 
 void PreSelector::FillRegion(const int regOffset,
-                               const Electrons& Els, const Muons& Mus){
+                             const Electrons& Els, const Muons& Mus){
 
 
   if(PairEl and PairElDefineW(Els,Mus)){
