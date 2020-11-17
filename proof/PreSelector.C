@@ -182,9 +182,9 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "A",          "B",          "C",          "D",
     "A_Up",       "B_Up",       "C_Up",       "D_Up",      /* +4 */
     "A_Down",     "B_Down",     "C_Down",     "D_Down",    /* +8 */
-    "A_CR1",      "B_CR1",      "C_CR1",      "D_CR1",     /* +12 */
-    "A_CR1_Up",   "B_CR1_Up",   "C_CR1_Up",   "D_CR1_Up",  /* +16 */
-    "A_CR1_Down", "B_CR1_Down", "C_CR1_Down", "D_CR1_Down" /* +20 */
+    "CR1_A",      "CR1_B",      "CR1_C",      "CR1_D",     /* +12 */
+    "CR1_A_Up",   "CR1_B_Up",   "CR1_C_Up",   "CR1_D_Up",  /* +16 */
+    "CR1_A_Down", "CR1_B_Down", "CR1_C_Down", "CR1_D_Down" /* +20 */
   };
 
   for(auto id: idst){
@@ -863,14 +863,10 @@ Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
     if(!DefineW(Mus))
       return kFALSE;
 
-  std::cout << "PairMuDefineW [Ok]\n";
-
   return kTRUE;
 }
 
 Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
-
-  std::cout << "PairElDefineW\n";
 
   auto WMuonOk = [&](){
     Bool_t ok{};
@@ -1165,7 +1161,6 @@ void PreSelector::Terminate() {
 
   TObjLink *lnk = fOutput->FirstLink();
   while (lnk) {
-    std::cout << lnk->GetObject()->GetName() << std::endl;
     lnk->GetObject()->Write();
     lnk = lnk->Next();
   }

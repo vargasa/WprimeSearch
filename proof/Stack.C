@@ -158,35 +158,70 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HMassZ_C","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
     HistoInfo{"HMassZ_D","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
     /* Another series */
+    HistoInfo{"HMassZ_CR1_A","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV) CR;Event count/2GeV"},
+    HistoInfo{"HMassZ_CR1_B","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV) CR;Event count/2GeV"},
+    HistoInfo{"HMassZ_CR1_C","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV) CR;Event count/2GeV"},
+    HistoInfo{"HMassZ_CR1_D","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV) CR;Event count/2GeV"},
+    /* Another series */
     HistoInfo{"HMet_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
     HistoInfo{"HMet_B","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
     HistoInfo{"HMet_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
     HistoInfo{"HMet_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    /* Another series */
+    HistoInfo{"HMet_CR1_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV) CR;Event count/10GeV"},
+    HistoInfo{"HMet_CR1_B","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV) CR;Event count/10GeV"},
+    HistoInfo{"HMet_CR1_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV) CR;Event count/10GeV"},
+    HistoInfo{"HMet_CR1_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV) CR;Event count/10GeV"},
     /* Another series */
     HistoInfo{"HMassTW_A","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
     HistoInfo{"HMassTW_B","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
     HistoInfo{"HMassTW_C","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
     HistoInfo{"HMassTW_D","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
     /* Another series */
+    HistoInfo{"HMassTW_CR1_A","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu} CR;Event count/5GeV"},
+    HistoInfo{"HMassTW_CR1_B","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu} CR;Event count/5GeV"},
+    HistoInfo{"HMassTW_CR1_C","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu} CR;Event count/5GeV"},
+    HistoInfo{"HMassTW_CR1_D","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu} CR;Event count/5GeV"},
+    /* Another series */
     HistoInfo{"HMassWZ_A","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{WZ}^{3e0#mu};Event count/100GeV"},
     HistoInfo{"HMassWZ_B","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{WZ}^{2e1#mu};Event count/100GeV"},
     HistoInfo{"HMassWZ_C","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{WZ}^{1e2#mu};Event count/100GeV"},
     HistoInfo{"HMassWZ_D","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{WZ}^{0e3#mu};Event count/100GeV"},
     /* Another series */
+    HistoInfo{"HMassWZ_CR1_A","M_{WZ}^{Z#rightarrow ee W#rightarrow e#nu};M_{WZ}^{3e0#mu} CR;Event count/100GeV"},
+    HistoInfo{"HMassWZ_CR1_B","M_{WZ}^{Z#rightarrow ee W#rightarrow #mu#nu};M_{WZ}^{2e1#mu} CR;Event count/100GeV"},
+    HistoInfo{"HMassWZ_CR1_C","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow e#nu};M_{WZ}^{1e2#mu} CR;Event count/100GeV"},
+    HistoInfo{"HMassWZ_CR1_D","M_{WZ}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu};M_{WZ}^{0e3#mu} CR;Event count/100GeV"},
+    /* Another series */
     HistoInfo{"HPileup_A","Number of Good Primary Vertices;nPvs;Event count"},
     HistoInfo{"HPileup_B","Number of Good Primary Vertices;nPvs;Event count"},
     HistoInfo{"HPileup_C","Number of Good Primary Vertices;nPvs;Event count"},
     HistoInfo{"HPileup_D","Number of Good Primary Vertices;nPvs;Event count"},
+    /* Another series */
+    HistoInfo{"HPileup_CR1_A","Number of Good Primary Vertices;nPvs CR;Event count"},
+    HistoInfo{"HPileup_CR1_B","Number of Good Primary Vertices;nPvs CR;Event count"},
+    HistoInfo{"HPileup_CR1_C","Number of Good Primary Vertices;nPvs CR;Event count"},
+    HistoInfo{"HPileup_CR1_D","Number of Good Primary Vertices;nPvs CR;Event count"},
     /* Another Series */
     HistoInfo{"HMet_+ABCD","MET lll#nu; #slash{E_{T}}(GeV);Event count/10GeV"},
     HistoInfo{"HMassTW_+ABCD","M_{WT}^{lll#nu}; M_{WT}(GeV);Event count/5GeV"},
     HistoInfo{"HMassZ_+ABCD","M_{Z}^{lll#nu}; M_{Z}(GeV);Event count/2GeV"},
     HistoInfo{"HMassWZ_+ABCD","M_{WZ}^{lll#nu}; M_{WZ}(GeV);Event count/100GeV"},
     /* Another Series */
+    HistoInfo{"HMet_CR1_+ABCD","MET lll#nu; #slash{E_{T}}(GeV) CR;Event count/10GeV"},
+    HistoInfo{"HMassTW_CR1_+ABCD","M_{WT}^{lll#nu}; M_{WT}(GeV) CR;Event count/5GeV"},
+    HistoInfo{"HMassZ_CR1_+ABCD","M_{Z}^{lll#nu}; M_{Z}(GeV) CR;Event count/2GeV"},
+    HistoInfo{"HMassWZ_CR1_+ABCD","M_{WZ}^{lll#nu}; M_{WZ}(GeV) CR;Event count/100GeV"},
+    /* Another Series */
     HistoInfo{"HLt_A","eee#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
     HistoInfo{"HLt_B","ee#mu#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
     HistoInfo{"HLt_C","#mu#mu e#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
     HistoInfo{"HLt_D","#mu#mu#mu#nu;P_{T}^{Lep} (GeV);Event count/100GeV"},
+    /* Another Series */
+    HistoInfo{"HLt_CR1_A","eee#nu; P_{T}^{Lep} (GeV) CR;Event count/100GeV"},
+    HistoInfo{"HLt_CR1_B","ee#mu#nu; P_{T}^{Lep} (GeV) CR;Event count/100GeV"},
+    HistoInfo{"HLt_CR1_C","#mu#mu e#nu; P_{T}^{Lep} (GeV) CR;Event count/100GeV"},
+    HistoInfo{"HLt_CR1_D","#mu#mu#mu#nu;P_{T}^{Lep} (GeV) CR;Event count/100GeV"},
   };
 
   std::vector<HistoInfo> NonStackedHistos = {
@@ -195,25 +230,50 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     HistoInfo{"HPtl3_+ABCD","W Lepton Pt;Pt;Normalized Events"},
     HistoInfo{"HMetPt_+ABCD","Met Pt;Pt;Normalized Events"},
     /*Next series*/
+    HistoInfo{"HPtl1_CR1_+ABCD","Z Lepton highest pt;Pt CR;Normalized Events"},
+    HistoInfo{"HPtl2_CR1_+ABCD","Z Second Lepton pt;Pt CR;Normalized Events"},
+    HistoInfo{"HPtl3_CR1_+ABCD","W Lepton Pt;Pt CR;Normalized Events"},
+    HistoInfo{"HMetPt_CR1_+ABCD","Met Pt;Pt CR;Normalized Events"},
+    /*Next series*/
     HistoInfo{"HDistl1l2_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"},
     HistoInfo{"HDistl1l3_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"},
     HistoInfo{"HDistl2l3_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"},
     HistoInfo{"HWZDist_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"},
+    /*Next series*/
+    HistoInfo{"HDistl1l2_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2) CR; Normalized Events"},
+    HistoInfo{"HDistl1l3_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3) CR; Normalized Events"},
+    HistoInfo{"HDistl2l3_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3) CR; Normalized Events"},
+    HistoInfo{"HWZDist_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z) CR; Normalized Events"},
     /*Next series*/
     HistoInfo{"HEtal1_+ABCD","Eta Distribution l1; Eta; Normalized events"},
     HistoInfo{"HEtal2_+ABCD","Eta Distribution l2; Eta; Normalized events"},
     HistoInfo{"HEtal3_+ABCD","Eta Distribution l3; Eta; Normalized events"},
     HistoInfo{"HScaleFactors_+ABCD","Scale Factors; Scale Factor; Normalized events"},
     /*Next series*/
+    HistoInfo{"HEtal1_CR1_+ABCD","Eta Distribution l1; Eta CR; Normalized events"},
+    HistoInfo{"HEtal2_CR1_+ABCD","Eta Distribution l2; Eta CR; Normalized events"},
+    HistoInfo{"HEtal3_CR1_+ABCD","Eta Distribution l3; Eta CR; Normalized events"},
+    HistoInfo{"HScaleFactors_CR1_+ABCD","Scale Factors; Scale Factor CR; Normalized events"},
+    /*Next series*/
     HistoInfo{"HPhil1_+ABCD","Phi Distribution l1; Eta; Normalized events"},
     HistoInfo{"HPhil2_+ABCD","Phi Distribution l2; Eta; Normalized events"},
     HistoInfo{"HPhil3_+ABCD","Phi Distribution l3; Eta; Normalized events"},
     HistoInfo{"HMetPhi_+ABCD","Phi Distribution MET; MET; Normalized events"},
     /*Next series*/
+    HistoInfo{"HPhil1_CR1_+ABCD","Phi Distribution l1; Eta CR; Normalized events"},
+    HistoInfo{"HPhil2_CR1_+ABCD","Phi Distribution l2; Eta CR; Normalized events"},
+    HistoInfo{"HPhil3_CR1_+ABCD","Phi Distribution l3; Eta CR; Normalized events"},
+    HistoInfo{"HMetPhi_CR1_+ABCD","Phi Distribution MET; MET CR; Normalized events"},
+    /*Next series*/
     HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
     HistoInfo{"HnJet_+ABCD","Number of Jets; nJet; Normalized events"},
     HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
     HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
+    /*Next series*/
+    HistoInfo{"HPileup_CR1_+ABCD","Number of primary vertices; Npvs CR; Normalized events"},
+    HistoInfo{"HnJet_CR1_+ABCD","Number of Jets; nJet CR; Normalized events"},
+    HistoInfo{"HPileup_CR1_+ABCD","Number of primary vertices; Npvs CR; Normalized events"},
+    HistoInfo{"HPileup_CR1_+ABCD","Number of primary vertices; Npvs CR; Normalized events"},
   };
 
   std::function<void(TH1* h,const Double_t&)> blindHisto = [](TH1* h, const Double_t& wpmass) {
