@@ -986,6 +986,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+  if (*MET_pt < 30.){
+    HCutFlow->FillS("MET<30");
+    return kFALSE;
+  }
+
 #ifndef CMSDATA
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,
@@ -1080,13 +1085,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
-  Bool_t ZDistCut = l1l2Dist > 1.5;
-  if(ZDistCut){
-    HCutFlow->FillS("FailZDistCut");
-    return kFALSE;
-  }
-
   assert(PairEl or PairMu);
 
   if(PairMu){
@@ -1124,8 +1122,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
     assert( i<*nElectron );
   }
 
-  if (*MET_pt < 30.){
-    HCutFlow->FillS("MET_pt<30");
+  const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
+  Bool_t ZDistCut = l1l2Dist > 1.5;
+  if(ZDistCut){
     FillRegion(12,Els,Mus); // 12 -> CR
   } else {
     FillRegion(0,Els,Mus); // 0 -> Signal Region
@@ -1154,7 +1153,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_ZDist.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
