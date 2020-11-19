@@ -268,7 +268,7 @@ class PreSelector : public EventSelection {
   Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);
   Bool_t PairMuDefineW(const Electrons& Els, const Muons& Mus);
   void FillRegion(const int regOffset, const Electrons& Els, const Muons& Mus);
-  std::pair<UInt_t,UInt_t> GetLeptonPair(const Leptons&, const std::vector<UInt_t>&) const;
+  std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(const Leptons&, const std::vector<UInt_t>&) const;
   ZPairInfo FindZ(const Leptons&,const std::vector<UInt_t>&) const;
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(const ROOT::Math::PtEtaPhiMVector&,const Float_t&);
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4VAlt(ROOT::Math::PtEtaPhiMVector,Float_t); 

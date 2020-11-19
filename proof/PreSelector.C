@@ -524,8 +524,8 @@ Float_t PreSelector::MassRecoW(const float& ptl, const float& phil,
 };
 
 
-std::pair<UInt_t,UInt_t> PreSelector::GetLeptonPair(const Leptons& l,
-                                                    const std::vector<UInt_t>& GoodIndex) const{
+std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons& l,
+                                                                  const std::vector<UInt_t>& GoodIndex) const{
 
   // return leading pair sorted by Pt
 
@@ -544,47 +544,62 @@ std::pair<UInt_t,UInt_t> PreSelector::GetLeptonPair(const Leptons& l,
     }
   }
 
-  std::pair<UInt_t,UInt_t> couple;
+  std::vector<std::pair<UInt_t,UInt_t>> pairs;
 
   if(positive.size() == 0 || negative.size() == 0)
-    return couple; /*empty*/
+    return pairs; /*empty*/
 
-  if(l.pt[positive[0]] >= l.pt[negative[0]]){
-    couple = std::make_pair(positive[0],negative[0]);
-  } else {
-    couple = std::make_pair(negative[0],positive[0]);
+  std::pair<UInt_t,UInt_t> couple;
+
+  for(const uint& i: positive){
+    for(const uint& j: negative){
+      if (l.pt[i] > l.pt[j]) {
+        couple = std::make_pair(i,j);
+      } else {
+        couple = std::make_pair(j,i);
+      }
+      pairs.push_back(couple);
+    }
   }
 
-  return couple;
+  return pairs;
 
-}
-
-
+};
 
 ZPairInfo PreSelector::FindZ(const Leptons& l, const std::vector<UInt_t>& GoodLepton) const{
 
-  std::pair<UInt_t,UInt_t> Pair ;
+  std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
+  Pairs = PreSelector::GetLeptonPairs(l,GoodLepton);
 
-  Pair = PreSelector::GetLeptonPair(l,GoodLepton);
+  ZPairInfo z1;
 
-  // ZMassDistance, ZMass, Pair
-  ZPairInfo ZMassTuple;
+  if(Pairs.size() == 0)
+    return z1;
 
-  if(Pair.first == Pair.second) /*empty*/
-    return ZMassTuple;
+  std::vector<ZPairInfo> PairsWithMass;
 
   const Double_t ZNominalMass = 91.1876;
 
-  UInt_t i = Pair.first;
-  UInt_t j = Pair.second;
-  Float_t m = PreSelector::MassRecoZ(l.pt[i],l.eta[i],l.phi[i],l.mass,
-                                     l.pt[j],l.eta[j],l.phi[j],l.mass);
+  for(const auto& pair: Pairs){
+    UInt_t i = pair.first;
+    UInt_t j = pair.second;
+    Float_t m = PreSelector::MassRecoZ(l.pt[i],l.eta[i],l.phi[i],l.mass,
+                                       l.pt[j],l.eta[j],l.phi[j],l.mass);
+    z1.Delta = abs(ZNominalMass-m);
+    z1.Mass = m;
+    z1.Pair = pair;
+    PairsWithMass.emplace_back(z1);
+  }
 
-  ZMassTuple.Delta = abs(ZNominalMass-m);
-  ZMassTuple.Mass = m;
-  ZMassTuple.Pair = std::make_pair(i,j);
+  if(PairsWithMass.size() > 1) {
+    auto sortAscByDelta = [&] (const ZPairInfo& p1, const ZPairInfo& p2) {
+      return p1.Delta < p2.Delta;
+    };
+    std::sort(PairsWithMass.begin(),PairsWithMass.end(),
+              sortAscByDelta);
+  }
 
-  return ZMassTuple;
+  return PairsWithMass[0]; /*Pair with smallest delta*/
 
 }
 
