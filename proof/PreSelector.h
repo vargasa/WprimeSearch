@@ -94,6 +94,7 @@ class PreSelector : public EventSelection {
 
   // nJets
   TTreeReaderValue<UInt_t> nJet = {fReader, "nJet"};
+  TTreeReaderArray<Float_t> Jet_btagDeepFlavB = {fReader, "Jet_btagDeepFlavB"};
 
   // GenPart
 #ifndef CMSDATA
@@ -131,6 +132,7 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HDistl1l3;
   std::vector<TH1F*> HDistl2l3;
   std::vector<TH1F*> HnJet;
+  std::vector<TH1F*> HnbTag;
 
   std::vector<TH2F*> HMassZWZ;
 
@@ -231,6 +233,8 @@ class PreSelector : public EventSelection {
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
 
   void FillCategory(const Int_t& nch, const Leptons& lz,const Leptons& lw);
+  Int_t nbTag();
+  Int_t nbQ;
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;

@@ -184,7 +184,10 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "A_Down",     "B_Down",     "C_Down",     "D_Down",    /* +8 */
     "CR1_A",      "CR1_B",      "CR1_C",      "CR1_D",     /* +12 */
     "CR1_A_Up",   "CR1_B_Up",   "CR1_C_Up",   "CR1_D_Up",  /* +16 */
-    "CR1_A_Down", "CR1_B_Down", "CR1_C_Down", "CR1_D_Down" /* +20 */
+    "CR1_A_Down", "CR1_B_Down", "CR1_C_Down", "CR1_D_Down", /* +20 */
+    "CR2_A",      "CR2_B",      "CR2_C",      "CR2_D",     /* +24 */
+    "CR2_A_Up",   "CR2_B_Up",   "CR2_C_Up",   "CR2_D_Up",  /* +28 */
+    "CR2_A_Down", "CR2_B_Down", "CR2_C_Down", "CR2_D_Down" /* +32 */
   };
 
   for(auto id: idst){
@@ -229,6 +232,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   const Int_t nJetBins = 15;
   InitHVec<TH1F>(HnJet,"HnJet",nJetBins,0.,(float)nJetBins);
+  InitHVec<TH1F>(HnbTag,"HnbTag",nJetBins,0.,(float)nJetBins);
 
   const Float_t MinMass = 0.;
   const Float_t MaxMass = 2200.;
@@ -253,7 +257,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
 
   const Float_t MaxLt = 2000.;
-  const Int_t NLtBins = 20;
+  const Int_t NLtBins = 200;
   InitHVec<TH1F>(HLt,"HLt",NLtBins,0.,MaxLt);
 
   InitHVec<TH2F>(HMassZWZ,"HMassZWZ",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
@@ -668,6 +672,7 @@ void PreSelector::FillCategory(const Int_t& nch, const Leptons& lz,const Leptons
   HPhil2[nch]->Fill(lep2.Phi());
   HPhil3[nch]->Fill(lep3.Phi());
   HnJet[nch]->Fill(*nJet);
+  HnbTag[nch]->Fill(nbQ);
   HDistl1l2[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),
                                          lep2.Eta(),lep2.Phi()));
   HDistl1l3[nch]->Fill(GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),
@@ -954,6 +959,23 @@ void PreSelector::FillRegion(const int regOffset,
   HOverlap->Fill(IsA_+IsB+IsC+IsD);
 }
 
+Int_t PreSelector::nbTag(){
+#if defined(Y2016)
+  const float medium = 0.3093;
+#elif defined(Y2017)
+  const float medium = 0.3033;
+#elif defined(Y2018)
+  const float medium = 0.2770;
+#endif
+  Int_t nbtag = 0;
+  for(uint i = 0; i < *nJet; ++i){
+    if( Jet_btagDeepFlavB[i] > medium){
+      ++nbtag;
+    }
+  }
+  return nbtag;
+}
+
 Bool_t PreSelector::Process(Long64_t entry) {
 
   IsA_ = IsB = IsC = IsD = false;
@@ -1124,8 +1146,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist > 1.5;
+
+  nbQ = nbTag();
+
   if(ZDistCut){
-    FillRegion(12,Els,Mus); // 12 -> CR
+    if( nbQ >= 2 ){
+      FillRegion(12,Els,Mus); // 12 -> ttBar CR
+    } else {
+      FillRegion(24,Els,Mus); // 24 -> DY Mix
+    }
   } else {
     FillRegion(0,Els,Mus); // 0 -> Signal Region
   }
@@ -1153,7 +1182,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_ZDist.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_2CR.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
