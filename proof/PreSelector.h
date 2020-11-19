@@ -224,6 +224,7 @@ class PreSelector : public EventSelection {
   std::vector<UInt_t> GetGoodMuon(const Muons&);
   std::vector<UInt_t> GetGoodElectron(const Electrons&);
   Int_t LeadingIdx(const Leptons& l);
+  void SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l);
 
   bool DefineW(const Leptons& l);
   Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&) const;

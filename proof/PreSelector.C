@@ -4,6 +4,7 @@
 #include "TLegend.h"
 #include "TError.h"
 #include "TVector2.h"
+#include <functional>
 
 #define FillS(xx) Fill(xx,1.)
 
@@ -412,6 +413,16 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 }
 
+void PreSelector::SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l){
+   std::function<bool(const int&, const int&)> sortDescPt =
+    [&](const Int_t& i, const Int_t& j){
+      return !(l.pt[i] < l.pt[j]);
+    };
+
+   std::sort(GoodIdx.begin(),GoodIdx.end(),
+            sortDescPt);
+}
+
 std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   std::vector<UInt_t> GoodIndex = {};
   if(!MuonTest()) return GoodIndex;
@@ -432,6 +443,9 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
     if( Muon_highPtId[i] >=1 && Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
+
+  SortByDescPt(GoodIndex,Mu);
+
   return GoodIndex;
 }
 
@@ -482,6 +496,9 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
        abs(El.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
+
+  SortByDescPt(GoodIndex,El);
+
   return GoodIndex;
 };
 
