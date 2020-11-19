@@ -416,11 +416,14 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   std::vector<UInt_t> GoodIndex = {};
   if(!MuonTest()) return GoodIndex;
   if(*Mu.n == 0) return GoodIndex;
-  if(Mu.pt[0] < 52.)  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
+
+  leadMuIdx = LeadingIdx(Mu);
+
+  if(Mu.pt[leadMuIdx] < 52.)  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
     return GoodIndex;
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 20.;
-  if(abs(Mu.eta[0]) >= MaxEta){
+  if(abs(Mu.eta[leadMuIdx]) >= MaxEta){
     HCutFlow->FillS("LeadingMuOut");
     return GoodIndex;
   }
@@ -430,7 +433,23 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
       GoodIndex.emplace_back(i);
   }
   return GoodIndex;
-};
+}
+
+Int_t PreSelector::LeadingIdx(const Leptons& l) {
+
+  Int_t idx = -1;
+  Double_t pt = -1.;
+
+  for(uint i = 0; i < *l.n; ++i){
+    if( l.pt[i] > pt ){
+      idx = i;
+      pt = l.pt[i];
+    }
+  }
+
+  return idx;
+
+}
 
 std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MaxEta = 2.5;
@@ -447,9 +466,11 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   if(!ElectronTest()) return GoodIndex;
   if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
 
-  if( El.pt[0] < MinPt ) return GoodIndex;
+  leadElIdx = LeadingIdx(El);
 
-  if(abs(El.eta[0]) >= MaxEta){
+  if( El.pt[leadElIdx] < MinPt ) return GoodIndex;
+
+  if(abs(El.eta[leadElIdx]) >= MaxEta){
     HCutFlow->FillS("LeadingElOut");
     return GoodIndex;
   }
@@ -511,7 +532,7 @@ std::pair<UInt_t,UInt_t> PreSelector::GetLeptonPair(const Leptons& l,
   if(positive.size() == 0 || negative.size() == 0)
     return couple; /*empty*/
 
-  if(l.pt[positive[0]] > l.pt[negative[0]]){
+  if(l.pt[positive[0]] >= l.pt[negative[0]]){
     couple = std::make_pair(positive[0],negative[0]);
   } else {
     couple = std::make_pair(negative[0],positive[0]);
@@ -717,31 +738,31 @@ void PreSelector::FillCategory(const Int_t& nch, const Leptons& lz,const Leptons
 
   switch(nch){
   case 0:
-    wup = GetElectronSF(Electron_eta[0], Electron_pt[0],1);
+    wup = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetElectronSF(Electron_eta[0], Electron_pt[0],-1);
+    wdown = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   case 1:
-    wup = GetElectronSF(Electron_eta[0],Electron_pt[0],1);
-    wup *= GetMuonSF(Muon_eta[0],Muon_pt[0],1);
+    wup = GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
+    wup *= GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
-    wdown *= GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
+    wdown = GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+    wdown *= GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   case 2:
-    wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
-    wup *= GetElectronSF(Electron_eta[0],Electron_pt[0],1);
+    wup = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+    wup *= GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
-    wdown *= GetElectronSF(Electron_eta[0],Electron_pt[0],-1);
+    wdown = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    wdown *= GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   case 3:
-    wup = GetMuonSF(Muon_eta[0],Muon_pt[0],1);
+    wup = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetMuonSF(Muon_eta[0],Muon_pt[0],-1);
+    wdown = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   }
@@ -1069,8 +1090,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   if(PairEl){
+    assert(leadElIdx>=0);
     zt = &ztel;
   } else { //PairMu
+    assert(leadMuIdx>=0);
     zt = &ztmu;
   }
 
@@ -1086,6 +1109,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   l1 = (*zt).Pair.first;
   l2 = (*zt).Pair.second;
+
 
   if(PairEl){
     lep1 = PtEtaPhiMVector(Electron_pt[l1],Electron_eta[l1],

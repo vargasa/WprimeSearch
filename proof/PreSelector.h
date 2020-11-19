@@ -187,7 +187,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HWlepIdx;
   std::vector<TH3F*> HlepIdx;
 
-
   TH1D *HPileup;
   std::vector<TH1F*> HPileup_;
 
@@ -195,6 +194,8 @@ class PreSelector : public EventSelection {
   TH2I* HNMu;
 
   UInt_t l1, l2, l3; // Lepton pair index and lead remaining
+  Int_t leadMuIdx; // Leading is not 0th index
+  Int_t leadElIdx;
   Float_t wmt; // W Transverse mass;
 
   Bool_t IsA_{},IsB{},IsC{},IsD{};
@@ -222,6 +223,7 @@ class PreSelector : public EventSelection {
 
   std::vector<UInt_t> GetGoodMuon(const Muons&);
   std::vector<UInt_t> GetGoodElectron(const Electrons&);
+  Int_t LeadingIdx(const Leptons& l);
 
   bool DefineW(const Leptons& l);
   Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&) const;
