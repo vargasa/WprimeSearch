@@ -476,6 +476,8 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MinPt = 32.;
 #endif
 
+  std::pair<double,double> etaGap = std::make_pair(1.4442,1.5660);
+
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
   if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
@@ -492,8 +494,10 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
 
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
-    if(El.cutBased[i]==4 && El.pt[i]>MinPt &&
-       abs(El.eta[i])<MaxEta)
+    double abseta =  abs(El.eta[i]);
+    if(El.cutBased[i]>=3 and El.pt[i]>MinPt and
+       abseta < MaxEta and
+       ( abseta < etaGap.first or abseta > etaGap.second))
       GoodIndex.emplace_back(i);
   }
 
