@@ -153,45 +153,160 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HMassZ_B","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV" },
     { "HMassZ_C","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
     { "HMassZ_D","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
-    { "HMet_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    { "HMet_B","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    { "HMet_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    { "HMet_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    { "HMassZ_+ABCD","M_{Z} lll#nu;M_{Z} (GeV);Event count/2GeV"},
     { "HMassTW_A","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
     { "HMassTW_B","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
     { "HMassTW_C","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
     { "HMassTW_D","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
-    { "HPileup_A","Number of Good Primary Vertices;nPvs;Event count"},
-    { "HPileup_B","Number of Good Primary Vertices;nPvs;Event count"},
-    { "HPileup_C","Number of Good Primary Vertices;nPvs;Event count"},
-    { "HPileup_D","Number of Good Primary Vertices;nPvs;Event count"},
-    { "HLt_A","eee#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
-    { "HLt_B","ee#mu#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
-    { "HLt_C","#mu#mu e#nu; P_{T}^{Lep} (GeV);Event count/100GeV"},
-    { "HLt_D","#mu#mu#mu#nu;P_{T}^{Lep} (GeV);Event count/100GeV"},
+    { "HMassTW_+ABCD","M_{T}^{W}(lll#nu);M_{WT};Event count/5GeV"},
+    { "HMassW_A","M_{W} eee#nu ;M_{W} (GeV);Event count"},
+    { "HMassW_B","M_{W} ee#mu#nu ;M_{W} (GeV);Event count"},
+    { "HMassW_C","M_{W} #mu#mue#nu ;M_{W} (GeV);Event count"},
+    { "HMassW_D","M_{W} #mu#mu#mu#nu ;M_{W} (GeV);Event count"},
+    { "HMassW_+ABCD","M_{W} #mu#mu#mu#nu ;M_{W} (GeV);Event count"},
+    { "HMassWZ_A","M_{W} eee#nu ;M_{WZ} (GeV);Event count"},
+    { "HMassWZ_B","M_{W} ee#mu#nu ;M_{WZ} (GeV);Event count"},
+    { "HMassWZ_C","M_{W} #mu#mue#nu ;M_{WZ} (GeV);Event count"},
+    { "HMassWZ_D","M_{W} #mu#mu#mu#nu ;M_{WZ} (GeV);Event count"},
+    { "HMassWZ_+ABCD","M_{W} #mu#mu#mu#nu ;M_{WZ} (GeV);Event count"},
+    { "HPileup_A","nPvs eee#nu;nPvs;Event count"},
+    { "HPileup_B","nPvs ee#mu#nu;nPvs;Event count"},
+    { "HPileup_C","nPvs #mu#mue#nu;nPvs;Event count"},
+    { "HPileup_D","nPvs #mu#mu#mu#nu;nPvs;Event count"},
+    { "HPileup_+ABCD","nPvs lll#nu;nPvs;Event count"},
+    { "HLt_A","eee#nu; P_{T}^{Lep} (GeV);Event count/10GeV"},
+    { "HLt_B","ee#mu#nu; P_{T}^{Lep} (GeV);Event count/10GeV"},
+    { "HLt_C","#mu#mu e#nu; P_{T}^{Lep} (GeV);Event count/10GeV"},
+    { "HLt_D","#mu#mu#mu#nu;P_{T}^{Lep} (GeV);Event count/10GeV"},
+    { "HLt_+ABCD","lll#nu;P_{T}^{Lep} (GeV);Event count/10GeV"},
+    { "HDistl1l2_A","dR(e_{1},e_{2}) eee#nu;dR (cm);Event count"},
+    { "HDistl1l2_B","dR(e_{1},e_{2}) ee#mu#nu;dR (cm);Event count"},
+    { "HDistl1l2_C","dR(#mu_{1},#mu_{2}) #mu#mue#nu;dR (cm);Event count"},
+    { "HDistl1l2_D","dR(#mu_{1},#mu_{2}) #mu#mue#nu;dR (cm);Event count"},
+    { "HDistl1l2_+ABCD","dR(l_{1},l_{2}) lll#nu;dR (cm);Event count"},
+    { "HDistl1l3_A","dR(e_{1},e_{3}) eee#nu;dR (cm);Event count"},
+    { "HDistl1l3_B","dR(e_{1},e_{3}) ee#mu#nu;dR (cm);Event count"},
+    { "HDistl1l3_C","dR(#mu_{1},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
+    { "HDistl1l3_D","dR(#mu_{1},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
+    { "HDistl1l3_+ABCD","dR(l_{1},l_{3}) lll#nu;dR (cm);Event count"},
+    { "HDistl2l3_A","dR(e_{2},e_{3}) eee#nu;dR (cm);Event count"},
+    { "HDistl2l3_B","dR(e_{2},e_{3}) ee#mu#nu;dR (cm);Event count"},
+    { "HDistl2l3_C","dR(#mu_{2},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
+    { "HDistl2l3_D","dR(#mu_{2},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
+    { "HDistl2l3_+ABCD","dR(l_{2},l_{3}) lll#nu;dR (cm);Event count"},
+    { "HWZDist_A","dr(W,Z) eee#nu;dR (cm);Event count"},
+    { "HWZDist_B","dr(W,Z) ee#mu#nu;dR (cm);Event count"},
+    { "HWZDist_C","dr(W,Z) ee#mu#nu;dR (cm);Event count"},
+    { "HWZDist_D","dr(W,Z) #mu#mue#nu;dR (cm);Event count"},
+    { "HWZDist_+ABCD","dr(W,Z) lll#nu;dR (cm);Event count"},
+    { "HnEl_A","n_{e};n_{e};Event count"},
+    { "HnEl_B","n_{e};n_{e};Event count"},
+    { "HnEl_C","n_{e};n_{e};Event count"},
+    { "HnEl_D","n_{e};n_{e};Event count"},
+    { "HnEl_+ABCD","n_{e};n_{e};Event count"},
+    { "HnMu_A","n_{#mu};n_{#mu};Event count"},
+    { "HnMu_B","n_{#mu};n_{#mu};Event count"},
+    { "HnMu_C","n_{#mu};n_{#mu};Event count"},
+    { "HnMu_D","n_{#mu};n_{#mu};Event count"},
+    { "HnMu_+ABCD","n_{#mu};n_{#mu};Event count"},
+    { "HnJet_A","n_{Jet};n_{Jet};Event count"},
+    { "HnJet_B","n_{Jet};n_{Jet};Event count"},
+    { "HnJet_C","n_{Jet};n_{Jet};Event count"},
+    { "HnJet_D","n_{Jet};n_{Jet};Event count"},
+    { "HnJet_+ABCD","n_{Jet};n_{Jet};Event count"},
+    { "HnbTag_A","n_{bTag};n_{bTag} medium;Event count"},
+    { "HnbTag_B","n_{bTag};n_{bTag} medium;Event count"},
+    { "HnbTag_C","n_{bTag};n_{bTag} medium;Event count"},
+    { "HnbTag_D","n_{bTag};n_{bTag} medium;Event count"},
+    { "HnbTag_+ABCD","n_{bTag};n_{bTag} medium;Event count"},
+    { "HPtl1_A","Pt_{e1} eee#nu; Pt_{e1} (GeV); Event count"},
+    { "HPtl1_B","Pt_{e1} ee#mu#nu; Pt_{e1} (GeV); Event count"},
+    { "HPtl1_C","Pt_{#mu1} #mu#mue#nu; Pt_{#mu1} (GeV); Event count"},
+    { "HPtl1_D","Pt_{#mu1} #mu#mu#mu#nu; Pt_{#mu1} (GeV); Event count"},
+    { "HPtl1_+ABCD","Pt_{l1} lll#nu; Pt_{l1} (GeV); Event count"},
+    { "HPtl2_A","Pt_{e2} eee#nu; Pt_{e2} (GeV); Event count"},
+    { "HPtl2_B","Pt_{e2} ee#mu#nu; Pt_{e2} (GeV); Event count"},
+    { "HPtl2_C","Pt_{#mu2} #mu#mue#nu; Pt_{#mu2} (GeV); Event count"},
+    { "HPtl2_D","Pt_{#mu2} #mu#mu#mu#nu; Pt_{#mu2} (GeV); Event count"},
+    { "HPtl2_+ABCD","Pt_{l2} lll#nu; Pt_{l2} (GeV); Event count"},
+    { "HPtl3_A","Pt_{e3} eee#nu; Pt_{e3} (GeV); Event count"},
+    { "HPtl3_B","Pt_{#mu} ee#mu#nu; Pt_{e3} (GeV); Event count"},
+    { "HPtl3_C","Pt_{e3} #mu#mue#nu; Pt_{#mu3} (GeV); Event count"},
+    { "HPtl3_D","Pt_{#mu3} #mu#mu#mu#nu; Pt_{#mu3} (GeV); Event count"},
+    { "HPtl3_+ABCD","Pt_{l3} lll#nu; Pt_{l3} (GeV); Event count"},
+    { "HMetPt_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_B","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_+ABCD","#slash{E}_{T} lll#nu;#slash{E}_{T}(GeV);Event count/10GeV"},
+    { "HEtal1_A", "#eta_{e1} eee#nu;Eta;Event count"},
+    { "HEtal1_B", "#eta_{e1} ee#mu#nu;Eta;Event count"},
+    { "HEtal1_C", "#eta_{#mu1} #mu#mue#nu;Eta;Event count"},
+    { "HEtal1_D", "#eta_{#mu1} #mu#mu#mu#nu;Eta;Event count"},
+    { "HEtal1_+ABCD ", "Eta_{l1} lll#nu;Eta;Event count"},
+    { "HEtal2_A", "#eta_{e2} eee#nu;Eta;Event count"},
+    { "HEtal2_B", "#eta_{e2} ee#mu#nu;Eta;Event count"},
+    { "HEtal2_C", "#eta_{#mu2} #mu#mue#nu;Eta;Event count"},
+    { "HEtal2_D", "#eta_{#mu2} #mu#mu#mu#nu;Eta;Event count"},
+    { "HEtal2_+ABCD ", "Eta_{l2} lll#nu;Eta;Event count"},
+    { "HEtal3_A", "#eta_{e3} eee#nu;Eta;Event count"},
+    { "HEtal3_B", "#eta_{#mu} ee#mu#nu;Eta;Event count"},
+    { "HEtal3_C", "#eta_{e} #mu#mue#nu;Eta;Event count"},
+    { "HEtal3_D", "#eta_{#mu3} #mu#mu#mu#nu;Eta;Event count"},
+    { "HEtal3_+ABCD ", "Eta_{l2} lll#nu;Eta;Event count"},
+    { "HPhil1_A", "#phi_{e1} eee#nu;#phi (rad);Event count"},
+    { "HPhil1_B", "#phi_{e1} ee#mu#nu;#phi (rad);Event count"},
+    { "HPhil1_C", "#phi_{#mu1} #mu#mue#nu;#phi (rad);Event count"},
+    { "HPhil1_D", "#phi_{#mu1} #mu#mu#mu#nu;#phi (rad);Event count"},
+    { "HPhil1_+ABCD", "#phi_{l1} lll#nu;#phi (rad);Event count"},
+    { "HPhil2_A", "#phi_{e2} eee#nu;#phi (rad);Event count"},
+    { "HPhil2_B", "#phi_{e2} ee#mu#nu;#phi (rad);Event count"},
+    { "HPhil2_C", "#phi_{#mu2} #mu#mue#nu;#phi (rad);Event count"},
+    { "HPhil2_D", "#phi_{#mu2} #mu#mu#mu#nu;#phi (rad);Event count"},
+    { "HPhil2_+ABCD", "#phi_{l2} lll#nu;#phi (rad);Event count"},
+    { "HPhil3_A", "#phi_{e3} eee#nu;#phi (rad);Event count"},
+    { "HPhil3_B", "#phi_{#mu} ee#mu#nu;#phi (rad);Event count"},
+    { "HPhil3_C", "#phi_{e} #mu#mue#nu;#phi (rad);Event count"},
+    { "HPhil3_D", "#phi_{#mu3} #mu#mu#mu#nu;#phi (rad);Event count"},
+    { "HPhil3_+ABCD", "#phi_{l3} lll#nu;#phi (rad);Event count"},
+    { "HMetPhi_A", "#phi_{#slash{E}} eee#nu;#phi (rad);Event count"},
+    { "HMetPhi_B", "#phi_{#slash{E}} ee#mu#nu;#phi (rad);Event count"},
+    { "HMetPhi_C", "#phi_{#slash{E}} #mu#mue#nu;#phi (rad);Event count"},
+    { "HMetPhi_D", "#phi_{#slash{E}} #mu#mu#mu#nu;#phi (rad);Event count"},
+    { "HMetPhi_+ABCD", "#phi_{#slash{E}} lll#nu;#phi (rad);Event count"},
   };
 
   std::vector<std::string> HistNames = {
     /* Another series */
-    "HMet_A",
-    "HLt_A",
-    "HMassZ_A",
-    "HMassTW_A",
+    "HDistl1l2",
+    "HDistl1l3",
+    "HDistl2l3",
+    "HWZDist",
     /* Another series */
-    "HMet_B",
-    "HLt_B",
-    "HMassZ_B",
-    "HMassTW_B",
+    "HnEl",
+    "HnMu",
+    "HnJet",
+    "HnbTag",
     /* Another series */
-    "HMet_C",
-    "HLt_C",
-    "HMassZ_C",
-    "HMassTW_C",
+    "HMassW",
+    "HMassZ",
+    "HMassTW",
+    "HMassWZ",
     /* Another series */
-    "HMet_D",
-    "HLt_D",
-    "HMassZ_D",
-    "HMassTW_D",
+    "HPtl1",
+    "HPtl2",
+    "HPtl3",
+    "HMetPt",
+    /* Another series */
+    "HPileup",
+    "HEtal1",
+    "HEtal2",
+    "HEtal3",
+    /* Another series */
+    "HPhil1",
+    "HPhil2",
+    "HPhil3",
+    "HMetPhi"
   };
 
   struct HistoInfo {
@@ -880,110 +995,111 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       c1->Divide(2,2);
       Int_t j = 1;
 
-      for (auto HN : HistNames) {
+      std::vector<std::string> channels = { "A","B","C","D","+ABCD" };
 
-        Int_t r = (j-1)%4;
-        c1->cd(r+1);
-        const char *hName = HN.c_str();
+      for(const auto& ch: channels) {
+        for (auto HN : HistNames) {
 
-        const Float_t leftMargin = 0.12;
-        const Float_t rightMargin = 0.12;
-        const Float_t topMargin = 0.12;
-        const Float_t bottomMargin = 0.5;
+          Int_t r = (j-1)%4;
+          c1->cd(r+1);
+          const char *hName = (HN + "_" + ch).c_str();
 
-        auto mainPad = new TPad(Form("mainPad_%s",hName),"mainPad",0.,0.25,1.,1.);
-        mainPad->Draw();
-        mainPad->SetLeftMargin(leftMargin);
-        mainPad->SetRightMargin(rightMargin);
-        mainPad->SetBottomMargin(1e-3);
-        mainPad->SetLogy();
-        mainPad->SetTickx();
-        mainPad->SetTicky();
+          const Float_t leftMargin = 0.12;
+          const Float_t rightMargin = 0.12;
+          const Float_t topMargin = 0.12;
+          const Float_t bottomMargin = 0.5;
 
-        auto cmsLabel = new TPaveText(0.11,0.93,0.3,1.0,"NDC");
-        cmsLabel->SetFillColor(0);
-        cmsLabel->SetBorderSize(0);
-        cmsLabel->AddText("CMS Preliminary");
-        cmsLabel->SetTextAlign(12);
-        cmsLabel->Draw();
+          auto mainPad = new TPad(Form("mainPad_%s",hName),"mainPad",0.,0.25,1.,1.);
+          mainPad->Draw();
+          mainPad->SetLeftMargin(leftMargin);
+          mainPad->SetRightMargin(rightMargin);
+          mainPad->SetBottomMargin(1e-3);
+          mainPad->SetLogy();
+          mainPad->SetTickx();
+          mainPad->SetTicky();
 
-        auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
-        lumiLabel->SetFillColor(0);
-        lumiLabel->SetBorderSize(0);
-        lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[year]));
-        lumiLabel->SetTextAlign(12);
-        lumiLabel->Draw();
+          auto cmsLabel = new TPaveText(0.11,0.93,0.3,1.0,"NDC");
+          cmsLabel->SetFillColor(0);
+          cmsLabel->SetBorderSize(0);
+          cmsLabel->AddText("CMS Preliminary");
+          cmsLabel->SetTextAlign(12);
+          cmsLabel->Draw();
 
-        auto subPad = new TPad(Form("mainPad_%s",HN.name.c_str()),"subPad",0.,0.,1.,0.25);
-        subPad->Draw();
-        subPad->SetLeftMargin(leftMargin);
-        subPad->SetRightMargin(rightMargin);
-        subPad->SetTopMargin(1e-3);
-        subPad->SetBottomMargin(bottomMargin);
+          auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
+          lumiLabel->SetFillColor(0);
+          lumiLabel->SetBorderSize(0);
+          lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[year]));
+          lumiLabel->SetTextAlign(12);
+          lumiLabel->Draw();
+
+          auto subPad = new TPad(Form("mainPad_%s",hName),"subPad",0.,0.,1.,0.25);
+          subPad->Draw();
+          subPad->SetLeftMargin(leftMargin);
+          subPad->SetRightMargin(rightMargin);
+          subPad->SetTopMargin(1e-3);
+          subPad->SetBottomMargin(bottomMargin);
  
-        auto legend = new TLegend(0.3, 0.66, .87, .89);
-        legend->SetNColumns(2);
+          auto legend = new TLegend(0.3, 0.66, .87, .89);
+          legend->SetNColumns(2);
 
-        THStack *hs = new THStack("hs","");
-        hs = getBGStack(year,hName,legend);
-        //blindStack(hs,WpMass);
-        TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
+          THStack *hs = new THStack("hs","");
+          hs = getBGStack(year,hName,legend);
+          //blindStack(hs,WpMass);
+          TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
-        auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
-        applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
-        hsig->SetTitle(signal.legendName.c_str());
-        legend->AddEntry( hsig,signal.legendName.c_str(),"L");
-        hsig->SetLineColor(kBlack);
-        hsig->SetLineWidth(3);
-        hsig->SetFillColor(0);
-        hs->SetTitle(Labels[HN].c_str());
+          auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
+          applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+          hsig->SetTitle(signal.legendName.c_str());
+          legend->AddEntry( hsig,signal.legendName.c_str(),"L");
+          hsig->SetLineColor(kBlack);
+          hsig->SetLineWidth(3);
+          hsig->SetFillColor(0);
+          hs->SetTitle(Labels[std::string(hName)].c_str());
 
-        legend->SetBorderSize(0);
+          std::cout << "\n\t" << hName
+                    << "\t" << Labels[std::string(hName)]
+                    << "\n";
 
-        gStyle->SetOptStat(0);
+          legend->SetBorderSize(0);
+          gStyle->SetOptStat(0);
 
-        mainPad->cd();
-        hs->Draw("HIST");
-        hsig->Draw("HIST SAME");
-        double maxx = last->GetXaxis()->GetBinWidth(0) * (last->FindLastBinAbove(0.25)+1);
-        double minx = last->GetXaxis()->GetBinWidth(0) * (last->FindFirstBinAbove(0.25)-1);
-        hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
+          mainPad->cd();
+          hs->Draw("HIST");
+          hsig->Draw("HIST SAME");
+          double maxx = last->GetXaxis()->GetBinWidth(0) * (last->FindLastBinAbove(0.25)+1);
+          double minx = last->GetXaxis()->GetBinWidth(0) * (last->FindFirstBinAbove(0.25)-1);
+          hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
 
-        auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),hName);
-        hdata->SetMarkerStyle(kFullCircle);
-        fixYRange(hs,getMaxY(hdata));
-        hdata->Draw("SAME P");
-        TH1F* herror = getErrorHisto(hs);
-        herror->Draw("SAME E2");
-        blindHisto(hdata,WpMass);
-        legend->AddEntry(hdata, Form("Data%d",year));
+          auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),hName);
+          hdata->SetMarkerStyle(kFullCircle);
+          fixYRange(hs,getMaxY(hdata));
+          hdata->Draw("SAME P");
+          TH1F* herror = getErrorHisto(hs);
+          herror->Draw("SAME E2");
+          //blindHisto(hdata,WpMass);
+          legend->AddEntry(hdata, Form("Data%d",year));
 
-        if (std::string(hName).compare("HMassWZ_+ABCD")==0){
-          printBgContrib(year,hs,hsig);
-          printDataCard(year,WpMass,hs,hsig,hdata);
-        }
+          auto hcdata = getRatio(hdata,hs);
+          subPad->cd();
+          subPad->SetGrid();
+          hcdata->SetMaximum(1.9);
+          hcdata->SetMinimum(0.1);
+          hcdata->Draw();
+          subPad->SetFrameLineWidth(1);
+          hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+          hcdata->GetYaxis()->SetLabelSize(0.15);
+          hcdata->GetYaxis()->SetTitleOffset(2.5);
+          hcdata->GetXaxis()->SetTitleOffset(9.0);
 
-
-        auto hcdata = getRatio(hdata,hs);
-        subPad->cd();
-        subPad->SetGrid();
-        hcdata->SetMaximum(1.9);
-        hcdata->SetMinimum(0.1);
-        hcdata->Draw();
-        subPad->SetFrameLineWidth(1);
-        hcdata->GetXaxis()->SetRangeUser(minx,maxx);
-        hcdata->GetYaxis()->SetLabelSize(0.15);
-        hcdata->GetYaxis()->SetTitleOffset(2.5);
-        hcdata->GetXaxis()->SetTitleOffset(9.0);
-
-        ++j;
-        mainPad->cd();
-        legend->Draw();
-        if( r+1 == 4 ){
-          c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),hName,WpMass));
-          c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName,WpMass));
-          c1->Clear();
-          c1->Divide(2,2);
+          ++j;
+          mainPad->cd();
+          legend->Draw();
+          if( r+1 == 4 ){
+            c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),hName,WpMass));
+            c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName,WpMass));
+            c1->Clear();
+            c1->Divide(2,2);
+          }
         }
       }
 
