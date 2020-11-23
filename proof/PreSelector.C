@@ -183,17 +183,17 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 
   std::vector<std::string> idst = {
     "A",             "B",             "C",             "D",             /*+4*/
-    "A_Central",     "B_Central",     "C_Central",     "D_Central",     /*+8*/
-    "A_Up",          "B_Up",          "C_Up",          "D_Up",          /*+12*/
-    "A_Down",        "B_Down",        "C_Down",        "D_Down",        /*+16*/
+    "Central_A",     "Central_B",     "Central_C",     "Central_D",     /*+8*/
+    "Up_A",          "Up_B",          "Up_C",          "Up_D",          /*+12*/
+    "Down_A",        "Down_B",        "Down_C",        "Down_D",        /*+16*/
     "CR1_A",         "CR1_B",         "CR1_C",         "CR1_D",         /*+20*/
-    "CR1_A_Central", "CR1_B_Central", "CR1_C_Central", "CR1_D_Central", /*+24*/
-    "CR1_A_Up",      "CR1_B_Up",      "CR1_C_Up",      "CR1_D_Up",      /*+28*/
-    "CR1_A_Down",    "CR1_B_Down",    "CR1_C_Down",    "CR1_D_Down",    /*+32*/
+    "CR1_Central_A", "CR1_Central_B", "CR1_Central_C", "CR1_Central_D", /*+24*/
+    "CR1_Up_A",      "CR1_Up_B",      "CR1_Up_C",      "CR1_Up_D",      /*+28*/
+    "CR1_Down_A",    "CR1_Down_B",    "CR1_Down_C",    "CR1_Down_D",    /*+32*/
     "CR2_A",         "CR2_B",         "CR2_C",         "CR2_D",         /*+36*/
-    "CR2_A_Central", "CR2_B_Central", "CR2_C_Central", "CR2_D_Central", /*+40*/
-    "CR2_A_Up",      "CR2_B_Up",      "CR2_C_Up",      "CR2_D_Up",      /*+44*/
-    "CR2_A_Down",    "CR2_B_Down",    "CR2_C_Down",    "CR2_D_Down"     /*+46*/
+    "CR2_Central_A", "CR2_Central_B", "CR2_Central_C", "CR2_Central_D", /*+40*/
+    "CR2_Up_A",      "CR2_Up_B",      "CR2_Up_C",      "CR2_Up_D",      /*+44*/
+    "CR2_Down_A",    "CR2_Down_B",    "CR2_Down_C",    "CR2_Down_D"     /*+46*/
   };
 
   for(auto id: idst){
