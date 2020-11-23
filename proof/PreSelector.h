@@ -120,7 +120,6 @@ class PreSelector : public EventSelection {
 
 
   // THs
-  std::vector<TH1F*> HMet;
   std::vector<TH1F*> HnEl;
   std::vector<TH1F*> HnMu;
   std::vector<TH1F*> HMassTW;
@@ -183,10 +182,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HWZPt;
   std::vector<TH2F*> HWZPtDist;
 
-  std::vector<TH2F*> HZlepIdx;
-  std::vector<TH1F*> HWlepIdx;
-  std::vector<TH3F*> HlepIdx;
-
   TH1D *HPileup;
   std::vector<TH1F*> HPileup_;
 
@@ -235,7 +230,8 @@ class PreSelector : public EventSelection {
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
 
-  void FillCategory(const Int_t& nch, const Leptons& lz,const Leptons& lw);
+  void FillCategory(const Int_t& nch, const Int_t& crOffset,
+                    const Leptons& lz,const Leptons& lw);
   Int_t nbTag();
   Int_t nbQ;
 
