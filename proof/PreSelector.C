@@ -493,7 +493,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
     double abseta =  abs(El.eta[i]);
-    if(El.cutBased[i]>=3 and El.pt[i]>MinPt and
+    if(El.cutBased[i]==4 and El.pt[i]>MinPt and
        abseta < MaxEta and
        ( abseta < etaGap.first or abseta > etaGap.second))
       GoodIndex.emplace_back(i);
