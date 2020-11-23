@@ -149,25 +149,25 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
 
   std::unordered_map<std::string, std::string> Labels = {
-    { "HMassZ_A","M_{Z}^{Z#rightarrow ee};M_{Z}^{3e0#mu}(GeV);Event count/2GeV" },
-    { "HMassZ_B","M_{Z}^{Z#rightarrow ee};M_{Z}^{2e1#mu}(GeV);Event count/2GeV" },
-    { "HMassZ_C","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{1e2#mu}(GeV);Event count/2GeV"},
-    { "HMassZ_D","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{0e3#mu}(GeV);Event count/2GeV"},
+    { "HMassZ_A","M_{Z}^{Z#rightarrow ee};M_{Z}^{eee#nu}(GeV);Event count/2GeV" },
+    { "HMassZ_B","M_{Z}^{Z#rightarrow ee};M_{Z}^{ee#mu#nu}(GeV);Event count/2GeV" },
+    { "HMassZ_C","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{#mu#mue#nu}(GeV);Event count/2GeV"},
+    { "HMassZ_D","M_{Z}^{Z#rightarrow #mu#mu};M_{Z}^{#mu#mu#mu#nu}(GeV);Event count/2GeV"},
     { "HMassZ_+ABCD","M_{Z} lll#nu;M_{Z} (GeV);Event count/2GeV"},
-    { "HMassTW_A","M_{T}^{W}(3e0#mu);M_{WT}^{3e0#mu};Event count/5GeV"},
-    { "HMassTW_B","M_{T}^{W}(2e1#mu);M_{WT}^{2e1#mu};Event count/5GeV"},
-    { "HMassTW_C","M_{T}^{W}(1e2#mu);M_{WT}^{1e2#mu};Event count/5GeV"},
-    { "HMassTW_D","M_{T}^{W}(0e3#mu);M_{WT}^{0e3#mu};Event count/5GeV"},
+    { "HMassTW_A","M_{T}^{W}(eee#nu);M_{WT}^{eee#nu} (GeV);Event count/5GeV"},
+    { "HMassTW_B","M_{T}^{W}(ee#mu#nu);M_{WT}^{ee#mu#nu} (GeV);Event count/5GeV"},
+    { "HMassTW_C","M_{T}^{W}(#mu#mue#nu);M_{WT}^{#mu#mue#nu} (GeV);Event count/5GeV"},
+    { "HMassTW_D","M_{T}^{W}(#mu#mu#mu#nu);M_{WT}^{#mu#mu#mu#nu} (GeV);Event count/5GeV"},
     { "HMassTW_+ABCD","M_{T}^{W}(lll#nu);M_{WT};Event count/5GeV"},
-    { "HMassW_A","M_{W} eee#nu ;M_{W} (GeV);Event count"},
-    { "HMassW_B","M_{W} ee#mu#nu ;M_{W} (GeV);Event count"},
-    { "HMassW_C","M_{W} #mu#mue#nu ;M_{W} (GeV);Event count"},
+    { "HMassW_A","M_{W} eee#nu ;M_{W}^{eee#nu} (GeV);Event count"},
+    { "HMassW_B","M_{W} ee#mu#nu ;M_{W}^{ee#mu#nu} (GeV);Event count"},
+    { "HMassW_C","M_{W} #mu#mue#nu ;M_{W}^{#mu#mue#nu} (GeV);Event count"},
     { "HMassW_D","M_{W} #mu#mu#mu#nu ;M_{W} (GeV);Event count"},
-    { "HMassW_+ABCD","M_{W} #mu#mu#mu#nu ;M_{W} (GeV);Event count"},
-    { "HMassWZ_A","M_{W} eee#nu ;M_{WZ} (GeV);Event count"},
-    { "HMassWZ_B","M_{W} ee#mu#nu ;M_{WZ} (GeV);Event count"},
-    { "HMassWZ_C","M_{W} #mu#mue#nu ;M_{WZ} (GeV);Event count"},
-    { "HMassWZ_D","M_{W} #mu#mu#mu#nu ;M_{WZ} (GeV);Event count"},
+    { "HMassW_+ABCD","M_{W} #mu#mu#mu#nu ;M_{W}^{eee#nu} (GeV);Event count"},
+    { "HMassWZ_A","M_{WZ} eee#nu ;M_{WZ}^{eee#nu} (GeV);Event count"},
+    { "HMassWZ_B","M_{WZ} ee#mu#nu ;M_{WZ}^{ee#mu#nu} (GeV);Event count"},
+    { "HMassWZ_C","M_{WZ} #mu#mue#nu ;M_{WZ}^{#mu#mue#nu} (GeV);Event count"},
+    { "HMassWZ_D","M_{WZ} #mu#mu#mu#nu ;M_{WZ}^{#mu#mu#mu#nu} (GeV);Event count"},
     { "HMassWZ_+ABCD","M_{W} #mu#mu#mu#nu ;M_{WZ} (GeV);Event count"},
     { "HPileup_A","nPvs eee#nu;nPvs;Event count"},
     { "HPileup_B","nPvs ee#mu#nu;nPvs;Event count"},
@@ -197,8 +197,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HWZDist_A","dr(W,Z) eee#nu;dR (cm);Event count"},
     { "HWZDist_B","dr(W,Z) ee#mu#nu;dR (cm);Event count"},
     { "HWZDist_C","dr(W,Z) ee#mu#nu;dR (cm);Event count"},
-    { "HWZDist_D","dr(W,Z) #mu#mue#nu;dR (cm);Event count"},
-    { "HWZDist_+ABCD","dr(W,Z) lll#nu;dR (cm);Event count"},
+    { "HWZDist_D","dr(W,Z) #mu#mu#mu#nu;dR (cm);Event count"},
+    { "HWZDist_+ABCD","dR(W,Z) lll#nu;dR (cm);Event count"},
     { "HnEl_A","n_{e};n_{e};Event count"},
     { "HnEl_B","n_{e};n_{e};Event count"},
     { "HnEl_C","n_{e};n_{e};Event count"},
@@ -234,10 +234,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HPtl3_C","Pt_{e3} #mu#mue#nu; Pt_{#mu3} (GeV); Event count"},
     { "HPtl3_D","Pt_{#mu3} #mu#mu#mu#nu; Pt_{#mu3} (GeV); Event count"},
     { "HPtl3_+ABCD","Pt_{l3} lll#nu; Pt_{l3} (GeV); Event count"},
-    { "HMetPt_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{3e0#mu}_{T}(GeV);Event count/10GeV"},
-    { "HMetPt_B","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{2e1#mu}_{T}(GeV);Event count/10GeV"},
-    { "HMetPt_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{1e2#mu}_{T}(GeV);Event count/10GeV"},
-    { "HMetPt_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{0e3#mu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{eee#nu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_B","#slash{E}^{Z#rightarrow ee W#rightarrow #mu#nu}_{T};#slash{E}^{ee#mu#nu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{#mu#mue#nu}_{T}(GeV);Event count/10GeV"},
+    { "HMetPt_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{#mu#mu#mu#nu}_{T}(GeV);Event count/10GeV"},
     { "HMetPt_+ABCD","#slash{E}_{T} lll#nu;#slash{E}_{T}(GeV);Event count/10GeV"},
     { "HEtal1_A", "#eta_{e1} eee#nu;Eta;Event count"},
     { "HEtal1_B", "#eta_{e1} ee#mu#nu;Eta;Event count"},
@@ -454,18 +454,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hcdata->SetMarkerStyle(20);
       hcdata->SetMarkerSize(.5);
       hcdata->SetLineWidth(1);
+      const int font = 43;
+      const float fontSize = 17.;
+      const float labelSize = 0.17;
       hcdata->SetTitle("");
-      hcdata->GetXaxis()->SetTitleSize(25);
-      hcdata->GetXaxis()->SetTitleFont(43);
-      hcdata->GetXaxis()->SetTitleOffset(6.0);
-      hcdata->GetXaxis()->SetLabelSize(0.17);
-      hcdata->GetYaxis()->SetTitleSize(14);
-      hcdata->GetYaxis()->SetTitleFont(43);
-      hcdata->GetYaxis()->SetLabelSize(0.17);
-      hcdata->GetYaxis()->SetTitleOffset(5.0);
+      hcdata->GetXaxis()->SetTitle(hss->GetHistogram()->GetXaxis()->GetTitle());
+      hcdata->GetXaxis()->SetTitleFont(font);
+      hcdata->GetXaxis()->SetTitleSize(fontSize);
+      hcdata->GetXaxis()->SetLabelSize(labelSize);
+      hcdata->GetXaxis()->SetTitleOffset(12.0);
+      hcdata->GetYaxis()->SetTitleFont(font);
+      hcdata->GetYaxis()->SetTitleSize(fontSize);
+      hcdata->GetYaxis()->SetLabelSize(labelSize);
+      hcdata->GetYaxis()->SetTitleOffset(4.0);
       hcdata->GetYaxis()->SetNdivisions(6,3,0);
       hcdata->GetYaxis()->SetTitle("Data/MC");
-      hcdata->GetYaxis()->SetLimits(0.,2.);
+      hcdata->SetMinimum(0.1);
+      hcdata->SetMaximum(1.9);
       return hcdata;
   };
 
@@ -995,7 +1000,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       c1->Divide(2,2);
       Int_t j = 1;
 
-      std::vector<std::string> channels = { "A","B","C","D","+ABCD" };
+      std::vector<std::string> channels = {
+        "A","B","C","D","+ABCD",
+        "Central_A","Central_B","Central_C","Central_D","Central_+ABCD",
+      };
 
       for(const auto& ch: channels) {
         for (auto HN : HistNames) {
@@ -1066,8 +1074,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           mainPad->cd();
           hs->Draw("HIST");
           hsig->Draw("HIST SAME");
-          double maxx = last->GetXaxis()->GetBinWidth(0) * (last->FindLastBinAbove(0.25)+1);
-          double minx = last->GetXaxis()->GetBinWidth(0) * (last->FindFirstBinAbove(0.25)-1);
+          double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.25)+1);
+          double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.25)-1);
           hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
 
           auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),hName);
@@ -1082,14 +1090,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           auto hcdata = getRatio(hdata,hs);
           subPad->cd();
           subPad->SetGrid();
-          hcdata->SetMaximum(1.9);
-          hcdata->SetMinimum(0.1);
           hcdata->Draw();
           subPad->SetFrameLineWidth(1);
           hcdata->GetXaxis()->SetRangeUser(minx,maxx);
-          hcdata->GetYaxis()->SetLabelSize(0.15);
-          hcdata->GetYaxis()->SetTitleOffset(2.5);
-          hcdata->GetXaxis()->SetTitleOffset(9.0);
 
           ++j;
           mainPad->cd();
