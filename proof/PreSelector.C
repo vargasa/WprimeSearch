@@ -494,7 +494,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; i++){
     double abseta =  abs(El.eta[i]);
-    if(El.cutBased[i]==4 and El.pt[i]>MinPt and
+    if(El.cutBased[i]==4 and
        abseta < MaxEta and
        ( abseta < etaGap.first or abseta > etaGap.second))
       GoodIndex.emplace_back(i);
@@ -946,8 +946,6 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
 
 bool PreSelector::DefineW(const Leptons& l){
 
-  assert(l.pt[l3] > 20.); // MinPt
-
   lep3 = PtEtaPhiMVector(l.pt[l3], l.eta[l3], l.phi[l3], l.mass);
   wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
   nu = PreSelector::GetNu4V(lep3, wmt);
@@ -996,22 +994,12 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
 
 Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
 
-  auto WMuonOk = [&](){
-    if (Muon_highPtId[SameFlvWCand[0]] == 2) {
-      l3 = SameFlvWCand[0];
-    } else {
-      return false;
-    }
-    return true;
-  };
-
-  if (SameFlvWCand.size() > 0 and GoodElectron.size() == 0){
+  if ( SameFlvWCand.size()>0 and GoodElectron.size() == 0 ){
+    l3 = SameFlvWCand[0];
     IsD = true;
-    if(!WMuonOk()) return kFALSE;
-  } else if(SameFlvWCand.size() > 0 and GoodElectron.size() > 0) {
-    if(Muon_pt[SameFlvWCand[0]] > Electron_pt[GoodElectron[0]]){
+  } else if( SameFlvWCand.size() > 0 and GoodElectron.size() > 0 ) {
+    if( Muon_pt[SameFlvWCand[0]] > Electron_pt[GoodElectron[0]] ){
       IsD = true;
-      if(!WMuonOk()) return kFALSE;
     } else {
       IsC = true;
       l3 = GoodElectron[0];
@@ -1045,6 +1033,9 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
         break;
       }
     }
+    if (!ok) {
+      HCutFlow->FillS("FailWMuonGlbHighPtId");
+    }
     return ok;
   };
 
@@ -1052,24 +1043,16 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
     IsA_ = true;
     l3 = SameFlvWCand[0];
   } else if (SameFlvWCand.size() > 0 and GoodMuon.size() > 0){
-    if(Electron_pt[SameFlvWCand[0]] > Muon_pt[GoodMuon[0]]){
+    if( (Muon_pt[GoodMuon[0]] > Electron_pt[SameFlvWCand[0]]) and WMuonOk() ){
+      IsB = true;
+    } else {
       IsA_ = true;
       l3 = SameFlvWCand[0];
-    } else {
-      IsB = true;
-      if (!WMuonOk()) {
-        HCutFlow->FillS("FailWMuonGlbHighPt");
-        return kFALSE;
-      }
     }
-  } else if(SameFlvWCand.size() == 0 and GoodMuon.size()>0 ) {
+  } else if( SameFlvWCand.size() == 0 and (GoodMuon.size()>0 and WMuonOk()) ) {
     IsB = true;
-    if(!WMuonOk()){
-      HCutFlow->FillS("FailWMuonGlbHighPt");
-      return kFALSE;
-    }
   } else {
-    assert(false);
+      return kFALSE;
   }
 
   if (IsA_)
