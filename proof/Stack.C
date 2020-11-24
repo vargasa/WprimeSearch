@@ -179,6 +179,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HLt_C","#mu#mu e#nu; P_{T}^{Lep} (GeV);Event count/10GeV"},
     { "HLt_D","#mu#mu#mu#nu;P_{T}^{Lep} (GeV);Event count/10GeV"},
     { "HLt_+ABCD","lll#nu;P_{T}^{Lep} (GeV);Event count/10GeV"},
+    { "HWZPt_A","Pt(WZ) eee#nu; P_{t}^{WZ} (GeV);Event count"},
+    { "HWZPt_B","Pt(WZ) ee#mu#nu; P_{t}^{WZ} (GeV);Event count"},
+    { "HWZPt_C","Pt(WZ) #mu#mue#nu; P_{t}^{WZ} (GeV);Event count"},
+    { "HWZPt_D","Pt(WZ) #mu#mu#mu#nu; P_{t}^{WZ} (GeV);Event count"},
+    { "HWZPt_+ABCD","Pt(WZ) eee#nu; P_{t}^{WZ} (GeV);Event count"},
     { "HDistl1l2_A","dR(e_{1},e_{2}) eee#nu;dR (cm);Event count"},
     { "HDistl1l2_B","dR(e_{1},e_{2}) ee#mu#nu;dR (cm);Event count"},
     { "HDistl1l2_C","dR(#mu_{1},#mu_{2}) #mu#mue#nu;dR (cm);Event count"},
@@ -297,6 +302,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     "HPtl2",
     "HPtl3",
     "HMetPt",
+    /* Another series */
+    "HPtl1",
+    "HMetPt",
+    "HLt",
+    "HWZPt",
     /* Another series */
     "HPileup",
     "HEtal1",
@@ -493,7 +503,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
 
     TH1F* hCutFlow = static_cast<TH1F*>(f1->Get(Form("%s/HCutFlow",folder.c_str())));
-    count += hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(cutLabel.c_str()));
+    count += hCutFlow->GetBinContent(hCutFlow->GetXaxis()->FindBin(cutLabel.c_str( )));
 
     return count;
   };
@@ -855,7 +865,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c1;
   };
 
-
   std::function<void(const int&)> plotHLTSelectionRatio = [&] (const int& yr) {
 
     TCanvas* c1 = new TCanvas("c1","c1");
@@ -892,11 +901,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GElTgEff->Draw("AP");
     GElTgEff->GetYaxis()->SetRangeUser(0, 1.);
     GMuTgEff->SetMarkerStyle(23);
+    GElTgEff->SetMarkerSize(0.5);
     GMuTgEff->SetMarkerColor(kBlue);
     invertGraph(GMuTgEff);
     GMuTgEff->Draw("P");
+    GMuTgEff->SetMarkerSize(0.5);
     GHLTEff->SetMarkerStyle(24);
     GHLTEff->SetMarkerColor(kRed);
+    GHLTEff->SetMarkerSize(0.5);
     invertGraph(GHLTEff);
     GHLTEff->Draw("P");
     gPad->BuildLegend();
@@ -908,7 +920,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   std::function<void(const int&)> plotSelectionRatio = [&] (const int& yr) {
 
-    const std::string fromHisto = "HMassWZ_+ABCD";
     const Int_t nMassPoints = 14;
 
     TCanvas* c1 = new TCanvas("c1","c1");
@@ -924,14 +935,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     for (auto& signal: SignalSamples.find(yr)->second) {
       const Int_t WpMass = getWpMassFromName(signal.folderName);
-      addCutEff(GSelRatioA, Form("%d/%s",yr,signal.folderName.c_str()), "3e0mu", "NoCuts", WpMass);
-      addCutEff(GSelRatioB, Form("%d/%s",yr,signal.folderName.c_str()), "2e1mu", "NoCuts", WpMass);
-      addCutEff(GSelRatioC, Form("%d/%s",yr,signal.folderName.c_str()), "1e2mu", "NoCuts", WpMass);
-      addCutEff(GSelRatioD, Form("%d/%s",yr,signal.folderName.c_str()), "0e3mu", "NoCuts", WpMass);
+      addCutEff(GSelRatioA, Form("%d/%s",yr,signal.folderName.c_str()), "0", "NoCuts", WpMass);
+      addCutEff(GSelRatioB, Form("%d/%s",yr,signal.folderName.c_str()), "1", "NoCuts", WpMass);
+      addCutEff(GSelRatioC, Form("%d/%s",yr,signal.folderName.c_str()), "2", "NoCuts", WpMass);
+      addCutEff(GSelRatioD, Form("%d/%s",yr,signal.folderName.c_str()), "3", "NoCuts", WpMass);
     }
 
     TGraph GInclusive = TGraph(nMassPoints);
-    GInclusive.SetTitle("Inclusive");
+    GInclusive.SetTitle("Combined");
 
     auto addToInclusive = [&](TGraph* g){
       Double_t* xi = GInclusive.GetX();
@@ -946,12 +957,16 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     };
 
     GSelRatioA->SetMarkerStyle(20);
+    GSelRatioA->SetMarkerSize(0.5);
     GSelRatioA->SetMarkerColor(kBlue);
     GSelRatioB->SetMarkerStyle(21);
+    GSelRatioB->SetMarkerSize(0.5);
     GSelRatioB->SetMarkerColor(kOrange);
     GSelRatioC->SetMarkerStyle(22);
+    GSelRatioC->SetMarkerSize(0.5);
     GSelRatioC->SetMarkerColor(kGreen);
     GSelRatioD->SetMarkerStyle(23);
+    GSelRatioD->SetMarkerSize(0.5);
     GSelRatioD->SetMarkerColor(kViolet);
 
     addToInclusive(GSelRatioA);
@@ -961,8 +976,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     GInclusive.SetMarkerColor(kRed);
     GInclusive.SetMarkerStyle(24);
-    GInclusive.GetYaxis()->SetTitle("#epsilon");
-    GInclusive.GetXaxis()->SetTitle("M_{WZ}");
+    GInclusive.SetMarkerSize(0.5);
+    GInclusive.GetYaxis()->SetTitle("#EventsPassing/#nEventsInSignal");
+    GInclusive.GetXaxis()->SetTitle(Form("Wprime Mass Point %d",yr));
     GInclusive.Draw("AP");
     GInclusive.GetYaxis()->SetRangeUser(0.0,0.4);
 
@@ -970,7 +986,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GSelRatioB->Draw("P");
     GSelRatioC->Draw("P");
     GSelRatioD->Draw("P");
-    gPad->BuildLegend(0.7,0.8,0.7,0.8);
+    gPad->BuildLegend(0.1,0.7,0.25,0.9);
     c1->Print(Form("plots/%d/%s_%d_SelectionRatio.png",yr,fileLabel.c_str(),yr));
     c1->Write(Form("%s_%d_SelectionRatio.png",fileLabel.c_str(),yr));
 
