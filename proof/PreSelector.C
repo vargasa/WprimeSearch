@@ -97,6 +97,7 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
 #ifndef CMSDATA
 Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
   if(!h) return 1.;
+  assert(copysign(1.,h->GetBinContent(h->FindBin(npv))) > 0);
   return h->GetBinContent(h->FindBin(npv));
 }
 #endif
@@ -833,10 +834,6 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
     break;
   }
-
-  assert(wcentral>0);
-  assert(wup>0);
-  assert(wdown>0);
 
   HScaleFactors[nh]->Fill(wup);
   HScaleFactors[nh]->Fill(wdown);
