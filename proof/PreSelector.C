@@ -1068,39 +1068,24 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
 
 void PreSelector::FillRegion(const int regOffset,
                              const Electrons& Els, const Muons& Mus){
-
-
-  if(PairEl and PairElDefineW(Els,Mus)){
-
-    assert( l1 < *nElectron and l2 < *nElectron);
-
-    //3e0mu
-    if(IsA_){
-      FillCategory(0,regOffset,Els,Els);
-    }
-
-    // 2e1mu
-    if(IsB){
-      FillCategory(1,regOffset,Els,Mus);
-    }
+  //3e0mu
+  if(IsA_){
+    FillCategory(0,regOffset,Els,Els);
   }
-
-  if(PairMu and PairMuDefineW(Els,Mus)){
-
-    assert( l1 < *nMuon and l2 < *nMuon);
-
-    // 1e2Mu
-    if(IsC){
-      assert( l3 < *nElectron );
-      FillCategory(2,regOffset,Mus,Els);
-    }
-    // 0e3mu
-    if(IsD){
-      assert( l3 < *nMuon );
-      FillCategory(3,regOffset,Mus,Mus);
-    }
+  // 2e1mu
+  if(IsB){
+    FillCategory(1,regOffset,Els,Mus);
   }
-
+  // 1e2Mu
+  if(IsC){
+    assert( l3 < *nElectron );
+    FillCategory(2,regOffset,Mus,Els);
+  }
+  // 0e3mu
+  if(IsD){
+    assert( l3 < *nMuon );
+    FillCategory(3,regOffset,Mus,Mus);
+  }
   // 3leptons
   HOverlap->Fill(IsA_+IsB+IsC+IsD);
 }
@@ -1188,6 +1173,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+
+  ////////////// Define Z //////////////
+
   const Float_t MinZMass = 70.;
   const Float_t MaxZMass = 111.;
 
@@ -1219,10 +1207,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   if(PairEl){
-    assert(leadElIdx>=0);
     zt = &ztel;
   } else { //PairMu
-    assert(leadMuIdx>=0);
     zt = &ztmu;
   }
 
@@ -1239,7 +1225,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
   l1 = (*zt).Pair.first;
   l2 = (*zt).Pair.second;
 
-
   if(PairEl){
     lep1 = PtEtaPhiMVector(Electron_pt[l1],Electron_eta[l1],
                            Electron_phi[l1],Electrons::mass);
@@ -1251,8 +1236,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     lep2 = PtEtaPhiMVector(Muon_pt[l2],Muon_eta[l2],
                            Muon_phi[l2],Muons::mass);
   }
-
-  zb   = lep1 + lep2;
 
   Bool_t Zl1PtCut = lep1.Pt() < 50.;
   if(Zl1PtCut){
@@ -1267,7 +1250,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  assert(PairEl or PairMu);
+  zb   = lep1 + lep2;
+
+  ////////////// Define W //////////////
+
+  assert(PairEl xor PairMu);
 
   if(PairMu){
     for(auto i: GoodMuon){
@@ -1302,6 +1289,16 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   for(const auto& i: GoodElectron){
     assert( i<*nElectron );
+  }
+
+  if(PairEl) PairElDefineW(Els,Mus);
+  if(PairMu) PairMuDefineW(Els,Mus);
+
+  //////////////////////////////////////
+
+  if( (lep1 + lep2 + lep3).M() < 120. ){
+    HCutFlow->FillS("MLeps<120");
+    return kFALSE;
   }
 
   FillRegion(0,Els,Mus); // 0 -> Signal Region
