@@ -1223,6 +1223,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+  if (PairEl && PairMu){
+    HCutFlow->FillS("BothFlvPairs");
+  }
+
   if (PairEl && PairMu) {
     if (ztel.Delta > ztmu.Delta) {
       PairEl = false;
@@ -1273,6 +1277,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+  const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
+  Bool_t ZDistCut = l1l2Dist > 1.5;
+  if(ZDistCut){
+    HCutFlow->FillS("FilZDistCut");
+    return kFALSE;
+  }
+
   assert(PairEl or PairMu);
 
   if(PairMu){
@@ -1310,20 +1321,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     assert( i<*nElectron );
   }
 
-  const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
-  Bool_t ZDistCut = l1l2Dist > 1.5;
-
-  nbQ = nbTag();
-
-  if(ZDistCut){
-    if( nbQ >= 2 ){
-      FillRegion(16,Els,Mus); // 16 -> ttBar CR
-    } else {
-      FillRegion(32,Els,Mus); // 32 -> DY Mix
-    }
-  } else {
-    FillRegion(0,Els,Mus); // 0 -> Signal Region
-  }
+  FillRegion(0,Els,Mus); // 0 -> Signal Region
 
   return kTRUE;
 }
