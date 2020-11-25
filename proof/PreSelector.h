@@ -188,7 +188,7 @@ class PreSelector : public EventSelection {
   TH2I* HNEl;
   TH2I* HNMu;
 
-  UInt_t l1, l2, l3; // Lepton pair index and lead remaining
+  Int_t l1, l2, l3; // Lepton pair index and lead remaining
   Int_t leadMuIdx; // Leading is not 0th index
   Int_t leadElIdx;
   Float_t wmt; // W Transverse mass;

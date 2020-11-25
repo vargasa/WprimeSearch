@@ -1034,6 +1034,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
       }
     }
     if (!ok) {
+      l3 = -1;
       HCutFlow->FillS("FailWMuonGlbHighPtId");
     }
     return ok;
@@ -1043,7 +1044,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
     IsA_ = true;
     l3 = SameFlvWCand[0];
   } else if (SameFlvWCand.size() > 0 and GoodMuon.size() > 0){
-    if( (Muon_pt[GoodMuon[0]] > Electron_pt[SameFlvWCand[0]]) and WMuonOk() ){
+    if( WMuonOk() and (Muon_pt[l3] > Electron_pt[SameFlvWCand[0]]) ){
       IsB = true;
     } else {
       IsA_ = true;
@@ -1052,7 +1053,10 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
   } else if( SameFlvWCand.size() == 0 and (GoodMuon.size()>0 and WMuonOk()) ) {
     IsB = true;
   } else {
-      return kFALSE;
+    assert(IsA_==false);
+    assert(IsB ==false);
+    assert(l3 == -1);
+    return kFALSE;
   }
 
   if (IsA_)
@@ -1078,12 +1082,12 @@ void PreSelector::FillRegion(const int regOffset,
   }
   // 1e2Mu
   if(IsC){
-    assert( l3 < *nElectron );
+    assert( l3 < (int)*nElectron );
     FillCategory(2,regOffset,Mus,Els);
   }
   // 0e3mu
   if(IsD){
-    assert( l3 < *nMuon );
+    assert( l3 < (int)*nMuon );
     FillCategory(3,regOffset,Mus,Mus);
   }
   // 3leptons
@@ -1112,6 +1116,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   IsA_ = IsB = IsC = IsD = false;
   PairMu = PairEl = false;
   SameFlvWCand.clear();
+  l1 = l2 = l3 = -1;
 
   ReadEntry(entry);
 
@@ -1257,7 +1262,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   assert(PairEl xor PairMu);
 
   if(PairMu){
-    for(auto i: GoodMuon){
+    for(const int& i: GoodMuon){
       if(i!=l1 && i!=l2)
         if(Muon_highPtId[i] == 2)
           SameFlvWCand.emplace_back(i);
@@ -1270,7 +1275,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
       assert(i<*nMuon);
     }
   } else { // PairEl
-    for(auto i: GoodElectron){
+    for(const int& i: GoodElectron){
       if(i!=l1 && i!=l2)
         SameFlvWCand.emplace_back(i);
     }
@@ -1291,8 +1296,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
     assert( i<*nElectron );
   }
 
-  if(PairEl) PairElDefineW(Els,Mus);
-  if(PairMu) PairMuDefineW(Els,Mus);
+  if(PairEl)
+    if(!PairElDefineW(Els,Mus))
+      return kFALSE;
+  if(PairMu)
+    if(!PairMuDefineW(Els,Mus))
+      return kFALSE;
 
   //////////////////////////////////////
 
