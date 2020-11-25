@@ -150,7 +150,7 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HGenPartZ;
   std::vector<TH1F*> HGenPartW;
   std::vector<TH1F*> HGenPartF;
-
+  std::vector<TH2F*> HGenPartChgF;
   std::vector<TH1F*> HScaleFactors;
   TH1D *SFPileup;
 

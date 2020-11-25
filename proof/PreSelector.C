@@ -314,6 +314,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HGenPartZ,"HGenPartZ",BinsPdgId,PdgIdMin,PdgIdMax);
   InitHVec<TH1F>(HGenPartW,"HGenPartW",BinsPdgId,PdgIdMin,PdgIdMax);
   InitHVec<TH1F>(HGenPartF,"HGenPartF",BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartChgF,"HGenPartChgF",6,-2.,2.,BinsPdgId,PdgIdMin,PdgIdMax);
 
 #endif
   HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
@@ -779,6 +780,8 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
 
 
 #ifndef CMSDATA
+  HGenPartChgF[nh+kNoSf]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
+  HGenPartChgF[nh+kNoSf]->Fill(lz.charge[l2],GenPart_pdgId[lz.genPartIdx[l2]]);
   HGenPartF[nh+kNoSf]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l1]]));
   HGenPartF[nh+kNoSf]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l2]]));
   HGenPartF[nh+kNoSf]->FillS(Form("%d",GenPart_pdgId[lw.genPartIdx[l3]]));
