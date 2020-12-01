@@ -63,10 +63,17 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   TList *SFDb = new TList();
 
 #ifdef Y2016
+  TFile *f0 = TFile::Open("files/mc/2016/sf/merged_kfactors_zjets.root","READ");
+  auto SFDYKFactorQCD = static_cast<TH1F*>(f0->Get("kfactor_monojet_qcd"));
+  SFDb->SetName("SFDb");
+  SFDYKFactorQCD->SetName("SFDYKFactorQCD");
+  SFDb->Add(SFDYKFactorQCD);
+  auto SFDYKFactorEWK = static_cast<TH1F*>(f0->Get("kfactor_monojet_ewk"));
+  SFDYKFactorEWK->SetName("SFDYKFactorEWK");
+  SFDb->Add(SFDYKFactorEWK);
   TFile *f1 = TFile::Open("files/mc/2016/sf/EfficienciesAndSF_RunBtoF.root","READ");
   auto SFMuonTriggerBF = static_cast<TH2F*>(f1->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio"));
   SFMuonTriggerBF->SetName("SFMuonTriggerBF");
-  SFDb->SetName("SFDb");
   SFDb->Add(SFMuonTriggerBF);
   TFile *f2 = TFile::Open("files/mc/2016/sf/EfficienciesAndSF_Period4.root","READ");
   auto SFMuonTriggerGH = static_cast<TH2F*>(f2->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio"));

@@ -5,6 +5,7 @@
 #include "TError.h"
 #include "TVector2.h"
 #include <functional>
+#include <bitset>
 
 #define FillS(xx) Fill(xx,1.)
 
@@ -59,6 +60,31 @@ Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
   assert(sf>0.);
 
   return sf;
+}
+#endif
+
+#ifndef CMSDATA
+Double_t PreSelector::GetZPtFromGen() const{
+
+  const int zid = 23;
+  double zptMax = 0.;
+  const int maxNFlags = 14;
+  const int fromHardProcess = 8;
+  const int isFirstCopy = 12;
+
+  auto checkFlags = [&](const int& idx) {
+    std::bitset<maxNFlags> flags(GenPart_statusFlags[idx]);
+    return ( flags[fromHardProcess] and flags[isFirstCopy] );
+  };
+
+  for(uint i = 0; i < GenPart_pdgId.GetSize(); ++i){
+    if( abs(GenPart_pdgId[i]) == zid and GenPart_pt[i] > zptMax
+        and checkFlags(i) ){
+      zptMax = GenPart_pt[i];
+    }
+  }
+
+  return zptMax;
 }
 #endif
 #ifndef CMSDATA
@@ -128,6 +154,36 @@ Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
 
   return sf;
 
+}
+#endif
+#ifndef CMSDATA
+Double_t PreSelector::GetKFactor(const Double_t& ZGenPt, const int& option) const{
+  assert(ApplyKFactors);
+  double sf = 1.;
+
+  if( ZGenPt < KSFMinPt or ZGenPt > KSFMaxPt)
+    return sf;
+
+  const int nbinQCD = SFDYKFactorQCD->FindBin(ZGenPt);
+  const int nbinEWK = SFDYKFactorEWK->FindBin(ZGenPt);
+
+  sf *= SFDYKFactorQCD->GetBinContent(nbinQCD);
+  sf *= SFDYKFactorEWK->GetBinContent(nbinEWK);
+
+  switch(option){
+  case -1:
+    sf -= SFDYKFactorQCD->GetBinErrorLow(nbinQCD);
+    sf -= SFDYKFactorEWK->GetBinErrorLow(nbinEWK);
+    break;
+  case 1:
+    sf += SFDYKFactorQCD->GetBinErrorUp(nbinQCD);
+    sf += SFDYKFactorQCD->GetBinErrorUp(nbinEWK);
+    break;
+  case 0:
+    break;
+  }
+
+  return sf;
 }
 #endif
 #ifndef CMSDATA
@@ -213,7 +269,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   TH1::SetDefaultSumw2();
 
-  const Int_t DistBins = 100;
+  const Int_t DistBins = 50;
   const Float_t MaxDist = 2.01*TMath::Pi();
 
   InitHVec<TH1F>(HDistl1l2,"HDistl1l2",DistBins,0.,MaxDist);
@@ -386,6 +442,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   }
 
 #ifdef Y2016
+  SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
+  SFDYKFactorEWK = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorEWK"));
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
@@ -394,6 +452,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
+
+  if(SampleName.Contains("DYJetsToLL")){
+    ApplyKFactors = true;
+    KSFMinPt = SFDYKFactorQCD->GetBinLowEdge(1);
+    KSFMaxPt = SFDYKFactorQCD->GetBinLowEdge(SFDYKFactorQCD->GetNbinsX())
+      + SFDYKFactorQCD->GetBinWidth(SFDYKFactorQCD->GetNbinsX());
+    std::clog << Form("Apply kFactors to sample: %s\n",SampleName.Data());
+  }
+
 #elif defined(Y2017)
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
@@ -842,8 +909,26 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
     break;
   }
 
+  Double_t ksf = 1.;
+  Double_t ksfup = 1.;
+  Double_t ksfdown = 1.;
+
+  if (ApplyKFactors) {
+    Double_t zpt = GetZPtFromGen();
+    if(zpt > 0.){
+      ksf = GetKFactor(zpt,0);
+      ksfup = GetKFactor(zpt,1);
+      ksfdown = GetKFactor(zpt,-1);
+    }
+    wcentral *= ksf;
+    wup *= ksfup;
+    wdown *= ksfdown;
+  }
+
   HScaleFactors[nh]->Fill(wup);
   HScaleFactors[nh]->Fill(wdown);
+  HScaleFactors[nh]->Fill(ksfup);
+  HScaleFactors[nh]->Fill(ksfdown);
 
   // Eta histos
   HPileup_[nh+kCentral]->Fill(*PV_npvs,wcentral);

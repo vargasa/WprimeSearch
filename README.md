@@ -98,6 +98,13 @@ wget -P proof/files/mc/2017/sf/ -c https://cms-service-dqm.web.cern.ch/cms-servi
 wget -P proof/files/mc/2018/sf/ -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2018-69200ub.root
 
 ```
+### kFactors
+```
+#2016
+wget -P proof/files/mc/2016/sf -c https://github.com/rishabhCMS/decaf/raw/master/analysis/data/vjets_SFs/merged_kfactors_zjets.root
+
+```
+
 
 The pileup scalefactors `PileupWeights.root` is computed by using:
 
