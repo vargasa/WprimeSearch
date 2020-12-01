@@ -54,6 +54,7 @@ class PreSelector : public EventSelection {
   TTreeReaderValue<Float_t> PV_chi2 = {fReader, "PV_chi2"};
   TTreeReaderValue<Float_t> PV_score = {fReader, "PV_score"};
   TTreeReaderValue<Int_t> PV_npvs = {fReader, "PV_npvs"};
+  TTreeReaderValue<Float_t> Pileup_nTrueInt = {fReader, "Pileup_nTrueInt"};
 
   // Muons
   // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/muons_cff.py
@@ -183,6 +184,7 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HWZPtDist;
 
   TH1D *HPileup;
+  TH1D *HTruePileup;
   std::vector<TH1F*> HPileup_;
 
   TH2I* HNEl;

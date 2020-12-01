@@ -96,7 +96,7 @@ Int_t PileupReweighing(){
 
     for(auto& sample: (*i).second) {
       std::clog << Form("Processing: %d/%s:\n", year, sample.c_str());
-      mcPileup = static_cast<TH1D*>(mcFile->Get(Form("%d/%s/HPileup",year,sample.c_str())));
+      mcPileup = static_cast<TH1D*>(mcFile->Get(Form("%d/%s/HTruePileup",year,sample.c_str())));
       mcPileup = static_cast<TH1D*>(mcPileup->Clone());
       mcPileup->Scale(1./mcPileup->Integral());
 

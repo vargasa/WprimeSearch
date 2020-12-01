@@ -303,6 +303,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
                      nPvsBins,minPvs,maxPvs);
   fOutput->Add(HPileup);
 
+  HTruePileup = new TH1D("HTruePileup","PV_npvs",
+                         nPvsBins,minPvs,maxPvs);
+
+  fOutput->Add(HTruePileup);
 
   InitHVec<TH1F>(HPileup_,"HPileup",nPvsBins,minPvs,maxPvs);
 
@@ -1129,6 +1133,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 #endif
 
   HPileup->Fill(static_cast<Double_t>(*PV_npvs));
+  HTruePileup->Fill(static_cast<Double_t>(*Pileup_nTrueInt));
 
   if (!ElectronTest()) HCutFlow->FillS("FailElectronHLTs");
   if (!MuonTest()) HCutFlow->FillS("FailMuonHLTs");
