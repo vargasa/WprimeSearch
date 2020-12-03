@@ -269,7 +269,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   TH1::SetDefaultSumw2();
 
-  const Int_t DistBins = 50;
+  const Int_t DistBins = 30;
   const Float_t MaxDist = 2.01*TMath::Pi();
 
   InitHVec<TH1F>(HDistl1l2,"HDistl1l2",DistBins,0.,MaxDist);
@@ -278,7 +278,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HWZDist,"HWZDist",DistBins,0.,MaxDist);
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
-  InitHVec<TH1F>(HWZPt,"HWZPt",100,0.,1e3);
+  InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
 
   const Double_t MaxnLep = 7;
   const Double_t MinnLep = 0;
@@ -306,7 +306,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMassZ,"HMassZ",ZMassBins,HMinZMass,HMaxZMass);
 
   const Float_t MaxTWMass = 250.;
-  const Int_t TWMassBins = 50;
+  const Int_t TWMassBins = 30;
   InitHVec<TH1F>(HMassTW,"HMassTW",TWMassBins,0.,MaxTWMass);
 
   const Float_t MaxWZMass = 8500.;
@@ -314,7 +314,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
 
   const Float_t MaxLt = 2000.;
-  const Int_t NLtBins = 200;
+  const Int_t NLtBins = 100;
   InitHVec<TH1F>(HLt,"HLt",NLtBins,0.,MaxLt);
 
   InitHVec<TH2F>(HMassZWZ,"HMassZWZ",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
@@ -402,7 +402,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMetPt,"HMetPt",MetBins,MinMet,MaxMet);
 
   const Float_t MaxEta = 3.;
-  const Int_t EtaBins = 100;
+  const Int_t EtaBins = 50;
 
   InitHVec<TH1F>(HEtal1,"HEtal1",EtaBins,-1*MaxEta,MaxEta);
   InitHVec<TH1F>(HEtal2,"HEtal2",EtaBins,-1*MaxEta,MaxEta);
@@ -422,7 +422,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
                  EtaBins,-1*MaxEta,MaxEta);
 
   const Float_t MaxPhi = TMath::Pi();
-  const Int_t PhiBins = 50;
+  const Int_t PhiBins = 30;
 
   InitHVec<TH1F>(HPhil1,"HPhil1",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil2,"HPhil2",PhiBins,-1*MaxPhi,MaxPhi);
