@@ -5,7 +5,7 @@
 void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   std::string fileLabel;
-  std::regex rexp("(WprimeHistos_)([A-Za-z_-]+)(.root)");
+  std::regex rexp("(WprimeHistos_)([A-Za-z0-9_-]+)(.root)");
   std::smatch sm;
   if(std::regex_search(FileName,sm,rexp))
     fileLabel = sm[2];
@@ -1050,14 +1050,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
           Int_t r = (j-1)%4;
           c1->cd(r+1);
-          const char *hName = (HN + "_" + ch).c_str();
+	  std::string hName(Form("%s_%s",HN.c_str(),ch.c_str()));
+	  std::string dataHName = hName;
+          if (hName.find("Central") != std::string::npos) {
+            dataHName.erase(dataHName.find("Central_"),8); //Strip out Central_
+          }
 
           const Float_t leftMargin = 0.12;
           const Float_t rightMargin = 0.12;
           const Float_t topMargin = 0.12;
           const Float_t bottomMargin = 0.5;
 
-          auto mainPad = new TPad(Form("mainPad_%s",hName),"mainPad",0.,0.25,1.,1.);
+          auto mainPad = new TPad(Form("mainPad_%s",hName.c_str()),"mainPad",0.,0.25,1.,1.);
           mainPad->Draw();
           mainPad->SetLeftMargin(leftMargin);
           mainPad->SetRightMargin(rightMargin);
@@ -1080,7 +1084,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           lumiLabel->SetTextAlign(12);
           lumiLabel->Draw();
 
-          auto subPad = new TPad(Form("mainPad_%s",hName),"subPad",0.,0.,1.,0.25);
+          auto subPad = new TPad(Form("mainPad_%s",hName.c_str()),"subPad",0.,0.,1.,0.25);
           subPad->Draw();
           subPad->SetLeftMargin(leftMargin);
           subPad->SetRightMargin(rightMargin);
@@ -1102,11 +1106,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           hsig->SetLineColor(kBlack);
           hsig->SetLineWidth(3);
           hsig->SetFillColor(0);
-          hs->SetTitle(Labels[std::string(hName)].c_str());
-
-          std::cout << "\n\t" << hName
-                    << "\t" << Labels[std::string(hName)]
-                    << "\n";
+          hs->SetTitle(Labels[dataHName].c_str());
 
           legend->SetBorderSize(0);
           gStyle->SetOptStat(0);
@@ -1118,7 +1118,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.25)-1);
           hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
 
-          auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),hName);
+          auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
           hdata->SetMarkerStyle(kFullCircle);
           fixYRange(hs,getMaxY(hdata));
           hdata->Draw("SAME P");
