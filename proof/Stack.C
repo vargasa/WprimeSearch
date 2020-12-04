@@ -1043,6 +1043,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       std::vector<std::string> channels = {
         "A","B","C","D","+ABCD",
         "Central_A","Central_B","Central_C","Central_D","Central_+ABCD",
+        "CR1_A","CR1_B","CR1_C","CR1_D","CR1_+ABCD",
+        "CR1_Central_A","CR1_Central_B","CR1_Central_C","CR1_Central_D","CR1_Central_+ABCD"
       };
 
       for(const auto& ch: channels) {
@@ -1050,10 +1052,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
           Int_t r = (j-1)%4;
           c1->cd(r+1);
-	  std::string hName(Form("%s_%s",HN.c_str(),ch.c_str()));
-	  std::string dataHName = hName;
+          std::string hName(Form("%s_%s",HN.c_str(),ch.c_str()));
+          std::string dataHName = hName;
           if (hName.find("Central") != std::string::npos) {
             dataHName.erase(dataHName.find("Central_"),8); //Strip out Central_
+          } else if (hName.find("Up_") != std::string::npos) {
+            dataHName.erase(dataHName.find("Up_"),3); //Strip out Central_
+          } else if (hName.find("Down_") != std::string::npos) {
+            dataHName.erase(dataHName.find("Down_"),5); //Strip out Central_
           }
 
           const Float_t leftMargin = 0.12;
@@ -1106,7 +1112,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           hsig->SetLineColor(kBlack);
           hsig->SetLineWidth(3);
           hsig->SetFillColor(0);
-          hs->SetTitle(Labels[dataHName].c_str());
+          std::string labelIdx = dataHName;
+          if (hName.find("CR1_") != std::string::npos) {
+            labelIdx.erase(labelIdx.find("CR1_"),4);
+          } else if (hName.find("CR2_") != std::string::npos) {
+            labelIdx.erase(labelIdx.find("CR2_"),4);
+          }
+          hs->SetTitle(Labels[labelIdx].c_str());
 
           legend->SetBorderSize(0);
           gStyle->SetOptStat(0);
