@@ -779,7 +779,7 @@ Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
   return sqrt(pow(eta2-eta1,2.)+pow(dphi,2.));
 }
 #ifndef CMSDATA
-void PreSelector::FillHSF(std::vector<TH1*>& h1, const Int_t& nh, const Double_t& binContent,
+void PreSelector::FillHSF(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent,
                           const Double_t& wdown, const Double_t& wcentral,
                           const Double_t& wup){
 
@@ -940,7 +940,7 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
   HScaleFactors[nh]->Fill(ksfdown);
 
   // Eta histos
-  FillHSF(HPileUp_,nh,(double)*PV_npvs,wdown,wcentral,wup);
+  FillHSF(HPileup_,nh,(double)*PV_npvs,wdown,wcentral,wup);
   FillHSF(HEtal1,nh,lep1.Eta(),wdown,wcentral,wup);
   FillHSF(HEtal2,nh,lep2.Eta(),wdown,wcentral,wup);
   FillHSF(HEtal3,nh,lep3.Eta(),wdown,wcentral,wup);
@@ -1032,6 +1032,7 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
 Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
 
   if ( SameFlvWCand.size()>0 and GoodElectron.size() == 0 ){
+    assert(SameFlvWCand.size()==1);
     l3 = SameFlvWCand[0];
     IsD = true;
   } else if( SameFlvWCand.size() > 0 and GoodElectron.size() > 0 ) {
@@ -1212,11 +1213,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
   HNEl->Fill(*nElectron,GoodElectron.size());
   HNMu->Fill(*nMuon,GoodMuon.size());
 
-  if( (GoodElectron.size() + GoodMuon.size()) <3 ){
-    HCutFlow->FillS("goodLep<3");
+  if( (GoodElectron.size() + GoodMuon.size()) != 3 ){
+    HCutFlow->FillS("goodLep!=3");
     return kFALSE;
   }
-
 
   ////////////// Define Z //////////////
 
@@ -1287,13 +1287,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
-  Bool_t ZDistCut = l1l2Dist > 1.5;
-  if(ZDistCut){
-    HCutFlow->FillS("FilZDistCut");
-    return kFALSE;
-  }
-
   zb   = lep1 + lep2;
 
   ////////////// Define W //////////////
@@ -1349,7 +1342,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  FillRegion(0,Els,Mus); // 0 -> Signal Region
+  const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
+  Bool_t ZDistCut = l1l2Dist < 1.5;
+  if(ZDistCut){
+    HCutFlow->FillS("SignalRegion");
+    FillRegion(0,Els,Mus); // 0 -> Signal Region
+  } else {
+    HCutFlow->FillS("dRControlRegion");
+    FillRegion(16,Els,Mus); // 16 -> CR1 Slot
+  }
 
   return kTRUE;
 }
