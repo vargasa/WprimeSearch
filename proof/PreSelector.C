@@ -98,7 +98,7 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
   if(y > h->GetYaxis()->GetXmax())
     return GetSFFromHisto(h,x,h->GetYaxis()->GetXmax() - 1e-3,option);
 #elif defined(Y2017) || defined(Y2018)
-  /* 2017/2018 SFMuonID, SFMuonTrigger provides x(pt) and y(eta)  */
+  /* 2017/2018 SFMuonHighPtID, SFMuonTrigger provides x(pt) and y(eta)  */
   assert(y < h->GetYaxis()->GetXmax() && y > h->GetYaxis()->GetXmin());
   if(x > h->GetXaxis()->GetXmax())
     return GetSFFromHisto(h,h->GetXaxis()->GetXmax() - 1e-3,y,option);
@@ -207,15 +207,15 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
 
   Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
   Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
-  Double_t SFIDBF = GetSFFromHisto(SFMuonIDBF,eta,pt,option);
-  Double_t SFIDGH = GetSFFromHisto(SFMuonIDGH,eta,pt,option);
+  Double_t SFIDBF = GetSFFromHisto(SFMuonHighPtIDBF,eta,pt,option);
+  Double_t SFIDGH = GetSFFromHisto(SFMuonHighPtIDGH,eta,pt,option);
 
   sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
   sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
 
 #elif defined(Y2017) || defined(Y2018)
   sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
-  sf *= GetSFFromHisto(SFMuonID,pt,abs(eta),option);
+  sf *= GetSFFromHisto(SFMuonHighPtID,pt,abs(eta),option);
 #endif
   assert(sf>0);
 
@@ -448,8 +448,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
   SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
-  SFMuonIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDBF"));
-  SFMuonIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonIDGH"));
+  SFMuonHighPtIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDBF"));
+  SFMuonHighPtIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDGH"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
 
@@ -465,14 +465,14 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  SFMuonID = static_cast<TH2D*>(SFDb->FindObject("SFMuonID"));
+  SFMuonHighPtID = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtID"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
 #elif defined(Y2018)
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  SFMuonID = static_cast<TH2D*>(SFDb->FindObject("SFMuonID"));
+  SFMuonHighPtID = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtID"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2018",SampleName.Data())));
 #endif
@@ -795,7 +795,19 @@ void PreSelector::FillHSF(std::vector<TH1F*>& h1, const Int_t& nh, const Double_
 
 }
 #endif
-void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
+void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
+
+  Int_t nch = -1;
+
+  if(IsD){
+    nch=3;
+  } else if (IsC) {
+    nch=2;
+  } else if (IsB) {
+    nch=1;
+  } else if (IsA_) {
+    nch=0;
+  }
 
   Int_t nh = nch + crOffset;
 
@@ -856,8 +868,7 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
   HNLep[nh]->Fill(GoodMuon.size(),GoodElectron.size());
   HMassZWZ[nh]->Fill(PairZMass,(wb+zb).M());
 
-  HCutFlow->FillS(Form("%d",nch));
-
+  HCutFlow->FillS(Form("%d",nh));
 
 #ifndef CMSDATA
   HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
@@ -877,16 +888,14 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
   Double_t wdown = -1.;
   Double_t wcentral = -1.;
 
-  switch(nch){
-  case 0:
+  if(IsA_){
     wcentral = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
     wup = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
     wdown = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
-    break;
-  case 1:
+  } else if (IsB) {
     wcentral = GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     wcentral *= GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
@@ -896,8 +905,7 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
     wdown = GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
     wdown *= GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
-    break;
-  case 2:
+  } else if (IsC) {
     wcentral = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
     wcentral *= GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
@@ -907,15 +915,15 @@ void PreSelector::FillCategory(const Int_t& nch, const Int_t& crOffset, const Le
     wdown = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
     wdown *= GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
-    break;
-  case 3:
+  } else if (IsD) {
     wcentral = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
     wup = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
     wdown = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
-    break;
+  } else {
+    assert (false);
   }
 
   Double_t ksf = 1.;
@@ -1030,21 +1038,22 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
 
 void PreSelector::FillRegion(const int regOffset,
                              const Electrons& Els, const Muons& Mus){
+
   //3e0mu
   if(IsA_){
-    FillCategory(0,regOffset,Els,Els);
+    FillCategory(regOffset,Els,Els);
   }
   // 2e1mu
   if(IsB){
-    FillCategory(1,regOffset,Els,Mus);
+    FillCategory(regOffset,Els,Mus);
   }
   // 1e2Mu
   if(IsC){
-    FillCategory(2,regOffset,Mus,Els);
+    FillCategory(regOffset,Mus,Els);
   }
   // 0e3mu
   if(IsD){
-    FillCategory(3,regOffset,Mus,Mus);
+    FillCategory(regOffset,Mus,Mus);
   }
   // 3leptons
   HOverlap->Fill(IsA_+IsB+IsC+IsD);

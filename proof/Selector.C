@@ -81,13 +81,14 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFDb->Add(SFMuonTriggerGH);
   fProof->AddInputData(SFDb);
   TFile *f3 = TFile::Open("files/mc/2016/sf/RunBCDEF_SF_ID.root","READ");
-  auto SFMuonIDBF = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"));
-  SFMuonIDBF->SetName("SFMuonIDBF");
-  SFDb->Add(SFMuonIDBF);
+  auto SFMuonHighPtIDBF = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"));
+  SFMuonHighPtIDBF->SetName("SFMuonHighPtIDBF");
+  SFDb->Add(SFMuonHighPtIDBF);
   TFile *f4 = TFile::Open("files/mc/2016/sf/RunGH_SF_ID.root","READ");
-  auto SFMuonIDGH = static_cast<TH2D*>(f4->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"));
-  SFMuonIDGH->SetName("SFMuonIDGH");
-  SFDb->Add(SFMuonIDGH);
+  auto SFMuonHighPtIDGH = static_cast<TH2D*>(f4->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"));
+  SFMuonHighPtIDGH->SetName("SFMuonHighPtIDGH");
+  SFDb->Add(SFMuonHighPtIDGH);
+
   TFile *f5 = TFile::Open("files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","READ");
   auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
   SFElectronTrigger1->SetName("SFElectronTrigger1");

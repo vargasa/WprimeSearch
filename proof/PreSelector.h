@@ -231,7 +231,7 @@ class PreSelector : public EventSelection {
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
 
-  void FillCategory(const Int_t& nch, const Int_t& crOffset,
+  void FillCategory(const Int_t& crOffset,
                     const Leptons& lz,const Leptons& lw);
   Int_t nbTag();
   Int_t nbQ;
@@ -258,13 +258,13 @@ class PreSelector : public EventSelection {
   TH1F* SFDYKFactorEWK;
   TH2F* SFMuonTriggerBF;
   TH2F* SFMuonTriggerGH;
-  TH2D* SFMuonIDBF;
-  TH2D* SFMuonIDGH;
+  TH2D* SFMuonHighPtIDBF;
+  TH2D* SFMuonHighPtIDGH;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
 #elif defined(Y2017) || defined(Y2018)
   TH2F* SFMuonTrigger;
-  TH2D* SFMuonID;
+  TH2D* SFMuonHighPtID;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
 #endif
