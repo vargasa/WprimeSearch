@@ -1028,86 +1028,6 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
   return kTRUE;
 }
 
-
-Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
-
-  if ( SameFlvWCand.size()>0 and GoodElectron.size() == 0 ){
-    assert(SameFlvWCand.size()==1);
-    l3 = SameFlvWCand[0];
-    IsD = true;
-  } else if( SameFlvWCand.size() > 0 and GoodElectron.size() > 0 ) {
-    if( Muon_pt[SameFlvWCand[0]] > Electron_pt[GoodElectron[0]] ){
-      IsD = true;
-    } else {
-      IsC = true;
-      l3 = GoodElectron[0];
-    }
-  } else if (SameFlvWCand.size() == 0 and GoodElectron.size() > 0) {
-    IsC = true;
-    l3 = GoodElectron[0];
-  } else {
-    assert(false);
-  }
-
-  if(IsC)
-    if(!DefineW(Els))
-      return kFALSE;
-
-  if(IsD)
-    if(!DefineW(Mus))
-      return kFALSE;
-
-  return kTRUE;
-}
-
-Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
-
-  auto WMuonOk = [&](){
-    Bool_t ok{};
-    for (const auto& i: GoodMuon) {
-      if (Muon_highPtId[i] == 2) {
-        l3 = i;
-        ok = true;
-        break;
-      }
-    }
-    if (!ok) {
-      l3 = -1;
-      HCutFlow->FillS("FailWMuonGlbHighPtId");
-    }
-    return ok;
-  };
-
-  if (SameFlvWCand.size() > 0 and GoodMuon.size() == 0) {
-    IsA_ = true;
-    l3 = SameFlvWCand[0];
-  } else if (SameFlvWCand.size() > 0 and GoodMuon.size() > 0){
-    if( WMuonOk() and (Muon_pt[l3] > Electron_pt[SameFlvWCand[0]]) ){
-      IsB = true;
-    } else {
-      IsA_ = true;
-      l3 = SameFlvWCand[0];
-    }
-  } else if( SameFlvWCand.size() == 0 and (GoodMuon.size()>0 and WMuonOk()) ) {
-    IsB = true;
-  } else {
-    assert(IsA_==false);
-    assert(IsB ==false);
-    assert(l3 == -1);
-    return kFALSE;
-  }
-
-  if (IsA_)
-    if (!DefineW(Els))
-      return kFALSE;
-  if (IsB)
-    if (!DefineW(Mus))
-      return kFALSE;
-
-  return kTRUE;
-
-}
-
 void PreSelector::FillRegion(const int regOffset,
                              const Electrons& Els, const Muons& Mus){
   //3e0mu
@@ -1120,12 +1040,10 @@ void PreSelector::FillRegion(const int regOffset,
   }
   // 1e2Mu
   if(IsC){
-    assert( l3 < (int)*nElectron );
     FillCategory(2,regOffset,Mus,Els);
   }
   // 0e3mu
   if(IsD){
-    assert( l3 < (int)*nMuon );
     FillCategory(3,regOffset,Mus,Mus);
   }
   // 3leptons
@@ -1153,7 +1071,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   IsA_ = IsB = IsC = IsD = false;
   PairMu = PairEl = false;
-  SameFlvWCand.clear();
   l1 = l2 = l3 = -1;
 
   ReadEntry(entry);
@@ -1294,46 +1211,49 @@ Bool_t PreSelector::Process(Long64_t entry) {
   assert(PairEl xor PairMu);
 
   if(PairMu){
-    for(const int& i: GoodMuon){
-      if(i!=l1 && i!=l2)
-        if(Muon_highPtId[i] == 2)
-          SameFlvWCand.emplace_back(i);
-    }
-    if(SameFlvWCand.size() == 0 and GoodElectron.size() == 0){
-      HCutFlow->FillS("PairMu_NoWlepCand");
-      return kFALSE;
-    }
-    for(const auto& i: SameFlvWCand){
-      assert(i<*nMuon);
+    if(GoodMuon.size() == 3){
+      for(const int& i: GoodMuon){
+        if( (i!=l1 && i!=l2) and Muon_highPtId[i] == 2 ){
+          l3 = i;
+          DefineW(Mus);
+          IsD = true;
+        }
+      }
+      if(l3 == -1){
+        HCutFlow->FillS("PairMu_NoWlepCand");
+        return kFALSE;
+      }
+    } else {
+      assert(GoodElectron.size() == 1);
+      l3 = GoodElectron[0];
+      DefineW(Els);
+      IsC = true;
     }
   } else { // PairEl
-    for(const int& i: GoodElectron){
-      if(i!=l1 && i!=l2)
-        SameFlvWCand.emplace_back(i);
-    }
-    if(SameFlvWCand.size() == 0 and GoodMuon.size() == 0){
-      HCutFlow->FillS("PairEl_NoWlepCand");
-      return kFALSE;
-    }
-    for(const auto& i: SameFlvWCand){
-      assert(i<*nElectron);
+    if(GoodElectron.size() == 3){
+      for(const int& i: GoodElectron){
+        if(i!=l1 && i!=l2){
+          l3 = i;
+          DefineW(Els);
+          IsA_ = true;
+        }
+      }
+      assert(l3 != -1);
+    } else {
+      assert(GoodMuon.size() == 1);
+      if (Muon_highPtId[0] == 2) {
+        l3 = Muon_highPtId[0];
+        DefineW(Mus);
+        IsB = true;
+      } else {
+        HCutFlow->FillS("PairEl_NoWlepCand");
+        return kFALSE;
+      }
     }
   }
 
-  for(const auto& i: GoodMuon){
-    assert( i<*nMuon );
-  }
-
-  for(const auto& i: GoodElectron){
-    assert( i<*nElectron );
-  }
-
-  if(PairEl)
-    if(!PairElDefineW(Els,Mus))
-      return kFALSE;
-  if(PairMu)
-    if(!PairMuDefineW(Els,Mus))
-      return kFALSE;
+  assert(l3 != -1);
+  assert(IsA_ xor IsB xor IsC xor IsD);
 
   //////////////////////////////////////
 

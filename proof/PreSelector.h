@@ -199,7 +199,6 @@ class PreSelector : public EventSelection {
 
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
-  std::vector<UInt_t> SameFlvWCand;
   Bool_t PairEl{}, PairMu{};
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
   std::vector<ROOT::Math::PxPyPzMVector> nu;
@@ -271,8 +270,6 @@ class PreSelector : public EventSelection {
 #endif
 #endif
 
-  Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);
-  Bool_t PairMuDefineW(const Electrons& Els, const Muons& Mus);
   void FillRegion(const int regOffset, const Electrons& Els, const Muons& Mus);
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(const Leptons&, const std::vector<UInt_t>&) const;
   ZPairInfo FindZ(const Leptons&,const std::vector<UInt_t>&) const;
