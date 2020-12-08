@@ -194,6 +194,7 @@ class PreSelector : public EventSelection {
   Int_t leadMuIdx; // Leading is not 0th index
   Int_t leadElIdx;
   Float_t wmt; // W Transverse mass;
+  Float_t lt; // Sum of leptons Pt
 
   Bool_t IsA_{},IsB{},IsC{},IsD{};
 

@@ -20,7 +20,7 @@ PreSelector::PreSelector(TTree *)
   HCutFlow = 0;
   HNEl = 0;
   HNMu = 0;
-
+  HTruePileup = 0;
   HPileup = 0;
 
 }
@@ -296,7 +296,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t MassBins = 22;
 
   const Float_t MinWMass = 0.;
-  const Float_t MaxWMass = 1e3;
+  const Float_t MaxWMass = 500;
 
   InitHVec<TH1F>(HMassW,"HMassW",MassBins,MinWMass,MaxWMass);
 
@@ -313,7 +313,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t WZMassBins = 85;
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
 
-  const Float_t MaxLt = 2000.;
+  const Float_t MaxLt = 1000.;
   const Int_t NLtBins = 100;
   InitHVec<TH1F>(HLt,"HLt",NLtBins,0.,MaxLt);
 
@@ -396,9 +396,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Double_t MinMet = 0.;
   const Int_t MetBins = 60;
 
-  InitHVec<TH1F>(HPtl1,"HPtl1",MetBins,MinMet,MaxPt);
-  InitHVec<TH1F>(HPtl2,"HPtl2",MetBins,MinMet,MaxPt);
-  InitHVec<TH1F>(HPtl3,"HPtl3",MetBins,MinMet,MaxPt);
+  InitHVec<TH1F>(HPtl1,"HPtl1",25,0.,250.);
+  InitHVec<TH1F>(HPtl2,"HPtl2",10.,0.,100.);
+  InitHVec<TH1F>(HPtl3,"HPtl3",40,0.,400.);
   InitHVec<TH1F>(HMetPt,"HMetPt",MetBins,MinMet,MaxMet);
 
   const Float_t MaxEta = 3.;
@@ -564,7 +564,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   GoodIndex.reserve(10);
 
   UInt_t index = 0;
-  for (UInt_t i = 0; i< *El.n; i++){
+  for (UInt_t i = 0; i< *El.n; ++i){
     double abseta =  abs(El.eta[i]);
     if(El.cutBased[i]==4 and
        abseta < MaxEta and
@@ -812,7 +812,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   Int_t nh = nch + crOffset;
 
   // Pt histos
-  Float_t lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
   HPtl1[nh]->Fill(lep1.Pt());
   HPtl2[nh]->Fill(lep2.Pt());
   HPtl3[nh]->Fill(lep3.Pt());
@@ -1268,6 +1267,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if( (lep1 + lep2 + lep3).M() < 120. ){
     HCutFlow->FillS("MLeps<120");
+    return kFALSE;
+  }
+
+  lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
+
+  if( lt < 110.){
+    HCutFlow->FillS("FailsLTCut");
     return kFALSE;
   }
 
