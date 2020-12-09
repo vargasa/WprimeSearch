@@ -1250,7 +1250,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     } else {
       assert(GoodMuon.size() == 1);
       if (Muon_highPtId[0] == 2) {
-        l3 = Muon_highPtId[0];
+        l3 = GoodMuon[0];
         DefineW(Mus);
         IsB = true;
       } else {
