@@ -999,6 +999,16 @@ bool PreSelector::DefineW(const int& idx, const Leptons& l){
     HCutFlow->FillS("Wlep<30");
     return false;
   }
+  if(GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi()) < 1.0 ){
+    l3 = -1;
+    HCutFlow->FillS("Distl2l3<1.");
+    return false;
+  }
+  if(GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi()) < 1.0 ){
+    l3 = -1;
+    HCutFlow->FillS("Distl1l2<1.");
+    return false;
+  }
   wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
   nu = PreSelector::GetNu4V(lep3, wmt);
   wb = (lep3 + nu[0]);
