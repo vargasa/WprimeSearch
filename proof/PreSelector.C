@@ -314,7 +314,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
 
   const Float_t MaxLt = 1000.;
-  const Int_t NLtBins = 100;
+  const Int_t NLtBins = 50;
   InitHVec<TH1F>(HLt,"HLt",NLtBins,0.,MaxLt);
 
   InitHVec<TH2F>(HMassZWZ,"HMassZWZ",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
@@ -797,6 +797,8 @@ void PreSelector::FillHSF(std::vector<TH1F*>& h1, const Int_t& nh, const Double_
 #endif
 void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
 
+  assert(IsA_ xor IsB xor IsC xor IsD);
+
   Int_t nch = -1;
 
   if(IsD){
@@ -988,9 +990,15 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 }
 
 
-bool PreSelector::DefineW(const Leptons& l){
+bool PreSelector::DefineW(const int& idx, const Leptons& l){
 
+  l3 = idx;
   lep3 = PtEtaPhiMVector(l.pt[l3], l.eta[l3], l.phi[l3], l.mass);
+  if(lep3.Pt() < 30) {
+    l3 = -1; /* safeguard */
+    HCutFlow->FillS("Wlep<30");
+    return false;
+  }
   wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
   nu = PreSelector::GetNu4V(lep3, wmt);
   wb = (lep3 + nu[0]);
@@ -1222,8 +1230,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     if(GoodMuon.size() == 3){
       for(const int& i: GoodMuon){
         if( (i!=l1 && i!=l2) and Muon_highPtId[i] == 2 ){
-          l3 = i;
-          DefineW(Mus);
+          if(!DefineW(i,Mus)) return kFALSE;
           IsD = true;
         }
       }
@@ -1233,16 +1240,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
       }
     } else {
       assert(GoodElectron.size() == 1);
-      l3 = GoodElectron[0];
-      DefineW(Els);
+      if(!DefineW(GoodElectron[0],Els)) return kFALSE;
       IsC = true;
     }
   } else { // PairEl
     if(GoodElectron.size() == 3){
       for(const int& i: GoodElectron){
         if(i!=l1 && i!=l2){
-          l3 = i;
-          DefineW(Els);
+          if(!DefineW(i,Els)) return kFALSE;
           IsA_ = true;
         }
       }
@@ -1250,8 +1255,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     } else {
       assert(GoodMuon.size() == 1);
       if (Muon_highPtId[0] == 2) {
-        l3 = GoodMuon[0];
-        DefineW(Mus);
+        if(!DefineW(GoodMuon[0],Mus)) return kFALSE;
         IsB = true;
       } else {
         HCutFlow->FillS("PairEl_NoWlepCand");
