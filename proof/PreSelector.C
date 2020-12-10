@@ -280,6 +280,18 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
   InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
 
+  InitHVec<TH1F>(HDxyl1,"HDxyl1",200,-0.5,0.5);
+  InitHVec<TH1F>(HDxyl2,"HDxyl2",200,-0.5,0.5);
+  InitHVec<TH1F>(HDxyl3,"HDxyl3",200,-0.5,0.5);
+
+  InitHVec<TH1F>(HDzl1,"HDzl1",200,-0.5,0.5);
+  InitHVec<TH1F>(HDzl2,"HDzl2",200,-0.5,0.5);
+  InitHVec<TH1F>(HDzl3,"HDzl3",200,-0.5,0.5);
+
+  InitHVec<TH1F>(HRelIsol1,"HRelIsol1",100,0.,1.0);
+  InitHVec<TH1F>(HRelIsol2,"HRelIsol2",100,0.,1.0);
+  InitHVec<TH1F>(HRelIsol3,"HRelIsol3",100,0.,1.0);
+
   const Double_t MaxnLep = 7;
   const Double_t MinnLep = 0;
   const Int_t nLepBins = 7;
@@ -856,6 +868,17 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HPhil3[nh]->Fill(lep3.Phi());
   HMetPhi[nh]->Fill(*MET_phi);
 
+  // dxyz Histos
+  HDxyl1[nh]->Fill(lz.dxy[l1]);
+  HDxyl2[nh]->Fill(lz.dxy[l2]);
+  HDxyl3[nh]->Fill(lw.dxy[l3]);
+  HDzl1[nh]->Fill(lz.dz[l1]);
+  HDzl2[nh]->Fill(lz.dz[l2]);
+  HDzl3[nh]->Fill(lw.dz[l3]);
+  HRelIsol1[nh]->Fill(lz.relIso[l1]);
+  HRelIsol2[nh]->Fill(lz.relIso[l2]);
+  HRelIsol3[nh]->Fill(lz.relIso[l3]);
+
   // 2DHistos
   HWZPtDist[nh]->Fill((wb+zb).Pt(),wzdist);
   HPtEtal1[nh]->Fill(lep1.Pt(),lep1.Eta());
@@ -1134,19 +1157,19 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
 #ifndef CMSDATA
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
-            Muon_charge,Muon_dxy,Muon_dz,
+            Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_tightId, Muon_genPartIdx, Muon_pdgId);
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
-                Electron_charge,Electron_dxy,Electron_dz,
+                Electron_charge,Electron_dxy,Electron_dz,Electron_pfRelIso03_all,
                 Electron_cutBased, Electron_genPartIdx, Electron_pdgId);
 #else
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
-            Muon_charge,Muon_dxy,Muon_dz,
+            Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_tightId);
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
-                Electron_charge,Electron_dxy,Electron_dz,
+                Electron_charge,Electron_dxy,Electron_dz,Electron_pfRelIso03_all,
                 Electron_cutBased);
 #endif
 

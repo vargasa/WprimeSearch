@@ -11,7 +11,7 @@ using RAI = TTreeReaderArray<Int_t>&;
 class Electrons : public Leptons{
  public:
   Electrons(RVUI, RAF, RAF, RAF, RAI, RAF,
-            RAF, RAI
+            RAF, RAF, RAI
 #ifndef CMSDATA
             , RAI, RAI
 #endif
@@ -22,12 +22,12 @@ class Electrons : public Leptons{
 };
 
 Electrons::Electrons(RVUI n, RAF pt, RAF eta, RAF phi,
-                     RAI charge, RAF dxy, RAF dz, RAI cutBased
+                     RAI charge, RAF dxy, RAF dz, RAF relIso, RAI cutBased
 #ifndef CMSDATA
                      , RAI gpIdx, RAI pdgId
 #endif
                      ) :
-  Leptons(n,mass,pt,eta,phi,charge,dxy,dz
+  Leptons(n,mass,pt,eta,phi,charge,dxy,dz,relIso
 #ifndef CMSDATA
   , gpIdx, pdgId
 #endif
