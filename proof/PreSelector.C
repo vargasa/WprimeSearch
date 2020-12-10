@@ -353,7 +353,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   const Int_t nPvsBins = 100;
   const Float_t minPvs = 0.;
-  const Float_t maxPvs = 100.;
+  const Float_t maxPvs = 50.;
 
   HPileup = new TH1D("HPileup","PV_npvs",
                      nPvsBins,minPvs,maxPvs);
@@ -402,7 +402,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMetPt,"HMetPt",MetBins,MinMet,MaxMet);
 
   const Float_t MaxEta = 3.;
-  const Int_t EtaBins = 50;
+  const Int_t EtaBins = 25;
 
   InitHVec<TH1F>(HEtal1,"HEtal1",EtaBins,-1*MaxEta,MaxEta);
   InitHVec<TH1F>(HEtal2,"HEtal2",EtaBins,-1*MaxEta,MaxEta);
@@ -422,7 +422,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
                  EtaBins,-1*MaxEta,MaxEta);
 
   const Float_t MaxPhi = TMath::Pi();
-  const Int_t PhiBins = 30;
+  const Int_t PhiBins = 20;
 
   InitHVec<TH1F>(HPhil1,"HPhil1",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil2,"HPhil2",PhiBins,-1*MaxPhi,MaxPhi);
