@@ -215,6 +215,8 @@ class PreSelector : public EventSelection {
 
   Float_t PairZMass;
 
+  Double_t wdown, wcentral, wup;
+
  public :
 
   TString SampleName;
@@ -243,6 +245,7 @@ class PreSelector : public EventSelection {
 
   void FillCategory(const Int_t& crOffset,
                     const Leptons& lz,const Leptons& lw);
+  void FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent);
   Int_t nbTag();
   Int_t nbQ;
 
@@ -256,8 +259,7 @@ class PreSelector : public EventSelection {
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;
   Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
-  void FillHSF(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent,
-               const Double_t& wdown, const Double_t& wcentral,const Double_t& wup);
+  void DefineSFs();
 
   TList *SFDb;
   Bool_t ApplyKFactors{};

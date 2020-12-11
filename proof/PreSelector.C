@@ -790,127 +790,32 @@ Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
   Double_t dphi = TVector2::Phi_mpi_pi(phi1-phi2);
   return sqrt(pow(eta2-eta1,2.)+pow(dphi,2.));
 }
-#ifndef CMSDATA
-void PreSelector::FillHSF(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent,
-                          const Double_t& wdown, const Double_t& wcentral,
-                          const Double_t& wup){
+
+void PreSelector::FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent){
+
+#ifdef CMSDATA
+  assert( wcentral == 1.);
+#endif
 
   enum {
+    kNoSf = 0,
     kCentral = 4,
     kUp = 8,
     kDown = 12,
   };
-
+  h1[nh+kNoSf]->Fill(binContent);
+#ifndef CMSDATA
   h1[nh+kDown]->Fill(binContent,wdown);
   h1[nh+kCentral]->Fill(binContent,wcentral);
   h1[nh+kUp]->Fill(binContent,wup);
-
-}
 #endif
-void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
-
-  assert(IsA_ xor IsB xor IsC xor IsD);
-
-  Int_t nch = -1;
-
-  if(IsD){
-    nch=3;
-  } else if (IsC) {
-    nch=2;
-  } else if (IsB) {
-    nch=1;
-  } else if (IsA_) {
-    nch=0;
-  }
-
-  Int_t nh = nch + crOffset;
-
-  // Pt histos
-  HPtl1[nh]->Fill(lep1.Pt());
-  HPtl2[nh]->Fill(lep2.Pt());
-  HPtl3[nh]->Fill(lep3.Pt());
-  HMetPt[nh]->Fill(*MET_pt);
-  HWZPt[nh]->Fill((wb+zb).Pt());
-  HLt[nh]->Fill(lt);
-
-  // nHistos
-  HnEl[nh]->Fill(GoodElectron.size());
-  HnMu[nh]->Fill(GoodMuon.size());
-  HnJet[nh]->Fill(*nJet);
-  HnbTag[nh]->Fill(nbQ);
-
-  // Mass Histos
-  HMassW[nh]->Fill(wb.M());
-  HMassZ[nh]->Fill(PairZMass);
-  HMassTW[nh]->Fill(wmt);
-  HMassWZ[nh]->Fill((wb+zb).M());
-
-  // dR Histos
-  Double_t wzdist = GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi());
-  Double_t l1l2dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
-  Double_t l1l3dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
-  Double_t l2l3dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
-
-  HWZDist[nh]->Fill(wzdist);
-  HDistl1l2[nh]->Fill(l1l2dist);
-  HDistl1l3[nh]->Fill(l1l3dist);
-  HDistl2l3[nh]->Fill(l2l3dist);
-
-  // Eta Histos
-  HPileup_[nh]->Fill(*PV_npvs);
-  HEtal1[nh]->Fill(lep1.Eta());
-  HEtal2[nh]->Fill(lep2.Eta());
-  HEtal3[nh]->Fill(lep3.Eta());
-
-  // Phi Histos
-  HPhil1[nh]->Fill(lep1.Phi());
-  HPhil2[nh]->Fill(lep2.Phi());
-  HPhil3[nh]->Fill(lep3.Phi());
-  HMetPhi[nh]->Fill(*MET_phi);
-
-  // dxyz Histos
-  HDxyl1[nh]->Fill(lz.dxy[l1]);
-  HDxyl2[nh]->Fill(lz.dxy[l2]);
-  HDxyl3[nh]->Fill(lw.dxy[l3]);
-  HDzl1[nh]->Fill(lz.dz[l1]);
-  HDzl2[nh]->Fill(lz.dz[l2]);
-  HDzl3[nh]->Fill(lw.dz[l3]);
-  HRelIsol1[nh]->Fill(lz.relIso[l1]);
-  HRelIsol2[nh]->Fill(lz.relIso[l2]);
-  HRelIsol3[nh]->Fill(lz.relIso[l3]);
-
-  // 2DHistos
-  HWZPtDist[nh]->Fill((wb+zb).Pt(),wzdist);
-  HPtEtal1[nh]->Fill(lep1.Pt(),lep1.Eta());
-  HPtEtal2[nh]->Fill(lep2.Pt(),lep2.Eta());
-  HPtEtal3[nh]->Fill(lep3.Pt(),lep3.Eta());
-  HMassZTW[nh]->Fill(zb.M(),wmt);
-  HDeltaRPtZ[nh]->Fill(l1l2dist,zb.Pt());
-  HPtWPtZ[nh]->Fill(wb.Pt(),zb.Pt());
-  HDeltaRMWZ[nh]->Fill(l1l2dist,(wb+zb).M());
-  HLtMWZ[nh]->Fill(lt,(wb+zb).M());
-  HNLep[nh]->Fill(GoodMuon.size(),GoodElectron.size());
-  HMassZWZ[nh]->Fill(PairZMass,(wb+zb).M());
-
-  HCutFlow->FillS(Form("%d",nh));
-
+}
 #ifndef CMSDATA
-  HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
-  HGenPartChgF[nh]->Fill(lz.charge[l2],GenPart_pdgId[lz.genPartIdx[l2]]);
-  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l1]]));
-  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l2]]));
-  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lw.genPartIdx[l3]]));
+void PreSelector::DefineSFs(){
 
-  HGenPartZ[nh]->FillS(Form("%d",GetMother(lz.genPartIdx[l1],
-                                           lz.pdgId[l1]).second));
-  HGenPartZ[nh]->FillS(Form("%d",GetMother(lz.genPartIdx[l2],
-                                           lz.pdgId[l2]).second));
-  HGenPartW[nh]->FillS(Form("%d",GetMother(lw.genPartIdx[l3],
-                                           lw.pdgId[l3]).second));
-
-  Double_t wup = -1.;
-  Double_t wdown = -1.;
-  Double_t wcentral = -1.;
+  wup = -1.;
+  wdown = -1.;
+  wcentral = -1.;
 
   if(IsA_){
     wcentral = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
@@ -966,50 +871,122 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     wdown *= ksfdown;
   }
 
-  HScaleFactors[nh]->Fill(wup);
-  HScaleFactors[nh]->Fill(wdown);
-  HScaleFactors[nh]->Fill(ksfup);
-  HScaleFactors[nh]->Fill(ksfdown);
+  assert( wup > 0.);
+  assert( wcentral > 0.);
+  assert( wdown > 0.);
 
-  // Eta histos
-  FillHSF(HPileup_,nh,(double)*PV_npvs,wdown,wcentral,wup);
-  FillHSF(HEtal1,nh,lep1.Eta(),wdown,wcentral,wup);
-  FillHSF(HEtal2,nh,lep2.Eta(),wdown,wcentral,wup);
-  FillHSF(HEtal3,nh,lep3.Eta(),wdown,wcentral,wup);
+}
+#endif
+void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
 
-  // Pt histos
-  FillHSF(HPtl1,nh,lep1.Pt(),wdown,wcentral,wup);
-  FillHSF(HPtl2,nh,lep2.Pt(),wdown,wcentral,wup);
-  FillHSF(HPtl3,nh,lep3.Pt(),wdown,wcentral,wup);
-  FillHSF(HMetPt,nh,*MET_pt,wdown,wcentral,wup);
-  FillHSF(HWZPt,nh,(wb+zb).Pt(),wdown,wcentral,wup);
-  FillHSF(HLt,nh,lt,wdown,wcentral,wup);
+  assert(IsA_ xor IsB xor IsC xor IsD);
 
-  // n Histos
-  FillHSF(HnEl,nh,(double)GoodElectron.size(),wdown,wcentral,wup);
-  FillHSF(HnMu,nh,(double)GoodMuon.size(),wdown,wcentral,wup);
-  FillHSF(HnJet,nh,(double)*nJet,wdown,wcentral,wup);
-  FillHSF(HnbTag,nh,(double)nbQ,wdown,wcentral,wup);
+  wdown = wcentral = wup = 1.;
+  Int_t nch = -1;
 
-  // Mass Histos
-  FillHSF(HMassW,nh,wb.M(),wdown,wcentral,wup);
-  FillHSF(HMassZ,nh,PairZMass,wdown,wcentral,wup);
-  FillHSF(HMassTW,nh,wmt,wdown,wcentral,wup);
-  FillHSF(HMassWZ,nh,(wb+zb).M(),wdown,wcentral,wup);
+  if(IsD){
+    nch=3;
+  } else if (IsC) {
+    nch=2;
+  } else if (IsB) {
+    nch=1;
+  } else if (IsA_) {
+    nch=0;
+  }
+
+  Int_t nh = nch + crOffset;
 
   // dR Histos
-  FillHSF(HWZDist,nh,wzdist,wdown,wcentral,wup);
-  FillHSF(HDistl1l2,nh,l1l2dist,wdown,wcentral,wup);
-  FillHSF(HDistl1l3,nh,l1l3dist,wdown,wcentral,wup);
-  FillHSF(HDistl2l3,nh,l2l3dist,wdown,wcentral,wup);
+  Double_t wzdist = GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi());
+  Double_t l1l2dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
+  Double_t l1l3dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
+  Double_t l2l3dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
+
+  // 2DHistos
+  HWZPtDist[nh]->Fill((wb+zb).Pt(),wzdist);
+  HPtEtal1[nh]->Fill(lep1.Pt(),lep1.Eta());
+  HPtEtal2[nh]->Fill(lep2.Pt(),lep2.Eta());
+  HPtEtal3[nh]->Fill(lep3.Pt(),lep3.Eta());
+  HMassZTW[nh]->Fill(zb.M(),wmt);
+  HDeltaRPtZ[nh]->Fill(l1l2dist,zb.Pt());
+  HPtWPtZ[nh]->Fill(wb.Pt(),zb.Pt());
+  HDeltaRMWZ[nh]->Fill(l1l2dist,(wb+zb).M());
+  HLtMWZ[nh]->Fill(lt,(wb+zb).M());
+  HNLep[nh]->Fill(GoodMuon.size(),GoodElectron.size());
+  HMassZWZ[nh]->Fill(PairZMass,(wb+zb).M());
+
+  HCutFlow->FillS(Form("%d",nh));
+
+#ifndef CMSDATA
+
+  DefineSFs();
+
+  HScaleFactors[nh]->Fill(wup);
+  HScaleFactors[nh]->Fill(wdown);
+
+  HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
+  HGenPartChgF[nh]->Fill(lz.charge[l2],GenPart_pdgId[lz.genPartIdx[l2]]);
+  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l1]]));
+  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l2]]));
+  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lw.genPartIdx[l3]]));
+
+  HGenPartZ[nh]->FillS(Form("%d",GetMother(lz.genPartIdx[l1],
+                                           lz.pdgId[l1]).second));
+  HGenPartZ[nh]->FillS(Form("%d",GetMother(lz.genPartIdx[l2],
+                                           lz.pdgId[l2]).second));
+  HGenPartW[nh]->FillS(Form("%d",GetMother(lw.genPartIdx[l3],
+                                           lw.pdgId[l3]).second));
+  
+#endif
+
+  // Eta histos
+  FillH1(HPileup_,nh,(double)*PV_npvs);
+  FillH1(HEtal1,nh,lep1.Eta());
+  FillH1(HEtal2,nh,lep2.Eta());
+  FillH1(HEtal3,nh,lep3.Eta());
+
+  // Pt histos
+  FillH1(HPtl1,nh,lep1.Pt());
+  FillH1(HPtl2,nh,lep2.Pt());
+  FillH1(HPtl3,nh,lep3.Pt());
+  FillH1(HMetPt,nh,*MET_pt);
+  FillH1(HWZPt,nh,(wb+zb).Pt());
+  FillH1(HLt,nh,lt);
+
+  // n Histos
+  FillH1(HnEl,nh,(double)GoodElectron.size());
+  FillH1(HnMu,nh,(double)GoodMuon.size());
+  FillH1(HnJet,nh,(double)*nJet);
+  FillH1(HnbTag,nh,(double)nbQ);
+
+  // Mass Histos
+  FillH1(HMassW,nh,wb.M());
+  FillH1(HMassZ,nh,PairZMass);
+  FillH1(HMassTW,nh,wmt);
+  FillH1(HMassWZ,nh,(wb+zb).M());
+
+  // dR Histos
+  FillH1(HWZDist,nh,wzdist);
+  FillH1(HDistl1l2,nh,l1l2dist);
+  FillH1(HDistl1l3,nh,l1l3dist);
+  FillH1(HDistl2l3,nh,l2l3dist);
 
   // Phi Histos
-  FillHSF(HPhil1,nh,lep1.Phi(),wdown,wcentral,wup);
-  FillHSF(HPhil2,nh,lep2.Phi(),wdown,wcentral,wup);
-  FillHSF(HPhil3,nh,lep3.Phi(),wdown,wcentral,wup);
-  FillHSF(HMetPhi,nh,*MET_phi,wdown,wcentral,wup);
+  FillH1(HPhil1,nh,lep1.Phi());
+  FillH1(HPhil2,nh,lep2.Phi());
+  FillH1(HPhil3,nh,lep3.Phi());
+  FillH1(HMetPhi,nh,*MET_phi);
 
-#endif
+  // Dxyz RelIso
+  FillH1(HDxyl1,nh,lz.dxy[l1]);
+  FillH1(HDxyl2,nh,lz.dxy[l2]);
+  FillH1(HDxyl3,nh,lw.dxy[l3]);
+  FillH1(HDzl1,nh,lz.dz[l1]);
+  FillH1(HDzl2,nh,lz.dz[l2]);
+  FillH1(HDzl3,nh,lw.dz[l3]);
+  FillH1(HRelIsol1,nh,lz.relIso[l1]);
+  FillH1(HRelIsol2,nh,lz.relIso[l2]);
+  FillH1(HRelIsol3,nh,lz.relIso[l3]);
 }
 
 
