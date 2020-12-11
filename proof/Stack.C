@@ -682,7 +682,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c;
   };
 
-  diffSampleYear("HMassWZ_+ABCD");
 
   auto getBGStack = [&](int yr, std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
@@ -1077,28 +1076,146 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c1;
   };
 
-  for (auto& item: SignalSamples) {
-    const int year = item.first;
+
+  auto canvasOf4 = [&] (Int_t year, SignalInfo signal,
+                        std::vector<std::string> names) {
+
+    const Int_t WpMass = getWpMassFromName(signal.folderName);
 
     auto c1 = new TCanvas("cs","cs",10,10,1500,1200);
 
-    plotPunziSignificance(year);
-    plotSelectionRatio(year);
-    plotHLTSelectionRatio(year);
+    c1->Clear();
+    c1->Divide(2,2);
+    Int_t j = 1;
+
+    for (auto hName : names) {
+      Int_t r = (j-1)%4;
+      c1->cd(r+1);
+      std::string dataHName = hName;
+      if (hName.find("Central") != std::string::npos) {
+        dataHName.erase(dataHName.find("Central_"),8); //Strip out Central_
+      } else if (hName.find("Up_") != std::string::npos) {
+        dataHName.erase(dataHName.find("Up_"),3); //Strip out Central_
+      } else if (hName.find("Down_") != std::string::npos) {
+        dataHName.erase(dataHName.find("Down_"),5); //Strip out Central_
+      }
+
+      const Float_t leftMargin = 0.12;
+      const Float_t rightMargin = 0.12;
+      const Float_t topMargin = 0.12;
+      const Float_t bottomMargin = 0.5;
+
+      auto mainPad = new TPad(Form("mainPad_%s",hName.c_str()),"mainPad",0.,0.25,1.,1.);
+      mainPad->Draw();
+      mainPad->SetLeftMargin(leftMargin);
+      mainPad->SetRightMargin(rightMargin);
+      mainPad->SetBottomMargin(1e-3);
+      mainPad->SetLogy();
+      mainPad->SetTickx();
+      mainPad->SetTicky();
+
+      auto cmsLabel = new TPaveText(0.11,0.93,0.3,1.0,"NDC");
+      cmsLabel->SetFillColor(0);
+      cmsLabel->SetBorderSize(0);
+      cmsLabel->AddText("CMS Preliminary");
+      cmsLabel->SetTextAlign(12);
+      cmsLabel->Draw();
+
+      auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
+      lumiLabel->SetFillColor(0);
+      lumiLabel->SetBorderSize(0);
+      lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[year]));
+      lumiLabel->SetTextAlign(12);
+      lumiLabel->Draw();
+
+      auto subPad = new TPad(Form("mainPad_%s",hName.c_str()),"subPad",0.,0.,1.,0.25);
+      subPad->Draw();
+      subPad->SetLeftMargin(leftMargin);
+      subPad->SetRightMargin(rightMargin);
+      subPad->SetTopMargin(1e-3);
+      subPad->SetBottomMargin(bottomMargin);
+
+      auto legend = new TLegend(0.3, 0.66, .87, .89);
+      legend->SetNColumns(2);
+
+      THStack *hs = new THStack("hs","");
+      hs = getBGStack(year,hName,legend);
+      //blindStack(hs,WpMass);
+      TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
+
+      auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
+      applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+      hsig->SetTitle(signal.legendName.c_str());
+      legend->AddEntry( hsig,signal.legendName.c_str(),"L");
+      hsig->SetLineColor(kBlack);
+      hsig->SetLineWidth(3);
+      hsig->SetFillColor(0);
+      std::string labelIdx = dataHName;
+      if (hName.find("CR1_") != std::string::npos) {
+        labelIdx.erase(labelIdx.find("CR1_"),4);
+      } else if (hName.find("CR2_") != std::string::npos) {
+        labelIdx.erase(labelIdx.find("CR2_"),4);
+      }
+      hs->SetTitle(Labels[labelIdx].c_str());
+
+      legend->SetBorderSize(0);
+      gStyle->SetOptStat(0);
+
+      mainPad->cd();
+      hs->Draw("HIST");
+      hsig->Draw("HIST SAME");
+      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.25)+1);
+      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.25)-1);
+      hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
+
+      auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
+      hdata->SetMarkerStyle(kFullCircle);
+      fixYRange(hs,getMaxY(hdata));
+      hdata->Draw("SAME P");
+      TH1F* herror = getErrorHisto(hs);
+      herror->Draw("SAME E2");
+      //blindHisto(hdata,WpMass);
+      legend->AddEntry(hdata, Form("Data%d",year));
+
+      auto hcdata = getRatio(hdata,hs);
+      subPad->cd();
+      subPad->SetGrid();
+      hcdata->Draw();
+      subPad->SetFrameLineWidth(1);
+      hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+      ++j;
+
+      mainPad->cd();
+      legend->Draw();
+      if( r+1 == 4 ){
+	//throw;
+        c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),hName.c_str(),WpMass));
+        c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName.c_str(),WpMass));
+      }
+    }
+
+    delete c1;
+
+  };
+
+  for (auto& item: SignalSamples) {
+
+    const int year = item.first;
+
+    // plotPunziSignificance(year);
+    // plotSelectionRatio(year);
+    // plotHLTSelectionRatio(year);
 
     for (auto signal: item.second) {
 
       const Int_t WpMass = getWpMassFromName(signal.folderName);
 
-      printCutFlowStack(year,signal);
+      // printCutFlowStack(year,signal);
+      // printH2Comb(year, signal, "HPtWPtZ_+ABCD");
+      // printH2Comb(year, signal, "HDeltaRPtZ_+ABCD");
+      // printH2Comb(year, signal, "HLtMWZ_+ABCD");
 
-      printH2Comb(year, signal, "HPtWPtZ_+ABCD");
-      printH2Comb(year, signal, "HDeltaRPtZ_+ABCD");
-      printH2Comb(year, signal, "HLtMWZ_+ABCD");
-
-      c1->Clear();
-      c1->Divide(2,2);
-      Int_t j = 1;
+      /*** BGStack + Signal ***/
 
       std::vector<std::string> channels = {
         "A","B","C","D","+ABCD",
@@ -1108,112 +1225,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       };
 
       for(const auto& ch: channels) {
+        std::vector<std::string> hNames;
         for (auto HN : HistNames) {
-
-          Int_t r = (j-1)%4;
-          c1->cd(r+1);
-          std::string hName(Form("%s_%s",HN.c_str(),ch.c_str()));
-          std::string dataHName = hName;
-          if (hName.find("Central") != std::string::npos) {
-            dataHName.erase(dataHName.find("Central_"),8); //Strip out Central_
-          } else if (hName.find("Up_") != std::string::npos) {
-            dataHName.erase(dataHName.find("Up_"),3); //Strip out Central_
-          } else if (hName.find("Down_") != std::string::npos) {
-            dataHName.erase(dataHName.find("Down_"),5); //Strip out Central_
-          }
-
-          const Float_t leftMargin = 0.12;
-          const Float_t rightMargin = 0.12;
-          const Float_t topMargin = 0.12;
-          const Float_t bottomMargin = 0.5;
-
-          auto mainPad = new TPad(Form("mainPad_%s",hName.c_str()),"mainPad",0.,0.25,1.,1.);
-          mainPad->Draw();
-          mainPad->SetLeftMargin(leftMargin);
-          mainPad->SetRightMargin(rightMargin);
-          mainPad->SetBottomMargin(1e-3);
-          mainPad->SetLogy();
-          mainPad->SetTickx();
-          mainPad->SetTicky();
-
-          auto cmsLabel = new TPaveText(0.11,0.93,0.3,1.0,"NDC");
-          cmsLabel->SetFillColor(0);
-          cmsLabel->SetBorderSize(0);
-          cmsLabel->AddText("CMS Preliminary");
-          cmsLabel->SetTextAlign(12);
-          cmsLabel->Draw();
-
-          auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
-          lumiLabel->SetFillColor(0);
-          lumiLabel->SetBorderSize(0);
-          lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[year]));
-          lumiLabel->SetTextAlign(12);
-          lumiLabel->Draw();
-
-          auto subPad = new TPad(Form("mainPad_%s",hName.c_str()),"subPad",0.,0.,1.,0.25);
-          subPad->Draw();
-          subPad->SetLeftMargin(leftMargin);
-          subPad->SetRightMargin(rightMargin);
-          subPad->SetTopMargin(1e-3);
-          subPad->SetBottomMargin(bottomMargin);
- 
-          auto legend = new TLegend(0.3, 0.66, .87, .89);
-          legend->SetNColumns(2);
-
-          THStack *hs = new THStack("hs","");
-          hs = getBGStack(year,hName,legend);
-          //blindStack(hs,WpMass);
-          TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
-
-          auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
-          applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
-          hsig->SetTitle(signal.legendName.c_str());
-          legend->AddEntry( hsig,signal.legendName.c_str(),"L");
-          hsig->SetLineColor(kBlack);
-          hsig->SetLineWidth(3);
-          hsig->SetFillColor(0);
-          std::string labelIdx = dataHName;
-          if (hName.find("CR1_") != std::string::npos) {
-            labelIdx.erase(labelIdx.find("CR1_"),4);
-          } else if (hName.find("CR2_") != std::string::npos) {
-            labelIdx.erase(labelIdx.find("CR2_"),4);
-          }
-          hs->SetTitle(Labels[labelIdx].c_str());
-
-          legend->SetBorderSize(0);
-          gStyle->SetOptStat(0);
-
-          mainPad->cd();
-          hs->Draw("HIST");
-          hsig->Draw("HIST SAME");
-          double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.25)+1);
-          double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.25)-1);
-          hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
-
-          auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
-          hdata->SetMarkerStyle(kFullCircle);
-          fixYRange(hs,getMaxY(hdata));
-          hdata->Draw("SAME P");
-          TH1F* herror = getErrorHisto(hs);
-          herror->Draw("SAME E2");
-          //blindHisto(hdata,WpMass);
-          legend->AddEntry(hdata, Form("Data%d",year));
-
-          auto hcdata = getRatio(hdata,hs);
-          subPad->cd();
-          subPad->SetGrid();
-          hcdata->Draw();
-          subPad->SetFrameLineWidth(1);
-          hcdata->GetXaxis()->SetRangeUser(minx,maxx);
-
-          ++j;
-          mainPad->cd();
-          legend->Draw();
-          if( r+1 == 4 ){
-            c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),hName,WpMass));
-            c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName,WpMass));
-            c1->Clear();
-            c1->Divide(2,2);
+          hNames.emplace_back(Form("%s_%s",HN.c_str(),ch.c_str()));
+          if(hNames.size()==4) {
+            canvasOf4(year,signal,hNames);
+            hNames.clear();
           }
         }
       }
