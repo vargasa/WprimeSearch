@@ -239,10 +239,10 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                            Args... args){
 
   std::vector<std::string> idst = {
-    "A",             "B",             "C",             "D",             /*+4*/
-    "Central_A",     "Central_B",     "Central_C",     "Central_D",     /*+8*/
-    "Up_A",          "Up_B",          "Up_C",          "Up_D",          /*+12*/
-    "Down_A",        "Down_B",        "Down_C",        "Down_D",        /*+16*/
+    "SR_A",          "SR_B",          "SR_C",          "SR_D",          /*+4*/
+    "SR_Central_A",  "SR_Central_B",  "SR_Central_C",  "SR_Central_D",  /*+8*/
+    "SR_Up_A",       "SR_Up_B",       "SR_Up_C",       "SR_Up_D",       /*+12*/
+    "SR_Down_A",     "SR_Down_B",     "SR_Down_C",     "SR_Down_D",     /*+16*/
     "CR1_A",         "CR1_B",         "CR1_C",         "CR1_D",         /*+20*/
     "CR1_Central_A", "CR1_Central_B", "CR1_Central_C", "CR1_Central_D", /*+24*/
     "CR1_Up_A",      "CR1_Up_B",      "CR1_Up_C",      "CR1_Up_D",      /*+28*/
@@ -365,7 +365,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   const Int_t nPvsBins = 100;
   const Float_t minPvs = 0.;
-  const Float_t maxPvs = 50.;
+  const Float_t maxPvs = 100.;
 
   HPileup = new TH1D("HPileup","PV_npvs",
                      nPvsBins,minPvs,maxPvs);
