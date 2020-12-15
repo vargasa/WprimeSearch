@@ -150,6 +150,9 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HPtWPtZ;
   std::vector<TH2F*> HDeltaRMWZ;
   std::vector<TH2F*> HLtMWZ;
+  std::vector<TH2F*> HEtaPhil1;
+  std::vector<TH2F*> HEtaPhil2;
+  std::vector<TH2F*> HEtaPhil3;
 
   //Angular
 

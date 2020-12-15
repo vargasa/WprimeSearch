@@ -436,6 +436,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t MaxPhi = TMath::Pi();
   const Int_t PhiBins = 20;
 
+  InitHVec<TH2F>(HEtaPhil1,"HEtaPhil1",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH2F>(HEtaPhil2,"HEtaPhil2",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH2F>(HEtaPhil3,"HEtaPhil3",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil1,"HPhil1",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil2,"HPhil2",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil3,"HPhil3",PhiBins,-1*MaxPhi,MaxPhi);
@@ -914,6 +917,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HLtMWZ[nh]->Fill(lt,(wb+zb).M());
   HNLep[nh]->Fill(GoodMuon.size(),GoodElectron.size());
   HMassZWZ[nh]->Fill(PairZMass,(wb+zb).M());
+  HEtaPhil1[nh]->Fill(lep1.Eta(),lep1.Phi());
+  HEtaPhil2[nh]->Fill(lep2.Eta(),lep2.Phi());
+  HEtaPhil3[nh]->Fill(lep3.Eta(),lep3.Phi());
 
   HCutFlow->FillS(Form("%d",nh));
 
