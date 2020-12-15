@@ -871,9 +871,9 @@ void PreSelector::DefineSFs(){
     wdown *= ksfdown;
   }
 
-  assert( wup > 0.);
-  assert( wcentral > 0.);
-  assert( wdown > 0.);
+  assert( wup >= 0.);
+  assert( wcentral >= 0.);
+  assert( wdown >= 0.);
 
 }
 #endif
@@ -1163,8 +1163,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   ////////////// Define Z //////////////
 
-  const Float_t MinZMass = 70.;
-  const Float_t MaxZMass = 111.;
+  const Float_t MinZMass = 80.;
+  const Float_t MaxZMass = 100.;
 
   ZPairInfo *zt = nullptr;
   ZPairInfo ztel;
@@ -1286,7 +1286,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   lt = lep1.Pt()+lep2.Pt()+lep3.Pt();
 
-  if( lt < 110.){
+  if( lt < 200.){
     HCutFlow->FillS("FailsLTCut");
     return kFALSE;
   }
