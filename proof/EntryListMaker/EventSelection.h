@@ -21,7 +21,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, MakeBranchList("HLT_Mu50")};
   TTreeReaderValue<Bool_t> HLT_TkMu50 = {fReader, MakeBranchList("HLT_TkMu50")};
   TTreeReaderValue<Bool_t> Dummy_TkMu50 = {fReader, "HLT_TkMu50"}; /*Do not dereference*/
-  TTreeReaderValue<Bool_t> Flag_globalTightHalo2016Filter = {fReader, MakeBranchList("Flag_globalTightHalo2016Filter")};
+  TTreeReaderValue<Bool_t> Flag_globalSuperTightHalo2016Filter = {fReader, MakeBranchList("Flag_globalSuperTightHalo2016Filter")};
   TTreeReaderValue<Bool_t> Flag_hcalLaserEventFilter = {fReader, MakeBranchList("Flag_hcalLaserEventFilter")};
   TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter = {fReader, MakeBranchList("Flag_EcalDeadCellTriggerPrimitiveFilter")};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
@@ -161,7 +161,7 @@ void EventSelection::ReadEntry(const Long64_t& entry){
   ElectronHLTs = (*HLT_Ele27_WPTight_Gsf||*HLT_Photon175);
   MuonHLTs = (*HLT_Mu50||*HLT_TkMu50);
   Flags = *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
-    *Flag_globalTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
+    *Flag_globalSuperTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
     && *PV_npvsGood > 0;
 #elif defined(Y2017)
   ElectronHLTs = *HLT_Ele35_WPTight_Gsf or *HLT_Photon200;
