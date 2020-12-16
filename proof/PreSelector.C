@@ -378,14 +378,23 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HPileup_,"HPileup",nPvsBins,minPvs,maxPvs);
 
-  const UInt_t BinsPdgId = 100;
+  const UInt_t BinsPdgId = 102;
   const Float_t PdgIdMin = -50.;
   const Float_t PdgIdMax = 50.;
 
 #ifndef CMSDATA
-  InitHVec<TH1F>(HGenPartZ,"HGenPartZ",BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH1F>(HGenPartW,"HGenPartW",BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH1F>(HGenPartF,"HGenPartF",BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartZ,"HGenPartZ",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartW,"HGenPartW",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartZWp,"HGenPartZWp",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartWWp,"HGenPartWWp",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
   InitHVec<TH2F>(HGenPartChgF,"HGenPartChgF",6,-2.,2.,BinsPdgId,PdgIdMin,PdgIdMax);
 
 #endif
@@ -927,17 +936,17 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 
   HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
   HGenPartChgF[nh]->Fill(lz.charge[l2],GenPart_pdgId[lz.genPartIdx[l2]]);
-  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l1]]));
-  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lz.genPartIdx[l2]]));
-  HGenPartF[nh]->FillS(Form("%d",GenPart_pdgId[lw.genPartIdx[l3]]));
 
-  HGenPartZ[nh]->FillS(Form("%d",GetMother(lz.genPartIdx[l1],
-                                           lz.pdgId[l1]).second));
-  HGenPartZ[nh]->FillS(Form("%d",GetMother(lz.genPartIdx[l2],
-                                           lz.pdgId[l2]).second));
-  HGenPartW[nh]->FillS(Form("%d",GetMother(lw.genPartIdx[l3],
-                                           lw.pdgId[l3]).second));
-  
+  std::pair<Int_t,Int_t> motherl1 = GetMother(lz.genPartIdx[l1],lz.pdgId[l1]);
+  std::pair<Int_t,Int_t> motherl2 = GetMother(lz.genPartIdx[l2],lz.pdgId[l2]);
+  std::pair<Int_t,Int_t> motherl3 = GetMother(lw.genPartIdx[l3],lw.pdgId[l3]);
+
+  HGenPartZ[nh]->Fill( motherl1.second, lz.pdgId[l1] );
+  HGenPartZ[nh]->Fill( motherl2.second, lz.pdgId[l2] );
+  HGenPartW[nh]->Fill( motherl3.second, lw.pdgId[l3] );
+  HGenPartZWp[nh]->Fill( motherl1.second, GetMother(motherl1).second );
+  HGenPartZWp[nh]->Fill( motherl2.second, GetMother(motherl2).second );
+  HGenPartWWp[nh]->Fill( motherl3.second, GetMother(motherl3).second );
 #endif
 
   // Eta histos

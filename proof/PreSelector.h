@@ -160,11 +160,12 @@ class PreSelector : public EventSelection {
   TH1F *HOverlap;
 
 #ifndef CMSDATA
-  std::vector<TH1F*> HGenPartZ;
-  std::vector<TH1F*> HGenPartW;
-  std::vector<TH1F*> HGenPartF;
+  std::vector<TH2F*> HGenPartZ;
+  std::vector<TH2F*> HGenPartW;
   std::vector<TH2F*> HGenPartChgF;
   std::vector<TH1F*> HScaleFactors;
+  std::vector<TH2F*> HGenPartZWp;
+  std::vector<TH2F*> HGenPartWWp;
   TH1D *SFPileup;
 
 #endif
