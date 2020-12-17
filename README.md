@@ -94,6 +94,11 @@ wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysi
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/RunABCD_SF_ID.root
 ```
 
+```bash
+#[2016]
+wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root
+```
+
 ### Pileup distribution
 
 ```bash

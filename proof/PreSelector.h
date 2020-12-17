@@ -274,8 +274,8 @@ class PreSelector : public EventSelection {
   TH1F* SFDYKFactorEWK;
   TH2F* SFMuonTriggerBF;
   TH2F* SFMuonTriggerGH;
-  TH2D* SFMuonHighPtIDBF;
-  TH2D* SFMuonHighPtIDGH;
+  TH2F* SFMuonHighPtID;
+  TH2F* SFMuonTrkHighPtID;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
   TH2F* SFElectronTightID;

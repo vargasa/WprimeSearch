@@ -470,8 +470,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
   SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
   SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
-  SFMuonHighPtIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDBF"));
-  SFMuonHighPtIDGH = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDGH"));
+  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtID"));
+  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
 
@@ -829,60 +829,107 @@ void PreSelector::DefineSFs(){
   wdown = -1.;
   wcentral = -1.;
 
+  auto applyIDSF = [&](TH1* h, const double& x, const double &y) {
+    wcentral *= GetSFFromHisto(h,x,y,0);
+    wup *= GetSFFromHisto(h,x,y,1);
+    wdown *= GetSFFromHisto(h,x,y,-1);
+  };
+
   if(IsA_){
 
-    wcentral = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
-    wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
+    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
 
-    wup = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
-    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wup *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),1);
-    wup *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),1);
-    wup *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
-    wdown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
-    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),-1);
-    wdown *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),-1);
-    wdown *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
+    wup = GetSFFromHisto(SFPileup,*PV_npvs);
+    wup *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
+
+    wdown = GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
+
+    applyIDSF(SFElectronTightID,lep1.Eta(),lep1.Pt());
+    applyIDSF(SFElectronTightID,lep2.Eta(),lep2.Pt());
+    applyIDSF(SFElectronTightID,lep3.Eta(),lep3.Pt());
+
   } else if (IsB) {
-    wcentral = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
-    wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),0);
-    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
-    wup *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
-    wup *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),1);
-    wup *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),1);
-    wup *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
-    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
-    wdown *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),-1);
-    wdown *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),-1);
-    wdown *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
-    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
-  } else if (IsC) {
-    wcentral = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
-    wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wup = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+
+    wup = GetSFFromHisto(SFPileup,*PV_npvs);
     wup *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
-    wup *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
-    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    wup *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+
+    wdown = GetSFFromHisto(SFPileup,*PV_npvs);
     wdown *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
-    wdown *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
-    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+
+    applyIDSF(SFElectronTightID,lep1.Eta(),lep1.Pt());
+    applyIDSF(SFElectronTightID,lep2.Eta(),lep2.Pt());
+
+    if ( Muon_highPtId[l3] == 2 ) {
+      applyIDSF(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt());
+    } else { // TrkHighPtId
+      applyIDSF(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt());
+    }
+
+  } else if (IsC) {
+
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+
+    wup = GetSFFromHisto(SFPileup,*PV_npvs);
+    wup *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
+    wup *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+
+    wdown = GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    wdown *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+
+    if ( Muon_highPtId[l1] == 2 ) {
+      applyIDSF(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt());
+    } else {
+      applyIDSF(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt());
+    }
+
+    if ( Muon_highPtId[l2] == 2 ) {
+      applyIDSF(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt());
+    } else {
+      applyIDSF(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt());
+    }
+
+    applyIDSF(SFElectronTightID,lep3.Eta(),lep3.Pt());
+
   } else if (IsD) {
-    wcentral = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
-    wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wup = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
-    wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
-    wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
+
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+
+    wup = GetSFFromHisto(SFPileup,*PV_npvs);
+    wup *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+
+    wdown = GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+
+    if ( Muon_highPtId[l1] == 2 ) {
+      applyIDSF(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt());
+    } else {
+      applyIDSF(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt());
+    }
+
+    if ( Muon_highPtId[l2] == 2 ) {
+      applyIDSF(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt());
+    } else {
+      applyIDSF(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt());
+    }
+
+    if ( Muon_highPtId[l3] == 2 ) {
+      applyIDSF(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt());
+    } else {
+      applyIDSF(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Eta());
+    }
+
   } else {
     assert (false);
   }
