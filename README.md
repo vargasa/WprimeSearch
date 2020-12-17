@@ -55,6 +55,17 @@ wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysi
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root
 ```
 
+#### Electron ID
+
+```bash
+# [2016 - TightId]
+wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronTight_Fall17V2.root
+# [2017 - TightId]
+wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronTight.root
+# [2018 - TightId]
+wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronTight.root
+```
+
 #### Muon Trigger:
 
 ```bash

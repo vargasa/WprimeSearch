@@ -116,7 +116,8 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
     break;
   }
 
-  assert(sf>0.);
+  assert(sf>=0.);
+
   return sf;
 }
 #endif
@@ -128,7 +129,7 @@ Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
 }
 #endif
 #ifndef CMSDATA
-Double_t PreSelector::GetElectronSF(const Float_t& eta, const Float_t& pt,
+Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
                                    const Int_t& option) const{
 
   assert(abs(eta)<2.5);
@@ -187,7 +188,7 @@ Double_t PreSelector::GetKFactor(const Double_t& ZGenPt, const int& option) cons
 }
 #endif
 #ifndef CMSDATA
-Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
+Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
                                const Int_t& option) const{
   /* Option 0: Central Value, -1: Low, +1: up */
 
@@ -207,15 +208,11 @@ Double_t PreSelector::GetMuonSF(const Float_t& eta, const Float_t& pt,
 
   Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
   Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
-  Double_t SFIDBF = GetSFFromHisto(SFMuonHighPtIDBF,eta,pt,option);
-  Double_t SFIDGH = GetSFFromHisto(SFMuonHighPtIDGH,eta,pt,option);
 
   sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
-  sf *=(LumiBF*SFIDBF+LumiGH*SFIDGH)/(LumiBF+LumiGH);
 
 #elif defined(Y2017) || defined(Y2018)
   sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
-  sf *= GetSFFromHisto(SFMuonHighPtID,pt,abs(eta),option);
 #endif
   assert(sf>0);
 
@@ -470,6 +467,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFDYKFactorEWK = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorEWK"));
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
   SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
   SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
   SFMuonHighPtIDBF = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDBF"));
@@ -488,6 +486,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 #elif defined(Y2017)
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtID = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtID"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
@@ -495,6 +494,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 #elif defined(Y2018)
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtID = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtID"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
@@ -830,38 +830,58 @@ void PreSelector::DefineSFs(){
   wcentral = -1.;
 
   if(IsA_){
-    wcentral = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
+
+    wcentral = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wup = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+
+    wup = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetElectronSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
+    wup *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),1);
+    wup *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),1);
+    wup *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
+    wdown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
+    wdown *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),-1);
+    wdown *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),-1);
+    wdown *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
   } else if (IsB) {
-    wcentral = GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
-    wcentral *= GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+    wcentral = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wup = GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
-    wup *= GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),0);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+    wup *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
+    wup *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),1);
+    wup *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),1);
+    wup *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
-    wdown *= GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    wdown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+    wdown *= GetSFFromHisto(SFElectronTightID,lep1.Eta(),lep1.Pt(),-1);
+    wdown *= GetSFFromHisto(SFElectronTightID,lep2.Eta(),lep2.Pt(),-1);
+    wdown *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
   } else if (IsC) {
-    wcentral = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
-    wcentral *= GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
+    wcentral = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wup = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
-    wup *= GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
+    wup = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+    wup *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
+    wup *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
-    wdown *= GetElectronSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+    wdown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    wdown *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+    wdown *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
   } else if (IsD) {
-    wcentral = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+    wcentral = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
     wcentral *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wup = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
+    wup = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
     wup *= GetSFFromHisto(SFPileup,*PV_npvs);
-    wdown = GetMuonSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    wdown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
     wdown *= GetSFFromHisto(SFPileup,*PV_npvs);
   } else {
     assert (false);

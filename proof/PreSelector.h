@@ -258,8 +258,8 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
   Double_t GetZPtFromGen() const;
   Double_t GetKFactor(const Double_t& ZGenPt, const int& option) const;
-  Double_t GetElectronSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
-  Double_t GetMuonSF(const Float_t& eta,const Float_t& pt, const Int_t& option) const;
+  Double_t GetElTriggerSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
+  Double_t GetMuTriggerSF(const Float_t& eta,const Float_t& pt, const Int_t& option) const;
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;
   Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
@@ -278,6 +278,7 @@ class PreSelector : public EventSelection {
   TH2D* SFMuonHighPtIDGH;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
+  TH2F* SFElectronTightID;
 #elif defined(Y2017) || defined(Y2018)
   TH2F* SFMuonTrigger;
   TH2D* SFMuonHighPtID;

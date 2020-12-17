@@ -97,6 +97,10 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
   SFElectronTrigger2->SetName("SFElectronTrigger2");
   SFDb->Add(SFElectronTrigger2);
+  TFile *f7a = TFile::Open("files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root","READ");
+  auto SFElectronTightID = static_cast<TH2F*>(f7a->Get("EGamma_SF2D"));
+  SFElectronTightID->SetName("SFElectronTightID");
+  SFDb->Add(SFElectronTightID);
 #elif defined(Y2017)
   TFile *f1 = TFile::Open("files/mc/2017/sf/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root","READ");
   // To be in sync with SFMuonID we provide also TH2 with x(pt) y(abseta)
