@@ -29,6 +29,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, MakeBranchList("Flag_BadPFMuonSummer16Filter")};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, MakeBranchList("Flag_HBHENoiseFilter")};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseIsoFilter = {fReader, MakeBranchList("Flag_HBHENoiseIsoFilter")};
+  TTreeReaderValue<Bool_t> Flag_goodVertices = {fReader, MakeBranchList("Flag_goodVertices")};
 #elif defined(Y2017)
   // 2017 HLTs && Flags
   TTreeReaderValue<Bool_t> HLT_Mu50 = {fReader, MakeBranchList("HLT_Mu50")};
@@ -46,6 +47,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
   TTreeReaderValue<Bool_t> Flag_BadChargedCandidateFilter = {fReader, MakeBranchList("Flag_BadChargedCandidateFilter")};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
+  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilterV2 = {fReader, MakeBranchList("Flag_ecalBadCalibFilterV2")};
 #elif defined(Y2018)
   // 2018 HLTs && Flags
   TTreeReaderValue<Bool_t> HLT_Ele32_WPTight_Gsf = {fReader, MakeBranchList("HLT_Ele32_WPTight_Gsf")};
@@ -61,6 +63,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
   TTreeReaderValue<Bool_t> Flag_BadChargedCandidateFilter = {fReader, MakeBranchList("Flag_BadChargedCandidateFilter")};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
+  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilterV2 = {fReader, MakeBranchList("Flag_ecalBadCalibFilterV2")};
 #endif
 
   TTreeReaderValue<Int_t> PV_npvsGood = {fReader, MakeBranchList("PV_npvsGood")}; // total number of reconstructed primary vertices
@@ -160,24 +163,26 @@ void EventSelection::ReadEntry(const Long64_t& entry){
 #if defined(Y2016)
   ElectronHLTs = (*HLT_Ele27_WPTight_Gsf||*HLT_Photon175);
   MuonHLTs = (*HLT_Mu50||*HLT_TkMu50);
-  Flags = *Flag_HBHENoiseIsoFilter && *Flag_EcalDeadCellTriggerPrimitiveFilter &&
-    *Flag_globalSuperTightHalo2016Filter && *Flag_BadPFMuonSummer16Filter
-    && *PV_npvsGood > 0;
+  Flags = *Flag_goodVertices and *Flag_globalSuperTightHalo2016Filter
+    and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
+    and *Flag_EcalDeadCellTriggerPrimitiveFilter
+    and *Flag_BadPFMuonFilter
+    and *PV_npvsGood > 0;
 #elif defined(Y2017)
   ElectronHLTs = *HLT_Ele35_WPTight_Gsf or *HLT_Photon200;
   MuonHLTs = *HLT_Mu50 or *HLT_OldMu100 or *HLT_TkMu100;
   Flags = *Flag_goodVertices and *Flag_globalSuperTightHalo2016Filter
     and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
     and *Flag_EcalDeadCellTriggerPrimitiveFilter
-    and *Flag_BadPFMuonFilter and *Flag_BadChargedCandidateFilter
-    and *Flag_eeBadScFilter and *PV_npvsGood > 0;
+    and *Flag_BadPFMuonFilter and *Flag_ecalBadCalibFilterV2
+    and *PV_npvsGood > 0;
 #elif defined(Y2018)
   ElectronHLTs = *HLT_Ele32_WPTight_Gsf or *HLT_Photon200;
   MuonHLTs = *HLT_Mu50 or *HLT_OldMu100 or *HLT_TkMu100;
   Flags = *Flag_goodVertices and *Flag_globalSuperTightHalo2016Filter
     and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
     and *Flag_EcalDeadCellTriggerPrimitiveFilter and *Flag_BadPFMuonFilter
-    and *Flag_BadChargedCandidateFilter and *Flag_eeBadScFilter
+    and *Flag_ecalBadCalibFilterV2
     and *PV_npvsGood > 0;
 #endif
 
