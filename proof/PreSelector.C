@@ -1316,38 +1316,58 @@ Bool_t PreSelector::Process(Long64_t entry) {
   if(PairMu){
     if(GoodMuon.size() == 3){
       for(const int& i: GoodMuon){
-        if( (i!=l1 && i!=l2) and Muon_highPtId[i] == 2 ){
-          if(!DefineW(i,Mus)) return kFALSE;
-          IsD = true;
+        if( i!=l1 and i!=l2 ) {
+          if ( Muon_highPtId[i] == 2 ) {
+            if(!DefineW(i,Mus)){
+              HCutFlow->FillS("PairMu_NoWMuCand");
+              return kFALSE;
+            } else {
+              IsD = true;
+            }
+          } else {
+            HCutFlow->FillS("PairMu_NoWMuCand");
+            return kFALSE;
+          }
         }
       }
-      if(l3 == -1){
-        HCutFlow->FillS("PairMu_NoWlepCand");
-        return kFALSE;
-      }
+      assert(l3 != -1);
     } else {
       assert(GoodElectron.size() == 1);
-      if(!DefineW(GoodElectron[0],Els)) return kFALSE;
-      IsC = true;
+      if(!DefineW(GoodElectron[0],Els)){
+        HCutFlow->FillS("PairMu_NoWlepCand");
+        return kFALSE;
+      } else {
+        IsC = true;
+      }
+      assert(l3 != -1);
     }
   } else { // PairEl
     if(GoodElectron.size() == 3){
       for(const int& i: GoodElectron){
-        if(i!=l1 && i!=l2){
-          if(!DefineW(i,Els)) return kFALSE;
-          IsA_ = true;
+        if(i!=l1 and i!=l2){
+          if(!DefineW(i,Els)){
+            HCutFlow->FillS("PairEl_NoWElCand");
+            return kFALSE;
+          } else {
+            IsA_ = true;
+          }
         }
       }
       assert(l3 != -1);
     } else {
       assert(GoodMuon.size() == 1);
       if (Muon_highPtId[0] == 2) {
-        if(!DefineW(GoodMuon[0],Mus)) return kFALSE;
-        IsB = true;
+        if(!DefineW(GoodMuon[0],Mus)){
+          HCutFlow->FillS("PairEl_NoWMuCand");
+          return kFALSE;
+        } else {
+          IsB = true;
+        }
       } else {
-        HCutFlow->FillS("PairEl_NoWlepCand");
+        HCutFlow->FillS("PairEl_NoWMuCand");
         return kFALSE;
       }
+      assert(l3 != -1);
     }
   }
 
