@@ -266,8 +266,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   TH1::SetDefaultSumw2();
 
-  const Int_t DistBins = 30;
-  const Float_t MaxDist = 2.01*TMath::Pi();
+  const Int_t DistBins = 32;    // 0.2 Bin size
+  const Float_t MaxDist = 6.4;  // >2*Pi
 
   InitHVec<TH1F>(HDistl1l2,"HDistl1l2",DistBins,0.,MaxDist);
   InitHVec<TH1F>(HDistl1l3,"HDistl1l3",DistBins,0.,MaxDist);
