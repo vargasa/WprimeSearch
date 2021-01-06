@@ -288,55 +288,68 @@ c1->Print("2016_PunziTest.png")
 ```c++
 std::vector<int> wm = { 800, 1000, 1200, 1400, 1600, 1800, 2000, 2500, 3000, 3500, 4000 };
 
-std::string hname = "HDistl1l2_SR";
+std::vector<std::pair<std::string,std::string>> hname= {
+ {"HDistl1l2_SR","dR(l1,l2) (cm)"},
+ {"HLt_SR","#SigmaPt(l)"},
+ {"HPtl1_SR","Pt(l1)"},
+ {"HPtl2_SR","Pt(l2)"},
+ {"HPtl3_SR","Pt(l3)"},
+ {"HEtal1_SR","Eta(l1)"},
+ {"HEtal2_SR","Eta(l2)"},
+ {"HEtal3_SR","Eta(l3)"}
+};
 
-auto GetHisto = [&](const std::string filename) {
+auto GetHisto = [&](const std::string filename, const std::string hs) {
  auto f = TFile::Open(filename.c_str());
  // Take 600 as a base and add the rest on top of it
  auto h = static_cast<TH1F*>(f->Get(
-  Form("2016/WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph/%s_C",hname.c_str())
+  Form("2016/WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph/%s_C",hs.c_str())
  )->Clone());
  h->Add(static_cast<TH1D*>(f->Get(
-  Form("2016/WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph/%s_D",hname.c_str())
+  Form("2016/WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph/%s_D",hs.c_str())
  )));
  for(const int& m: wm){
-  h->Add(static_cast<TH1D*>(f->Get(Form("2016/WprimeToWZToWlepZlep_narrow_M-%d_13TeV-madgraph/%s_C",m,hname.c_str()))));
-  h->Add(static_cast<TH1D*>(f->Get(Form("2016/WprimeToWZToWlepZlep_narrow_M-%d_13TeV-madgraph/%s_D",m,hname.c_str()))));
+  h->Add(static_cast<TH1D*>(f->Get(Form("2016/WprimeToWZToWlepZlep_narrow_M-%d_13TeV-madgraph/%s_C",m,hs.c_str()))));
+  h->Add(static_cast<TH1D*>(f->Get(Form("2016/WprimeToWZToWlepZlep_narrow_M-%d_13TeV-madgraph/%s_D",m,hs.c_str()))));
  }
  return h;
 };
 
-TH1F* htotal = GetHisto("WprimeHistos_NoMuonID.root");
+for(auto hs: hname){
 
-TH1F* hpass1 = GetHisto("WprimeHistos_GlobalPF.root");
-TGraphAsymmErrors *g1 = new TGraphAsymmErrors(hpass1,htotal);
-g1->SetTitle("GlobalMuon is PF;dR;Efficiency");
-g1->SetLineColor(kGreen);
+ TH1F* htotal = GetHisto("WprimeHistos_NoMuonID.root",hs.first);
 
-TH1F* hpass2 = GetHisto("WprimeHistos_NoMuonPF.root");
-TGraphAsymmErrors *g2 = new TGraphAsymmErrors(hpass2,htotal);
-g2->SetTitle("No PF Requirement");
-g2->SetLineColor(kGray)
+ TH1F* hpass1 = GetHisto("WprimeHistos_GlobalPF.root",hs.first);
+ TGraphAsymmErrors *g1 = new TGraphAsymmErrors(hpass1,htotal);
+ g1->SetTitle("GlobalMuon is PF;dR;Efficiency");
+ g1->SetLineColor(kGreen);
 
-TH1F* hpass3 = GetHisto("WprimeHistos_EitherPF.root");
-TGraphAsymmErrors *g3 = new TGraphAsymmErrors(hpass3,htotal);
-g3->SetTitle("Either Muon is PF;dR;Efficiency");
-g3->SetLineColor(kRed);
+ TH1F* hpass2 = GetHisto("WprimeHistos_NoMuonPF.root",hs.first);
+ TGraphAsymmErrors *g2 = new TGraphAsymmErrors(hpass2,htotal);
+ g2->SetTitle("No PF Requirement");
+ g2->SetLineColor(kBlack);
 
-TMultiGraph* mg = new TMultiGraph();
-std::vector<TGraph*> gs = { g2,g1, g3 };
-for(auto& g: gs){
-  g->SetLineWidth(2);
-  mg->Add(g,"P");
+ TH1F* hpass3 = GetHisto("WprimeHistos_EitherPF.root",hs.first);
+ TGraphAsymmErrors *g3 = new TGraphAsymmErrors(hpass3,htotal);
+ g3->SetTitle("Either Muon is PF;dR;Efficiency");
+ g3->SetLineColor(kRed);
+
+
+ TMultiGraph* mg = new TMultiGraph();
+ std::vector<TGraph*> gs = { g2,g1,g3 };
+ for(auto& g: gs){
+   g->SetLineWidth(2);
+   mg->Add(g,"P");
+ }
+
+ auto c1 = new TCanvas("c1","c1",1200,1200);
+ mg->SetTitle(Form("Efficiency; %s Z#rightarrow#mu#mu; Efficiency;",hs.second.c_str()));
+ mg->GetYaxis()->SetRangeUser(0.,1.05);
+ mg->Draw("A");
+ mg->GetYaxis()->SetRangeUser(0.8,1.01);
+ gPad->BuildLegend();
+ c1->Print(Form("HighPtPF_%s.png",hs.second.c_str()));
 }
-
-auto c1 = new TCanvas();
-mg->SetTitle("Efficiency; dR(cm) Z#rightarrow#mu#mu; Efficiency;");
-mg->GetYaxis()->SetRangeUser(0.,1.05);
-mg->Draw("A");
-gPad->BuildLegend();
-c1->Print("HighPtPF.png");
-
 ```
 
 ### References:

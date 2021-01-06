@@ -408,57 +408,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string title;
   };
 
-  std::vector<HistoInfo> NonStackedHistos = {
-    HistoInfo{"HPtl1_+ABCD","Z Lepton highest pt;Pt;Normalized Events"},
-    HistoInfo{"HPtl2_+ABCD","Z Second Lepton pt;Pt;Normalized Events"},
-    HistoInfo{"HPtl3_+ABCD","W Lepton Pt;Pt;Normalized Events"},
-    HistoInfo{"HMetPt_+ABCD","Met Pt;Pt;Normalized Events"},
-    /*Next series*/
-    HistoInfo{"HPtl1_CR1_+ABCD","Z Lepton highest pt;Pt CR1;Normalized Events"},
-    HistoInfo{"HPtl2_CR1_+ABCD","Z Second Lepton pt;Pt CR1;Normalized Events"},
-    HistoInfo{"HPtl3_CR1_+ABCD","W Lepton Pt;Pt CR1;Normalized Events"},
-    HistoInfo{"HMetPt_CR1_+ABCD","Met Pt;Pt CR1;Normalized Events"},
-    /*Next series*/
-    HistoInfo{"HDistl1l2_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2); Normalized Events"},
-    HistoInfo{"HDistl1l3_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3); Normalized Events"},
-    HistoInfo{"HDistl2l3_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3); Normalized Events"},
-    HistoInfo{"HWZDist_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z); Normalized Events"},
-    /*Next series*/
-    HistoInfo{"HDistl1l2_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l2) CR1; Normalized Events"},
-    HistoInfo{"HDistl1l3_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l1,l3) CR1; Normalized Events"},
-    HistoInfo{"HDistl2l3_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (l2,l3) CR1; Normalized Events"},
-    HistoInfo{"HWZDist_CR1_+ABCD","Distance in Eta-Phi Plane; Distance in Eta-Phi Plane (W,Z) CR1; Normalized Events"},
-    /*Next series*/
-    HistoInfo{"HEtal1_+ABCD","Eta Distribution l1; Eta; Normalized events"},
-    HistoInfo{"HEtal2_+ABCD","Eta Distribution l2; Eta; Normalized events"},
-    HistoInfo{"HEtal3_+ABCD","Eta Distribution l3; Eta; Normalized events"},
-    HistoInfo{"HScaleFactors_+ABCD","Scale Factors; Scale Factor; Normalized events"},
-    /*Next series*/
-    HistoInfo{"HEtal1_CR1_+ABCD","Eta Distribution l1; Eta CR1; Normalized events"},
-    HistoInfo{"HEtal2_CR1_+ABCD","Eta Distribution l2; Eta CR1; Normalized events"},
-    HistoInfo{"HEtal3_CR1_+ABCD","Eta Distribution l3; Eta CR1; Normalized events"},
-    HistoInfo{"HScaleFactors_CR1_+ABCD","Scale Factors; Scale Factor CR1; Normalized events"},
-    /*Next series*/
-    HistoInfo{"HPhil1_+ABCD","Phi Distribution l1; Eta; Normalized events"},
-    HistoInfo{"HPhil2_+ABCD","Phi Distribution l2; Eta; Normalized events"},
-    HistoInfo{"HPhil3_+ABCD","Phi Distribution l3; Eta; Normalized events"},
-    HistoInfo{"HMetPhi_+ABCD","Phi Distribution MET; MET; Normalized events"},
-    /*Next series*/
-    HistoInfo{"HPhil1_CR1_+ABCD","Phi Distribution l1; Eta CR1; Normalized events"},
-    HistoInfo{"HPhil2_CR1_+ABCD","Phi Distribution l2; Eta CR1; Normalized events"},
-    HistoInfo{"HPhil3_CR1_+ABCD","Phi Distribution l3; Eta CR1; Normalized events"},
-    HistoInfo{"HMetPhi_CR1_+ABCD","Phi Distribution MET; MET CR1; Normalized events"},
-    /*Next series*/
-    HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
-    HistoInfo{"HnJet_+ABCD","Number of Jets; nJet; Normalized events"},
-    HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
-    HistoInfo{"HPileup_+ABCD","Number of primary vertices; Npvs; Normalized events"},
-    /*Next series*/
-    HistoInfo{"HPileup_CR1_+ABCD","Number of primary vertices; Npvs CR1; Normalized events"},
-    HistoInfo{"HnJet_CR1_+ABCD","Number of Jets; nJet CR1; Normalized events"},
-    HistoInfo{"HPileup_CR1_+ABCD","Number of primary vertices; Npvs CR1; Normalized events"},
-    HistoInfo{"HPileup_CR1_+ABCD","Number of primary vertices; Npvs CR1; Normalized events"},
-  };
 
 
   std::function<void(TH1* h,const Double_t&)> blindHisto = [](TH1* h, const Double_t& wpmass) {
@@ -923,7 +872,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   auto plotPunziSignificance = [&] (const int& yr) {
 
-    const std::string fromHisto = "HMassWZ_+ABCD";
+    const std::string fromHisto = "HMassWZ_SR_+ABCD";
     TCanvas* c1 = new TCanvas("c1","c1");
 
     THStack *hs = new THStack("hs","");
@@ -1077,7 +1026,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  auto canvasOf4 = [&] (Int_t year, SignalInfo signal,
+  auto canvasOf4Stacked = [&] (Int_t year, SignalInfo signal,
                         std::vector<std::string> names) {
 
     const Int_t WpMass = getWpMassFromName(signal.folderName);
@@ -1088,7 +1037,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     c1->Divide(2,2);
     Int_t j = 1;
 
+    std::string pngname;
+
     for (auto hName : names) {
+      pngname += hName + "_";
       Int_t r = (j-1)%4;
       c1->cd(r+1);
       std::string dataHName = hName;
@@ -1155,8 +1107,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         labelIdx.erase(labelIdx.find("CR1_"),4);
       } else if (hName.find("CR2_") != std::string::npos) {
         labelIdx.erase(labelIdx.find("CR2_"),4);
+      } else if (hName.find("SR_") != std::string::npos) {
+        labelIdx.erase(labelIdx.find("SR_"),3);
       }
       hs->SetTitle(Labels[labelIdx].c_str());
+      if (hName.find("CR1_") != std::string::npos) {
+        hs->SetTitle((Labels[labelIdx].c_str() + std::string(" CR")).c_str());
+      }
 
       legend->SetBorderSize(0);
       gStyle->SetOptStat(0);
@@ -1188,8 +1145,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       legend->Draw();
       if( r+1 == 4 ){
-	//throw;
-        c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),hName.c_str(),WpMass));
+        c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),pngname.c_str(),WpMass));
         c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName.c_str(),WpMass));
       }
     }
@@ -1211,15 +1167,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       const Int_t WpMass = getWpMassFromName(signal.folderName);
 
       // printCutFlowStack(year,signal);
-      // printH2Comb(year, signal, "HPtWPtZ_+ABCD");
-      // printH2Comb(year, signal, "HDeltaRPtZ_+ABCD");
-      // printH2Comb(year, signal, "HLtMWZ_+ABCD");
+      // printH2Comb(year, signal, "HPtWPtZ_SR_+ABCD");
+      // printH2Comb(year, signal, "HDeltaRPtZ_SR_+ABCD");
+      // printH2Comb(year, signal, "HLtMWZ_SR_+ABCD");
 
       /*** BGStack + Signal ***/
 
       std::vector<std::string> channels = {
-        "A","B","C","D","+ABCD",
-        "Central_A","Central_B","Central_C","Central_D","Central_+ABCD",
+        "SR_A","SR_B","SR_C","SR_D","SR_+ABCD",
+        "SR_Central_A","SR_Central_B","SR_Central_C","SR_Central_D","SR_Central_+ABCD",
         "CR1_A","CR1_B","CR1_C","CR1_D","CR1_+ABCD",
         "CR1_Central_A","CR1_Central_B","CR1_Central_C","CR1_Central_D","CR1_Central_+ABCD"
       };
@@ -1229,66 +1185,40 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         for (auto HN : HistNames) {
           hNames.emplace_back(Form("%s_%s",HN.c_str(),ch.c_str()));
           if(hNames.size()==4) {
-            canvasOf4(year,signal,hNames);
+            canvasOf4Stacked(year,signal,hNames);
             hNames.clear();
           }
         }
       }
 
-      /*** NonStackedHistos ***/
+      /*** Compare CR vs SR ***/
 
-      c1->Clear();
-      c1->Divide(2,2);
-      UInt_t canvasPos = 1;
-      gStyle->SetOptStat(0);
+      std::vector<std::string> chs = {"A","B","C","D","+ABCD"};
+      std::vector<std::string> chk = {"_SR", "_CR1"};
+      std::vector<std::string> hints = {
+        "HMassZ","HMassWZ",
+        "HPtl1","HPtl2",
+        "HPtl3","HMetPt",
+        "HDistl1l2","HDistl2l3",
+        "HPileup","HLt",
+        "HEtal1", "HEtal2",
+        "HEtal3","HPhil1",
+        "HPhil2","HPhil3"
+      };
 
-      j = 1;
-      for(auto hp: NonStackedHistos){
-        Int_t r = (j-1)%4;
-        auto legend = new TLegend(0.11, 0.7, .89, .89);
-        legend->SetNColumns(3);
-        c1->cd(r+1);
-        for(auto BGN: (BgNames.find(year))->second ){
-          std::cout << Form("Getting %d/%s/%s\n",year,BGN.folderName.c_str(),hp.name.c_str());
-          auto h = (TH1F*)getHistoFromFile(Form("%d/%s",year,BGN.folderName.c_str()),hp.name);
-          legend->AddEntry(h,BGN.legendName.c_str(), "L");
-          legend->SetBorderSize(0);
-          h->SetTitle(hp.title.c_str());
-          h->SetLineColor(BGN.color);
-          h->GetXaxis()->SetRangeUser(0., 800.);
-          normalizeHisto(h);
-          h->SetMaximum(1.5);
-          h->Draw("HIST SAME");
-        }
-
-        auto hsig = (TH1F*)getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hp.name.c_str());
-        hsig->SetLineColor(kBlack);
-        hsig->SetLineWidth(2);
-        normalizeHisto(hsig);
-        hsig->Draw("HIST SAME");
-        legend->AddEntry(hsig,signal.legendName.c_str(), "L");
-
-        if(hp.name == "HPileup"){
-           auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),hp.name);
-           hdata->SetLineColor(kRed);
-           hdata->SetLineWidth(2);
-           normalizeHisto(hdata);
-           hdata->Draw("HIST SAME");
-           legend->AddEntry(hdata,"Data","L");
-        }
-
-        ++j;
-        legend->Draw();
-        if( r+1 == 4 ){
-          c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d.png",year,fileLabel.c_str(),hp.name.c_str(),WpMass));
-          c1->Write(Form("%d_%s_%s_Wprime%d",year,fileLabel.c_str(),hp.name.c_str(),WpMass));
-          c1->Clear();
-          c1->Divide(2,2);
+      for(auto chhs: chs){
+        std::vector<std::string> hNames;
+        for(auto HN: hints){
+          for(auto k: chk){
+            hNames.emplace_back(Form("%s%s_Central_%s",HN.c_str(),k.c_str(),chhs.c_str()));
+          }
+          if(hNames.size() == 4){
+            canvasOf4Stacked(year,signal,hNames);
+            hNames.clear();
+          }
         }
       }
+
     }
-
-
   }
-
 }
