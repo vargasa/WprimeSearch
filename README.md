@@ -283,6 +283,62 @@ l->Draw();
 c1->Print("2016_PunziTest.png")
 ```
 
+### Efficiency graphs
+
+```c++
+std::vector<int> wm = { 800, 1000, 1200, 1400, 1600, 1800, 2000, 2500, 3000, 3500, 4000 };
+
+std::string hname = "HDistl1l2_SR";
+
+auto GetHisto = [&](const std::string filename) {
+ auto f = TFile::Open(filename.c_str());
+ // Take 600 as a base and add the rest on top of it
+ auto h = static_cast<TH1F*>(f->Get(
+  Form("2016/WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph/%s_C",hname.c_str())
+ )->Clone());
+ h->Add(static_cast<TH1D*>(f->Get(
+  Form("2016/WprimeToWZToWlepZlep_narrow_M-600_13TeV-madgraph/%s_D",hname.c_str())
+ )));
+ for(const int& m: wm){
+  h->Add(static_cast<TH1D*>(f->Get(Form("2016/WprimeToWZToWlepZlep_narrow_M-%d_13TeV-madgraph/%s_C",m,hname.c_str()))));
+  h->Add(static_cast<TH1D*>(f->Get(Form("2016/WprimeToWZToWlepZlep_narrow_M-%d_13TeV-madgraph/%s_D",m,hname.c_str()))));
+ }
+ return h;
+};
+
+TH1F* htotal = GetHisto("WprimeHistos_NoMuonID.root");
+
+TH1F* hpass1 = GetHisto("WprimeHistos_GlobalPF.root");
+TGraphAsymmErrors *g1 = new TGraphAsymmErrors(hpass1,htotal);
+g1->SetTitle("GlobalMuon is PF;dR;Efficiency");
+g1->SetLineColor(kGreen);
+
+TH1F* hpass2 = GetHisto("WprimeHistos_NoMuonPF.root");
+TGraphAsymmErrors *g2 = new TGraphAsymmErrors(hpass2,htotal);
+g2->SetTitle("No PF Requirement");
+g2->SetLineColor(kGray)
+
+TH1F* hpass3 = GetHisto("WprimeHistos_EitherPF.root");
+TGraphAsymmErrors *g3 = new TGraphAsymmErrors(hpass3,htotal);
+g3->SetTitle("Either Muon is PF;dR;Efficiency");
+g3->SetLineColor(kRed);
+
+TMultiGraph* mg = new TMultiGraph();
+std::vector<TGraph*> gs = { g2,g1, g3 };
+for(auto& g: gs){
+  g->SetLineWidth(2);
+  mg->Add(g,"P");
+}
+
+auto c1 = new TCanvas();
+mg->SetTitle("Efficiency; dR(cm) Z#rightarrow#mu#mu; Efficiency;");
+mg->GetYaxis()->SetRangeUser(0.,1.05);
+mg->Draw("A");
+gPad->BuildLegend();
+c1->Print("HighPtPF.png");
+
+```
+
 ### References:
 
 * [Analysis update B2G Workshop May/18/2020](https://indico.cern.ch/event/891751/timetable/)
