@@ -25,7 +25,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
     std::ifstream infile(file);
     std::string line;
     while(std::getline(infile, line)){
-      if(line.find("#") == 0) continue;
+      if(line.empty() or line.find("#") == 0) continue;
       line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
       std::cout << "Chaining " << line << std::endl;
       fChain->AddFile(line.c_str());
@@ -94,7 +94,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
   SFElectronTrigger2->SetName("SFElectronTrigger2");
   SFDb->Add(SFElectronTrigger2);
-  TFile *f7a = TFile::Open("files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root","READ");
+  TFile *f7a = TFile::Open("files/mc/2016/sf/2016LegacyReReco_ElectronLoose.root","READ");
   auto SFElectronTightID = static_cast<TH2F*>(f7a->Get("EGamma_SF2D"));
   SFElectronTightID->SetName("SFElectronTightID");
   SFDb->Add(SFElectronTightID);

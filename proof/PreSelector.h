@@ -153,6 +153,7 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HEtaPhil1;
   std::vector<TH2F*> HEtaPhil2;
   std::vector<TH2F*> HEtaPhil3;
+  std::vector<TH2F*> HZElId;
 
   //Angular
 
@@ -213,6 +214,7 @@ class PreSelector : public EventSelection {
 
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
+  std::vector<UInt_t> SameFlvWCand;
   Bool_t PairEl{}, PairMu{};
   PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
   std::vector<ROOT::Math::PxPyPzMVector> nu;
@@ -238,7 +240,7 @@ class PreSelector : public EventSelection {
   Int_t LeadingIdx(const Leptons& l);
   void SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l);
 
-  bool DefineW(const int& idx, const Leptons& l);
+  bool DefineW(const Leptons& l);
   Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&) const;
   Bool_t CheckMuonPair(const std::pair<UInt_t,UInt_t>&) const;
   Float_t GetEtaPhiDistance(const float&,const float&,const float&,const float&) const;
@@ -287,6 +289,8 @@ class PreSelector : public EventSelection {
 #endif
 #endif
 
+  Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);
+  Bool_t PairMuDefineW(const Electrons& Els, const Muons& Mus);
   void FillRegion(const int regOffset, const Electrons& Els, const Muons& Mus);
   std::vector<std::pair<UInt_t,UInt_t>> GetLeptonPairs(const Leptons&, const std::vector<UInt_t>&) const;
   ZPairInfo FindZ(const Leptons&,const std::vector<UInt_t>&) const;
