@@ -271,21 +271,18 @@ class PreSelector : public EventSelection {
   Bool_t ApplyKFactors{};
   Double_t KSFMinPt;
   Double_t KSFMaxPt;
-#ifdef Y2016
-  TH1F* SFDYKFactorQCD;
-  TH1F* SFDYKFactorEWK;
-  TH2F* SFMuonTriggerBF;
-  TH2F* SFMuonTriggerGH;
+  TH2F* SFElectronLooseID;
   TH2F* SFMuonHighPtID;
   TH2F* SFMuonTrkHighPtID;
+  TH1F* SFDYKFactorQCD;
+  TH1F* SFDYKFactorEWK;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
-  TH2F* SFElectronTightID;
+#ifdef Y2016
+  TH2F* SFMuonTriggerBF;
+  TH2F* SFMuonTriggerGH;
 #elif defined(Y2017) || defined(Y2018)
   TH2F* SFMuonTrigger;
-  TH2D* SFMuonHighPtID;
-  TGraphAsymmErrors* SFElectronTrigger1;
-  TGraphAsymmErrors* SFElectronTrigger2;
 #endif
 #endif
 

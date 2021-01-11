@@ -91,18 +91,9 @@ Double_t PreSelector::GetZPtFromGen() const{
 Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
                                     const Int_t& option) const {
   assert(h!= NULL);
-#if defined(Y2016)
-  /* Check for eta */
-  /* 2016 provides x(eta) and y(pt)  */
   assert(x < h->GetXaxis()->GetXmax() && x > h->GetXaxis()->GetXmin());
   if(y > h->GetYaxis()->GetXmax())
     return GetSFFromHisto(h,x,h->GetYaxis()->GetXmax() - 1e-3,option);
-#elif defined(Y2017) || defined(Y2018)
-  /* 2017/2018 SFMuonHighPtID, SFMuonTrigger provides x(pt) and y(eta)  */
-  assert(y < h->GetYaxis()->GetXmax() && y > h->GetYaxis()->GetXmin());
-  if(x > h->GetXaxis()->GetXmax())
-    return GetSFFromHisto(h,h->GetXaxis()->GetXmax() - 1e-3,y,option);
-#endif
   Int_t nbin = h->FindBin(x,y);
   Double_t sf = h->GetBinContent(nbin);
   switch(option){
@@ -178,7 +169,7 @@ Double_t PreSelector::GetKFactor(const Double_t& ZGenPt, const int& option) cons
     break;
   case 1:
     sf += SFDYKFactorQCD->GetBinErrorUp(nbinQCD);
-    sf += SFDYKFactorQCD->GetBinErrorUp(nbinEWK);
+    sf += SFDYKFactorEWK->GetBinErrorUp(nbinEWK);
     break;
   case 0:
     break;
@@ -266,7 +257,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   TH1::SetDefaultSumw2();
 
-  const Int_t DistBins = 32*4;    // 0.2/4 Bin size
+  const Int_t DistBins = 32;    // 0.2 Bin size
   const Float_t MaxDist = 6.4;  // >2*Pi
 
   InitHVec<TH1F>(HDistl1l2,"HDistl1l2",DistBins,0.,MaxDist);
@@ -464,18 +455,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
     SFDb = dynamic_cast<TList*>(fInput->FindObject("SFDb"));
   }
 
-#ifdef Y2016
-  SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
-  SFDYKFactorEWK = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorEWK"));
-  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
-  SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
-  SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
+  assert(SFDb);
+
   SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtID"));
   SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
-  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
+  SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
+
+  SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
+  SFDYKFactorEWK = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorEWK"));
+  assert(SFDYKFactorEWK);
 
   if(SampleName.Contains("DYJetsToLL")){
     ApplyKFactors = true;
@@ -485,23 +473,38 @@ void PreSelector::SlaveBegin(TTree *tree) {
     std::clog << Form("Apply kFactors to sample: %s\n",SampleName.Data());
   }
 
-#elif defined(Y2017)
+#endif
+
+#if defined(Y2016) && !defined(CMSDATA)
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
+  SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
+  SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
+  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
+  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
+#endif
+#if defined(Y2017) && !defined(CMSDATA)
+  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  SFMuonHighPtID = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtID"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
-#elif defined(Y2018)
+#endif
+#if defined(Y2018) && !defined(CMSDATA)
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  SFMuonHighPtID = static_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtID"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2018",SampleName.Data())));
 #endif
+
+#if !defined(CMSDATA)
+  assert(SFElectronTrigger1);
+  assert(SFElectronTrigger2);
+  assert(SFElectronLooseID);
+  assert(SFMuonHighPtID);
+  assert(SFMuonTrkHighPtID);
+
   if(!SFPileup)
     std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
 
@@ -848,9 +851,9 @@ void PreSelector::DefineSFs(){
     wdown = GetSFFromHisto(SFPileup,*PV_npvs);
     wdown *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
 
-    applyIDSF(SFElectronTightID,lep1.Eta(),lep1.Pt());
-    applyIDSF(SFElectronTightID,lep2.Eta(),lep2.Pt());
-    applyIDSF(SFElectronTightID,lep3.Eta(),lep3.Pt());
+    applyIDSF(SFElectronLooseID,lep1.Eta(),lep1.Pt());
+    applyIDSF(SFElectronLooseID,lep2.Eta(),lep2.Pt());
+    applyIDSF(SFElectronLooseID,lep3.Eta(),lep3.Pt());
 
   } else if (IsB) {
 
@@ -866,8 +869,8 @@ void PreSelector::DefineSFs(){
     wdown *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
     wdown *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
 
-    applyIDSF(SFElectronTightID,lep1.Eta(),lep1.Pt());
-    applyIDSF(SFElectronTightID,lep2.Eta(),lep2.Pt());
+    applyIDSF(SFElectronLooseID,lep1.Eta(),lep1.Pt());
+    applyIDSF(SFElectronLooseID,lep2.Eta(),lep2.Pt());
 
     if ( Muon_highPtId[l3] == 2 ) {
       applyIDSF(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt());
@@ -878,7 +881,7 @@ void PreSelector::DefineSFs(){
   } else if (IsC) {
 
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronLooseID,lep3.Eta(),lep3.Pt(),0);
     wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
 
     wup = GetSFFromHisto(SFPileup,*PV_npvs);
@@ -901,7 +904,7 @@ void PreSelector::DefineSFs(){
       applyIDSF(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt());
     }
 
-    applyIDSF(SFElectronTightID,lep3.Eta(),lep3.Pt());
+    applyIDSF(SFElectronLooseID,lep3.Eta(),lep3.Pt());
 
   } else if (IsD) {
 
@@ -929,7 +932,7 @@ void PreSelector::DefineSFs(){
     if ( Muon_highPtId[l3] == 2 ) {
       applyIDSF(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt());
     } else {
-      applyIDSF(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Eta());
+      applyIDSF(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt());
     }
 
   } else {

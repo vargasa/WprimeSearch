@@ -58,12 +58,12 @@ wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysi
 #### Electron ID
 
 ```bash
-# [2016 - TightId]
+# [2016 - LooseId]
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronLoose.root
-# [2017 - TightId]
-[FIX ME] wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronTight.root
-# [2018 - TightId]
-[FIX ME] wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronTight.root
+# [2017 - LooseId]
+wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronLoose.root
+# [2018 - LooseId]
+wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronLoose.root
 ```
 
 #### Muon Trigger:
@@ -94,9 +94,15 @@ wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysi
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/RunABCD_SF_ID.root
 ```
 
+#### Muon ID [UL]:
+
 ```bash
 #[2016]
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root
+#[2017]
+wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
+#[2018]
+wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
 ```
 
 ### Pileup distribution
@@ -118,6 +124,8 @@ wget -P proof/files/mc/2018/sf/ -c https://cms-service-dqm.web.cern.ch/cms-servi
 ```
 #2016
 wget -P proof/files/mc/2016/sf -c https://github.com/rishabhCMS/decaf/raw/master/analysis/data/vjets_SFs/merged_kfactors_zjets.root
+#2017 / 2018
+wget -P proof/files/mc/2017/sf -c https://github.com/rishabhCMS/decaf/raw/master/analysis/data/vjets_SFs/SF_QCD_NLO_DYJetsToLL.root
 
 ```
 
