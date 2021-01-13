@@ -203,7 +203,7 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
   sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
 
 #elif defined(Y2017) || defined(Y2018)
-  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
+  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
 #endif
   assert(sf>0);
 
