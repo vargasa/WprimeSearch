@@ -1,0 +1,65 @@
+\section{Data and Montecarlo Samples}
+
+\subsection{Data}
+
+
+\begin{table}[h]
+\centering
+\caption{List of datasets used in the analysis.}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Year & Dataset & Run & Version \\ \hline
+2016 & SingleMuon     & B           & ver2-v1 \\
+     &                & C,D,E,F,G,H & v1      \\
+     & SingleElectron & B           & ver2-v1 \\
+     &                & C,D,E,F,G,H & v1      \\
+     & SinglePhoton   & B           & ver2-v1 \\
+     &                & C,D,E,F,G,H & v1      \\ \hline
+2017 & SingleMuon     & B,C,D,E,F & v1 \\
+     & SingleElectron & B,C,D,E,F & v1 \\
+     & SinglePhoton   & B,C,D,E,F & v1 \\\hline
+2018 & SingleMuon & A,B,C,D & v1 \\
+     & EGamma     & A,B,C,D & v1 \\ \hline
+\end{tabular}
+\label{tab:Datasets}
+\end{table}
+
+\begin{table}[htbp]
+  \footnotesize
+  \topcaption{
+    The golden JSON files
+  }
+  \centering
+  \label{tab:gJSON}
+  \begin{tabular}{ c l }
+    \hline
+    Year & File \\
+    \hline
+    2016 & Cert\_271036-284044\_13TeV\_ReReco\_07Aug2017\_Collisions16\_JSON.txt \\
+    2017 & Cert\_294927-306462\_13TeV\_PromptReco\_Collisions17\_JSON.txt \\
+    2018 & Cert\_314472-325175\_13TeV\_PromptReco\_Collisions18\_JSON.txt \\
+    \hline
+  \end{tabular}
+\end{table}
+
+
+\subsection{Montecarlo Samples}
+
+
+\begin{sidewaystable}[htb]
+\begin{center}
+\caption{List of background samples for 2016}
+\footnotesize
+\begin{tabular}{|l|l|l|l|}
+\hline
+Background  & Sample & XSec [pb] & Comment \\ \hline
+DY          & DYJetsToLL\_M-10to50\_TuneCUETP8M1\_13TeV-amcatnloFXFX-pythia8      & 18610.0 & For low di-lepton mass \\ % DYJetsToLL_M-10to50_ext1
+Top         & TTTo2L2Nu\_TuneCUETP8M2\_ttHtranche3\_13TeV-powheg-pythia8          & 87.310 & \\ % TTTo2L2Nu
+& ST\_tW\_antitop\_5f\_inclusiveDecays\_13TeV-powheg-pythia8\_TuneCUETP8M1        & 35.60 & \_ext1 \\ \hline % ST_tW_antitop
+\end{tabular}
+\label{tab:BkgList1}
+\end{center}
+\end{sidewaystable}
+
+
+
