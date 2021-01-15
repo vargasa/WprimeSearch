@@ -645,38 +645,15 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetElectronPermutations(const
 
 
 std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetMuonPairs(const Muons& m) const{
+
   // return leading pair sorted by Pt
-
-  static const UInt_t size = 5;
-
-  std::vector<UInt_t> positive;
-  positive.reserve(size);
-  std::vector<UInt_t> negative;
-  negative.reserve(size);
-
-  for (const UInt_t& lepIdx : GoodMuon) {
-    if (m.charge[lepIdx] == 1) {
-      positive.emplace_back(lepIdx);
-    } else {
-      negative.emplace_back(lepIdx);
-    }
-  }
 
   std::vector<std::pair<UInt_t,UInt_t>> pairs;
 
-  if(positive.size() == 0 || negative.size() == 0)
-    return pairs; /*empty*/
-
-  std::pair<UInt_t,UInt_t> couple;
-
-  for(const uint& i: positive){
-    for(const uint& j: negative){
-      if (m.pt[i] > m.pt[j]) {
-        couple = std::make_pair(i,j);
-      } else {
-        couple = std::make_pair(j,i);
-      }
-      pairs.push_back(couple);
+  for(uint i = 0; i < GoodMuon.size(); ++i){
+    for(uint j = i+1; j < GoodMuon.size(); ++j){
+      if (m.charge[i] != m.charge[j])
+        pairs.push_back(std::make_pair(GoodMuon[i],GoodMuon[j]));
     }
   }
 
