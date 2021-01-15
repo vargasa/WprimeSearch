@@ -627,10 +627,24 @@ Float_t PreSelector::MassRecoW(const float& ptl, const float& phil,
   return TMath::Sqrt(2.*ptl*ptmet*(1-TMath::Cos(phil-phimet)));
 };
 
+std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetElectronPermutations(const Electrons& el) const{
 
-std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons& l,
-                                                                  const std::vector<UInt_t>& GoodIndex) const{
+  // Ignore opposit charge requirement for electrons
 
+  std::vector<std::pair<UInt_t,UInt_t>> perms;
+
+  for(uint i = 0; i < GoodElectron.size(); ++i){
+    for(uint j = i+1; j < GoodElectron.size(); ++j){
+      perms.push_back(std::make_pair(GoodElectron[i],GoodElectron[j]));
+    }
+  }
+
+  return perms;
+
+};
+
+
+std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetMuonPairs(const Muons& m) const{
   // return leading pair sorted by Pt
 
   static const UInt_t size = 5;
@@ -640,8 +654,8 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons&
   std::vector<UInt_t> negative;
   negative.reserve(size);
 
-  for (const UInt_t& lepIdx : GoodIndex) {
-    if (l.charge[lepIdx] == 1) {
+  for (const UInt_t& lepIdx : GoodMuon) {
+    if (m.charge[lepIdx] == 1) {
       positive.emplace_back(lepIdx);
     } else {
       negative.emplace_back(lepIdx);
@@ -657,7 +671,7 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons&
 
   for(const uint& i: positive){
     for(const uint& j: negative){
-      if (l.pt[i] > l.pt[j]) {
+      if (m.pt[i] > m.pt[j]) {
         couple = std::make_pair(i,j);
       } else {
         couple = std::make_pair(j,i);
@@ -670,10 +684,19 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetLeptonPairs(const Leptons&
 
 };
 
-ZPairInfo PreSelector::FindZ(const Leptons& l, const std::vector<UInt_t>& GoodLepton) const{
 
-  std::vector<std::pair<UInt_t,UInt_t>> Pairs ;
-  Pairs = PreSelector::GetLeptonPairs(l,GoodLepton);
+ZPairInfo PreSelector::FindZ(const Electrons& el) const{
+
+  return FindZ(PreSelector::GetElectronPermutations(el), GoodElectron);
+}
+
+ZPairInfo PreSelector::FindZ(const Muons& mu) const{
+
+  return FindZ(PreSelector::GetMuonPairs(mu), GoodMuon);
+}
+
+ZPairInfo PreSelector::FindZ(std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
+                             const std::vector<UInt_t>& GoodLepton) const{
 
   ZPairInfo z1;
 
@@ -1339,10 +1362,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
   ZPairInfo ztel;
   ZPairInfo ztmu;
 
-  ztmu = FindZ(Mus,GoodMuon);
+  ztmu = FindZ(Mus);
   if(!ztmu.empty() && CheckMuonPair(ztmu.Pair)) PairMu = true;
 
-  ztel = FindZ(Els,GoodElectron);
+  ztel = FindZ(Els);
   if(!ztel.empty() && CheckElectronPair(ztel.Pair)) PairEl = true;
 
   if (!PairEl && !PairMu) {
