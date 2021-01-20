@@ -104,8 +104,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kBlue-2,831.76},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kRed+3,123.9},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kOrange+7,5765.},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
+            kOrange+7,160.8},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
+            kOrange+7,48.63},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
+            kOrange+7,6.975},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
+            kOrange+7,1.756},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
+            kOrange+7,0.8094},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
+            kOrange+7,0.1931},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
+            kOrange+7,0.003513},
         }
       }
     };
