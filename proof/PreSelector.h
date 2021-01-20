@@ -293,7 +293,9 @@ class PreSelector : public EventSelection {
   std::vector<std::pair<UInt_t,UInt_t>> GetElectronPermutations(const Electrons& el) const;
   ZPairInfo FindZ(const Electrons& el) const;
   ZPairInfo FindZ(const Muons& mu) const;
-  ZPairInfo FindZ(std::vector<std::pair<UInt_t,UInt_t>>& Pairs,const std::vector<UInt_t>&) const;
+  ZPairInfo FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
+                  const Leptons& l,
+                  const std::vector<UInt_t>& GoodLepton) const;
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(const ROOT::Math::PtEtaPhiMVector&,const Float_t&);
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4VAlt(ROOT::Math::PtEtaPhiMVector,Float_t); 
   std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,

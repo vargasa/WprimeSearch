@@ -629,7 +629,7 @@ Float_t PreSelector::MassRecoW(const float& ptl, const float& phil,
 
 std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetElectronPermutations(const Electrons& el) const{
 
-  // Ignore opposit charge requirement for electrons
+  // Ignore opposite charge requirement for electrons
 
   std::vector<std::pair<UInt_t,UInt_t>> perms;
 
@@ -663,16 +663,15 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetMuonPairs(const Muons& m) 
 
 
 ZPairInfo PreSelector::FindZ(const Electrons& el) const{
-
-  return FindZ(PreSelector::GetElectronPermutations(el), GoodElectron);
+  return FindZ(PreSelector::GetElectronPermutations(el), el, GoodElectron);
 }
 
 ZPairInfo PreSelector::FindZ(const Muons& mu) const{
-
-  return FindZ(PreSelector::GetMuonPairs(mu), GoodMuon);
+  return FindZ(PreSelector::GetMuonPairs(mu), mu, GoodMuon);
 }
 
-ZPairInfo PreSelector::FindZ(std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
+ZPairInfo PreSelector::FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
+                             const Leptons& l,
                              const std::vector<UInt_t>& GoodLepton) const{
 
   ZPairInfo z1;
