@@ -37,7 +37,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   // ShortName, DasName, kColor, Style, XSection, nEvents
-  std::multimap<int, std::vector<BackgroundInfo>> BgNames =
+  std::unordered_map<int, std::vector<BackgroundInfo>> BgNames =
     {
       {
         2016,
@@ -149,7 +149,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     Float_t xsec;
   };
 
-  std::multimap<int, std::vector<SignalInfo>> SignalSamples = {
+  std::unordered_map<int,int> SignalPos = { /* WpMass, Position in SignalSample vector */
+    {600, 0},
+    {800, 1},
+    {1000,2},
+    {1200,3},
+    {1400,4},
+    {1600,5},
+    {1800,6},
+    {2000,7},
+    {2500,8},
+    {3000,9},
+    {3500,10},
+    {4000,11},
+  };
+
+  std::unordered_map<int, std::vector<SignalInfo>> SignalSamples = {
     {
       2016,
       {
@@ -615,13 +630,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::vector<int> years = { 2016, 2017, 2018 };
 
     auto getSampleName = [&] (const std::string& legend, const int& yy) {
-      for (auto BGN: BgNames.find(yy)->second) {
+      for (auto BGN: BgNames[yy]) {
         if (BGN.legendName == legend) return BGN.folderName;
       }
       return std::string("");
     };
 
-    for (auto BGN: BgNames.find(years[0])->second) {
+    for (auto BGN: BgNames[years[0]]) {
       THStack* hs = new THStack("hs",histoName.c_str());
       TLegend* l = new TLegend(0,0,1,1);
       TH1F* hn = new TH1F("hn","nEvents",3,0.,3.);
@@ -667,7 +682,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   auto getBGStack = [&](int yr, std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
     Int_t prevColor = -1;
-    for (auto BGN: BgNames.find(yr)->second) {
+    for (auto BGN: BgNames[yr]) {
       auto h = getHistoFromFile(Form("%d/%s",yr,BGN.folderName.c_str()),hname);
       applyLumiSF(h, Form("%d/%s",yr,BGN.folderName.c_str()), BGN.xsec);
       h->SetFillStyle(1001);
@@ -714,7 +729,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       h->LabelsDeflate();
     };
 
-    for(const auto& BGN: (BgNames.find(year))->second){
+    for(const auto& BGN: (BgNames[year])){
       TH1D* HTCutFlow = new TH1D(Form("HTCF_%d_%s",year,BGN.folderName.c_str()),"HT",10,0., 10.);
       std::string folder = Form("%d/%s",year,BGN.folderName.c_str());
       fillCutH(HTCutFlow,folder);
@@ -748,7 +763,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
                      const std::string& histoLabel){
     TCanvas* c2 = new TCanvas("c2","c2");
     TH2F* h2BgSum = nullptr;
-    for(const auto& BGN: (BgNames.find(yr))->second){
+    for(const auto& BGN: (BgNames[yr])){
       std::string folder = Form("%d/%s",yr,BGN.folderName.c_str());
       auto h2 = static_cast<TH2F*>(getHistoFromFile(folder.c_str(),histoLabel.c_str()));
       if(!h2BgSum) {
@@ -913,7 +928,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TGraph* GPunziS = new TGraph();
     GPunziS->SetTitle(Form("Punzi Significance vs M(WZ) %d; M(WZ); Punzi Significance", yr));
 
-    for (auto& signal: SignalSamples.find(yr)->second) {
+    for (auto& signal: SignalSamples[yr]) {
         GPunziS->SetPoint(GPunziS->GetN(),
                           getWpMassFromName(signal.folderName),
                           getPunziSignificance(hs, Form("%d/%s",yr,signal.folderName.c_str()), fromHisto));
@@ -940,7 +955,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TGraph* GHLTEff = new TGraph();
     GHLTEff->SetTitle(Form("HLT Efficiency (El OR Mu) on Signal;Wprime Mass Point %d;Ratio",yr));
 
-    for (auto& signal: SignalSamples.find(yr)->second) {
+    for (auto& signal: SignalSamples[yr]) {
       const Int_t WpMass = getWpMassFromName(signal.folderName);
       addCutEff(GElTgEff, Form("%d/%s",yr,signal.folderName.c_str()), "FailElectronHLTs", "NoCuts", WpMass);
       addCutEff(GMuTgEff, Form("%d/%s",yr,signal.folderName.c_str()), "FailMuonHLTs", "NoCuts", WpMass);
@@ -997,7 +1012,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TGraph* GSelRatioD = new TGraph();
     GSelRatioD->SetTitle("#mu#mu#mu#nu");
 
-    for (auto& signal: SignalSamples.find(yr)->second) {
+    for (auto& signal: SignalSamples[yr]) {
       const Int_t WpMass = getWpMassFromName(signal.folderName);
       addCutEff(GSelRatioA, Form("%d/%s",yr,signal.folderName.c_str()), "0", "NoCuts", WpMass);
       addCutEff(GSelRatioB, Form("%d/%s",yr,signal.folderName.c_str()), "1", "NoCuts", WpMass);
@@ -1058,22 +1073,35 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  auto canvasOf4Stacked = [&] (Int_t year, SignalInfo signal,
-                        std::vector<std::string> names) {
+  auto canvasStacked = [&] (const Int_t WpMass,
+                            std::vector<std::string> names) {
 
-    const Int_t WpMass = getWpMassFromName(signal.folderName);
+    const Int_t npads = names.size();
 
-    auto c1 = new TCanvas("cs","cs",10,10,1500,1200);
+    TCanvas* c1;
 
-    c1->Clear();
-    c1->Divide(2,2);
+    if (npads == 3) {
+      c1 = new TCanvas("cs","cs",10,10,1800,600);
+      c1->Divide(3,1);
+    } else if (npads == 4){
+      c1 = new TCanvas("cs","cs",10,10,1500,1200);
+      c1->Divide(2,2);
+    } else if (npads == 6) {
+      c1 = new TCanvas("cs","cs",10,10,1500,1000);
+      c1->Divide(3,2);
+    } else {
+      std::clog << "Undefined canvas division: " << npads << "\n";
+    }
+
     Int_t j = 1;
 
     std::string pngname;
 
     for (auto hName : names) {
-      pngname += hName + "_";
-      Int_t r = (j-1)%4;
+      int year = std::stoi(hName.substr(0,4));
+      hName = hName.substr(5,hName.size());
+      SignalInfo signal = SignalSamples[year][SignalPos[WpMass]];
+      Int_t r = (j-1)%npads;
       c1->cd(r+1);
       std::string dataHName = hName;
       if (hName.find("Central") != std::string::npos) {
@@ -1083,6 +1111,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       } else if (hName.find("Down_") != std::string::npos) {
         dataHName.erase(dataHName.find("Down_"),5); //Strip out Central_
       }
+      pngname += dataHName + "_";
 
       const Float_t leftMargin = 0.12;
       const Float_t rightMargin = 0.12;
@@ -1176,8 +1205,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       mainPad->cd();
       legend->Draw();
-      if( r+1 == 4 ){
-        c1->Print(Form("plots/%d/%s_Stack_%s_Wprime%d_Data.png",year,fileLabel.c_str(),pngname.c_str(),WpMass));
+      if( r+1 == npads ){
+        c1->Print(Form("plots/%d/%s_%sM%d.png",year,fileLabel.c_str(),pngname.c_str(),WpMass));
         c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName.c_str(),WpMass));
       }
     }
@@ -1185,6 +1214,26 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c1;
 
   };
+
+  std::vector<int> pyear = { 2016, 2017, 2018 };
+  std::vector<std::string> chs = { "A","B","C","D" };
+  std::vector<std::string> hints = {
+    "HMassZ","HMassWZ"
+  };
+
+  for(auto chhs: chs){
+    std::vector<std::string> hNames;
+    for(auto h: hints){
+      for(auto yr: pyear){
+        hNames.emplace_back(Form("%d/%s_CR1_Central_%s",yr,h.c_str(),chhs.c_str()));
+        if(hNames.size() == 6){
+          canvasStacked(600,hNames);
+          hNames.clear();
+        }
+      }
+    }
+  }
+
 
   for (auto& item: SignalSamples) {
 
@@ -1215,9 +1264,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       for(const auto& ch: channels) {
         std::vector<std::string> hNames;
         for (auto HN : HistNames) {
-          hNames.emplace_back(Form("%s_%s",HN.c_str(),ch.c_str()));
+          hNames.emplace_back(Form("%d/%s_%s",year,HN.c_str(),ch.c_str()));
           if(hNames.size()==4) {
-            canvasOf4Stacked(year,signal,hNames);
+            canvasStacked(WpMass,hNames);
             hNames.clear();
           }
         }
@@ -1228,6 +1277,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       std::vector<std::string> chs = {"A","B","C","D","+ABCD"};
       std::vector<std::string> chk = {"_SR", "_CR1"};
       std::vector<std::string> hints = {
+        "HMassTW","HPileup",
         "HMassZ","HMassWZ",
         "HPtl1","HPtl2",
         "HPtl3","HMetPt",
@@ -1242,10 +1292,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         std::vector<std::string> hNames;
         for(auto HN: hints){
           for(auto k: chk){
-            hNames.emplace_back(Form("%s%s_Central_%s",HN.c_str(),k.c_str(),chhs.c_str()));
+            hNames.emplace_back(Form("%d/%s%s_Central_%s",year,HN.c_str(),k.c_str(),chhs.c_str()));
           }
           if(hNames.size() == 4){
-            canvasOf4Stacked(year,signal,hNames);
+            canvasStacked(WpMass,hNames);
             hNames.clear();
           }
         }
