@@ -1,0 +1,2 @@
+# dasgoclient --query="file dataset=/GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM">GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8.txt
+/store/mc/RunIISummer16NanoAODv6/GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1/70000/A7AD1CC8-72CC-A640-B167-357C8D02CE23.root
