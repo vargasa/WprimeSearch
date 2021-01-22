@@ -958,12 +958,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     TCanvas* c1 = new TCanvas("c1","c1");
 
+    TMultiGraph* mg = new TMultiGraph("mg",Form("HLT Efficiency;Wprime Mass Point [%d]; Ratio [EventsPassingHLTs/EventsGenerated]",yr));
+
     TGraph* GElTgEff = new TGraph();
-    GElTgEff->SetTitle(Form("Electron HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio [EventsPassingHLTs/EventsGenerated]",yr));
+    GElTgEff->SetTitle("Electron HLTs Efficiency");
     TGraph* GMuTgEff = new TGraph();
-    GMuTgEff->SetTitle(Form("Muon HLTs Efficiency on Signal;Wprime Mass Point %d;Ratio",yr));
+    GMuTgEff->SetTitle("Muon HLTs Efficiency");
     TGraph* GHLTEff = new TGraph();
-    GHLTEff->SetTitle(Form("HLT Efficiency (El OR Mu) on Signal;Wprime Mass Point %d;Ratio",yr));
+    GHLTEff->SetTitle("HLT Efficiency (El OR Mu)");
 
     for (auto& signal: SignalSamples[yr]) {
       const Int_t WpMass = getWpMassFromName(signal.folderName);
@@ -987,21 +989,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     GElTgEff->SetMarkerStyle(22);
     GElTgEff->SetMarkerColor(kBlack);
     invertGraph(GElTgEff);
-    GElTgEff->Draw("AP");
+    mg->Add(GElTgEff,"AP");
     GElTgEff->GetYaxis()->SetRangeUser(0, 1.);
     GMuTgEff->SetMarkerStyle(23);
     GElTgEff->SetMarkerSize(0.5);
     GMuTgEff->SetMarkerColor(kBlue);
     invertGraph(GMuTgEff);
-    GMuTgEff->Draw("P");
+    mg->Add(GMuTgEff,"P");
     GMuTgEff->SetMarkerSize(0.5);
     GHLTEff->SetMarkerStyle(24);
     GHLTEff->SetMarkerColor(kRed);
     GHLTEff->SetMarkerSize(0.5);
     invertGraph(GHLTEff);
-    GHLTEff->Draw("P");
+    mg->Add(GHLTEff,"P");
+    mg->Draw("A");
     gPad->BuildLegend();
-    c1->Print(Form("plots/%d/%s_%d_SignalTriggerEfficiency.png",yr,fileLabel.c_str(),yr));
+    c1->Print(Form("plots/%d/%s_%d_SignalTriggerEfficiency.pdf",yr,fileLabel.c_str(),yr));
     c1->Write(Form("%d_%s_SignalTriggerEfficiency",yr,fileLabel.c_str()));
 
     delete c1;
