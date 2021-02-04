@@ -74,7 +74,8 @@ class PreSelector : public EventSelection {
   TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
   TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
   TTreeReaderArray<UChar_t> Muon_highPtId = {fReader, "Muon_highPtId"};
-
+  TTreeReaderArray<Float_t> Muon_ip3d = {fReader, "Muon_ip3d"};
+  TTreeReaderArray<Float_t> Muon_sip3d = {fReader, "Muon_sip3d"};
 
   // Electrons
   // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/electrons_cff.py
@@ -91,6 +92,8 @@ class PreSelector : public EventSelection {
   TTreeReaderArray<Float_t> Electron_pfRelIso03_chg = {fReader, "Electron_pfRelIso03_chg"};
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_all = {fReader, "Electron_miniPFRelIso_all"};
   TTreeReaderArray<Float_t> Electron_miniPFRelIso_chg = {fReader, "Electron_miniPFRelIso_chg"};
+  TTreeReaderArray<Float_t> Electron_ip3d = {fReader, "Electron_ip3d"};
+  TTreeReaderArray<Float_t> Electron_sip3d = {fReader, "Muon_sip3d"};
 
   // nJets
   TTreeReaderValue<UInt_t> nJet = {fReader, "nJet"};
@@ -137,6 +140,12 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HDzl1;
   std::vector<TH1F*> HDzl2;
   std::vector<TH1F*> HDzl3;
+  std::vector<TH1F*> HIP3Dl1;
+  std::vector<TH1F*> HIP3Dl2;
+  std::vector<TH1F*> HIP3Dl3;
+  std::vector<TH1F*> HSIP3Dl1;
+  std::vector<TH1F*> HSIP3Dl2;
+  std::vector<TH1F*> HSIP3Dl3;
   std::vector<TH1F*> HRelIsol1;
   std::vector<TH1F*> HRelIsol2;
   std::vector<TH1F*> HRelIsol3;

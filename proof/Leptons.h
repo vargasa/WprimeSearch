@@ -16,6 +16,8 @@ class Leptons{
   RAF dxy;
   RAF dz;
   RAF relIso;
+  RAF ip3d;
+  RAF sip3d;
   Float_t mass;
 #ifndef CMSDATA
   RAI genPartIdx;
@@ -24,7 +26,8 @@ class Leptons{
 
  protected:
   Leptons(RVUI n, Float_t mass, RAF pt, RAF eta, RAF phi,
-          RAI charge, RAF dxy, RAF dz, RAF relIso
+          RAI charge, RAF dxy, RAF dz, RAF relIso,
+          RAF ip3d, RAF sip3d
 #ifndef CMSDATA
           , RAI gpIdx, RAI pdgId
 #endif
@@ -32,13 +35,14 @@ class Leptons{
 };
 
 Leptons::Leptons(RVUI n, Float_t mass, RAF pt, RAF eta, RAF phi,
-                 RAI charge, RAF dxy, RAF dz, RAF relIso
+                 RAI charge, RAF dxy, RAF dz, RAF relIso,
+                 RAF ip3d, RAF sip3d
 #ifndef CMSDATA
                  , RAI gpIdx, RAI pdgId
 #endif
                  ):
   n(n),mass(mass),pt(pt),eta(eta),phi(phi),charge(charge),
-  dxy(dxy),dz(dz),relIso(relIso)
+    dxy(dxy),dz(dz),relIso(relIso),ip3d(ip3d),sip3d(sip3d)
 #ifndef CMSDATA
   ,genPartIdx(gpIdx), pdgId(pdgId)
 #endif

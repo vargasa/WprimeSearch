@@ -268,13 +268,21 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
   InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
 
-  InitHVec<TH1F>(HDxyl1,"HDxyl1",200,-0.5,0.5);
-  InitHVec<TH1F>(HDxyl2,"HDxyl2",200,-0.5,0.5);
-  InitHVec<TH1F>(HDxyl3,"HDxyl3",200,-0.5,0.5);
+  InitHVec<TH1F>(HDxyl1,"HDxyl1",400,-0.5,0.5);
+  InitHVec<TH1F>(HDxyl2,"HDxyl2",400,-0.5,0.5);
+  InitHVec<TH1F>(HDxyl3,"HDxyl3",400,-0.5,0.5);
 
-  InitHVec<TH1F>(HDzl1,"HDzl1",200,-0.5,0.5);
-  InitHVec<TH1F>(HDzl2,"HDzl2",200,-0.5,0.5);
-  InitHVec<TH1F>(HDzl3,"HDzl3",200,-0.5,0.5);
+  InitHVec<TH1F>(HDzl1,"HDzl1",400,-0.5,0.5);
+  InitHVec<TH1F>(HDzl2,"HDzl2",400,-0.5,0.5);
+  InitHVec<TH1F>(HDzl3,"HDzl3",400,-0.5,0.5);
+
+  InitHVec<TH1F>(HIP3Dl1,"HIP3Dl1",400,-0.5,0.5);
+  InitHVec<TH1F>(HIP3Dl2,"HIP3Dl2",400,-0.5,0.5);
+  InitHVec<TH1F>(HIP3Dl3,"HIP3Dl3",400,-0.5,0.5);
+
+  InitHVec<TH1F>(HSIP3Dl1,"HSIP3Dl1",400,-50.,50.);
+  InitHVec<TH1F>(HSIP3Dl2,"HSIP3Dl2",400,-50.,50.);
+  InitHVec<TH1F>(HSIP3Dl3,"HSIP3Dl3",400,-50.,50.);
 
   InitHVec<TH1F>(HRelIsol1,"HRelIsol1",100,0.,1.0);
   InitHVec<TH1F>(HRelIsol2,"HRelIsol2",100,0.,1.0);
@@ -1069,6 +1077,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HDzl1,nh,lz.dz[l1]);
   FillH1(HDzl2,nh,lz.dz[l2]);
   FillH1(HDzl3,nh,lw.dz[l3]);
+  FillH1(HIP3Dl1,nh,lz.ip3d[l1]);
+  FillH1(HIP3Dl2,nh,lz.ip3d[l2]);
+  FillH1(HIP3Dl3,nh,lw.ip3d[l3]);
+  FillH1(HSIP3Dl1,nh,lz.sip3d[l1]);
+  FillH1(HSIP3Dl2,nh,lz.sip3d[l2]);
+  FillH1(HSIP3Dl3,nh,lw.sip3d[l3]);
   FillH1(HRelIsol1,nh,lz.relIso[l1]);
   FillH1(HRelIsol2,nh,lz.relIso[l2]);
   FillH1(HRelIsol3,nh,lz.relIso[l3]);
@@ -1303,18 +1317,22 @@ Bool_t PreSelector::Process(Long64_t entry) {
 #ifndef CMSDATA
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
+            Muon_ip3d,Muon_sip3d,
             Muon_tightId, Muon_genPartIdx, Muon_pdgId);
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
                 Electron_charge,Electron_dxy,Electron_dz,Electron_pfRelIso03_all,
+                Electron_ip3d,Electron_sip3d,
                 Electron_cutBased, Electron_genPartIdx, Electron_pdgId);
 #else
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
+            Muon_ip3d,Muon_sip3d,
             Muon_tightId);
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
                 Electron_charge,Electron_dxy,Electron_dz,Electron_pfRelIso03_all,
+                Electron_ip3d,Electron_sip3d,
                 Electron_cutBased);
 #endif
 
@@ -1479,7 +1497,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_LooseElectron.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_IP3D2016.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
