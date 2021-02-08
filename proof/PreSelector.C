@@ -268,9 +268,13 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
   InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
 
-  InitHVec<TH1F>(HDxyl1,"HDxyl1",400,-0.5,0.5);
-  InitHVec<TH1F>(HDxyl2,"HDxyl2",400,-0.5,0.5);
-  InitHVec<TH1F>(HDxyl3,"HDxyl3",400,-0.5,0.5);
+  InitHVec<TH1F>(HDxyl1,"HDxyl1",3000,-0.50,0.50);
+  InitHVec<TH1F>(HDxyl2,"HDxyl2",3000,-0.50,0.50);
+  InitHVec<TH1F>(HDxyl3,"HDxyl3",3000,-0.50,0.50);
+
+  InitHVec<TH2F>(HDxyl1l2,"HDxyl1l2",
+                 3000,-0.50,0.50,
+                 3000,-0.50,0.50);
 
   InitHVec<TH1F>(HDzl1,"HDzl1",400,-0.5,0.5);
   InitHVec<TH1F>(HDzl2,"HDzl2",400,-0.5,0.5);
@@ -1003,6 +1007,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HEtaPhil1[nh]->Fill(lep1.Eta(),lep1.Phi());
   HEtaPhil2[nh]->Fill(lep2.Eta(),lep2.Phi());
   HEtaPhil3[nh]->Fill(lep3.Eta(),lep3.Phi());
+  HDxyl1l2[nh]->Fill(lz.dxy[l1],lz.dxy[l2]);
 
   if(IsA_ or IsB) { // PairEl
     HZElId[nh]->Fill(Electron_cutBased[l1],Electron_cutBased[l2]);
@@ -1497,7 +1502,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_IP3D2016.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_Dxyl1l2.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
