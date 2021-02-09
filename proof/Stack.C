@@ -71,7 +71,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"TTV","ttZJets_13TeV_madgraphMLM-pythia8",
             kCyan+1,6.559e-1},
           BackgroundInfo{"VVV","WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-            kCyan+1,2.086e-1},
+            kGreen+1,2.086e-1},
           BackgroundInfo{"VVV","WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
             kGreen+1,1.651e-1},
           BackgroundInfo{"VVV","WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
@@ -79,13 +79,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"VVV","ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
             kGreen+1,1.398e-2},
           BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8",
-            kGreen+3,1.575},
+                         43,2.703e-3}, /*AN2019_252_v1*/
           BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8",
-            kGreen+3,1.575},
+                         43,2.703e-3}, /*AN2019_252_v1*/
           BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8",
-            kGreen+3,3.185},
+                         43,5.423e-3}, /*AN2019_252_v1*/
           BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8",
-            kGreen+3,1.575},
+                         43,2.703e-3}, /*AN2019_252_v1*/
           BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1",
             kGreen+3,3.365},
           BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1",
@@ -602,7 +602,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   auto applyLumiSF = [&](TH1* h, std::string folder, const Float_t& xsec){
     Int_t yr = std::stoi(folder.substr(0,folder.rfind("/")+1));
-    Double_t nEvents = getCutCount(folder,"NoCuts");
+    Double_t nEvents = getCutCount(folder,"genWeight");
     Double_t lumiSF = luminosity[yr]*xsec*1e3/nEvents; /* pico*femto^-1=1e-12*1e15=1e3 */
     h->Scale(lumiSF);
   };
@@ -1233,14 +1233,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::vector<int> pyear = { 2016, 2017, 2018 };
   std::vector<std::string> chs = { "A","B","C","D" };
   std::vector<std::string> hints = {
-    "HMassZ","HMassWZ"
+    "HMassZ","HMassWZ",
+    "HPtl1","HPtl2","HPtl3","HMetPt",
   };
 
-  for(auto chhs: chs){
-    std::vector<std::string> hNames;
-    for(auto h: hints){
-      for(auto yr: pyear){
-        hNames.emplace_back(Form("%d/%s_CR1_Central_%s",yr,h.c_str(),chhs.c_str()));
+  for(auto yr: pyear){
+    for(auto chhs: chs){
+      std::vector<std::string> hNames;
+      for(auto h: hints){
+        hNames.emplace_back(Form("%d/%s_SR_Central_%s",yr,h.c_str(),chhs.c_str()));
         if(hNames.size() == 6){
           canvasStacked(600,hNames);
           hNames.clear();
