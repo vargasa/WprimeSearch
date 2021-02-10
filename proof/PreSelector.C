@@ -1254,7 +1254,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
   auto WMuonOk = [&](){
     Bool_t ok{};
     for (const int& i: GoodMuon) {
-      if ( Muon_highPtId[i] == 2 ) { /*PairEl*/
+      if ( Muon_highPtId[i] == 2 and Muon_pt[i] > 50) { /*PairEl*/
         l3 = i;
         ok = true;
         break;
@@ -1471,7 +1471,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   if(PairMu){
     for(const int& i: GoodMuon){
       if(i!=l1 && i!=l2)
-        if(Muon_highPtId[i] == 2)
+        if(Muon_highPtId[i] == 2 and Muon_pt[i] > 50)
           SameFlvWCand.emplace_back(i);
     }
     if(SameFlvWCand.size() == 0 and GoodElectron.size() == 0){
