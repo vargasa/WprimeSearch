@@ -268,13 +268,13 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
   InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
 
-  InitHVec<TH1F>(HDxyl1,"HDxyl1",3000,-0.50,0.50);
-  InitHVec<TH1F>(HDxyl2,"HDxyl2",3000,-0.50,0.50);
-  InitHVec<TH1F>(HDxyl3,"HDxyl3",3000,-0.50,0.50);
+  InitHVec<TH1F>(HDxyl1,"HDxyl1",1500,-0.25,0.25);
+  InitHVec<TH1F>(HDxyl2,"HDxyl2",1500,-0.25,0.25);
+  InitHVec<TH1F>(HDxyl3,"HDxyl3",1500,-0.25,0.25);
 
   InitHVec<TH2F>(HDxyl1l2,"HDxyl1l2",
-                 3000,-0.50,0.50,
-                 3000,-0.50,0.50);
+                 1500,-0.25,0.25,
+                 1500,-0.25,0.25);
 
   InitHVec<TH1F>(HDzl1,"HDzl1",400,-0.5,0.5);
   InitHVec<TH1F>(HDzl2,"HDzl2",400,-0.5,0.5);
@@ -607,7 +607,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; ++i){
     double abseta =  abs(El.eta[i]);
-    if(El.cutBased[i]>=2 and
+    if(El.cutBased[i]>=3 and
        abseta < MaxEta and
        ( abseta < etaGap.first or abseta > etaGap.second))
       GoodIndex.emplace_back(i);
@@ -1198,6 +1198,22 @@ Int_t PreSelector::nbTag(){
 
 Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
 
+  auto WElectronOk = [&](){
+    Bool_t ok{};
+    for(const int& n: GoodElectron){
+      if( Electron_cutBased[n] == 4 ) {
+        l3 = n;
+        ok = true;
+        break;
+      }
+    }
+    if (!ok) {
+      l3 = -1;
+      HCutFlow->FillS("WElNotTight");
+    }
+    return ok;
+  };
+
   if ( SameFlvWCand.size()>0 and GoodElectron.size() == 0 ){
     //assert(SameFlvWCand.size()==1);
     l3 = SameFlvWCand[0];
@@ -1206,13 +1222,17 @@ Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
     if( Muon_pt[SameFlvWCand[0]] > Electron_pt[GoodElectron[0]] ){
       l3 = SameFlvWCand[0];
       IsD = true;
-    } else {
-      l3 = GoodElectron[0];
+    } else if (WElectronOk()) {
       IsC = true;
+    } else {
+      return kFALSE;
     }
   } else if (SameFlvWCand.size() == 0 and GoodElectron.size() > 0) {
-    IsC = true;
-    l3 = GoodElectron[0];
+    if (WElectronOk()){
+      IsC = true;
+    } else {
+      return kFALSE;
+    }
   } else {
     assert(false);
   }
@@ -1247,16 +1267,37 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
     return ok;
   };
 
+  auto WElectronOk = [&](){
+    Bool_t ok{};
+    for(const int& n: GoodElectron){
+      if( Electron_cutBased[n] == 4 ) {
+        l3 = n;
+        ok = true;
+        break;
+      }
+    }
+    if (!ok) {
+      l3 = -1;
+      HCutFlow->FillS("WElNotTight");
+    }
+    return ok;
+  };
+
   if (SameFlvWCand.size() > 0 and GoodMuon.size() == 0) {
-    IsA_ = true;
-    l3 = SameFlvWCand[0];
+    if(WElectronOk()){
+      IsA_ = true;
+    } else {
+      return kFALSE;
+    }
   } else if (SameFlvWCand.size() > 0 and GoodMuon.size() > 0) {
     if( WMuonOk() and (Muon_pt[l3] > Electron_pt[SameFlvWCand[0]]) ){
       // l3 defined through WMuonOk
       IsB = true;
-    } else {
-      l3 = SameFlvWCand[0];
+    } else if (WElectronOk()) {
+      // l3 defined through WElectronOk
       IsA_ = true;
+    } else {
+      return kFALSE;
     }
   } else if( SameFlvWCand.size() == 0 and (GoodMuon.size()>0 and WMuonOk()) ) {
     // l3 defined through WMuonOk
@@ -1502,7 +1543,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_Dxyl1l2.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_WElTight.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
