@@ -123,6 +123,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kOrange+7,1.927e-1},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
             kOrange+7,3.478e-3},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,2.086e-1},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,1.651e-1},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,5.565e-2},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,1.398e-2},
         }
       },
       {
@@ -150,6 +158,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kOrange+7,1.931e-1},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
             kOrange+7,3.513e-3},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,2.154e-1},
+          BackgroundInfo{"VVV","WWZ_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,1.676e-1},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,5.701e-2},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",
+            kGreen+1,1.473e-2},
         }
       }
     };
