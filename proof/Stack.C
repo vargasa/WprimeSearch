@@ -319,7 +319,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HPtl2_+ABCD","Pt_{l2} lll#nu; Pt_{l2} (GeV); Event count"},
     { "HPtl3_A","Pt_{e3} eee#nu; Pt_{e3} (GeV); Event count"},
     { "HPtl3_B","Pt_{#mu} ee#mu#nu; Pt_{e3} (GeV); Event count"},
-    { "HPtl3_C","Pt_{e3} #mu#mue#nu; Pt_{#mu3} (GeV); Event count"},
+    { "HPtl3_C","Pt_{e3} #mu#mue#nu; Pt_{e} (GeV); Event count"},
     { "HPtl3_D","Pt_{#mu3} #mu#mu#mu#nu; Pt_{#mu3} (GeV); Event count"},
     { "HPtl3_+ABCD","Pt_{l3} lll#nu; Pt_{l3} (GeV); Event count"},
     { "HMetPt_A","#slash{E}^{Z#rightarrow ee W#rightarrow e#nu}_{T};#slash{E}^{eee#nu}_{T}(GeV);Event count"},
@@ -327,20 +327,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HMetPt_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{#mu#mue#nu}_{T}(GeV);Event count"},
     { "HMetPt_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{#mu#mu#mu#nu}_{T}(GeV);Event count"},
     { "HMetPt_+ABCD","#slash{E}_{T} lll#nu;#slash{E}_{T}(GeV);Event count"},
-    { "HEtal1_A", "#eta_{e1} eee#nu;Eta;Event count"},
+    { "HEtal1_A", "#eta_{e1} eee#nu;Eta e_{1};Event count"},
     { "HEtal1_B", "#eta_{e1} ee#mu#nu;Eta;Event count"},
     { "HEtal1_C", "#eta_{#mu1} #mu#mue#nu;Eta;Event count"},
     { "HEtal1_D", "#eta_{#mu1} #mu#mu#mu#nu;Eta;Event count"},
-    { "HEtal1_+ABCD ", "Eta_{l1} lll#nu;Eta;Event count"},
+    { "HEtal1_+ABCD ", "Eta_{l1} lll#nu;Eta e_{2};Event count"},
     { "HEtal2_A", "#eta_{e2} eee#nu;Eta;Event count"},
     { "HEtal2_B", "#eta_{e2} ee#mu#nu;Eta;Event count"},
     { "HEtal2_C", "#eta_{#mu2} #mu#mue#nu;Eta;Event count"},
     { "HEtal2_D", "#eta_{#mu2} #mu#mu#mu#nu;Eta;Event count"},
     { "HEtal2_+ABCD ", "Eta_{l2} lll#nu;Eta;Event count"},
-    { "HEtal3_A", "#eta_{e3} eee#nu;Eta;Event count"},
-    { "HEtal3_B", "#eta_{#mu} ee#mu#nu;Eta;Event count"},
-    { "HEtal3_C", "#eta_{e} #mu#mue#nu;Eta;Event count"},
-    { "HEtal3_D", "#eta_{#mu3} #mu#mu#mu#nu;Eta;Event count"},
+    { "HEtal3_A", "#eta_{e3} eee#nu;Eta e_{3};Event count"},
+    { "HEtal3_B", "#eta_{#mu} ee#mu#nu;Eta #mu;Event count"},
+    { "HEtal3_C", "#eta_{e} #mu#mue#nu;Eta e;Event count"},
+    { "HEtal3_D", "#eta_{#mu3} #mu#mu#mu#nu;Eta #mu_{3};Event count"},
     { "HEtal3_+ABCD ", "Eta_{l2} lll#nu;Eta;Event count"},
     { "HPhil1_A", "#phi_{e1} eee#nu;#phi (rad);Event count"},
     { "HPhil1_B", "#phi_{e1} ee#mu#nu;#phi (rad);Event count"},
@@ -801,8 +801,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c2;
   };
 
-  auto printDataCard = [&] (const int& year, const int& wpmass,
-                            THStack* hsbg, TH1* hsig, TH1* hdata) {
+  auto printDataCard = [&] (const int& year, const int& wpmass) {
+
+    const char* fromHisto = "HMassWZ_SR_A";
+    THStack* hsbg = getBGStack(year,fromHisto);
+    SignalInfo signal = SignalSamples[year][SignalPos[wpmass]];
+    TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),fromHisto);
+    applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+    auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),fromHisto);
+
     ofstream dcFile;
     dcFile.open(Form("plots/%d/%d_%d_DataCard.txt", year, year, wpmass));
 
