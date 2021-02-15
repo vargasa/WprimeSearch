@@ -235,10 +235,6 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "CR1_Central_A", "CR1_Central_B", "CR1_Central_C", "CR1_Central_D", /*+24*/
     "CR1_Up_A",      "CR1_Up_B",      "CR1_Up_C",      "CR1_Up_D",      /*+28*/
     "CR1_Down_A",    "CR1_Down_B",    "CR1_Down_C",    "CR1_Down_D",    /*+32*/
-    "CR2_A",         "CR2_B",         "CR2_C",         "CR2_D",         /*+36*/
-    "CR2_Central_A", "CR2_Central_B", "CR2_Central_C", "CR2_Central_D", /*+40*/
-    "CR2_Up_A",      "CR2_Up_B",      "CR2_Up_C",      "CR2_Up_D",      /*+44*/
-    "CR2_Down_A",    "CR2_Down_B",    "CR2_Down_C",    "CR2_Down_D"     /*+46*/
   };
 
   for(auto id: idst){
@@ -321,8 +317,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t TWMassBins = 30;
   InitHVec<TH1F>(HMassTW,"HMassTW",TWMassBins,0.,MaxTWMass);
 
-  const Float_t MaxWZMass = 8500.;
-  const Int_t WZMassBins = 85;
+  const Float_t MaxWZMass = 5500.;
+  const Int_t WZMassBins = 50;
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
 
   const Float_t MaxLt = 1000.;
@@ -450,6 +446,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HEtaPhil1,"HEtaPhil1",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH2F>(HEtaPhil2,"HEtaPhil2",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH2F>(HEtaPhil3,"HEtaPhil3",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH2F>(HPtl1l2,"HPtl1l2",50,0,250,50,0,250);
   InitHVec<TH1F>(HPhil1,"HPhil1",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil2,"HPhil2",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil3,"HPhil3",PhiBins,-1*MaxPhi,MaxPhi);
@@ -471,7 +468,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtID"));
   SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
-  SFElectronMediumID = static_cast<TH2F*>(SFDb->FindObject("SFElectronMediumID"));
+  SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
   SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 
   SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
@@ -514,7 +511,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 #if !defined(CMSDATA)
   assert(SFElectronTrigger1);
   assert(SFElectronTrigger2);
-  assert(SFElectronMediumID);
+  assert(SFElectronLooseID);
   assert(SFElectronTightID);
   assert(SFMuonHighPtID);
   assert(SFMuonTrkHighPtID);
@@ -609,7 +606,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; ++i){
     double abseta =  abs(El.eta[i]);
-    if(El.cutBased[i]>=3 and
+    if(El.cutBased[i]>=2 and
        abseta < MaxEta and
        ( abseta < etaGap.first or abseta > etaGap.second))
       GoodIndex.emplace_back(i);
@@ -864,8 +861,8 @@ void PreSelector::DefineSFs(){
     wdown = GetSFFromHisto(SFPileup,*PV_npvs);
     wdown *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
 
-    applyIDSF(SFElectronMediumID,lep1.Eta(),lep1.Pt());
-    applyIDSF(SFElectronMediumID,lep2.Eta(),lep2.Pt());
+    applyIDSF(SFElectronLooseID,lep1.Eta(),lep1.Pt());
+    applyIDSF(SFElectronLooseID,lep2.Eta(),lep2.Pt());
     applyIDSF(SFElectronTightID,lep3.Eta(),lep3.Pt());
 
   } else if (IsB) {
@@ -882,8 +879,8 @@ void PreSelector::DefineSFs(){
     wdown *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
     wdown *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
 
-    applyIDSF(SFElectronMediumID,lep1.Eta(),lep1.Pt());
-    applyIDSF(SFElectronMediumID,lep2.Eta(),lep2.Pt());
+    applyIDSF(SFElectronLooseID,lep1.Eta(),lep1.Pt());
+    applyIDSF(SFElectronLooseID,lep2.Eta(),lep2.Pt());
 
     if ( Muon_highPtId[l3] == 2 ) {
       applyIDSF(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt());
@@ -1009,6 +1006,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HEtaPhil1[nh]->Fill(lep1.Eta(),lep1.Phi());
   HEtaPhil2[nh]->Fill(lep2.Eta(),lep2.Phi());
   HEtaPhil3[nh]->Fill(lep3.Eta(),lep3.Phi());
+  HPtl1l2[nh]->Fill(lep1.Pt(),lep2.Pt());
   HDxyl1l2[nh]->Fill(lz.dxy[l1],lz.dxy[l2]);
 
   if(IsA_ or IsB) { // PairEl
