@@ -1355,8 +1355,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  if (*MET_pt < 30.){
-    HCutFlow->FillS("MET<30");
+  if (*MET_pt < 40.){
+    HCutFlow->FillS("MET<40");
     return kFALSE;
   }
 
@@ -1426,8 +1426,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   if(PairEl){
+    if (*MET_pt < 40.) {
+      return kFALSE;
+    }
     zt = &ztel;
   } else { //PairMu
+    if (*MET_pt < 60.) {
+      return kFALSE;
+    }
     zt = &ztmu;
   }
 
@@ -1543,7 +1549,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_WElTight.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_PairMuZMet60.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
