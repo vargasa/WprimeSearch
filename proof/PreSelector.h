@@ -282,7 +282,7 @@ class PreSelector : public EventSelection {
   Bool_t ApplyKFactors{};
   Double_t KSFMinPt;
   Double_t KSFMaxPt;
-  TH2F* SFElectronMediumID;
+  TH2F* SFElectronLooseID;
   TH2F* SFElectronTightID;
   TH2F* SFMuonHighPtID;
   TH2F* SFMuonTrkHighPtID;

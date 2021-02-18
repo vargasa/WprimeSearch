@@ -314,11 +314,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMassZ,"HMassZ",ZMassBins,HMinZMass,HMaxZMass);
 
   const Float_t MaxTWMass = 250.;
-  const Int_t TWMassBins = 30;
+  const Int_t TWMassBins = 15;
   InitHVec<TH1F>(HMassTW,"HMassTW",TWMassBins,0.,MaxTWMass);
 
   const Float_t MaxWZMass = 5500.;
-  const Int_t WZMassBins = 50;
+  const Int_t WZMassBins = 100;
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
 
   const Float_t MaxLt = 1000.;
@@ -416,7 +416,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t MetBins = 60;
 
   InitHVec<TH1F>(HPtl1,"HPtl1",25,0.,250.);
-  InitHVec<TH1F>(HPtl2,"HPtl2",10.,0.,100.);
+  InitHVec<TH1F>(HPtl2,"HPtl2",20.,0.,100.);
   InitHVec<TH1F>(HPtl3,"HPtl3",40,0.,400.);
   InitHVec<TH1F>(HMetPt,"HMetPt",MetBins,MinMet,MaxMet);
 
@@ -1135,6 +1135,8 @@ Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
 }
 
 Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
+
+  if (Muon_pt[p.first] < 70.) return kFALSE;
   const Float_t MinSubleadPt = 10.;
   if (Muon_pt[p.second] < MinSubleadPt) return kFALSE;
 
@@ -1549,7 +1551,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_PairMuZMet60.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_MuZPt70MuonMet60_BinChanged.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
