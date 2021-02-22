@@ -801,14 +801,17 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c2;
   };
 
+
   auto printDataCard = [&] (const int& year, const int& wpmass) {
 
-    const char* fromHisto = "HMassWZ_SR_A";
-    THStack* hsbg = getBGStack(year,fromHisto);
-    SignalInfo signal = SignalSamples[year][SignalPos[wpmass]];
-    TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),fromHisto);
-    applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
-    auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),fromHisto);
+    const char* fromHisto = "HMassWZ_SR";
+
+    std::unordered_map<std::string,std::string> channels = {
+      {"A", "eee"},
+      {"B", "eemu"},
+      {"C", "mumue"},
+      {"D", "mumumu"},
+    };
 
     ofstream dcFile;
     dcFile.open(Form("plots/%d/%d_%d_DataCard.txt", year, year, wpmass));
@@ -819,38 +822,71 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       { 2018, 0.025 },
     };
 
-    std::string binName = "modA";
-    std::string bin = "bin\t" + binName + "\t";
-    std::string process  = Form("process\t%s_%d\t","Wp",wpmass);
-    std::string processn = "process\t0\t";
-    std::string rate     = Form("rate\t%.2f\t",hsig->Integral());
-    std::string unc1     = Form("lumi_13TeV\tlnN\t%.4f\t",1. + lumiSyst[year]);
+    std::string rootFilename = Form("CombineFile_%d.root",year);
+    TFile* fCombine = TFile::Open(rootFilename.c_str(),"UPDATE");
 
-    for(uint i = 1; i <= hsbg->GetNhists(); ++i){
-      bin += binName + "\t";
-      processn += Form("%d\t",i);
-      unc1 += Form("%.4f\t",1. + lumiSyst[year]);
+    std::string bin0 = "bin\t";
+    std::string obs  = "observation\t";
+    std::string bin1 = "bin\t";
+    std::string processn = "process\t";
+    std::string process  = "process\t";
+    std::string rate     = "rate\t";
+    std::string unc1     = "lumi_13TeV\tlnN\t";
+
+
+    for(auto ch: channels){
+
+      fCombine->cd("/");
+      fCombine->mkdir(ch.second.c_str());
+      fCombine->cd(ch.second.c_str());
+
+      SignalInfo signal = SignalSamples[year][SignalPos[wpmass]];
+      TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Central_%s",fromHisto,ch.first.c_str()));
+      applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+      hsig->Write(Form("Wprime%d",wpmass));
+      bin1 += ch.second + "\t";
+      processn += "0\t";
+      process += Form("Wprime%d\t",wpmass);
+      rate += Form("%.2f\t",hsig->Integral());
+      unc1 += "--\t";
+
+
+      auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
+                                    Form("%s_%s",fromHisto,ch.first.c_str()));
+      bin0 += Form("%s\t",ch.second.c_str());
+      obs += Form("%.2f\t",hdata->Integral());
+      hdata->Write("data_obs");
+
+      int counter = 1;
+      for (auto BGN: BgNames[year]) {
+        bin1 += ch.second + "\t";
+        processn += Form("%d\t",counter);
+        process += BGN.folderName + "\t";
+        auto h = getHistoFromFile(Form("%d/%s",year,BGN.folderName.c_str()),Form("%s_Central_%s",fromHisto,ch.first.c_str()));
+        applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
+        rate += Form("%.2f\t",h->Integral());
+        h->Write(BGN.folderName.c_str());
+        unc1 += Form("%.4f\t",1. + lumiSyst[year]);
+        ++counter;
+      }
     }
 
-    TIter b = hsbg->begin();
 
-    while(b.Next()){
-      auto histo = static_cast<TH1F*>(*b);
-      process += Form("%s\t",histo->GetTitle());
-      rate += Form("%.2f\t", histo->Integral());
-    }
-
-    dcFile << "imax\t1\njmax\t" << hsbg->GetNhists() << "\nkmax\t1\n";
+    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t1\n";
     dcFile << "------------\n";
-    dcFile<< "bin\t" << binName << std::endl;
-    dcFile << "observation\t" << hdata->Integral() << std::endl;
+    dcFile << Form("shapes * * %s $CHANNEL/$PROCESS\n",rootFilename.c_str());
+    dcFile << bin0 << std::endl;
+    dcFile << obs << std::endl;
     dcFile << "------------\n";
-    dcFile << bin << std::endl << process << std::endl
-    << processn << std::endl << rate << std::endl;
+    dcFile << bin1 << std::endl << process << std::endl << processn << std::endl << rate << std::endl;
     dcFile << "------------\n";
     dcFile << unc1 << std::endl;
 
   };
+
+  for(auto wpm: SignalPos){
+    printDataCard(2016,wpm.first);
+  }
 
   std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [&](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
 
@@ -1111,6 +1147,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     } else if (npads == 6) {
       c1 = new TCanvas("cs","cs",10,10,1500,1000);
       c1->Divide(3,2);
+    } else if (npads == 8) {
+      c1 = new TCanvas("cs","cs",10,10,2000,1000);
+      c1->Divide(4,2);
+
     } else {
       std::clog << "Undefined canvas division: " << npads << "\n";
     }
