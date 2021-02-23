@@ -567,29 +567,30 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   auto getRatio = [](TH1* hhdata, THStack *hss){
       auto hcdata = static_cast<TH1*>(hhdata->Clone());
-      hcdata->Divide(static_cast<TH1*>(hss->GetStack()->Last()));
-      hcdata->SetMarkerColor(kBlack);
-      hcdata->SetMarkerStyle(20);
-      hcdata->SetMarkerSize(.5);
-      hcdata->SetLineWidth(1);
+      auto hcmc = static_cast<TH1*>(hss->GetStack()->Last());
+      auto hratio = new TGraphAsymmErrors(hcdata,hcmc,"pois");
+      hratio->SetMarkerColor(kBlack);
+      hratio->SetMarkerStyle(20);
+      hratio->SetMarkerSize(.5);
+      hratio->SetLineWidth(1);
       const int font = 43;
       const float fontSize = 17.;
       const float labelSize = 0.17;
-      hcdata->SetTitle("");
-      hcdata->GetXaxis()->SetTitle(hss->GetHistogram()->GetXaxis()->GetTitle());
-      hcdata->GetXaxis()->SetTitleFont(font);
-      hcdata->GetXaxis()->SetTitleSize(fontSize);
-      hcdata->GetXaxis()->SetLabelSize(labelSize);
-      hcdata->GetXaxis()->SetTitleOffset(12.0);
-      hcdata->GetYaxis()->SetTitleFont(font);
-      hcdata->GetYaxis()->SetTitleSize(fontSize);
-      hcdata->GetYaxis()->SetLabelSize(labelSize);
-      hcdata->GetYaxis()->SetTitleOffset(4.0);
-      hcdata->GetYaxis()->SetNdivisions(6,3,0);
-      hcdata->GetYaxis()->SetTitle("Data/MC");
-      hcdata->SetMinimum(0.1);
-      hcdata->SetMaximum(1.9);
-      return hcdata;
+      hratio->SetTitle("");
+      hratio->GetXaxis()->SetTitle(hss->GetHistogram()->GetXaxis()->GetTitle());
+      hratio->GetXaxis()->SetTitleFont(font);
+      hratio->GetXaxis()->SetTitleSize(fontSize);
+      hratio->GetXaxis()->SetLabelSize(labelSize);
+      hratio->GetXaxis()->SetTitleOffset(12.0);
+      hratio->GetYaxis()->SetTitleFont(font);
+      hratio->GetYaxis()->SetTitleSize(fontSize);
+      hratio->GetYaxis()->SetLabelSize(labelSize);
+      hratio->GetYaxis()->SetTitleOffset(4.0);
+      hratio->GetYaxis()->SetNdivisions(6,3,0);
+      hratio->GetYaxis()->SetTitle("Data/MC");
+      hratio->SetMinimum(0.1);
+      hratio->SetMaximum(1.9);
+      return hratio;
   };
 
   std::function<double(const std::string&, std::string)> getCutCount = [&] (const std::string& folder, std::string cutLabel){
@@ -860,12 +861,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Central_%s",fromHisto,ch.first.c_str()));
       applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
       hsig->Write(Form("Wprime%d",wpmass));
+
+      auto hsigup = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Up_%s",fromHisto,ch.first.c_str()));
+      hsigup->Write(Form("Wprime%d_Up",wpmass));
+
+      auto hsigdown = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Down_%s",fromHisto,ch.first.c_str()));
+      hsigdown->Write(Form("Wprime%d_Down",wpmass));
+
       bin1 += ch.second + "\t";
       processn += "0\t";
       process += Form("Wprime%d\t",wpmass);
       rate += Form("%.2f\t",hsig->Integral());
       unc1 += "--\t";
-
 
       auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
                                     Form("%s_%s",fromHisto,ch.first.c_str()));
@@ -878,11 +885,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         bin1 += ch.second + "\t";
         processn += Form("%d\t",counter);
         process += BGN.folderName + "\t";
-        auto h = getHistoFromFile(Form("%d/%s",year,BGN.folderName.c_str()),Form("%s_Central_%s",fromHisto,ch.first.c_str()));
+        std::string fname = Form("%d/%s",year,BGN.folderName.c_str());
+        auto h = getHistoFromFile(fname.c_str(),Form("%s_Central_%s",fromHisto,ch.first.c_str()));
         applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
         rate += Form("%.2f\t",h->Integral());
         h->Write(BGN.folderName.c_str());
         unc1 += Form("%.4f\t",1. + lumiSyst[year]);
+
+        auto hup = getHistoFromFile(fname.c_str(),Form("%s_Up_%s",fromHisto,ch.first.c_str()));
+        applyLumiSF(hup, fname.c_str(), BGN.xsec);
+        hup->Write(std::string(BGN.folderName+"_Up").c_str());
+
+        auto hdown = getHistoFromFile(fname.c_str(),Form("%s_Down_%s",fromHisto,ch.first.c_str()));
+        applyLumiSF(hdown, fname.c_str(), BGN.xsec);
+        hup->Write(std::string(BGN.folderName+"_Down").c_str());
+
         ++counter;
       }
     }
@@ -890,7 +907,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t1\n";
     dcFile << "------------\n";
-    dcFile << Form("shapes * * %s $CHANNEL/$PROCESS\n",rootFilename.c_str());
+    dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
     dcFile << bin0 << std::endl;
     dcFile << obs << std::endl;
     dcFile << "------------\n";
