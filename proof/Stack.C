@@ -839,7 +839,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       { 2018, 0.025 },
     };
 
-    std::string rootFilename = Form("CombineFile_%d.root",year);
+    std::string rootFilename = Form("CombineFile_%d_%d.root",year,wpmass);
     TFile* fCombine = TFile::Open(rootFilename.c_str(),"UPDATE");
 
     std::string bin0 = "bin\t";
@@ -849,6 +849,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string process  = "process\t";
     std::string rate     = "rate\t";
     std::string unc1     = "lumi_13TeV\tlnN\t";
+    std::string unc2     = "CMS_AllSF\tshape\t";
 
 
     for(auto ch: channels){
@@ -862,11 +863,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
       hsig->Write(Form("Wprime%d",wpmass));
 
+      unc2 += "1.0\t";
       auto hsigup = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Up_%s",fromHisto,ch.first.c_str()));
-      hsigup->Write(Form("Wprime%d_Up",wpmass));
-
+      hsigup->Write(Form("Wprime%d_CMS_AllSFUp",wpmass));
       auto hsigdown = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Down_%s",fromHisto,ch.first.c_str()));
-      hsigdown->Write(Form("Wprime%d_Down",wpmass));
+      hsigdown->Write(Form("Wprime%d_CMS_AllSFDown",wpmass));
 
       bin1 += ch.second + "\t";
       processn += "0\t";
@@ -892,28 +893,32 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         h->Write(BGN.folderName.c_str());
         unc1 += Form("%.4f\t",1. + lumiSyst[year]);
 
+        unc2 += "1.0\t";
         auto hup = getHistoFromFile(fname.c_str(),Form("%s_Up_%s",fromHisto,ch.first.c_str()));
         applyLumiSF(hup, fname.c_str(), BGN.xsec);
-        hup->Write(std::string(BGN.folderName+"_Up").c_str());
+        hup->Write(std::string(BGN.folderName+"_CMS_AllSFUp").c_str());
 
         auto hdown = getHistoFromFile(fname.c_str(),Form("%s_Down_%s",fromHisto,ch.first.c_str()));
         applyLumiSF(hdown, fname.c_str(), BGN.xsec);
-        hup->Write(std::string(BGN.folderName+"_Down").c_str());
+        hup->Write(std::string(BGN.folderName+"_CMS_AllSFDown").c_str());
 
         ++counter;
       }
     }
 
 
-    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t1\n";
+    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t2\n";
     dcFile << "------------\n";
-    dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
+    dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $CHANNEL/$PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
     dcFile << bin0 << std::endl;
     dcFile << obs << std::endl;
     dcFile << "------------\n";
     dcFile << bin1 << std::endl << process << std::endl << processn << std::endl << rate << std::endl;
     dcFile << "------------\n";
     dcFile << unc1 << std::endl;
+    dcFile << unc2 << std::endl;
+
+    fCombine->Close();
 
   };
 
