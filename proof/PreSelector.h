@@ -21,6 +21,7 @@
 #include "EntryListMaker/EventSelection.h"
 #include "TGraphAsymmErrors.h"
 #include "IsData.h"
+#include <unordered_map>
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
@@ -232,7 +233,11 @@ class PreSelector : public EventSelection {
 
   Float_t PairZMass;
 
-  Double_t wdown, wcentral, wup;
+  Double_t wcentral;
+  Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
+    WElIDUp,WElIDDown,WMuIDUp,WMuIDDown;
+
+  std::unordered_map<std::string,int> HIdx;
 
  public :
 
