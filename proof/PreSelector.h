@@ -131,6 +131,7 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HMassZ;
   std::vector<TH1F*> HMassW;
   std::vector<TH1F*> HMassWZ;
+  std::vector<TH1F*> HPtZMWZ;
   std::vector<TH1F*> HLt;
   std::vector<TH1F*> HDistl1l2;
   std::vector<TH1F*> HDistl1l3;

@@ -261,6 +261,8 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "SR_B_MuID_Up",
     "SR_B_MuID_Down",
     "SR_C_ElTrigger_Up",
+    "SR_C_ElTrigger_Down",
+    "SR_C_MuTrigger_Up",
     "SR_C_MuTrigger_Down",
     "SR_C_ElID_Up",
     "SR_C_ElID_Down",
@@ -364,6 +366,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t MaxWZMass = 5500.;
   const Int_t WZMassBins = 100;
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
+  InitHVec<TH1F>(HPtZMWZ,"HPtZMWZ",40,0.,2);
 
   const Float_t MaxLt = 1000.;
   const Int_t NLtBins = 50;
@@ -1115,6 +1118,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HMassZ,nh,PairZMass);
   FillH1(HMassTW,nh,wmt);
   FillH1(HMassWZ,nh,(wb+zb).M());
+  FillH1(HPtZMWZ,nh,zb.Pt()/(wb+zb).M());
 
   // HiggsCombine Syst Histos
   double wzm = (wb+zb).M();
@@ -1636,7 +1640,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_MuZPt70MuonMet60_CombineHistos.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_MuZPt70MuonMet60_PtMWZRatio.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
