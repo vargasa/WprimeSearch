@@ -43,7 +43,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         2016,
         {
           BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-            kOrange,5.052},  /*XSecAnalyzer 0.*/
+            kOrange,4.43},  /*XSecAnalyzer 0.*/
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
             kBlue,1.256},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
@@ -70,14 +70,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kCyan+1,0.283}, /*XSecAnayzer 0.*/
           BackgroundInfo{"TTV","ttZJets_13TeV_madgraphMLM-pythia8",
             kCyan+1,6.559e-1},
-          BackgroundInfo{"VVV","WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-            kGreen+1,2.086e-1},
-          BackgroundInfo{"VVV","WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-            kGreen+1,1.651e-1},
-          BackgroundInfo{"VVV","WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-            kGreen+1,5.565e-2},
-          BackgroundInfo{"VVV","ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-            kGreen+1,1.398e-2},
+          BackgroundInfo{"WWW","WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+			 14,2.086e-1},
+          BackgroundInfo{"WWZ","WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+			 15,1.651e-1},
+          BackgroundInfo{"WZZ","WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+			 16,5.565e-2},
+          BackgroundInfo{"ZZZ","ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+			 17,1.398e-2},
           BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8",
                          43,2.703e-3}, /*AN2019_252_v1*/
           BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8",
@@ -819,7 +819,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  auto printDataCard = [&] (const int& year, const int& wpmass) {
+
+
+  std::function<void(const int&, const int&)>
+    printDataCard = [&] (const int& year, const int& wpmass) {
 
     const char* fromHisto = "HMassWZ_SR";
 
@@ -849,8 +852,59 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string process  = "process\t";
     std::string rate     = "rate\t";
     std::string unc1     = "lumi_13TeV\tlnN\t";
-    std::string unc2     = "CMS_AllSF\tshape\t";
+    std::vector<std::string> systEl = { "ElTrigger","ElID" };
+    std::vector<std::string> systMu = { "MuTrigger","MuID" };
+    std::string unc2     = "CMS_ElTrigger\tshape\t";
+    std::string unc3     = "CMS_MuTrigger\tshape\t";
+    std::string unc4     = "CMS_ElID\tshape\t";
+    std::string unc5     = "CMS_MuID\tshape\t";
 
+
+
+
+    std::function<void(const std::string&, const std::string&, const float&)>
+    saveHisto = [&] (const std::string& sampleName,
+                     const std::string& ch,
+                     const float& xsec){
+
+      std::function<void(const std::string&,
+                         const std::string&,
+                         const std::string&)>
+      saveUpDown = [&] (std::string folder, std::string hname, std::string s/*ystematic*/){
+        auto hup = getHistoFromFile(folder.c_str(),Form("%s_Up",hname.c_str()));
+        applyLumiSF(hup, folder.c_str(), xsec);
+        hup->Write(std::string(sampleName+Form("_CMS_%s_Up",s.c_str())).c_str());
+        auto hdown = getHistoFromFile(folder.c_str(),Form("%s_Down",hname.c_str()));
+        applyLumiSF(hdown, folder.c_str(), xsec);
+        hup->Write(std::string(sampleName+Form("_CMS_%s_Down",s.c_str())).c_str());
+      };
+
+      if(ch == "A"){
+        for (auto s: systEl) {
+          std::string folderName = Form("%d/%s",year,sampleName.c_str());
+          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          saveUpDown(folderName,hname,s);
+        }
+      } else if (ch == "B" or ch == "C"){
+        for (auto s: systEl) {
+          std::string folderName = Form("%d/%s",year,sampleName.c_str());
+          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          saveUpDown(folderName,hname,s);
+        }
+        for (auto s: systMu) {
+          std::string folderName = Form("%d/%s",year,sampleName.c_str());
+          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          saveUpDown(folderName,hname,s);
+        }
+      } else if (ch == "D"){
+        for (auto s: systMu) {
+          std::string folderName = Form("%d/%s",year,sampleName.c_str());
+          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          saveUpDown(folderName,hname,s);
+        }
+      }
+
+    };
 
     for(auto ch: channels){
 
@@ -859,21 +913,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       fCombine->cd(ch.second.c_str());
 
       SignalInfo signal = SignalSamples[year][SignalPos[wpmass]];
-      TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Central_%s",fromHisto,ch.first.c_str()));
+      TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_%s_Central",fromHisto,ch.first.c_str()));
       applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
       hsig->Write(Form("Wprime%d",wpmass));
 
-      unc2 += "1.0\t";
-      auto hsigup = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Up_%s",fromHisto,ch.first.c_str()));
-      hsigup->Write(Form("Wprime%d_CMS_AllSFUp",wpmass));
-      auto hsigdown = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_Down_%s",fromHisto,ch.first.c_str()));
-      hsigdown->Write(Form("Wprime%d_CMS_AllSFDown",wpmass));
+      saveHisto(signal.folderName, ch.first, signal.xsec);
 
       bin1 += ch.second + "\t";
       processn += "0\t";
       process += Form("Wprime%d\t",wpmass);
       rate += Form("%.2f\t",hsig->Integral());
       unc1 += "--\t";
+      unc2 += "--\t";
+      unc3 += "--\t";
+      unc4 += "--\t";
+      unc5 += "--\t";
 
       auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
                                     Form("%s_%s",fromHisto,ch.first.c_str()));
@@ -887,21 +941,37 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         processn += Form("%d\t",counter);
         process += BGN.folderName + "\t";
         std::string fname = Form("%d/%s",year,BGN.folderName.c_str());
-        auto h = getHistoFromFile(fname.c_str(),Form("%s_Central_%s",fromHisto,ch.first.c_str()));
+        auto h = getHistoFromFile(fname.c_str(),Form("%s_%s_Central",fromHisto,ch.first.c_str()));
         applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
         rate += Form("%.2f\t",h->Integral());
         h->Write(BGN.folderName.c_str());
         unc1 += Form("%.4f\t",1. + lumiSyst[year]);
 
-        unc2 += "1.0\t";
-        auto hup = getHistoFromFile(fname.c_str(),Form("%s_Up_%s",fromHisto,ch.first.c_str()));
-        applyLumiSF(hup, fname.c_str(), BGN.xsec);
-        hup->Write(std::string(BGN.folderName+"_CMS_AllSFUp").c_str());
-
-        auto hdown = getHistoFromFile(fname.c_str(),Form("%s_Down_%s",fromHisto,ch.first.c_str()));
-        applyLumiSF(hdown, fname.c_str(), BGN.xsec);
-        hup->Write(std::string(BGN.folderName+"_CMS_AllSFDown").c_str());
-
+        if (ch.first == "A") {
+          unc2 += "1.0\t";
+          unc3 += "-\t";
+          unc4 += "1.0\t";
+          unc5 += "-\t";
+          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
+        } else if (ch.first == "B") {
+          unc2 += "1.0\t";
+          unc3 += "1.0\t";
+          unc4 += "1.0\t";
+          unc5 += "1.0\t";
+          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
+        } else if (ch.first == "C") {
+          unc2 += "1.0\t";
+          unc3 += "1.0\t";
+          unc4 += "1.0\t";
+          unc5 += "1.0\t";
+          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
+        } else if (ch.first == "D") {
+          unc2 += "-\t";
+          unc3 += "1.0\t";
+          unc4 += "-\t";
+          unc5 += "1.0\t";
+          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
+        }
         ++counter;
       }
     }
@@ -917,14 +987,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << "------------\n";
     dcFile << unc1 << std::endl;
     dcFile << unc2 << std::endl;
+    dcFile << unc3 << std::endl;
+    dcFile << unc4 << std::endl;
+    dcFile << unc5 << std::endl;
 
     fCombine->Close();
 
   };
 
-  for(auto wpm: SignalPos){
-    printDataCard(2016,wpm.first);
+  for(auto n: SignalPos){
+    printDataCard(2016,n.first);
   }
+
 
   std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [&](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
 
