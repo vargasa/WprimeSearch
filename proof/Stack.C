@@ -873,10 +873,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       saveUpDown = [&] (std::string folder, std::string hname, std::string s/*ystematic*/){
         auto hup = getHistoFromFile(folder.c_str(),Form("%s_Up",hname.c_str()));
         applyLumiSF(hup, folder.c_str(), xsec);
-        hup->Write(std::string(sampleName+Form("_CMS_%s_Up",s.c_str())).c_str());
+        hup->Write(std::string(sampleName+Form("_CMS_%sUp",s.c_str())).c_str());
         auto hdown = getHistoFromFile(folder.c_str(),Form("%s_Down",hname.c_str()));
         applyLumiSF(hdown, folder.c_str(), xsec);
-        hup->Write(std::string(sampleName+Form("_CMS_%s_Down",s.c_str())).c_str());
+        hup->Write(std::string(sampleName+Form("_CMS_%sDown",s.c_str())).c_str());
       };
 
       if(ch == "A"){
@@ -977,7 +977,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
 
 
-    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t2\n";
+    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t5\n";
     dcFile << "------------\n";
     dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $CHANNEL/$PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
     dcFile << bin0 << std::endl;
@@ -1278,12 +1278,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       Int_t r = (j-1)%npads;
       c1->cd(r+1);
       std::string dataHName = hName;
-      if (hName.find("Central") != std::string::npos) {
-        dataHName.erase(dataHName.find("Central_"),8); //Strip out Central_
-      } else if (hName.find("Up_") != std::string::npos) {
-        dataHName.erase(dataHName.find("Up_"),3); //Strip out Central_
-      } else if (hName.find("Down_") != std::string::npos) {
-        dataHName.erase(dataHName.find("Down_"),5); //Strip out Central_
+      if (hName.find("_Central") != std::string::npos) {
+        dataHName.erase(dataHName.find("_Central"),8); //Strip out Central_
+      } else if (hName.find("_Up") != std::string::npos) {
+        dataHName.erase(dataHName.find("_Up"),3); //Strip out Central_
+      } else if (hName.find("_Down") != std::string::npos) {
+        dataHName.erase(dataHName.find("_Down"),5); //Strip out Central_
       }
       pngname += dataHName + "_";
 
@@ -1400,7 +1400,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     for(auto chhs: chs){
       std::vector<std::string> hNames;
       for(auto h: hints){
-        hNames.emplace_back(Form("%d/%s_SR_Central_%s",yr,h.c_str(),chhs.c_str()));
+        hNames.emplace_back(Form("%d/%s_CR1_%s_Central",yr,h.c_str(),chhs.c_str()));
         if(hNames.size() == 6){
           canvasStacked(600,hNames);
           hNames.clear();
@@ -1426,55 +1426,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       // printH2Comb(year, signal, "HPtWPtZ_SR_+ABCD");
       // printH2Comb(year, signal, "HDeltaRPtZ_SR_+ABCD");
       // printH2Comb(year, signal, "HLtMWZ_SR_+ABCD");
-
-      /*** BGStack + Signal ***/
-
-      std::vector<std::string> channels = {
-        "SR_A","SR_B","SR_C","SR_D","SR_+ABCD",
-        "SR_Central_A","SR_Central_B","SR_Central_C","SR_Central_D","SR_Central_+ABCD",
-        "CR1_A","CR1_B","CR1_C","CR1_D","CR1_+ABCD",
-        "CR1_Central_A","CR1_Central_B","CR1_Central_C","CR1_Central_D","CR1_Central_+ABCD"
-      };
-
-      for(const auto& ch: channels) {
-        std::vector<std::string> hNames;
-        for (auto HN : HistNames) {
-          hNames.emplace_back(Form("%d/%s_%s",year,HN.c_str(),ch.c_str()));
-          if(hNames.size()==4) {
-            canvasStacked(WpMass,hNames);
-            hNames.clear();
-          }
-        }
-      }
-
-      /*** Compare CR vs SR ***/
-
-      std::vector<std::string> chs = {"A","B","C","D","+ABCD"};
-      std::vector<std::string> chk = {"_SR", "_CR1"};
-      std::vector<std::string> hints = {
-        "HMassTW","HPileup",
-        "HMassZ","HMassWZ",
-        "HPtl1","HPtl2",
-        "HPtl3","HMetPt",
-        "HDistl1l2","HDistl2l3",
-        "HPileup","HLt",
-        "HEtal1", "HEtal2",
-        "HEtal3","HPhil1",
-        "HPhil2","HPhil3"
-      };
-
-      for(auto chhs: chs){
-        std::vector<std::string> hNames;
-        for(auto HN: hints){
-          for(auto k: chk){
-            hNames.emplace_back(Form("%d/%s%s_Central_%s",year,HN.c_str(),k.c_str(),chhs.c_str()));
-          }
-          if(hNames.size() == 4){
-            canvasStacked(WpMass,hNames);
-            hNames.clear();
-          }
-        }
-      }
 
     }
   }
