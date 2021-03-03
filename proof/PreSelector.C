@@ -307,6 +307,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HDistl1l2,"HDistl1l2",DistBins,0.,MaxDist);
   InitHVec<TH1F>(HDistl1l3,"HDistl1l3",DistBins,0.,MaxDist);
   InitHVec<TH1F>(HDistl2l3,"HDistl2l3",DistBins,0.,MaxDist);
+  InitHVec<TH1F>(HDistZl3,"HDistZl3",DistBins,0.,MaxDist);
+  InitHVec<TH1F>(HDistZW,"HDistZW",DistBins,0.,MaxDist);
 
   InitHVec<TH1F>(HWZDist,"HWZDist",DistBins,0.,MaxDist);
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
@@ -368,7 +370,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t MaxWZMass = 5500.;
   const Int_t WZMassBins = 100;
   InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
-  InitHVec<TH1F>(HPtZMWZ,"HPtZMWZ",40,0.,2);
+  InitHVec<TH1F>(HPtZMWZ,"HPtZMWZ",60,0.,2);
+  InitHVec<TH1F>(HPtWMWZ,"HPtWMWZ",60,0.,2);
 
   const Float_t MaxLt = 1000.;
   const Int_t NLtBins = 50;
@@ -1116,14 +1119,15 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HnbTag,nh,(double)nbQ);
 
   // Mass Histos
+  double wzm = (wb+zb).M();
   FillH1(HMassW,nh,wb.M());
   FillH1(HMassZ,nh,PairZMass);
   FillH1(HMassTW,nh,wmt);
-  FillH1(HMassWZ,nh,(wb+zb).M());
-  FillH1(HPtZMWZ,nh,zb.Pt()/(wb+zb).M());
+  FillH1(HMassWZ,nh,wzm);
+  FillH1(HPtZMWZ,nh,zb.Pt()/wzm);
+  FillH1(HPtWMWZ,nh,wb.Pt()/wzm);
 
   // HiggsCombine Syst Histos
-  double wzm = (wb+zb).M();
   if(IsA_){
     HMassWZ[HIdx["SR_A_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
     HMassWZ[HIdx["SR_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
@@ -1159,6 +1163,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HDistl1l2,nh,l1l2dist);
   FillH1(HDistl1l3,nh,l1l3dist);
   FillH1(HDistl2l3,nh,l2l3dist);
+  FillH1(HDistZl3,nh,GetEtaPhiDistance(zb.Eta(),zb.Phi(),lep3.Eta(),lep3.Phi()));
+  FillH1(HDistZW,nh,GetEtaPhiDistance(zb.Eta(),zb.Phi(),wb.Eta(),wb.Phi()));
 
   // Phi Histos
   FillH1(HPhil1,nh,lep1.Phi());
