@@ -303,6 +303,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HWZDist_C","dr(W,Z) ee#mu#nu;dR (cm);Event count"},
     { "HWZDist_D","dr(W,Z) #mu#mu#mu#nu;dR (cm);Event count"},
     { "HWZDist_+ABCD","dR(W,Z) lll#nu;dR (cm);Event count"},
+    { "HPtZMWZ_A","P_{t}^{Z}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HPtZMWZ_B","P_{t}^{Z}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HPtZMWZ_C","P_{t}^{Z}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HPtZMWZ_D","P_{t}^{Z}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HPtWMWZ_A","P_{t}^{W}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HPtWMWZ_B","P_{t}^{W}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HPtWMWZ_C","P_{t}^{W}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HPtWMWZ_D","P_{t}^{W}/M_{WZ};P_{t}^{Z}/M_{WZ};Event count"},
+    { "HDistZl3_A","dr(Z,e_{3});dr(Z,e_{3})(cm);Event count"},
+    { "HDistZl3_B","dr(Z,#mu);dr(Z(e,e),#mu)(cm);Event count"},
+    { "HDistZl3_C","dr(Z,e);dr(Z(mu,mu),e)(cm);Event count"},
+    { "HDistZl3_D","dr(Z,#mu);dr(Z,#mu)(cm);Event count"},
+    { "HDistZW_A","dr(Z,W);dr(Z(e,e),W(e,#nu))(cm);Event count"},
+    { "HDistZW_B","dr(Z,W);dr(Z(e,e),W(#mu,#nu))(cm);Event count"},
+    { "HDistZW_C","dr(Z,W);dr(Z(#mu,#mu),W)(cm);Event count"},
+    { "HDistZW_D","dr(Z,W);dr(Z,W)(cm);Event count"},
     { "HnEl_A","n_{e};n_{e};Event count"},
     { "HnEl_B","n_{e};n_{e};Event count"},
     { "HnEl_C","n_{e};n_{e};Event count"},
@@ -484,23 +500,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-
-  std::function<void(TH1* h,const Double_t&)> blindHisto = [](TH1* h, const Double_t& wpmass) {
-    Int_t nBin = h->FindBin(wpmass);
-    for(int i = -1; i < 20; ++i){
-      h->SetBinContent(nBin+i,0.);
-      h->SetBinError(nBin+i,0.);
-    }
-  };
-
-  auto blindStack = [&](THStack * hst, const Double_t& wpmass) {
-
-    TObjLink *lnk = hst->GetHists()->FirstLink();
-    while (lnk) {
-      blindHisto(static_cast<TH1*>(lnk->GetObject()),wpmass);
-      lnk = lnk->Next();
-    }
-  };
 
   auto getErrorHisto = [](THStack* hst){
     TList* lst = hst->GetHists();
@@ -1244,7 +1243,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
 
   auto canvasStacked = [&] (const Int_t WpMass,
-                            std::vector<std::string> names) {
+                            std::vector<std::string> names,
+                            bool includeData = true) {
 
     const Int_t npads = names.size();
 
@@ -1292,11 +1292,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       const Float_t topMargin = 0.12;
       const Float_t bottomMargin = 0.5;
 
-      auto mainPad = new TPad(Form("mainPad_%s",hName.c_str()),"mainPad",0.,0.25,1.,1.);
+      TPad *mainPad;
+
+      if (includeData) {
+        mainPad = new TPad(Form("mainPad_%s",hName.c_str()),"mainPad",0.,0.25,1.,1.);
+        mainPad->SetBottomMargin(1e-3);
+      } else {
+        mainPad = new TPad(Form("mainPad_%s",hName.c_str()),"mainPad",0.,0.,1.,1.);
+      }
+
       mainPad->Draw();
       mainPad->SetLeftMargin(leftMargin);
       mainPad->SetRightMargin(rightMargin);
-      mainPad->SetBottomMargin(1e-3);
       mainPad->SetLogy();
       mainPad->SetTickx();
       mainPad->SetTicky();
@@ -1315,19 +1322,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       lumiLabel->SetTextAlign(12);
       lumiLabel->Draw();
 
-      auto subPad = new TPad(Form("mainPad_%s",hName.c_str()),"subPad",0.,0.,1.,0.25);
-      subPad->Draw();
-      subPad->SetLeftMargin(leftMargin);
-      subPad->SetRightMargin(rightMargin);
-      subPad->SetTopMargin(1e-3);
-      subPad->SetBottomMargin(bottomMargin);
-
       auto legend = new TLegend(0.3, 0.66, .87, .89);
       legend->SetNColumns(2);
 
       THStack *hs = new THStack("hs","");
       hs = getBGStack(year,hName,legend);
-      //blindStack(hs,WpMass);
       TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
       auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
@@ -1359,22 +1358,33 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.25)+1);
       double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.25)-1);
       hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
+      fixYRange(hs,getMaxY(last));
 
-      auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
-      hdata->SetMarkerStyle(kFullCircle);
-      fixYRange(hs,getMaxY(hdata));
-      hdata->Draw("SAME P");
-      TH1F* herror = getErrorHisto(hs);
-      herror->Draw("SAME E2");
-      //blindHisto(hdata,WpMass);
-      legend->AddEntry(hdata, Form("Data%d",year));
+      if (includeData) {
+        auto subPad = new TPad(Form("mainPad_%s",hName.c_str()),"subPad",0.,0.,1.,0.25);
+        c1->cd(r+1);
+        subPad->Draw();
+        subPad->SetLeftMargin(leftMargin);
+        subPad->SetRightMargin(rightMargin);
+        subPad->SetTopMargin(1e-3);
+        subPad->SetBottomMargin(bottomMargin);
 
-      auto hcdata = getRatio(hdata,hs);
-      subPad->cd();
-      subPad->SetGrid();
-      hcdata->Draw();
-      subPad->SetFrameLineWidth(1);
-      hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+        auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
+        mainPad->cd();
+        hdata->SetMarkerStyle(kFullCircle);
+        fixYRange(hs,getMaxY(hdata));
+        hdata->Draw("SAME P");
+        TH1F* herror = getErrorHisto(hs);
+        herror->Draw("SAME E2");
+        legend->AddEntry(hdata, Form("Data%d",year));
+
+        auto hcdata = getRatio(hdata,hs);
+        subPad->cd();
+        subPad->SetGrid();
+        hcdata->Draw();
+        subPad->SetFrameLineWidth(1);
+        hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+      }
       ++j;
 
       mainPad->cd();
