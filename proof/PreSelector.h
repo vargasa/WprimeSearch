@@ -194,11 +194,15 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HPtl1;
   std::vector<TH1F*> HPtl2;
   std::vector<TH1F*> HPtl3;
+  std::vector<TH1F*> HElPt;
+  std::vector<TH1F*> HMuPt;
   std::vector<TH1F*> HMetPt;
 
   std::vector<TH1F*> HEtal1;
   std::vector<TH1F*> HEtal2;
   std::vector<TH1F*> HEtal3;
+  std::vector<TH1F*> HElEta;
+  std::vector<TH1F*> HMuEta;
 
   std::vector<TH2F*> HPtEtal1;
   std::vector<TH2F*> HPtEtal2;
@@ -207,6 +211,8 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HPhil1;
   std::vector<TH1F*> HPhil2;
   std::vector<TH1F*> HPhil3;
+  std::vector<TH1F*> HElPhi;
+  std::vector<TH1F*> HMuPhi;
   std::vector<TH1F*> HMetPhi;
 
   std::vector<TH1F*> HWZDist;

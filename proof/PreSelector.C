@@ -470,6 +470,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HPtl1,"HPtl1",25,0.,250.);
   InitHVec<TH1F>(HPtl2,"HPtl2",20.,0.,100.);
   InitHVec<TH1F>(HPtl3,"HPtl3",40,0.,400.);
+  InitHVec<TH1F>(HElPt,"HElPt",40,0.,400.);
+  InitHVec<TH1F>(HMuPt,"HMuPt",40,0.,400.);
   InitHVec<TH1F>(HMetPt,"HMetPt",MetBins,MinMet,MaxMet);
 
   const Float_t MaxEta = 3.;
@@ -478,6 +480,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HEtal1,"HEtal1",EtaBins,-1*MaxEta,MaxEta);
   InitHVec<TH1F>(HEtal2,"HEtal2",EtaBins,-1*MaxEta,MaxEta);
   InitHVec<TH1F>(HEtal3,"HEtal3",EtaBins,-1*MaxEta,MaxEta);
+  InitHVec<TH1F>(HElEta,"HElEta",EtaBins,-1*MaxEta,MaxEta);
+  InitHVec<TH1F>(HMuEta,"HMuEta",EtaBins,-1*MaxEta,MaxEta);
 
   InitHVec<TH2F>(HPtEtal1,"HPtEtal1",
                  MetBins,0, MaxPt,
@@ -502,6 +506,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HPhil1,"HPhil1",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil2,"HPhil2",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil3,"HPhil3",PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH1F>(HElPhi,"HElPhi",PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH1F>(HMuPhi,"HMuPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMetPhi,"HMetPhi",PhiBins,-1*MaxPhi,MaxPhi);
 
 #ifndef CMSDATA
@@ -1129,11 +1135,29 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 
   // HiggsCombine Syst Histos
   if(IsA_){
+    FillH1(HElPt,nh,lep1.Pt());
+    FillH1(HElPt,nh,lep2.Pt());
+    FillH1(HElPt,nh,lep3.Pt());
+    FillH1(HElEta,nh,lep1.Eta());
+    FillH1(HElEta,nh,lep2.Eta());
+    FillH1(HElEta,nh,lep3.Eta());
+    FillH1(HElPhi,nh,lep1.Phi());
+    FillH1(HElPhi,nh,lep2.Phi());
+    FillH1(HElPhi,nh,lep3.Phi());
     HMassWZ[HIdx["SR_A_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
     HMassWZ[HIdx["SR_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_A_ElID_Up"]]->Fill(wzm,WElIDUp);
     HMassWZ[HIdx["SR_A_ElID_Down"]]->Fill(wzm,WElIDDown);
   } else if (IsB) {
+    FillH1(HElPt,nh,lep1.Pt());
+    FillH1(HElPt,nh,lep2.Pt());
+    FillH1(HMuPt,nh,lep3.Pt());
+    FillH1(HElEta,nh,lep1.Eta());
+    FillH1(HElEta,nh,lep2.Eta());
+    FillH1(HMuEta,nh,lep3.Eta());
+    FillH1(HElPhi,nh,lep1.Phi());
+    FillH1(HElPhi,nh,lep2.Phi());
+    FillH1(HMuPhi,nh,lep3.Phi());
     HMassWZ[HIdx["SR_B_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
     HMassWZ[HIdx["SR_B_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_B_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
@@ -1143,6 +1167,15 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_B_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
   } else if (IsC) {
+    FillH1(HMuPt,nh,lep1.Pt());
+    FillH1(HMuPt,nh,lep2.Pt());
+    FillH1(HElPt,nh,lep3.Pt());
+    FillH1(HMuEta,nh,lep1.Eta());
+    FillH1(HMuEta,nh,lep2.Eta());
+    FillH1(HElEta,nh,lep3.Eta());
+    FillH1(HMuPhi,nh,lep1.Phi());
+    FillH1(HMuPhi,nh,lep2.Phi());
+    FillH1(HElPhi,nh,lep3.Phi());
     HMassWZ[HIdx["SR_C_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
     HMassWZ[HIdx["SR_C_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_C_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
@@ -1152,6 +1185,15 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_C_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
   } else if (IsD) {
+    FillH1(HMuPt,nh,lep1.Pt());
+    FillH1(HMuPt,nh,lep2.Pt());
+    FillH1(HMuPt,nh,lep3.Pt());
+    FillH1(HMuEta,nh,lep1.Eta());
+    FillH1(HMuEta,nh,lep2.Eta());
+    FillH1(HMuEta,nh,lep3.Eta());
+    FillH1(HMuPhi,nh,lep1.Phi());
+    FillH1(HMuPhi,nh,lep2.Phi());
+    FillH1(HMuPhi,nh,lep3.Phi());
     HMassWZ[HIdx["SR_D_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
     HMassWZ[HIdx["SR_D_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
     HMassWZ[HIdx["SR_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
@@ -1648,7 +1690,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_MuZPt70MuonMet60_PtMWZRatio.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_CombinedDistributions.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
