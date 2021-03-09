@@ -631,31 +631,32 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::function<TH1*(std::string,std::string)> getHistoFromFile = [&](std::string folder, std::string hName){
     std::string hpath = Form("%s/%s",folder.c_str(),hName.c_str());
     std::clog << "Getting Histo From File: " << hpath << std::endl;
+
     if(hName.find("_+") != std::string::npos){
-      if (hName.find("_+H") != std::string::npos) { // Sum histograms
-        for(const auto hn: hName.substr(hName.find("_+")+2)){
-          std::cout << hn << std::endl;
-        }
-      } else { // Sum same histogram different channels
-        std::vector<std::string> chn;
-        chn.reserve(6);
-        for (const auto ch: hName.substr(hName.find("_+")+2)) {
-          if ( ch == std::string("_") ) break;
-          chn.emplace_back(Form("%c",ch));
-        }
-        TH1* hAll = nullptr;
-        for(const auto& ch: chn){
-          std::string hn = hName.substr(0,hName.find("_+") + 1);
-          std::string hln = hName.substr(hName.find("_+") + 2 + chn.size());
-          std::string fhn = hn + ch + hln;
-          if(!hAll){
-            hAll = static_cast<TH1*>(getHistoFromFile(folder,fhn));
-          } else {
-            hAll->Add(static_cast<TH1*>(getHistoFromFile(folder,fhn)));
-          }
-        }
-        return hAll;
+      std::vector<std::string> chn;
+      chn.reserve(6);
+      TH1* hAll = nullptr;
+      for (const auto ch: hName.substr(hName.find("_+")+2)) {
+        if ( ch == std::string("_") ) break;
+        chn.emplace_back(Form("%c",ch));
       }
+      for(const auto& ch: chn){
+        std::string hn = hName.substr(0, hName.find("_+") + 1);
+        std::string hln = hName.substr(hName.find("_+") + 2 + chn.size());
+        std::string fhn = hn + ch + hln;
+        if(!hAll){
+          hAll = static_cast<TH1*>(getHistoFromFile(folder,fhn));
+        } else {
+          hAll->Add(static_cast<TH1*>(getHistoFromFile(folder,fhn)));
+        }
+      }
+      return hAll;
+    } else if (hName.find("+H") != std::string::npos) {
+      std::string hn = hName.substr(0,hName.find("+"));
+      std::string hnew = hName.substr(hn.size()+1);
+      TH1* hAll = getHistoFromFile(folder,hn);
+      hAll->Add(static_cast<TH1*>(getHistoFromFile(folder,hnew)));
+      return hAll;
     }
     auto h = static_cast<TH1*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1*>(h->Clone());
@@ -1256,15 +1257,35 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  auto canvasStacked = [&] (const Int_t WpMass,
-                            std::vector<std::string> names,
-                            bool includeData = true) {
+  std::function<void(const Int_t, std::vector<std::string>,bool)>
+    canvasStacked = [&] (const Int_t WpMass,
+                         std::vector<std::string> names,
+                         bool includeData = true) {
 
     const Int_t npads = names.size();
 
-    TCanvas* c1;
+    std::function<void(std::string&)> removeCentral = [&] (std::string& s){
+      if (s.find("_Central") != std::string::npos){
+        s.erase(s.find("_Central"),8);
 
-    if (npads == 3) {
+      } else if (s.find("_Up") != std::string::npos) {
+        s.erase(s.find("_Up"),3);
+      } else if ( s.find("_Down") != std::string::npos){
+        s.erase(s.find("_Down"),5);
+      }
+      if (s.find("_Central") != std::string::npos)  removeCentral(s);
+      if (s.find("_Up")      != std::string::npos)  removeCentral(s);
+      if (s.find("_Down")    != std::string::npos)  removeCentral(s);
+    };
+
+    TCanvas* c1;
+    if ( npads == 1 ){
+      c1 = new TCanvas("cs","cs",10,10,600,600);
+      c1->Divide(1,1);
+    } else if( npads == 2 ){
+      c1 = new TCanvas("cs","cs",10,10,1200,600);
+      c1->Divide(2,1);
+    } else if (npads == 3) {
       c1 = new TCanvas("cs","cs",10,10,1800,600);
       c1->Divide(3,1);
     } else if (npads == 4){
@@ -1276,7 +1297,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     } else if (npads == 8) {
       c1 = new TCanvas("cs","cs",10,10,2000,1000);
       c1->Divide(4,2);
-
     } else {
       std::clog << "Undefined canvas division: " << npads << "\n";
     }
@@ -1292,13 +1312,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       Int_t r = (j-1)%npads;
       c1->cd(r+1);
       std::string dataHName = hName;
-      if (hName.find("_Central") != std::string::npos) {
-        dataHName.erase(dataHName.find("_Central"),8); //Strip out Central_
-      } else if (hName.find("_Up") != std::string::npos) {
-        dataHName.erase(dataHName.find("_Up"),3); //Strip out Central_
-      } else if (hName.find("_Down") != std::string::npos) {
-        dataHName.erase(dataHName.find("_Down"),5); //Strip out Central_
-      }
+      removeCentral(dataHName);
       pngname += dataHName + "_";
 
       const Float_t leftMargin = 0.12;
