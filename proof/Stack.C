@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string.h>
 #include "THStack.h"
 
 void Stack(std::string FileName = "WprimeHistos_all.root"){
@@ -568,6 +569,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto hcdata = static_cast<TH1*>(hhdata->Clone());
       auto hcmc = static_cast<TH1*>(hss->GetStack()->Last());
       auto hratio = new TGraphAsymmErrors(hcdata,hcmc,"pois");
+      for(uint i = 0; i < hratio->GetN(); i++){
+        hratio->SetPointEXhigh(i,0);
+        hratio->SetPointEXlow(i,0);
+      }
       hratio->SetMarkerColor(kBlack);
       hratio->SetMarkerStyle(20);
       hratio->SetMarkerSize(.5);
@@ -627,21 +632,30 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string hpath = Form("%s/%s",folder.c_str(),hName.c_str());
     std::clog << "Getting Histo From File: " << hpath << std::endl;
     if(hName.find("_+") != std::string::npos){
-      std::vector<std::string> chn;
-      chn.reserve(6);
-      for(const auto ch: hName.substr(hName.find("_+")+2)){
-        chn.emplace_back(Form("%c",ch));
-      }
-      TH1* hAll = nullptr;
-      for(const auto& ch: chn){
-        std::string hn = hName.substr(0,hName.find("_+"));
-        if(!hAll){
-          hAll = static_cast<TH1*>(getHistoFromFile(folder,hn + "_" + ch));
-        } else {
-          hAll->Add(static_cast<TH1*>(getHistoFromFile(folder,hn + "_" + ch)));
+      if (hName.find("_+H") != std::string::npos) { // Sum histograms
+        for(const auto hn: hName.substr(hName.find("_+")+2)){
+          std::cout << hn << std::endl;
         }
+      } else { // Sum same histogram different channels
+        std::vector<std::string> chn;
+        chn.reserve(6);
+        for (const auto ch: hName.substr(hName.find("_+")+2)) {
+          if ( ch == std::string("_") ) break;
+          chn.emplace_back(Form("%c",ch));
+        }
+        TH1* hAll = nullptr;
+        for(const auto& ch: chn){
+          std::string hn = hName.substr(0,hName.find("_+") + 1);
+          std::string hln = hName.substr(hName.find("_+") + 2 + chn.size());
+          std::string fhn = hn + ch + hln;
+          if(!hAll){
+            hAll = static_cast<TH1*>(getHistoFromFile(folder,fhn));
+          } else {
+            hAll->Add(static_cast<TH1*>(getHistoFromFile(folder,fhn)));
+          }
+        }
+        return hAll;
       }
-      return hAll;
     }
     auto h = static_cast<TH1*>(f1->Get(hpath.c_str()));
     h = static_cast<TH1*>(h->Clone());
@@ -1381,7 +1395,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         auto hcdata = getRatio(hdata,hs);
         subPad->cd();
         subPad->SetGrid();
-        hcdata->Draw();
+        hcdata->Draw("AP");
         subPad->SetFrameLineWidth(1);
         hcdata->GetXaxis()->SetRangeUser(minx,maxx);
       }
@@ -1402,19 +1416,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::vector<int> pyear = { 2016, 2017, 2018 };
   std::vector<std::string> chs = { "A","B","C","D" };
   std::vector<std::string> hints = {
-    "HMassZ","HMassWZ",
-    "HPtl1","HPtl2","HPtl3","HMetPt",
+    "HMassZ_CR1_+ABCD","HMassWZ_CR1_+ABCD",
+    "HMassTW_CR1_+ABCD","HMetPt_CR1_+ABCD"
   };
 
   for(auto yr: pyear){
-    for(auto chhs: chs){
-      std::vector<std::string> hNames;
-      for(auto h: hints){
-        hNames.emplace_back(Form("%d/%s_CR1_%s_Central",yr,h.c_str(),chhs.c_str()));
-        if(hNames.size() == 6){
-          canvasStacked(600,hNames);
-          hNames.clear();
-        }
+    std::vector<std::string> hNames;
+    for(auto h : hints){
+      hNames.emplace_back(Form("%d/%s_Central",yr,h.c_str()));
+      std::cout << Form("%d/%s_Central\n",yr,h.c_str()) ;
+      if(hNames.size() == 4){
+        canvasStacked(600,hNames,true);
+        hNames.clear();
       }
     }
   }
