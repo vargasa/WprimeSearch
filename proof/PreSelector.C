@@ -428,11 +428,17 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HPileup_,"HPileup",nPvsBins,minPvs,maxPvs);
 
-  const UInt_t BinsPdgId = 102;
-  const Float_t PdgIdMin = -50.;
-  const Float_t PdgIdMax = 50.;
+  const UInt_t BinsPdgId = 101;
+  const Float_t PdgIdMin = -50.5;
+  const Float_t PdgIdMax = 50.5;
 
 #ifndef CMSDATA
+  InitHVec<TH1F>(HGenPartPdgIdl1,"HGenPartPdgIdl1",
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH1F>(HGenPartPdgIdl2,"HGenPartPdgIdl2",
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH1F>(HGenPartPdgIdl3,"HGenPartPdgIdl3",
+                 BinsPdgId,PdgIdMin,PdgIdMax);
   InitHVec<TH2F>(HGenPartZ,"HGenPartZ",
                  BinsPdgId,PdgIdMin,PdgIdMax,
                  BinsPdgId,PdgIdMin,PdgIdMax);
@@ -1096,6 +1102,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   std::pair<Int_t,Int_t> motherl2 = GetMother(lz.genPartIdx[l2],lz.pdgId[l2]);
   std::pair<Int_t,Int_t> motherl3 = GetMother(lw.genPartIdx[l3],lw.pdgId[l3]);
 
+  HGenPartPdgIdl1[nh]->Fill(lz.pdgId[l1]);
+  HGenPartPdgIdl2[nh]->Fill(lz.pdgId[l2]);
+  HGenPartPdgIdl3[nh]->Fill(lw.pdgId[l3]);
   HGenPartZ[nh]->Fill( motherl1.second, lz.pdgId[l1] );
   HGenPartZ[nh]->Fill( motherl2.second, lz.pdgId[l2] );
   HGenPartW[nh]->Fill( motherl3.second, lw.pdgId[l3] );
