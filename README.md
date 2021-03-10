@@ -25,7 +25,7 @@ std::vector<int> years = {2016,2017,2018};
 for(const auto& year: years){
   f->cd(Form("%d",year));
   for (auto i: *(gDirectory->GetListOfKeys())) {
-    if ( i->GetName()[0] != 'S' ){ /*Do not delete CMSDATA plots just MC*/
+    if ( std::string(i->GetName()).find("Single") == std::string::npos ){ /*Do not delete CMSDATA plots just MC*/
       std::cout << Form("%d/%s;1",year,i->GetName()) << std::endl;
       gDirectory->Delete(Form("%s;1",i->GetName()));
     }

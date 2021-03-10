@@ -310,6 +310,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HDistZl3,"HDistZl3",DistBins,0.,MaxDist);
   InitHVec<TH1F>(HDistZW,"HDistZW",DistBins,0.,MaxDist);
 
+  InitHVec<TH1F>(HElFakeCat,"HElFakeCat",5,-2.5,2.5);
+  InitHVec<TH1F>(HMuFakeCat,"HMuFakeCat",5,-2.5,2.5);
+
   InitHVec<TH1F>(HWZDist,"HWZDist",DistBins,0.,MaxDist);
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
   InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
@@ -795,7 +798,7 @@ std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\M
   Mother.first = GenPart_genPartIdxMother[GenPartIdx];
   Mother.second = GenPart_pdgId[Mother.first];
 
-  if(Mother.second == PdgId){
+  if(abs(Mother.second) == abs(PdgId)){
     Mother = PreSelector::GetMother(Mother);
   }
 
@@ -1157,6 +1160,34 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_A_ElID_Up"]]->Fill(wzm,WElIDUp);
     HMassWZ[HIdx["SR_A_ElID_Down"]]->Fill(wzm,WElIDDown);
+
+#ifndef CMSDATA
+    Int_t pdgIdMother = 0;
+    Int_t fakeContent = 0;
+    pdgIdMother = GetMother(Electron_genPartIdx[l1],11).second;
+    std::vector accept = { 11 /*e-*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HElFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Electron_genPartIdx[l2],11).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HElFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Electron_genPartIdx[l3],11).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -1; // Real and unpaired
+    } else {
+      fakeContent = 2;  // Fake and unpaired
+    }
+    HElFakeCat[nh]->Fill(fakeContent);
+#endif
+
   } else if (IsB) {
     FillH1(HElPt,nh,lep1.Pt());
     FillH1(HElPt,nh,lep2.Pt());
@@ -1175,6 +1206,34 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_B_ElID_Down"]]->Fill(wzm,WElIDDown);
     HMassWZ[HIdx["SR_B_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
+
+#ifndef CMSDATA
+    Int_t pdgIdMother = 0;
+    Int_t fakeContent = 0;
+    pdgIdMother = GetMother(Electron_genPartIdx[l1],11).second;
+    std::vector accept = { 11 /*e-*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HElFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Electron_genPartIdx[l2],11).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HElFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Muon_genPartIdx[l3],13).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -1; // Real and unpaired
+    } else {
+      fakeContent = 2;  // Fake and unpaired
+    }
+    HMuFakeCat[nh]->Fill(fakeContent);
+#endif
+
   } else if (IsC) {
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
@@ -1193,6 +1252,33 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_C_ElID_Down"]]->Fill(wzm,WElIDDown);
     HMassWZ[HIdx["SR_C_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
+
+#ifndef CMSDATA
+    Int_t pdgIdMother = 0;
+    Int_t fakeContent = 0;
+    pdgIdMother = GetMother(Muon_genPartIdx[l1],13).second;
+    std::vector accept = { 11 /*e-*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HMuFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Muon_genPartIdx[l2],13).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HMuFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Electron_genPartIdx[l3],11).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -1; // Real and unpaired
+    } else {
+      fakeContent = 2;  // Fake and unpaired
+    }
+    HElFakeCat[nh]->Fill(fakeContent);
+#endif
   } else if (IsD) {
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
@@ -1207,6 +1293,33 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_D_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
     HMassWZ[HIdx["SR_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
+
+#ifndef CMSDATA
+    Int_t pdgIdMother = 0;
+    Int_t fakeContent = 0;
+    pdgIdMother = GetMother(Muon_genPartIdx[l1],13).second;
+    std::vector accept = { 11 /*e-*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HMuFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Muon_genPartIdx[l2],13).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -2; // Real and paired
+    } else {
+      fakeContent = 1;  // Fake and paired
+    }
+    HMuFakeCat[nh]->Fill(fakeContent);
+    pdgIdMother = GetMother(Muon_genPartIdx[l3],13).second;
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()){
+      fakeContent = -1; // Real and unpaired
+    } else {
+      fakeContent = 2;  // Fake and unpaired
+    }
+    HMuFakeCat[nh]->Fill(fakeContent);
+#endif
   }
 
   // dR Histos
