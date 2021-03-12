@@ -1,0 +1,1 @@
+/store/mc/RunIISummer20UL17NanoAODv2/WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mc2017_realistic_v8-v1/00000/9ACEF3FF-85E4-3746-9164-4E04F5AF1BE6.root

@@ -1,0 +1,3 @@
+/store/mc/RunIISummer20UL16NanoAODAPVv2/WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_preVFP_v9-v1/00000/56122B11-29E0-8B44-9A48-0FAB6C2BE507.root
+/store/mc/RunIISummer20UL16NanoAODAPVv2/WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_preVFP_v9-v1/230000/039E457C-B98A-CB4F-9A3F-ACC259D732B6.root
+/store/mc/RunIISummer20UL16NanoAODv2/WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_v15-v1/00000/03EEF580-5915-FD42-BF6A-F1BC18070C57.root

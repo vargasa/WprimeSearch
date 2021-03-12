@@ -1,0 +1,1 @@
+/store/mc/RunIISummer20UL16NanoAODAPVv2/WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_preVFP_v9-v1/00000/5451FE89-12E5-5A42-9203-A03EBAD3F918.root

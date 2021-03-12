@@ -310,8 +310,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HDistZl3,"HDistZl3",DistBins,0.,MaxDist);
   InitHVec<TH1F>(HDistZW,"HDistZW",DistBins,0.,MaxDist);
 
-  InitHVec<TH1F>(HElFakeCat,"HElFakeCat",5,-2.5,2.5);
-  InitHVec<TH1F>(HMuFakeCat,"HMuFakeCat",5,-2.5,2.5);
 
   InitHVec<TH1F>(HWZDist,"HWZDist",DistBins,0.,MaxDist);
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
@@ -436,6 +434,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t PdgIdMax = 50.5;
 
 #ifndef CMSDATA
+  InitHVec<TH1F>(HElFakeCat,"HElFakeCat",5,-2.5,2.5);
+  InitHVec<TH1F>(HMuFakeCat,"HMuFakeCat",5,-2.5,2.5);
+
   InitHVec<TH1F>(HGenPartPdgIdl1,"HGenPartPdgIdl1",
                  BinsPdgId,PdgIdMin,PdgIdMax);
   InitHVec<TH1F>(HGenPartPdgIdl2,"HGenPartPdgIdl2",
@@ -1271,7 +1272,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
 
-#ifndef CMSDAT
+#ifndef CMSDATA
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],13,1));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],13,2));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],13,3));
