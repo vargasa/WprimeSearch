@@ -290,6 +290,7 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
   Double_t GetZPtFromGen() const;
+  Int_t GetFakeContent(const int& genPartIdx,const int& pdgId,const int& nLepton) const;
   Double_t GetKFactor(const Double_t& ZGenPt, const int& option) const;
   Double_t GetElTriggerSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
   Double_t GetMuTriggerSF(const Float_t& eta,const Float_t& pt, const Int_t& option) const;
