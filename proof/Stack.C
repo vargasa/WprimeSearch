@@ -440,6 +440,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HRelIsol3_C","RelIso #mu#mue#nu; RelIso e; Event count"},
     { "HRelIsol3_D","RelIso #mu#mu#mu#nu; RelIso #mu_{2}; Event count"},
     { "HRelIsol3_+ABCD","RelIso lll#nu; RelIso l_{2}; Event count"},
+    { "HElFakeCat_A","eee#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HElFakeCat_B","ee#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HElFakeCat_C","#mu#mue#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HElFakeCat_D","#mu#mu#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HMuFakeCat_A","eee#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HMuFakeCat_B","ee#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HMuFakeCat_C","#mu#mue#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HMuFakeCat_D","#mu#mu#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
   };
 
   std::vector<std::string> HistNames = {
