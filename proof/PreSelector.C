@@ -227,15 +227,23 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                            Args... args){
 
   std::vector<std::string> idst = {
-    "SR_A",
-    "SR_B",
-    "SR_C",
-    "SR_D",
-    "SR_A_Central",
-    "SR_B_Central",
-    "SR_C_Central",
-    "SR_D_Central",
-    "CR1_A",
+    "SR1_A",
+    "SR1_B",
+    "SR1_C",
+    "SR1_D",
+    "SR1_A_Central",
+    "SR1_B_Central",
+    "SR1_C_Central",
+    "SR1_D_Central",
+    "SR2_A", // 8
+    "SR2_B",
+    "SR2_C",
+    "SR2_D",
+    "SR2_A_Central",
+    "SR2_B_Central",
+    "SR2_C_Central",
+    "SR2_D_Central",
+    "CR1_A", // 16
     "CR1_B",
     "CR1_C",
     "CR1_D",
@@ -243,6 +251,14 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "CR1_B_Central",
     "CR1_C_Central",
     "CR1_D_Central",
+    "CR2_A", // 24
+    "CR2_B",
+    "CR2_C",
+    "CR2_D",
+    "CR2_A_Central",
+    "CR2_B_Central",
+    "CR2_C_Central",
+    "CR2_D_Central",
   };
 
   std::vector<std::string> syst = {
@@ -1739,11 +1755,23 @@ Bool_t PreSelector::Process(Long64_t entry) {
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist < 1.5;
   if(ZDistCut){
-    HCutFlow->FillS("SignalRegion");
-    FillRegion(0,Els,Mus); // 0 -> Signal Region
+    HCutFlow->FillS("SR1");
+    FillRegion(0,Els,Mus); // 1st SR
   } else {
-    HCutFlow->FillS("dRControlRegion");
-    FillRegion(8,Els,Mus); // 8 -> CR1 Slot
+    HCutFlow->FillS("CR2");
+    FillRegion(16,Els,Mus); // 16 -> CR1 Slot
+  }
+
+  const float_t ptwmwz = wb.Pt()/(wb+zb).M();
+  const float_t ptzmwz = zb.Pt()/(wb+zb).M();
+  const float_t r_ = 0.35;
+
+  if ( ptwmwz < r_ or ptzmwz < r_ ) {
+    HCutFlow->FillS("CR2");
+    FillRegion(24,Els,Mus);
+  } else {
+    HCutFlow->FillS("SR2");
+    FillRegion(8,Els,Mus);
   }
 
   return kTRUE;
@@ -1769,7 +1797,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_FakeCats.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_SRCR2.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
