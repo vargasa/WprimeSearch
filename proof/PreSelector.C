@@ -1074,7 +1074,7 @@ Int_t PreSelector::GetFakeContent(const int& genPartIdx,
     return flags[isPromptFlag];
   };
 
-  Int_t pdgIdMother = 0;
+  Int_t pdgIdMother = GetMother(genPartIdx,pdgId).second;
   Int_t fakeContent = 0;
   Bool_t isPaired = (nLepton == 1 or nLepton == 2);
   Bool_t isUnpaired = (nLepton == 3);
