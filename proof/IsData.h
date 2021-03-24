@@ -1,2 +1,1 @@
-#define Y2016
-#define CMSDATA
+#define Y2017
