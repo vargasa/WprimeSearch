@@ -59,7 +59,11 @@ Year & Dataset & HLT                \\ \hline
 
 \subsection{Lepton Selection}
 
+\subsection{Primary vertex}
+
 \subsection{Electrons}
+
+\verb|Electron| collection in \verb|NanoAOD|
 
 Electrons are reconstructed from the different hits in the different
 layers of the tracker and energy deposits in the scintillating crystalls
@@ -68,13 +72,21 @@ across the $\eta-\phi$ plane in the Electromagnetic Calorimeter.
 The electron's sign charge can be identified by its signature in the tracker
 due to the presence of the strong magnetic field in the CMS detector.
 
-Electrons are required to be within the ECAL fiducial region i.e
-$\abs{eta}<2.5$ excluding the transition region betwen the barrel and
-the endcaps $1.4442<\abs{eta}<1.5660$.
+Electrons in this analysis are required to be within the ECAL fiducial
+region i.e $\abs{eta}<2.5$ excluding the transition region betwen the
+barrel and the endcaps $1.4442<\abs{eta}<1.5660$.
+
+Electron identification is based on a cut based ID as defined by the
+EGamma POG. Depending on the channel, this requirement
+may ask for \emph{loose} or \emph{tight} electrons, the former with an
+average efficiency of approximately 95\% and 70\% for
+the latter ~\cite{EGammaPOG_el}.
 
 \subsection{Muons}
 
-When compared to electrons, muons are reconstructed more efficiently due to additional
+\verb|Muon| collection in \verb|NanoAOD|
+
+When compared to electrons, muons are reconstructed more efficiently due to
 additional hits collected in the muon chambers.
 In the same way that the electron tracks, the muon tracks are bent due to the
 the presence of the strong magnetic field. However, as
@@ -83,12 +95,16 @@ its tracks are able to reflect the change of sign in the magnetic field after
 its passage through the superconducting solenoid.
 
 The muon objects in this analysis can be divided into two categories:
-Tracker and Global muons.
+Tracker and highPt Global muons ~\cite{MuonPOG}.
 
 Muons are required to be within the pseudorapidity range $\abs{eta}<2.4$ and
 to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon of
 the event is required to have $P_t>52$ in line with the trigger plateau.
 
+\subsection{Missing Energy}
+
+The missing transverse energy $E_T$ is reconstructed with the particle flow
+algorithm ~\cite{particleflow}
 
 \subsection{Z Candidate}
 
@@ -100,15 +116,13 @@ is required to fall in the Z mass window $ 70. GeV < M_Z < 111. $.
 If the Z candidate is formed from a muon pair with a leading (subleading) muon with
 a transverse momentum of at least $P_t=70 GeV$ ($P_t=10GeV$). One of the
 muons is required to pass two additional requirements: being a global high-Pt muon and a
-particle-flow candidate. In the case of electrons, the requirement is to have
-a transverse momentum of at least $P_t=27GeV$ (2016) matching the trigger
-plateau, $P_t=35GeV$ (2017), $P_t=32GeV$ (2018).
+particle-flow candidate. In the case of electrons, the requirement is to pass the
+selection critire of the cut-based \emph{loose} ID and a transverse momentum of
+at least $P_t=27GeV$ (2016) matching the trigger plateau, $P_t=35GeV$ (2017),
+$P_t=32GeV$ (2018).
 
 The event is rejected if the the distance in the $\eta-\phi$ plane for the two
 leptons product of the decay of the Z is less than $1.5$.
-
-
-
 
 \subsection{W Candidate}
 
@@ -119,10 +133,11 @@ energy, and consequently $E_{Pt}^{miss}$ is considered the transverse momentum
 corresponding to the undetected neutrino. The longitudinal momentum $P_z$ can be
 recovered by imposing the $M_W = 80.379 GeV $ nominal mass and $M_\nu = 0.$
 
-$W$ boson is reconstructed from the remaining lepton
-and the missing energy $E_T^{miss}$. The ramining lepton is required to be either
-a tight electron or a global High-Pt muon with a transverse momentum of at least
-$Pt=50GeV$
+$W$ boson is reconstructed from the remaining lepton and the missing energy
+$E_T^{miss}$. The ramining lepton is required to be either
+a \emph{tight} electron or a global High-Pt muon with a transverse momentum
+of at least $Pt=50GeV$.
+
 
 
 \subsection{WZ Candidate}

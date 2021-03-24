@@ -1,0 +1,145 @@
+
+
+\subsection{The Large Hadron Collider}
+
+The European Organization for Nuclear Research, CERN (by its French acronym)
+established 66 years ago in 1964 runs the largest particle physics laboratory in
+the world and it is home of dozens of experiments in a wide range of physics
+across its large infraestructure located in the Swiss-French border. Experiments
+in the whole length scale, from particle physics with collaborations such as
+CMS and ATLAS, to astronomy and earth science with experiments such as CAST
+and CLOUD.
+
+The Large Hadron Collider (LHC) is located in the French-Swiss border and
+extends through a perimeter of 17 miles (27 $km$). The LHC allow us to collide
+protons and heavy ions (lead nuclei) together and study the products of these
+collisions.
+
+The LHC takes advantage on already existing infraestructure which is used in the
+different stages of the acceleration process.
+
+**mention the antyhydrogen atom at CCERN
+
+A more detailed description of the LHC can be found ***somewhere.
+
+The Compact Muon Solenid detector (CMS) is one of the four points across the LHC
+in which hadronic collisions take place every 25ns, around hundreds of thousands
+of millions of protons (or heavy ions) are injected from the beam pipe
+into the center of the cylindrical detector. From this vast number of protons
+only a handful collide, for instance, during the 2016 data taking period a mean
+of 23 collisions per bunch crossing during 2016 was seen. \footnote{ This
+  phenomenom is known as pileup. The fact that we are not looking at a single
+  head on collision requires additional considerations that will be further
+  explored later in this section.}
+
+Once the hadrons collide, the products of each collision make its way through
+the different subdetectors. The very first detector, the Tracker detector, is
+meant to provide a way to keep track of the charged particles generated during
+the collision, this tracks allow us to assign identities to the particles and
+measure its momenta. A longer description of the tracker is given in section
+
+The Electromagnetic Calorimeter (ECAL) allow us to measure the energy of electrons,
+positrons and photons, and stop them in the process. The Hadronic Calorimeter (HCAL)
+allow us to get measurements from hadronic-like particle, such as pions ***. And Finally
+the Muon chambers *allow us to keep track of long-lived particles, the presence
+of muons in a reaction is a sign of a head on, high energy collision, and therefore
+of interesting physics. For instance, a 4 muon signature was found in events
+containing the well known discovery of the Higgs.
+
+The CMS detector and its subsystems have passed through different development
+stages. The current analysis was
+
+\subsection{CMS Coordinate system}
+
+*** need to describe the coordinate system ****
+
+\subsection{The Tracker Detector}
+
+The tracker subdetector is in charge of keeping track of the trajectories of
+charged particules produced in the collision (collectively referred as \em{tracks}),
+these trajectories are reconstructed by combining the hits in the different layers
+of silicon modules as the outgoing particle make its way through the detector.
+Due to the presence of the homongeneus magnetic field, these tracks *allow us to
+determine not only the charge (different electric charges will bend in opposite directions)
+but also determine its transverse momentum $P_{T}$, the reconstruction of the primary
+and secondary vertex relay on the accuracy of the measurements provided by the tracker.
+
+It is composed by two categories based on the material that it uses: the pixel with
+an spatial resolution of about 10 $\mum$ in $r-\phi$ and up to $40\mum$ in $z$
+and the strips
+
+A new pixel was installed at the end of 2016, which gave access to an improved
+protection against a harsher environment (radiation hardness), an additional
+layer of silicon modules in the barrel and the endcap, and an overall reduction
+of the material budget as measured in hadronic interaction length. *** show some plots ***
+
+There's an image showing the pixel differences TS2020_009_GOODCMS.pdf page 48
+
+@techreport{Lipinski:2265423,
+      author        = "Lipinski, Martin",
+      title         = "{The Phase-1 Upgrade of the CMS Pixel Detector}",
+      institution   = "CERN",
+      collaboration = "CMS Collaboration",
+      address       = "Geneva",
+      number        = "CMS-CR-2017-135. 06",
+      month         = "May",
+      year          = "2017",
+      reportNumber  = "CMS-CR-2017-135",
+      url           = "https://cds.cern.ch/record/2265423",
+      doi           = "10.1088/1748-0221/12/07/C07009",
+}
+
+
+Describe the basic physics mechanism that allows each subsystem to work.
+
+
+\subsection{The ECAL}
+
+The Electromagnetic Calorimeter is built on lead tungsten PbWO4 crystals.
+
+\subsection{The HCal}
+
+The HCAL was built on russian bullet shells
+
+
+\subsection{The Muon Chambers}
+
+The muon chamber and the CSC
+
+\subsection{The trigger system}
+
+The amount of data generated at such frequency in LHC collisions is a stress
+test for even the most current technology available in the market. Due to
+limitations in the electronics, data transfer speed and others the CMS detector
+accounts for
+
+
+*** Every bunch collision would require a million gigabytes (a petabyte) to be stored
+*** a bunch crossing every 25ns (40 million per second) continuously for months
+*** makes this unfeasible, nafordable, a.k.a impossible
+
+The L1 trigger takes an input of 40MHz and output 100KHz, then the hundreds of
+thousands of event per second are further filtered out trought the High Level
+Trigger to take an output of 200Hz. So the number of discarded events are
+around 99.9995%
+
+L1 Trigger or online trigger
+
+*** We can make a comment of the different formats AOD,NanoAOD in terms of weight/event
+
+
+\subsection{Computing infraestructure}
+
+* Talk about simulation?
+
+* Simulation comprises multiple steps: Event generation, detector simulation, digitazation
+reconstruction, etc.
+
+* By default the vertex is (0,0,0) however, in real life this is not true that's why
+we have a VertexSmearing process that introducess a distribution arount this default vertex
+
+* sensitive detectors are the ones that has a readout
+
+* Most of the simulations are the same, except for the generation step, that's the purpose
+of cmsDriver, help us to write configuration files based on approved simulation standards
+
