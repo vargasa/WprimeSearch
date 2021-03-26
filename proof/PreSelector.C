@@ -451,7 +451,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #ifndef CMSDATA
   InitHVec<TH1F>(HElFakeCat,"HElFakeCat",5,-2.5,2.5);
+  InitHVec<TH1F>(HElFakeString,"HElFakeString",10,0,10);
   InitHVec<TH1F>(HMuFakeCat,"HMuFakeCat",5,-2.5,2.5);
+  InitHVec<TH1F>(HMuFakeString,"HMuFakeString",10,0,10);
 
   InitHVec<TH1F>(HGenPartPdgIdl1,"HGenPartPdgIdl1",
                  BinsPdgId,PdgIdMin,PdgIdMax);
@@ -1100,6 +1102,41 @@ Int_t PreSelector::GetFakeContent(const int& genPartIdx,
 
 }
 #endif
+#ifndef CMSDATA
+std::string PreSelector::GetFakeString(const int& genPartIdx,
+                                       const int& pdgId) const{
+
+  std::function<Bool_t(const int&)> isPrompt = [&] (const int& gpidx) {
+    const int maxNFlags = 14;
+    const int isPromptFlag = 0;
+    std::bitset<maxNFlags> flags(GenPart_statusFlags[gpidx]);
+    return flags[isPromptFlag];
+  };
+
+  Int_t pdgIdMother = GetMother(genPartIdx,pdgId).second;
+  std::string fakeContent = "";
+
+  if(abs(pdgId) == ElPdgId){
+    fakeContent += std::string("El.");
+  } else {
+    fakeContent += std::string("Mu.");
+  }
+
+  std::vector accept = { pdgId /*e or Mu*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
+
+  if (isPrompt(genPartIdx)) {
+    fakeContent += std::string("Prompt.");
+  } else {
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()) {
+      fakeContent += std::string("HFD."); // Heavy Flavor Decay
+      return fakeContent;
+    }
+    fakeContent += std::string("NonPrompt.");
+  }
+  return fakeContent;
+}
+
+#endif
 
 
 void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
@@ -1219,9 +1256,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_A_ElID_Down"]]->Fill(wzm,WElIDDown);
 
 #ifndef CMSDATA
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],11,1));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],11,2));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],11,3));
+    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
+    HElFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId)+std::to_string(Electron_cutBased[l1])).c_str());
+    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
+    HElFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId)+std::to_string(Electron_cutBased[l2])).c_str());
+    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],ElPdgId,3));
+    HElFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l3],ElPdgId)+std::to_string(Electron_cutBased[l3])).c_str());
 #endif
 
   } else if (IsB) {
@@ -1244,9 +1284,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
 
 #ifndef CMSDATA
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],11,1));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],11,2));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],13,3));
+    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
+    HElFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId)+std::to_string(Electron_cutBased[l1])).c_str());
+    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
+    HElFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId)+std::to_string(Electron_cutBased[l2])).c_str());
+    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],MuPdgId,3));
+    HMuFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l3],MuPdgId)+std::to_string(Muon_highPtId[l3])).c_str());
 #endif
 
   } else if (IsC) {
@@ -1269,9 +1312,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
 
 #ifndef CMSDATA
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],13,1));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],13,2));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],11,3));
+    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
+    HMuFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId)+std::to_string(Muon_highPtId[l1])).c_str());
+    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
+    HMuFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l2],MuPdgId)+std::to_string(Muon_highPtId[l2])).c_str());
+    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],ElPdgId,3));
+    HElFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l3],ElPdgId)+std::to_string(Electron_cutBased[l3])).c_str());
 #endif
   } else if (IsD) {
     FillH1(HMuPt,nh,lep1.Pt());
@@ -1289,9 +1335,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
 
 #ifndef CMSDATA
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],13,1));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],13,2));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],13,3));
+    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
+    HMuFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId)+std::to_string(Muon_highPtId[l1])).c_str());
+    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
+    HMuFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l2],MuPdgId)+std::to_string(Muon_highPtId[l2])).c_str());
+    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],MuPdgId,3));
+    HMuFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l3],MuPdgId)+std::to_string(Muon_highPtId[l3])).c_str());
 #endif
   }
 
@@ -1797,7 +1846,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_SRCR2.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_FakeStrings.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
