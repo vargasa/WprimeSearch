@@ -177,8 +177,14 @@ class PreSelector : public EventSelection {
   TH1F *HOverlap;
 
 #ifndef CMSDATA
+
+  const Int_t ElPdgId = 11;
+  const Int_t MuPdgId = 13;
+
   std::vector<TH1F*> HElFakeCat;
+  std::vector<TH1F*> HElFakeString;
   std::vector<TH1F*> HMuFakeCat;
+  std::vector<TH1F*> HMuFakeString;
   std::vector<TH1F*> HGenPartPdgIdl1;
   std::vector<TH1F*> HGenPartPdgIdl2;
   std::vector<TH1F*> HGenPartPdgIdl3;
@@ -291,6 +297,7 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
   Double_t GetZPtFromGen() const;
   Int_t GetFakeContent(const int& genPartIdx,const int& pdgId,const int& nLepton) const;
+  std::string GetFakeString(const int& genPartIdx, const int& pdgId) const;
   Double_t GetKFactor(const Double_t& ZGenPt, const int& option) const;
   Double_t GetElTriggerSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
   Double_t GetMuTriggerSF(const Float_t& eta,const Float_t& pt, const Int_t& option) const;
