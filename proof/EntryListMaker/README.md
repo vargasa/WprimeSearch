@@ -24,6 +24,39 @@ do
 done
 ```
 
+For running with UL, replace:
+
+```
+-#include "BuildGoldenJson.hxx"
++#include "BuildGoldenJsonUL.hxx"
+```
+
+Rename also ROOT File for output to include UL label and then:
+
+```bash
+echo -e "#define CMSDATA\n#define Y2016">../IsData.h
+FILES=../files/data/2016/UL/*.txt
+for i in $FILES
+do
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
+done
+
+echo -e "#define CMSDATA\n#define Y2017">../IsData.h
+FILES=../files/data/2017/UL/*.txt
+for i in $FILES
+do
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
+done
+
+echo -e "#define CMSDATA\n#define Y2018">../IsData.h
+FILES=../files/data/2018/UL/*.txt
+for i in $FILES
+do
+ root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
+done
+```
+
+
 This will create two ROOT files `EventIDTree.root` and `EntryLists.root`, the former
 contains a `TTree` per dataset (separated in a different `TDirectory`) with all the 
 events id (`str(run)+str(event)`) and the later contains `TEntryList`s of the different
