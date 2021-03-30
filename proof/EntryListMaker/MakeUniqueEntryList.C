@@ -16,6 +16,18 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   year = 2018;
 #endif
 
+#ifndef ULSAMPLE
+  const char *ElectronSample = "SingleElectron";
+  const char *MuonSample = "SingleMuon";
+  const char *PhotonSample = "SinglePhoton";
+  const char *EGammaSample = "EGamma";
+#elif defined(ULSAMPLE)
+  const char *ElectronSample = "ULSingleElectron";
+  const char *MuonSample = "ULSingleMuon";
+  const char *PhotonSample = "ULSinglePhoton";
+  const char *EGammaSample = "ULEGamma";
+#endif
+
   TChain* fChain = new TChain("Events");
 
   istringstream f(file);
@@ -47,20 +59,20 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   TEntryList *l3 = nullptr;
 
   if ( (year == 2016) or (year == 2017) ) {
-    EventTree = (TTree*)f1->Get(Form("SinglePhoton_%d/eTree;1",year));
-    if (!sample.compare("SingleElectron")){
-      l2 = (TEntryList*)f2->Get(Form("SingleElectron_%d/EntryList;1",year));
-      std::clog << Form("Setting EntryList: %s\n",l2->GetName());
+    EventTree = (TTree*)f1->Get(Form("%s_%d/eTree;1",PhotonSample,year));
+    if (!sample.compare(ElectronSample)){
+      l2 = (TEntryList*)f2->Get(Form("%s_%d/EntryList;1",ElectronSample,year));
+      std::clog << Form("Setting EntryList: %s %s\n",ElectronSample,l2->GetName());
       fChain->SetEntryList(l2);
-    } else if (!sample.compare("SingleMuon")) {
-      EventTree2 = (TTree*)f1->Get(Form("SingleElectron_%d/eTree;1",year));
-      l3 = (TEntryList*)f2->Get(Form("SingleMuon_%d/EntryList;1",year));
-      std::clog << Form("Setting EntryList: %s\n",l3->GetName());
+    } else if (!sample.compare(MuonSample)) {
+      EventTree2 = (TTree*)f1->Get(Form("%s_%d/eTree;1",ElectronSample,year));
+      l3 = (TEntryList*)f2->Get(Form("%s_%d/EntryList;1",MuonSample,year));
+      std::clog << Form("Setting EntryList: %s %s\n",MuonSample,l3->GetName());
       fChain->SetEntryList(l3);
     }
-  } else if ( year == 2018 and (!sample.compare("EGamma")) ) {
-    EventTree = (TTree*)f1->Get(Form("SingleMuon_%d/eTree;1",year));
-    l2 = (TEntryList*)f2->Get(Form("EGamma_%d/EntryList;1",year));
+  } else if ( year == 2018 and (!sample.compare(EGammaSample)) ) {
+    EventTree = (TTree*)f1->Get(Form("%s_%d/eTree;1",MuonSample,year));
+    l2 = (TEntryList*)f2->Get(Form("%s_%d/EntryList;1",EGammaSample,year));
   }
 
   EventTree->SetName("EventIndexTree1");
@@ -68,7 +80,7 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   fProof->AddInput(EventTree);
 
   if (EventTree2) {
-    std::clog << Form("Adding EventIDTree: %s\n",EventTree->GetName());
+    std::clog << Form("Adding EventIDTree: %s\n",EventTree2->GetName());
     EventTree2->SetName("EventIndexTree2");
     fProof->AddInput(EventTree2);
   }

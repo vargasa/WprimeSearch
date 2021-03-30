@@ -1,7 +1,12 @@
+#include "../IsData.h"
 #include "TFile.h"
 #include "EventIDMaker.h"
 #include "TError.h"
+#ifndef ULSAMPLE
 #include "BuildGoldenJson.hxx"
+#elif defined(ULSAMPLE)
+#include "BuildGoldenJsonUL.hxx"
+#endif
 #include "TCanvas.h"
 
 #define FillS(ss) Fill(ss,1.);
