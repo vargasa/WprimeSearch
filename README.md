@@ -62,14 +62,25 @@ wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysi
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronLoose.root
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronMedium_Fall17V2.root
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronTight_Fall17V2.root
+# [UL2016]
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Loose_preVFP_EGM2D.root
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Loose_postVFP_EGM2D.root
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Tight_preVFP_EGM2D.root
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Tight_postVFP_EGM2D.root
 # [2017]
 wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronLoose.root
 wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronMedium.root
 wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronTight.root
+# [UL2017]
+wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/egammaEffi.txt_EGM2D_PHO_Loose_UL17.root
+wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/egammaEffi.txt_EGM2D_PHO_Tight_UL17.root
 # [2018]
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronLoose.root
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronMedium.root
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronTight.root
+# [UL2018]
+wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/egammaEffi.txt_Ele_Loose_EGM2D.root
+wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/egammaEffi.txt_Ele_Tight_EGM2D.root
 ```
 
 #### Muon Trigger:
