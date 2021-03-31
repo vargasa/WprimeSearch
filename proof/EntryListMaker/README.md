@@ -24,14 +24,7 @@ do
 done
 ```
 
-For running with UL, replace:
-
-```
--#include "BuildGoldenJson.hxx"
-+#include "BuildGoldenJsonUL.hxx"
-```
-
-Rename also ROOT File for output to include UL label and then:
+For running with UL:
 
 ```bash
 echo -e "#define CMSDATA\n#define Y2016\n#define ULSAMPLE">../IsData.h
@@ -118,42 +111,52 @@ when processing data:
 TFile f0("EntryLists.root","READ");
 TFile f1("EntryLists_Unique.root","UPDATE");
 
+const char* PhotonSample = "SinglePhoton";
+const char* ElectronSample = "SingleElectron";
+const char* MuonSample = "SingleMuon";
+const char* EGammaSample = "EGamma";
+
+const char* PhotonSample = "ULSinglePhoton";
+const char* ElectronSample = "ULSingleElectron";
+const char* MuonSample = "ULSingleMuon";
+const char* EGammaSample = "ULEGamma";
+
 // 2016
-auto t1 = (TEntryList*)f0.Get("SinglePhoton_2016/EntryList;1");
-auto t2 = (TEntryList*)f1.Get("SingleElectron_2016/EntryList;1");
-auto t3 = (TEntryList*)f1.Get("SingleMuon_2016/EntryList;1");
-TEntryList *t4 = new TEntryList("EntryList","SingleElectron+SingleMuon+SinglePhoton");
+auto t1 = (TEntryList*)f0.Get(Form("%s_2016/EntryList;1",PhotonSample));
+auto t2 = (TEntryList*)f1.Get(Form("%s_2016/EntryList;1",ElectronSample));
+auto t3 = (TEntryList*)f1.Get(Form("%s_2016/EntryList;1",MuonSample));
+TEntryList *t4 = new TEntryList("EntryList",Form("%s+%s+%s",PhotonSample,ElectronSample,MuonSample));
 t4->Add(t1);
 t4->Add(t2);
 t4->Add(t3);
-f1.mkdir("SinglePhotonSingleElectronSingleMuon_2016");
-f1.cd("SinglePhotonSingleElectronSingleMuon_2016");
+f1.mkdir(Form("%s%s%s_2016",PhotonSample,ElectronSample,MuonSample));
+f1.cd(Form("%s%s%s_2016",PhotonSample,ElectronSample,MuonSample));
 t4->Write();
 f1.Close();
 f0.Close();
 
 // 2017
-auto t1 = (TEntryList*)f0.Get("SinglePhoton_2017/EntryList;1");
-auto t2 = (TEntryList*)f1.Get("SingleElectron_2017/EntryList;1");
-auto t3 = (TEntryList*)f1.Get("SingleMuon_2017/EntryList;1");
-TEntryList *t4 = new TEntryList("EntryList","SingleElectron+SingleMuon+SinglePhoton");
+auto t1 = (TEntryList*)f0.Get(Form("%s_2017/EntryList;1",PhotonSample));
+auto t2 = (TEntryList*)f1.Get(Form("%s_2017/EntryList;1",ElectronSample));
+auto t3 = (TEntryList*)f1.Get(Form("%s_2017/EntryList;1",MuonSample));
+TEntryList *t4 = new TEntryList("EntryList",Form("%s+%s+%s",PhotonSample,ElectronSample,MuonSample));
 t4->Add(t1);
 t4->Add(t2);
 t4->Add(t3);
-f1.mkdir("SinglePhotonSingleElectronSingleMuon_2017");
-f1.cd("SinglePhotonSingleElectronSingleMuon_2017");
+f1.mkdir(Form("%s%s%s_2017",PhotonSample,ElectronSample,MuonSample));
+f1.cd(Form("%s%s%s_2017",PhotonSample,ElectronSample,MuonSample));
 t4->Write();
 f1.Close();
 f0.Close();
 
 //2018
-auto t1 = (TEntryList*)f0.Get("SingleMuon_2018/EntryList;1");
-auto t2 = (TEntryList*)f1.Get("EGamma_2018/EntryList;1");
-TEntryList *t4 = new TEntryList("EntryList","SingleMuon+EGamma");
+auto t1 = (TEntryList*)f0.Get(Form("%s_2018/EntryList;1",MuonSample));
+auto t2 = (TEntryList*)f1.Get(Form("%s_2018/EntryList;1",EGammeSample);
+TEntryList *t4 = new TEntryList("EntryList",Form("%s+%s",MuonSample,EGammaSample));
 t4->Add(t1);
 t4->Add(t2);
-f1.mkdir("SingleMuonEGamma_2018");
-f1.cd("SingleMuonEGamma_2018");
+f1.mkdir(Form("%s%s_2018",MuonSample,EGammaSample));
+f1.cd(Form("%s%s_2018",MuonSample,EGammaSample));
 t4->Write();
 ```
 
