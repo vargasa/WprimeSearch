@@ -43,6 +43,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2016,
         {
+
+          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",kOrange+7,6.637e+03},
           BackgroundInfo{"WZ","WZ_TuneCP5_13TeV-pythia8",kOrange,2.750e+01},
           BackgroundInfo{"WWZ","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",15,1.707e-01},
           BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
@@ -532,6 +534,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HMuFakeCat_B","ee#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
     { "HMuFakeCat_C","#mu#mue#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
     { "HMuFakeCat_D","#mu#mu#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
+    { "HFakeString_A","eee#nu;; Event count" },
+    { "HFakeString_B","ee#mu#nu;; Event count" },
+    { "HFakeString_C","#mu#mue#nu;; Event count" },
+    { "HFakeString_D","#mu#mu#mu#nu;; Event count" },
   };
 
   std::vector<std::string> HistNames = {
@@ -1461,8 +1467,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         labelIdx.erase(labelIdx.find("CR1_"),4);
       } else if (hName.find("CR2_") != std::string::npos) {
         labelIdx.erase(labelIdx.find("CR2_"),4);
-      } else if (hName.find("SR_") != std::string::npos) {
-        labelIdx.erase(labelIdx.find("SR_"),3);
+      } else if (hName.find("SR1_") != std::string::npos) {
+        labelIdx.erase(labelIdx.find("SR1_"),4);
+      } else if (hName.find("SR2_") != std::string::npos) {
+        labelIdx.erase(labelIdx.find("SR2_"),4);
       }
       hs->SetTitle(Labels[labelIdx].c_str());
       if (hName.find("CR1_") != std::string::npos) {
@@ -1529,11 +1537,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   for(auto yr: pyear){
     std::vector<std::string> hNames;
     for(auto h : hints){
-      hNames.emplace_back(Form("%d/%s_Central",yr,h.c_str()));
-      std::cout << Form("%d/%s_Central\n",yr,h.c_str()) ;
-      if(hNames.size() == 4){
-        canvasStacked(600,hNames,true);
-        hNames.clear();
+      for(auto ch: chs){
+        hNames.emplace_back(Form("%d/%s_CR1_%s",yr,h.c_str(),ch.c_str()));
+        if(hNames.size() == 4){
+          canvasStacked(600,hNames,true);
+          hNames.clear();
+        }
       }
     }
   }
