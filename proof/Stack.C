@@ -551,7 +551,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HIP3Dl3_B","ee#mu#nu;IP3D_{#mu} (cm); Event count" },
     { "HIP3Dl3_C","#mu#mue#nu;IP3D_{e} (cm); Event count" },
     { "HIP3Dl3_D","#mu#mu#mu#nu;IP3D_{#mu3} (cm); Event count" },
-
   };
 
   std::vector<std::string> HistNames = {
