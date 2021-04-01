@@ -569,8 +569,26 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtID"));
   SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
-  SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
-  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
+
+  const char* ElSFLoose = "SFElectronLooseID";
+  const char* ElSFTight = "SFElectronTightID";
+
+#if defined(Y2016)
+#if defined(ULSAMPLE)
+
+  std::string fullPath = std::string((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+  if (fullPath.find("preVFP") != std::string::npos) {
+    ElSFLoose = "SFElectronLooseIDpreVFP";
+    ElSFTight = "SFElectronTightIDpreVFP";
+  } else {
+    ElSFLoose = "SFElectronLooseIDpostVFP";
+    ElSFTight = "SFElectronTightIDpostVFP";
+  }
+#endif
+#endif
+
+  SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject(ElSFLoose));
+  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject(ElSFTight));
 
   SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
   SFDYKFactorEWK = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorEWK"));

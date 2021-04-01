@@ -90,10 +90,17 @@ wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/anal
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesAndSF_Period4.root
 #[2016 B-F]
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesAndSF_RunBtoF.root
+#[UL2016]
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/EfficienciesStudies_UL2016_preVFP_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_SingleMuonTriggers.root
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/EfficienciesStudies_UL2016_postVFP_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_SingleMuonTriggers.root
 #[2017 BCDEF]
 wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root
+#[UL2017]
+wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/EfficienciesStudies_UL2017_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_SingleMuonTriggers.root
 #[2018 ABCD]
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root
+#[UL2018]
+wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/EfficienciesStudies_UL2018_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_SingleMuonTriggers.root
 ````
 
 #### Muon ID:
@@ -105,10 +112,17 @@ Download filename differs from the one shown in the URL
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunGH_SF_ID.root
 #[2016 B-F]
 wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunBCDEF_SF_ID.root
+#[UL2016]
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root #preVFP
+wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root #postVFP
 #[2017 BCDEF]
 wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/RunBCDEF_SF_ID_2017.root
+#[UL2017]
+wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
 #[2018 ABCD]
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/RunABCD_SF_ID.root
+#[UL2018]
+wget -P proof/files/mc/2018/sf/UL -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root 
 ```
 
 #### Muon ID [UL]:
