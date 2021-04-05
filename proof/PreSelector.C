@@ -1467,6 +1467,8 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
   if (Muon_pt[p.first] < 70.) return kFALSE;
   const Float_t MinSubleadPt = 10.;
   if (Muon_pt[p.second] < MinSubleadPt) return kFALSE;
+  const Float_t farFromPV = 1e-2;
+  if (Muon_ip3d[p.first] > farFromPV or Muon_ip3d[p.second] > farFromPV) return kFALSE;
 
   Bool_t GlobalHighPtl1 = (Muon_highPtId[p.first] == 2);
   Bool_t GlobalHighPtl2 = (Muon_highPtId[p.second] == 2);
@@ -1584,7 +1586,9 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
   auto WMuonOk = [&](){
     Bool_t ok{};
     for (const int& i: GoodMuon) {
-      if ( Muon_highPtId[i] == 2 and Muon_pt[i] > 50) { /*PairEl*/
+      const Float_t minPt = 50.;
+      const Float_t farFromPV = 1e-2;
+      if(Muon_highPtId[i] == 2 and Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV){
         l3 = i;
         ok = true;
         break;
@@ -1806,9 +1810,12 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   if(PairMu){
     for(const int& i: GoodMuon){
-      if(i!=l1 && i!=l2)
-        if(Muon_highPtId[i] == 2 and Muon_pt[i] > 50)
+      if(i!=l1 && i!=l2){
+        const Float_t minPt = 50.;
+        const Float_t farFromPV = 1e-2;
+        if(Muon_highPtId[i] == 2 and Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV)
           SameFlvWCand.emplace_back(i);
+      }
     }
     if(SameFlvWCand.size() == 0 and GoodElectron.size() == 0){
       HCutFlow->FillS("PairMu_NoWlepCand");
@@ -1891,7 +1898,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_FakeStrings.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_IP3DFakes.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
