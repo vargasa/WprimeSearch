@@ -255,7 +255,8 @@ class PreSelector : public EventSelection {
 
   Double_t wcentral;
   Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
-    WElIDUp,WElIDDown,WMuIDUp,WMuIDDown;
+    WElIDUp,WElIDDown,WMuIDUp,WMuIDDown,
+    WKEWKUp,WKEWKDown,WKQCDUp,WKQCDDown;
 
   std::unordered_map<std::string,int> HIdx;
 
@@ -297,7 +298,7 @@ class PreSelector : public EventSelection {
   Double_t GetZPtFromGen() const;
   Int_t GetFakeContent(const int& genPartIdx,const int& pdgId,const int& nLepton) const;
   std::string GetFakeString(const int& genPartIdx, const int& pdgId, const int& idn) const;
-  Double_t GetKFactor(const Double_t& ZGenPt, const int& option) const;
+  Double_t GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const;
   Double_t GetElTriggerSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
   Double_t GetMuTriggerSF(const Float_t& eta,const Float_t& pt, const Int_t& option) const;
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;

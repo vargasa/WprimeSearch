@@ -149,27 +149,23 @@ Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
 }
 #endif
 #ifndef CMSDATA
-Double_t PreSelector::GetKFactor(const Double_t& ZGenPt, const int& option) const{
-  assert(ApplyKFactors);
+Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const{
+  assert(ApplyKFactors and h);
   double sf = 1.;
 
   if( ZGenPt < KSFMinPt or ZGenPt > KSFMaxPt)
     return sf;
 
-  const int nbinQCD = SFDYKFactorQCD->FindBin(ZGenPt);
-  const int nbinEWK = SFDYKFactorEWK->FindBin(ZGenPt);
+  const int nbin = h->FindBin(ZGenPt);
 
-  sf *= SFDYKFactorQCD->GetBinContent(nbinQCD);
-  sf *= SFDYKFactorEWK->GetBinContent(nbinEWK);
+  sf *= h->GetBinContent(nbin);
 
   switch(option){
   case -1:
-    sf -= SFDYKFactorQCD->GetBinErrorLow(nbinQCD);
-    sf -= SFDYKFactorEWK->GetBinErrorLow(nbinEWK);
+    sf -= h->GetBinErrorLow(nbin);
     break;
   case 1:
-    sf += SFDYKFactorQCD->GetBinErrorUp(nbinQCD);
-    sf += SFDYKFactorEWK->GetBinErrorUp(nbinEWK);
+    sf += h->GetBinErrorUp(nbin);
     break;
   case 0:
     break;
@@ -287,6 +283,19 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "SR_C_MuID_Up",
     "SR_C_MuID_Down",
   };
+
+  if(ApplyKFactors){
+    std::vector<std::string> limit = { "Up","Down" };
+    std::vector<std::string> chs = {"A","B","C","D"};
+    std::vector<std::string> type = { "EWK","QCD" };
+    for(auto ch: chs){
+      for(auto t: type){
+        for(auto l: limit){
+          syst.push_back(std::string("SR_")+ch+std::string("KFactor_")+t+std::string("_")+l);
+        }
+      }
+    }
+  }
 
   int ci = idst.size();
   for(const auto s: syst){
@@ -589,16 +598,16 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject(ElSFLoose));
   SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject(ElSFTight));
 
-  SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
-  SFDYKFactorEWK = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorEWK"));
-  assert(SFDYKFactorEWK);
-
   if(SampleName.Contains("DYJetsToLL")){
     ApplyKFactors = true;
+    SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
+    SFDYKFactorEWK = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorEWK"));
+    assert(SFDYKFactorEWK and SFDYKFactorQCD);
     KSFMinPt = SFDYKFactorQCD->GetBinLowEdge(1);
     KSFMaxPt = SFDYKFactorQCD->GetBinLowEdge(SFDYKFactorQCD->GetNbinsX())
       + SFDYKFactorQCD->GetBinWidth(SFDYKFactorQCD->GetNbinsX());
     std::clog << Form("Apply kFactors to sample: %s\n",SampleName.Data());
+
   }
 
 #endif
@@ -1054,7 +1063,12 @@ void PreSelector::DefineSFs(){
   if (ApplyKFactors) {
     Double_t zpt = GetZPtFromGen();
     if(zpt > 0.){
-      ksf = GetKFactor(zpt,0);
+      ksf  = GetKFactor(SFDYKFactorEWK,zpt,0);
+      ksf *= GetKFactor(SFDYKFactorQCD,zpt,0);
+      WKEWKUp = GetKFactor(SFDYKFactorEWK,zpt,1);
+      WKEWKDown = GetKFactor(SFDYKFactorEWK,zpt,-1);
+      WKQCDUp = GetKFactor(SFDYKFactorQCD,zpt,1);
+      WKQCDDown = GetKFactor(SFDYKFactorQCD,zpt,-1);
     }
     wcentral *= ksf;
   }
@@ -1262,7 +1276,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_A_ElID_Up"]]->Fill(wzm,WElIDUp);
     HMassWZ[HIdx["SR_A_ElID_Down"]]->Fill(wzm,WElIDDown);
-
+    if(ApplyKFactors){
+      HMassWZ[HIdx["SR_A_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+      HMassWZ[HIdx["SR_A_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+      HMassWZ[HIdx["SR_A_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+      HMassWZ[HIdx["SR_A_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    }
 #ifndef CMSDATA
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
@@ -1290,7 +1309,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_B_ElID_Down"]]->Fill(wzm,WElIDDown);
     HMassWZ[HIdx["SR_B_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
-
+    if(ApplyKFactors){
+      HMassWZ[HIdx["SR_B_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+      HMassWZ[HIdx["SR_B_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+      HMassWZ[HIdx["SR_B_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+      HMassWZ[HIdx["SR_B_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    }
 #ifndef CMSDATA
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
@@ -1318,7 +1342,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_C_ElID_Down"]]->Fill(wzm,WElIDDown);
     HMassWZ[HIdx["SR_C_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
-
+    if(ApplyKFactors){
+      HMassWZ[HIdx["SR_C_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+      HMassWZ[HIdx["SR_C_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+      HMassWZ[HIdx["SR_C_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+      HMassWZ[HIdx["SR_C_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    }
 #ifndef CMSDATA
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
@@ -1341,7 +1370,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx["SR_D_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
     HMassWZ[HIdx["SR_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
     HMassWZ[HIdx["SR_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
-
+    if(ApplyKFactors){
+      HMassWZ[HIdx["SR_D_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+      HMassWZ[HIdx["SR_D_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+      HMassWZ[HIdx["SR_D_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+      HMassWZ[HIdx["SR_D_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    }
 #ifndef CMSDATA
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
