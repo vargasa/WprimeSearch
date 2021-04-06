@@ -568,7 +568,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   assert(SFDb);
 
   SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtID"));
-  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
 
   const char* ElSFLoose = "SFElectronLooseID";
   const char* ElSFTight = "SFElectronTightID";
@@ -633,7 +632,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   assert(SFElectronLooseID);
   assert(SFElectronTightID);
   assert(SFMuonHighPtID);
-  assert(SFMuonTrkHighPtID);
+
 
   if(!SFPileup)
     std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
@@ -670,7 +669,7 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   }
   GoodIndex.reserve(10);
   for (UInt_t i=0; i<*Mu.n;i++){
-    if( Muon_highPtId[i] >=1 && Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
+    if( Muon_highPtId[i] == 2 && Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
 
@@ -999,15 +998,9 @@ void PreSelector::DefineSFs(){
     WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
     WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
 
-    if ( Muon_highPtId[l3] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    } else { // TrkHighPtId
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    }
+    wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
+    WMuIDUp = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
+    WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
 
   } else if (IsC) {
 
@@ -1020,25 +1013,13 @@ void PreSelector::DefineSFs(){
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
 
-    if ( Muon_highPtId[l1] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    }
+    wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
+    WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
+    WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
 
-    if ( Muon_highPtId[l2] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    }
+    wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
+    WMuIDUp *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
+    WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
 
     wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
     WElIDUp   = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
@@ -1052,35 +1033,17 @@ void PreSelector::DefineSFs(){
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
 
-    if ( Muon_highPtId[l1] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    }
+    wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
+    WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
+    WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
 
-    if ( Muon_highPtId[l2] == 2 ) {
-      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    } else {
-      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    }
+    wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
+    WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
+    WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
 
-    if ( Muon_highPtId[l3] == 2 ) {
-      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    } else {
-      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    }
+    wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
+    WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
+    WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
 
   } else {
     assert (false);
@@ -1470,20 +1433,9 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
   const Float_t farFromPV = 1e-2;
   if (Muon_ip3d[p.first] > farFromPV or Muon_ip3d[p.second] > farFromPV) return kFALSE;
 
-  Bool_t GlobalHighPtl1 = (Muon_highPtId[p.first] == 2);
-  Bool_t GlobalHighPtl2 = (Muon_highPtId[p.second] == 2);
-
-  if (!(GlobalHighPtl1 or GlobalHighPtl2)) {
-    HCutFlow->FillS("FailZGlbHighPt");
+  if (!(Muon_isPFcand[p.first] or Muon_isPFcand[p.second])) {
+    HCutFlow->FillS("FailPFCand");
     return kFALSE;
-  } else {
-    if (GlobalHighPtl1 and !Muon_isPFcand[p.first]) {
-      HCutFlow->FillS("FailZGlbHighPt&PFCand");
-      return kFALSE;
-    } else if (GlobalHighPtl2 and !Muon_isPFcand[p.second]) {
-      HCutFlow->FillS("FailZGlbHighPt&PFCand");
-      return kFALSE;
-    }
   }
   return kTRUE;
 }
@@ -1588,7 +1540,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
     for (const int& i: GoodMuon) {
       const Float_t minPt = 50.;
       const Float_t farFromPV = 1e-2;
-      if(Muon_highPtId[i] == 2 and Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV){
+      if(Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV){
         l3 = i;
         ok = true;
         break;
@@ -1813,7 +1765,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
       if(i!=l1 && i!=l2){
         const Float_t minPt = 50.;
         const Float_t farFromPV = 1e-2;
-        if(Muon_highPtId[i] == 2 and Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV)
+        if(Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV)
           SameFlvWCand.emplace_back(i);
       }
     }
