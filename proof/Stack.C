@@ -51,6 +51,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"ST","ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,7.174e+01},
           BackgroundInfo{"ST","ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,1.197e+02},
           BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue+3,7.592e+02},
+          BackgroundInfo{"TT","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kBlue+3,6.871e+02},
         }
       },
       {
@@ -538,6 +539,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HFakeString_B","ee#mu#nu;; Event count" },
     { "HFakeString_C","#mu#mue#nu;; Event count" },
     { "HFakeString_D","#mu#mu#mu#nu;; Event count" },
+    { "HIP3Dl1_A","eee#nu;IP3D_{e1} (cm); Event count" },
+    { "HIP3Dl1_B","ee#mu#nu;IP3D_{e1} (cm); Event count" },
+    { "HIP3Dl1_C","#mu#mue#nu;IP3D_{#mu1} (cm); Event count" },
+    { "HIP3Dl1_D","#mu#mu#mu#nu;IP3D_{#mu1} (cm); Event count" },
+    { "HIP3Dl2_A","eee#nu;IP3D_{e2} (cm); Event count" },
+    { "HIP3Dl2_B","ee#mu#nu;IP3D_{e2} (cm); Event count" },
+    { "HIP3Dl2_C","#mu#mue#nu;IP3D_{#mu2} (cm); Event count" },
+    { "HIP3Dl2_D","#mu#mu#mu#nu;IP3D_{#mu2} (cm); Event count" },
+    { "HIP3Dl3_A","eee#nu;IP3D_{e3} (cm); Event count" },
+    { "HIP3Dl3_B","ee#mu#nu;IP3D_{#mu} (cm); Event count" },
+    { "HIP3Dl3_C","#mu#mue#nu;IP3D_{e} (cm); Event count" },
+    { "HIP3Dl3_D","#mu#mu#mu#nu;IP3D_{#mu3} (cm); Event count" },
+
   };
 
   std::vector<std::string> HistNames = {
@@ -936,7 +950,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::function<void(const int&, const int&)>
     printDataCard = [&] (const int& year, const int& wpmass) {
 
-    const char* fromHisto = "HMassWZ_SR";
+    const char* fromHisto = "HMassWZ_SR1";
 
     std::unordered_map<std::string,std::string> channels = {
       {"A", "eee"},
@@ -966,18 +980,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string unc1     = "lumi_13TeV\tlnN\t";
     std::vector<std::string> systEl = { "ElTrigger","ElID" };
     std::vector<std::string> systMu = { "MuTrigger","MuID" };
+    std::vector<std::string> systK = { "EWK","QCD" };
     std::string unc2     = "CMS_ElTrigger\tshape\t";
     std::string unc3     = "CMS_MuTrigger\tshape\t";
     std::string unc4     = "CMS_ElID\tshape\t";
     std::string unc5     = "CMS_MuID\tshape\t";
-
-
-
+    std::string unc6     = "CMS_KFactorQCD\tshape\t";
+    std::string unc7     = "CMS_KFactorEWK\tshape\t";
 
     std::function<void(const std::string&, const std::string&, const float&)>
     saveHisto = [&] (const std::string& sampleName,
                      const std::string& ch,
-                     const float& xsec){
+                     const float& xsec) {
 
       std::function<void(const std::string&,
                          const std::string&,
@@ -991,31 +1005,33 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         hup->Write(std::string(sampleName+Form("_CMS_%sDown",s.c_str())).c_str());
       };
 
+      std::string folderName = Form("%d/%s",year,sampleName.c_str());
+      std::string hname;
       if(ch == "A"){
         for (auto s: systEl) {
-          std::string folderName = Form("%d/%s",year,sampleName.c_str());
-          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
         }
       } else if (ch == "B" or ch == "C"){
         for (auto s: systEl) {
-          std::string folderName = Form("%d/%s",year,sampleName.c_str());
-          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
         }
         for (auto s: systMu) {
-          std::string folderName = Form("%d/%s",year,sampleName.c_str());
-          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
         }
       } else if (ch == "D"){
         for (auto s: systMu) {
-          std::string folderName = Form("%d/%s",year,sampleName.c_str());
-          std::string hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
         }
       }
 
+      for (auto s: systK) {
+        hname = Form("%s_%s_%s",fromHisto,ch.c_str(),Form("KFactor_%s",s));
+        saveUpDown(foldername,hname,Form("KFactor%s",s));
+      }
     };
 
     for(auto ch: channels){
@@ -1040,6 +1056,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       unc3 += "--\t";
       unc4 += "--\t";
       unc5 += "--\t";
+      unc6 += "--\t";
+      unc7 += "--\t";
 
       auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
                                     Form("%s_%s",fromHisto,ch.first.c_str()));
@@ -1084,6 +1102,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc5 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         }
+
+        if (BGN.folderName.find("DYJets") != std::string::npos){
+          unc6 += "1.0\t";
+          unc7 += "1.0\t";
+          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
+        } else {
+          unc6 += "-\t";
+          unc7 += "-\t";
+        }
         ++counter;
       }
     }
@@ -1102,6 +1129,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << unc3 << std::endl;
     dcFile << unc4 << std::endl;
     dcFile << unc5 << std::endl;
+    dcFile << unc6 << std::endl;
+    dcFile << unc7 << std::endl;
 
     fCombine->Close();
 
