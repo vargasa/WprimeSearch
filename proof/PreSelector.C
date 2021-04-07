@@ -284,6 +284,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "SR_C_MuID_Down",
   };
 
+#ifndef CMSDATA
   if(ApplyKFactors){
     std::vector<std::string> limit = { "Up","Down" };
     std::vector<std::string> chs = {"A","B","C","D"};
@@ -296,6 +297,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
       }
     }
   }
+#endif
 
   int ci = idst.size();
   for(const auto s: syst){
@@ -308,6 +310,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                            args...));
   }
 
+#ifndef CMSDATA
   if(name == "HMassWZ"){
     for(const auto id: syst){
       vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
@@ -315,6 +318,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                              args...));
     }
   }
+#endif
 
   for(auto h: vec){
     fOutput->Add(h);
@@ -1272,6 +1276,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep1.Phi());
     FillH1(HElPhi,nh,lep2.Phi());
     FillH1(HElPhi,nh,lep3.Phi());
+#ifndef CMSDATA
     HMassWZ[HIdx["SR_A_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
     HMassWZ[HIdx["SR_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_A_ElID_Up"]]->Fill(wzm,WElIDUp);
@@ -1282,7 +1287,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR_A_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
       HMassWZ[HIdx["SR_A_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
     }
-#ifndef CMSDATA
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],ElPdgId,3));
@@ -1301,6 +1305,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep1.Phi());
     FillH1(HElPhi,nh,lep2.Phi());
     FillH1(HMuPhi,nh,lep3.Phi());
+#ifndef CMSDATA
     HMassWZ[HIdx["SR_B_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
     HMassWZ[HIdx["SR_B_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_B_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
@@ -1315,7 +1320,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR_B_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
       HMassWZ[HIdx["SR_B_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
     }
-#ifndef CMSDATA
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],MuPdgId,3));
@@ -1334,6 +1338,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep1.Phi());
     FillH1(HMuPhi,nh,lep2.Phi());
     FillH1(HElPhi,nh,lep3.Phi());
+#ifndef CMSDATA
     HMassWZ[HIdx["SR_C_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
     HMassWZ[HIdx["SR_C_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
     HMassWZ[HIdx["SR_C_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
@@ -1348,7 +1353,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR_C_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
       HMassWZ[HIdx["SR_C_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
     }
-#ifndef CMSDATA
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],ElPdgId,3));
@@ -1366,6 +1370,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep1.Phi());
     FillH1(HMuPhi,nh,lep2.Phi());
     FillH1(HMuPhi,nh,lep3.Phi());
+#ifndef CMSDATA
     HMassWZ[HIdx["SR_D_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
     HMassWZ[HIdx["SR_D_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
     HMassWZ[HIdx["SR_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
@@ -1376,7 +1381,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR_D_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
       HMassWZ[HIdx["SR_D_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
     }
-#ifndef CMSDATA
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],MuPdgId,3));
@@ -1884,7 +1888,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_IP3DFakes.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_RemoveTrkHighPtID.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
