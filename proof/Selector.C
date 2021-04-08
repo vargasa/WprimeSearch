@@ -83,6 +83,9 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFMuonHighPtID = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtID");
   SFDb->Add(SFMuonHighPtID);
+  auto SFMuonTrkHighPtID = static_cast<TH2F*>(f3a->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
+  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
+  SFDb->Add(SFMuonTrkHighPtID);
   TFile *f5 = TFile::Open("files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","READ");
   auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
   SFElectronTrigger1->SetName("SFElectronTrigger1");
@@ -116,6 +119,9 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtID");
   SFDb->Add(SFMuonHighPtID);
+  auto SFMuonTrkHighPtID = static_cast<TH2D*>(f3->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
+  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
+  SFDb->Add(SFMuonTrkHighPtID);
   TFile *f5 = TFile::Open("files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
   auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
   SFElectronTrigger1->SetName("SFElectronTrigger1");
@@ -149,6 +155,9 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtID");
   SFDb->Add(SFMuonHighPtID);
+  auto SFMuonTrkHighPtID =  static_cast<TH2D*>(f3->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
+  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
+  SFDb->Add(SFMuonTrkHighPtID);
   TFile *f5 = TFile::Open("files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
   auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
   SFElectronTrigger1->SetName("SFElectronTrigger1");
