@@ -257,60 +257,45 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "CR2_D_Central",
   };
 
-  std::vector<std::string> syst = {
-    "SR_A_ElTrigger_Up",
-    "SR_A_ElTrigger_Down",
-    "SR_A_ElID_Up",
-    "SR_A_ElID_Down",
-    "SR_D_MuTrigger_Up",
-    "SR_D_MuTrigger_Down",
-    "SR_D_MuID_Up",
-    "SR_D_MuID_Down",
-    "SR_B_ElTrigger_Up",
-    "SR_B_ElTrigger_Down",
-    "SR_B_MuTrigger_Up",
-    "SR_B_MuTrigger_Down",
-    "SR_B_ElID_Up",
-    "SR_B_ElID_Down",
-    "SR_B_MuID_Up",
-    "SR_B_MuID_Down",
-    "SR_C_ElTrigger_Up",
-    "SR_C_ElTrigger_Down",
-    "SR_C_MuTrigger_Up",
-    "SR_C_MuTrigger_Down",
-    "SR_C_ElID_Up",
-    "SR_C_ElID_Down",
-    "SR_C_MuID_Up",
-    "SR_C_MuID_Down",
-  };
 
 #ifndef CMSDATA
-  if(ApplyKFactors){
-    std::vector<std::string> limit = { "Up","Down" };
-    std::vector<std::string> chs = {"A","B","C","D"};
-    std::vector<std::string> type = { "EWK","QCD" };
-    for(auto ch: chs){
-      for(auto t: type){
+
+  std::vector<std::string> rgs = { "SR1" };
+  std::vector<std::string> chs = { "A","B","C","D" };
+  std::vector<std::string> sys = { "ElTrigger","MuTrigger","ElID","MuID" };
+  std::vector<std::string> limit = { "Up","Down" };
+
+  std::vector<std::string> syst;
+
+  for(auto r: rgs) {
+    for(auto c: chs) {
+      for(auto s: sys) {
         for(auto l: limit){
-          syst.push_back(std::string("SR_")+ch+std::string("KFactor_")+t+std::string("_")+l);
+          syst.push_back(Form("%s_%s_%s_%s",r.c_str(),c.c_str(),s.c_str(),l.c_str()));
         }
       }
     }
   }
-#endif
+
+  if(ApplyKFactors){
+    std::vector<std::string> type = { "EWK","QCD" };
+    for(auto r:rgs){
+      for(auto ch: chs){
+        for(auto t: type){
+          for(auto l: limit){
+            syst.push_back(Form("%s_%s_KFactor_%s_%s",r.c_str(),ch.c_str(),t.c_str(),l.c_str()));
+          }
+        }
+      }
+    }
+  }
 
   int ci = idst.size();
   for(const auto s: syst){
     HIdx.insert({s,ci++});
   }
 
-  for(const auto id: idst){
-    vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
-                           name.data(),
-                           args...));
-  }
 
-#ifndef CMSDATA
   if(name == "HMassWZ"){
     for(const auto id: syst){
       vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
@@ -318,7 +303,16 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                              args...));
     }
   }
+
 #endif
+
+
+  for(const auto id: idst){
+    vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
+                           name.data(),
+                           args...));
+  }
+
 
   for(auto h: vec){
     fOutput->Add(h);
@@ -1018,8 +1012,8 @@ void PreSelector::DefineSFs(){
       WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
     } else { // TrkHighPtId
       wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
+      WMuIDUp = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
+      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
     }
 
   } else if (IsC) {
@@ -1314,15 +1308,17 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep2.Phi());
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    HMassWZ[HIdx["SR_A_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
-    HMassWZ[HIdx["SR_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
-    HMassWZ[HIdx["SR_A_ElID_Up"]]->Fill(wzm,WElIDUp);
-    HMassWZ[HIdx["SR_A_ElID_Down"]]->Fill(wzm,WElIDDown);
-    if(ApplyKFactors){
-      HMassWZ[HIdx["SR_A_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-      HMassWZ[HIdx["SR_A_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-      HMassWZ[HIdx["SR_A_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-      HMassWZ[HIdx["SR_A_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    if(crOffset==0){ // SR1
+      HMassWZ[HIdx["SR_A_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
+      HMassWZ[HIdx["SR_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
+      HMassWZ[HIdx["SR_A_ElID_Up"]]->Fill(wzm,WElIDUp);
+      HMassWZ[HIdx["SR_A_ElID_Down"]]->Fill(wzm,WElIDDown);
+      if(ApplyKFactors){
+        HMassWZ[HIdx["SR_A_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR_A_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR_A_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR_A_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+      }
     }
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
@@ -1343,19 +1339,21 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep2.Phi());
     FillH1(HMuPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    HMassWZ[HIdx["SR_B_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
-    HMassWZ[HIdx["SR_B_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
-    HMassWZ[HIdx["SR_B_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
-    HMassWZ[HIdx["SR_B_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
-    HMassWZ[HIdx["SR_B_ElID_Up"]]->Fill(wzm,WElIDUp);
-    HMassWZ[HIdx["SR_B_ElID_Down"]]->Fill(wzm,WElIDDown);
-    HMassWZ[HIdx["SR_B_MuID_Up"]]->Fill(wzm,WMuIDUp);
-    HMassWZ[HIdx["SR_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
-    if(ApplyKFactors){
-      HMassWZ[HIdx["SR_B_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-      HMassWZ[HIdx["SR_B_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-      HMassWZ[HIdx["SR_B_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-      HMassWZ[HIdx["SR_B_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    if(crOffset==0){ // SR1
+      HMassWZ[HIdx["SR_B_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
+      HMassWZ[HIdx["SR_B_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
+      HMassWZ[HIdx["SR_B_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
+      HMassWZ[HIdx["SR_B_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
+      HMassWZ[HIdx["SR_B_ElID_Up"]]->Fill(wzm,WElIDUp);
+      HMassWZ[HIdx["SR_B_ElID_Down"]]->Fill(wzm,WElIDDown);
+      HMassWZ[HIdx["SR_B_MuID_Up"]]->Fill(wzm,WMuIDUp);
+      HMassWZ[HIdx["SR_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
+      if(ApplyKFactors){
+        HMassWZ[HIdx["SR_B_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR_B_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR_B_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR_B_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+      }
     }
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
     HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
@@ -1376,19 +1374,21 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep2.Phi());
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    HMassWZ[HIdx["SR_C_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
-    HMassWZ[HIdx["SR_C_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
-    HMassWZ[HIdx["SR_C_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
-    HMassWZ[HIdx["SR_C_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
-    HMassWZ[HIdx["SR_C_ElID_Up"]]->Fill(wzm,WElIDUp);
-    HMassWZ[HIdx["SR_C_ElID_Down"]]->Fill(wzm,WElIDDown);
-    HMassWZ[HIdx["SR_C_MuID_Up"]]->Fill(wzm,WMuIDUp);
-    HMassWZ[HIdx["SR_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
-    if(ApplyKFactors){
-      HMassWZ[HIdx["SR_C_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-      HMassWZ[HIdx["SR_C_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-      HMassWZ[HIdx["SR_C_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-      HMassWZ[HIdx["SR_C_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    if(crOffset==0){ // SR1
+      HMassWZ[HIdx["SR_C_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
+      HMassWZ[HIdx["SR_C_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
+      HMassWZ[HIdx["SR_C_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
+      HMassWZ[HIdx["SR_C_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
+      HMassWZ[HIdx["SR_C_ElID_Up"]]->Fill(wzm,WElIDUp);
+      HMassWZ[HIdx["SR_C_ElID_Down"]]->Fill(wzm,WElIDDown);
+      HMassWZ[HIdx["SR_C_MuID_Up"]]->Fill(wzm,WMuIDUp);
+      HMassWZ[HIdx["SR_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
+      if(ApplyKFactors){
+        HMassWZ[HIdx["SR_C_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR_C_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR_C_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR_C_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+      }
     }
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
@@ -1408,15 +1408,17 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep2.Phi());
     FillH1(HMuPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    HMassWZ[HIdx["SR_D_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
-    HMassWZ[HIdx["SR_D_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
-    HMassWZ[HIdx["SR_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
-    HMassWZ[HIdx["SR_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
-    if(ApplyKFactors){
-      HMassWZ[HIdx["SR_D_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-      HMassWZ[HIdx["SR_D_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-      HMassWZ[HIdx["SR_D_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-      HMassWZ[HIdx["SR_D_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+    if(crOffset==0){ // SR1
+      HMassWZ[HIdx["SR_D_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
+      HMassWZ[HIdx["SR_D_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
+      HMassWZ[HIdx["SR_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
+      HMassWZ[HIdx["SR_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
+      if(ApplyKFactors){
+        HMassWZ[HIdx["SR_D_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR_D_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR_D_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR_D_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+      }
     }
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
     HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
@@ -1936,7 +1938,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_RemoveTrkHighPtID.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_SystFix.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
