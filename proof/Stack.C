@@ -97,32 +97,32 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kCyan+1,0.283}, /*XSecAnayzer 0.*/
           BackgroundInfo{"TTV","ttZJets_13TeV_madgraphMLM-pythia8",
             kCyan+1,6.559e-1},
-          BackgroundInfo{"WWW","WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-			 14,2.086e-1},
-          BackgroundInfo{"WWZ","WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-			 15,1.651e-1},
-          BackgroundInfo{"WZZ","WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-			 16,5.565e-2},
-          BackgroundInfo{"ZZZ","ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-			 17,1.398e-2},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8",
-                         43,2.703e-3}, /*AN2019_252_v1*/
-          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8",
-                         43,2.703e-3}, /*AN2019_252_v1*/
-          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8",
-                         43,5.423e-3}, /*AN2019_252_v1*/
+          BackgroundInfo{"VVV","WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+                         14,2.086e-1},
+          BackgroundInfo{"VVV","WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+                         14,1.651e-1},
+          BackgroundInfo{"VVV","WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+                         14,5.565e-2},
+          BackgroundInfo{"VVV","ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
+                         14,1.398e-2},
+          // BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8",
+          //                43,2.703e-3}, /*AN2019_252_v1*/ -> Integral is 0
+          // BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8",
+          //                43,2.703e-3}, /*AN2019_252_v1*/ -> Integral is 0
+          // BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8",
+          //                43,5.423e-3}, /*AN2019_252_v1*/ -> Integral is 0
           BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8",
                          43,2.703e-3}, /*AN2019_252_v1*/
-          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1",
-            kGreen+3,3.365},
+          // BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1",
+          //   kGreen+3,3.365}, -> Integral is 0
           BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1",
             kGreen+3,3.806e1},
           BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1",
             kGreen+3,3.809e1},
-          BackgroundInfo{"ST","ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
-            kGreen+3,80.95}, /*XSecAnalyser 0.*/
-          BackgroundInfo{"ST","ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
-            kGreen+3,136.02}, /*XSecAnalyzer 0.*/
+          // BackgroundInfo{"ST","ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
+          //   kGreen+3,80.95}, /*XSecAnalyser 0.*/ -> Integral is 0
+          // BackgroundInfo{"ST","ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
+          //   kGreen+3,136.02}, /*XSecAnalyzer 0.*/ -> Integral is 0
         }
       },
       {
@@ -535,10 +535,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HMuFakeCat_B","ee#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
     { "HMuFakeCat_C","#mu#mue#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
     { "HMuFakeCat_D","#mu#mu#mu#nu;-1:R&P. -2:R&U. 1:F&P. 2:F&U. (R)eal,(F)ake,(P)aired,(U)npaired; Event count"},
-    { "HFakeString_A","eee#nu;; Event count" },
-    { "HFakeString_B","ee#mu#nu;; Event count" },
-    { "HFakeString_C","#mu#mue#nu;; Event count" },
-    { "HFakeString_D","#mu#mu#mu#nu;; Event count" },
+    { "HFakeString_A","eee#nu;; Lepton count" },
+    { "HFakeString_B","ee#mu#nu;; Lepton count" },
+    { "HFakeString_C","#mu#mue#nu;; Lepton count" },
+    { "HFakeString_D","#mu#mu#mu#nu;; Lepton count" },
     { "HIP3Dl1_A","eee#nu;IP3D_{e1} (cm); Event count" },
     { "HIP3Dl1_B","ee#mu#nu;IP3D_{e1} (cm); Event count" },
     { "HIP3Dl1_C","#mu#mue#nu;IP3D_{#mu1} (cm); Event count" },
@@ -839,6 +839,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     for (auto BGN: BgNames[yr]) {
       auto h = getHistoFromFile(Form("%d/%s",yr,BGN.folderName.c_str()),hname);
       applyLumiSF(h, Form("%d/%s",yr,BGN.folderName.c_str()), BGN.xsec);
+      if(h->Integral() < 1e-6){
+        std::cout << "\n\n*****************\n*****WARNING*****\n*****************\n"
+                  << "\t Integral for " << BGN.folderName << " is " << h->Integral()
+                  << "\n*****************\n";
+      }
+      std::cout << h->GetName() << "\t" << h->Integral() << "\n";
       h->SetFillStyle(1001);
       h->SetTitle(BGN.legendName.c_str());
       h->SetFillColor(BGN.color);
@@ -1028,8 +1034,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
 
       for (auto s: systK) {
-        hname = Form("%s_%s_%s",fromHisto,ch.c_str(),Form("KFactor_%s",s));
-        saveUpDown(foldername,hname,Form("KFactor%s",s));
+        hname = Form("%s_%s_%s",fromHisto,ch.c_str(),Form("KFactor_%s",s.c_str()));
+        saveUpDown(folderName,hname,Form("KFactor%s",s.c_str()));
       }
     };
 
@@ -1499,6 +1505,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         labelIdx.erase(labelIdx.find("SR1_"),4);
       } else if (hName.find("SR2_") != std::string::npos) {
         labelIdx.erase(labelIdx.find("SR2_"),4);
+      }
+
+      if (labelIdx.find("+") != std::string::npos){
+        labelIdx.erase(labelIdx.find("+",8));
       }
       hs->SetTitle(Labels[labelIdx].c_str());
       if (hName.find("CR1_") != std::string::npos) {
