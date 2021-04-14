@@ -54,45 +54,106 @@ full detector response simulated with the \verb|Geant4| toolkit ~\cite{geant4}.
 Physics objects are then reconstructed using the
 Particle-flow algorithm ~\cite{particleflow}.
 
-\subsection{Background Samples}
+\subsection {Signal Samples}
 
-SM physics processes with three leptons and missing energy in the final state
-are considered as sources of background in this search.
-
-WZ production
-
-Z+Jets
-
-Triboson production VVV
-
-Single Top (ST)
-
-ttV
-
-ZZ
-
-
-
-
-
-
-
-
+\ref{tab:SignalList2016}
 
 \begin{sidewaystable}[htb]
 \begin{center}
 \caption{List of background samples for 2016}
 \footnotesize
-\begin{tabular}{|l|l|l|l|}
+\begin{tabular}{|l|l|l|}
 \hline
-Background  & Sample & XSec [pb] & Comment \\ \hline
-DY          & DYJetsToLL\_M-10to50\_TuneCUETP8M1\_13TeV-amcatnloFXFX-pythia8      & 18610.0 & For low di-lepton mass \\ % DYJetsToLL_M-10to50_ext1
-Top         & TTTo2L2Nu\_TuneCUETP8M2\_ttHtranche3\_13TeV-powheg-pythia8          & 87.310 & \\ % TTTo2L2Nu
-& ST\_tW\_antitop\_5f\_inclusiveDecays\_13TeV-powheg-pythia8\_TuneCUETP8M1        & 35.60 & \_ext1 \\ \hline % ST_tW_antitop
+Sample & XSec Model A [pb] & XSec Model B [pb]\\ \hline
+\hline
+WprimeToWZToWlepZlep\_narrow\_M-600\_13TeV-madgraph  & 6.252E-2 & 0. \\
+WprimeToWZToWlepZlep\_narrow\_M-800\_13TeV-madgraph  & 1.886E-2 & 1.02E-02\\
+WprimeToWZToWlepZlep\_narrow\_M-1000\_13TeV-madgraph & 7.381E-3 & 6.81E-03\\
+WprimeToWZToWlepZlep\_narrow\_M-1200\_13TeV-madgraph & 3.356E-3 & 3.75E-03\\
+WprimeToWZToWlepZlep\_narrow\_M-1400\_13TeV-madgraph & 1.684E-3 & 2.08E-03\\
+WprimeToWZToWlepZlep\_narrow\_M-1600\_13TeV-madgraph & 9.036E-4 & 1.19E-03\\
+WprimeToWZToWlepZlep\_narrow\_M-1800\_13TeV-madgraph & 5.087E-4 & 6.97E-04\\
+WprimeToWZToWlepZlep\_narrow\_M-2000\_13TeV-madgraph & 2.967E-4 & 4.18E-04\\
+WprimeToWZToWlepZlep\_narrow\_M-2500\_13TeV-madgraph & 8.548E-5 & 1.25E-04\\
+WprimeToWZToWlepZlep\_narrow\_M-3000\_13TeV-madgraph & 2.680E-5 & 4.02E-05\\
+WprimeToWZToWlepZlep\_narrow\_M-3500\_13TeV-madgraph & 8.754E-6 & 1.33E-05\\
+WprimeToWZToWlepZlep\_narrow\_M-4000\_13TeV-madgraph & 2.893E-6 & 4.53E-06\\
+WprimeToWZToWlepZlep\_narrow\_M-4500\_13TeV-madgraph & 9.543E-7 & 1.49E-06\\
+\hline
+\end{tabular}
+\label{tab:SignalList2016}
+\end{center}
+\end{sidewaystable}
+
+
+
+\subsection{Background Samples}
+
+SM physics processes with three leptons and missing energy in the final state
+are considered as sources of background in this search.
+
+\subsection{WZ production}
+
+\subsection{Z+Jets}
+
+\subsection{Triboson production}
+
+\subsection{Single Top}
+
+\subsection{$t\bar{t}$}
+
+\subsection{ZZ}
+
+\begin{sidewaystable}[htb]
+\begin{center}
+\caption{List of background samples for 2016}
+\footnotesize
+\begin{tabular}{|l|l|l|}
+\hline
+Background  & Sample & XSec [pb] \\ \hline
+\hline $WZ\rightarrow\ell\nu\ell\ell$
+&WZTo3LNu\_TuneCUETP8M1\_13TeV-powheg-pythia8  & 4.43 \\
+\hline $Z\gamma\rightarrow\ell\ell\gamma$
+&ZGTo2LG\_TuneCUETP8M1\_13TeV-amcatnloFXFX-pythia8 & 1.24e2 \\
+\hline $ZZ\rightarrow4\ell$
+&ZZTo4L\_13TeV\_powheg\_pythia8 & 1.256 \\
+\hline $t\bar{t}$
+&TTJets\_DiLept\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8 & 5.675e1 \\
+\hline Z+Jets
+& DYJetsToLL\_M-50\_HT-100to200\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8   & 1.475e2 \\
+& DYJetsToLL\_M-50\_HT-200to400\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8   & 4.104e1 \\
+& DYJetsToLL\_M-50\_HT-400to600\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8   & 5.676   \\
+& DYJetsToLL\_M-50\_HT-600to800\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8   & 1.36    \\
+& DYJetsToLL\_M-50\_HT-800to1200\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8  & 6.218e-1\\
+& DYJetsToLL\_M-50\_HT-1200to2500\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8 & 1.512e-1\\
+& DYJetsToLL\_M-50\_HT-2500toInf\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8  & 3.659e-3\\
+\hline VVV
+&WWW\_4F\_TuneCUETP8M1\_13TeV-amcatnlo-pythia8 & 2.086e-1 \\
+&WWZ\_TuneCUETP8M1\_13TeV-amcatnlo-pythia8     & 1.651e-1 \\
+&WZZ\_TuneCUETP8M1\_13TeV-amcatnlo-pythia8     & 5.565e-2 \\
+&ZZZ\_TuneCUETP8M1\_13TeV-amcatnlo-pythia8     & 1.398e-2 \\
+\hline TTV
+&TTWJetsToLNu\_TuneCUETP8M1\_13TeV-amcatnloFXFX-madspin-pythia8 & 2.007e-1 \\
+&TTZToLL\_M-1to10\_TuneCUETP8M1\_13TeV-madgraphMLM-pythia8      & 0.283    \\
+&ttZJets\_13TeV\_madgraphMLM-pythia8                            & 6.559e-1 \\
+\hline Single Top
+&ST\_s-channel\_4f\_leptonDecays\_13TeV-amcatnlo-pythia8\_TuneCUETP8M1                      & 3.365   \\
+&ST\_t-channel\_antitop\_4f\_inclusiveDecays\_13TeV-powhegV2-madspin-pythia8\_TuneCUETP8M1  & 80.95   \\
+&ST\_t-channel\_top\_4f\_inclusiveDecays\_13TeV-powhegV2-madspin-pythia8\_TuneCUETP8M1      & 136.02  \\
+&ST\_tW\_antitop\_5f\_inclusiveDecays\_13TeV-powheg-pythia8\_TuneCUETP8M1                   & 3.806e1 \\
+&ST\_tW\_top\_5f\_inclusiveDecays\_13TeV-powheg-pythia8\_TuneCUETP8M1                       & 3.809e1 \\
+\hline $gg\rightarrow4\ell\ell$
+&GluGluToContinToZZTo2e2mu\_13TeV\_MCFM701\_pythia8 & 5.423e-3 \\
+&GluGluToContinToZZTo4e\_13TeV\_MCFM701\_pythia8    & 2.703e-3 \\
+&GluGluToContinToZZTo4mu\_13TeV\_MCFM701\_pythia8   & 2.703e-3 \\
+&GluGluToContinToZZTo4tau\_13TeV\_MCFM701\_pythia8  & 2.703e-3 \\
+\hline
 \end{tabular}
 \label{tab:BkgList1}
 \end{center}
 \end{sidewaystable}
+
+
 
 
 
