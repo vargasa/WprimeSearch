@@ -498,12 +498,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Double_t MinMet = 0.;
   const Int_t MetBins = 60;
 
-  InitHVec<TH1F>(HPtl1,"HPtl1",25,0.,250.);
-  InitHVec<TH1F>(HPtl2,"HPtl2",20.,0.,100.);
-  InitHVec<TH1F>(HPtl3,"HPtl3",40,0.,400.);
-  InitHVec<TH1F>(HElPt,"HElPt",40,0.,400.);
-  InitHVec<TH1F>(HMuPt,"HMuPt",40,0.,400.);
-  InitHVec<TH1F>(HMetPt,"HMetPt",MetBins,MinMet,MaxMet);
+  InitHVec<TH1F>(HPtl1,"HPtl1",100,0.,MaxPt);
+  InitHVec<TH1F>(HPtl2,"HPtl2",100,0.,MaxPt);
+  InitHVec<TH1F>(HPtl3,"HPtl3",100,0.,MaxPt);
+  InitHVec<TH1F>(HElPt,"HElPt",100,0.,MaxPt);
+  InitHVec<TH1F>(HMuPt,"HMuPt",100,0.,MaxPt);
+  InitHVec<TH1F>(HMetPt,"HMetPt",100,0.,MaxPt);
 
   const Float_t MaxEta = 3.;
   const Int_t EtaBins = 25;
