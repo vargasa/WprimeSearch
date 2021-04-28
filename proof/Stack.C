@@ -128,8 +128,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2017,
         {
-          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
-            kOrange,6.217e1},
+          BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            kOrange,5.06200E+0},
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
             kBlue,1.325},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -191,8 +191,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kOrange,5.07},
           BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kBlue,1.373},
-          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            kBlue-2,7.503e2},
+          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
+                         kBlue-2,5.434e+1},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             kRed+3,5.548e1},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
@@ -217,6 +217,27 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
             kGreen+1,5.701e-2},
           BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",
             kGreen+1,1.473e-2},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8",
+                         43,3.290e+0},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8",
+                         43,1.397e+0},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8",
+                         43,1.397e+0},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8",
+                         43,1.396e+0},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",
+                         kGreen+3,3.740e+0},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
+                         kGreen+3,3.497e+1},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
+                         kGreen+3,3.491e+1},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+                         kCyan+1,2.181e-1},
+          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",
+                         kCyan+1,5.324e-2},
+          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+                         kCyan+1,5.924e-1}
+
         }
       }
     };
