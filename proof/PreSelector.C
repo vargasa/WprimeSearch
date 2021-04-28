@@ -372,9 +372,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t TWMassBins = 15;
   InitHVec<TH1F>(HMassTW,"HMassTW",TWMassBins,0.,MaxTWMass);
 
-  const Float_t MaxWZMass = 5500.;
-  const Int_t WZMassBins = 100;
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",WZMassBins,0.,MaxWZMass);
+  const Double_t wzbins[15] = {
+    0,100,150,210,280,360,
+    450,550,660,780,910,1050,
+    1190,1340,3000
+  };
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",14,wzbins);
   InitHVec<TH1F>(HPtZMWZ,"HPtZMWZ",60,0.,2);
   InitHVec<TH1F>(HPtWMWZ,"HPtWMWZ",60,0.,2);
 
@@ -1907,7 +1910,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_SystFix.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_VarBin.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
