@@ -62,7 +62,20 @@ Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
   return sf;
 }
 #endif
+#ifndef CMSDATA
+Double_t PreSelector::GetPResidual(const Leptons& l, const int& idx) const{
 
+  const int gpidx = l.genPartIdx[idx];
+
+  PtEtaPhiMVector v4 = PtEtaPhiMVector(l.pt[idx],l.eta[idx],l.phi[idx],l.mass);
+  PtEtaPhiMVector v4Gen = PtEtaPhiMVector(GenPart_pt[gpidx],
+                                          GenPart_eta[gpidx],
+                                          GenPart_phi[gpidx],
+                                          GenPart_mass[gpidx]);
+
+  return ( (1 / v4.P()) - (1/v4Gen.P()) ) / ( 1/v4Gen.P() );
+}
+#endif
 #ifndef CMSDATA
 Double_t PreSelector::GetZPtFromGen() const{
 
@@ -227,19 +240,37 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "SR1_B",
     "SR1_C",
     "SR1_D",
-    "SR1_A_Central",
-    "SR1_B_Central",
-    "SR1_C_Central",
-    "SR1_D_Central",
-    "CR1_A", // 8
-    "CR1_B",
-    "CR1_C",
-    "CR1_D",
-    "CR1_A_Central",
-    "CR1_B_Central",
-    "CR1_C_Central",
-    "CR1_D_Central",
   };
+
+#ifndef CMSDATA
+  if (name == "HPResidual"){
+    idst.emplace_back("SR1_E");
+    idst.emplace_back("SR1_F");
+  }
+#endif
+
+  idst.emplace_back("SR1_A_Central");
+  idst.emplace_back("SR1_B_Central");
+  idst.emplace_back("SR1_C_Central");
+  idst.emplace_back("SR1_D_Central");
+
+  idst.emplace_back("CR1_A");
+  idst.emplace_back("CR1_B");
+  idst.emplace_back("CR1_C");
+  idst.emplace_back("CR1_D");
+
+#ifndef CMSDATA
+  if (name == "HPResidual"){
+    idst.emplace_back("CR1_E");
+    idst.emplace_back("CR1_F");
+  }
+#endif
+
+  idst.emplace_back("CR1_A_Central");
+  idst.emplace_back("CR1_B_Central");
+  idst.emplace_back("CR1_C_Central");
+  idst.emplace_back("CR1_D_Central");
+
 
   for(const auto id: idst){
     vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
@@ -441,6 +472,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t PdgIdMax = 50.5;
 
 #ifndef CMSDATA
+  InitHVec<TH1F>(HPResidual,"HPResidual",100,-0.5,0.5);
   InitHVec<TH1F>(HElFakeCat,"HElFakeCat",5,-2.5,2.5);
   InitHVec<TH1F>(HMuFakeCat,"HMuFakeCat",5,-2.5,2.5);
 
@@ -1231,6 +1263,54 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 
 #ifndef CMSDATA
 
+
+  if(IsC or IsD) { // PairMu
+
+    // 3 Regions in Eta:
+    // B(     |eta|<0.9)
+    //        1Trk+1Glb _A +0
+    //        1Glb+1Glb _B +1
+    // O( 0.9<|eta|<1.2)
+    //        1Trk+1Glb _C +2
+    //        1Glb+1Glb _D +3
+    // E(     |eta|>1.2)
+    //        1Trk+1Glb _E +4
+    //        1Glb+1Glb _F +5
+
+
+
+    auto getHId = [&] (const int& idx) {
+
+      int histoId = 0;
+
+      if (Muon_highPtId[l1] == 1 or Muon_highPtId[l2] == 1) { //1Trk+1Glb
+        if ( abs(Muon_eta[idx]) < 0.9) {
+          histoId = 0;
+        } else if ( abs(Muon_eta[idx]) > 0.9 and abs(Muon_eta[idx]) < 1.2 ){
+          histoId = 2;
+        } else if (abs(Muon_eta[idx]) > 1.2 ) {
+          histoId = 4;
+        }
+      } else { // 2Glb
+        if (abs (Muon_eta[idx]) < 0.9) {
+          histoId = 1;
+        } else if ( abs(Muon_eta[idx]) > 0.9 and abs(Muon_eta[idx]) < 1.2 ){
+          histoId = 3;
+        } else if ( abs(Muon_eta[idx]) > 1.2 ) {
+          histoId = 5;
+        }
+      }
+
+      return histoId;
+
+    };
+
+    HPResidual[crOffset + getHId(l1)]->Fill(GetPResidual(lz,l1));
+    HPResidual[crOffset + getHId(l2)]->Fill(GetPResidual(lz,l2));
+
+  }
+
+
   DefineSFs();
 
   HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
@@ -1910,7 +1990,7 @@ void PreSelector::Terminate() {
   std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
   std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_VarBin.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_PResidual.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));

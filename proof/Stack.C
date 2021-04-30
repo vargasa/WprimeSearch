@@ -551,6 +551,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HIP3Dl3_B","ee#mu#nu;IP3D_{#mu} (cm); Event count" },
     { "HIP3Dl3_C","#mu#mue#nu;IP3D_{e} (cm); Event count" },
     { "HIP3Dl3_D","#mu#mu#mu#nu;IP3D_{#mu3} (cm); Event count" },
+    { "HPResidual_A","|#eta| < 0.9 1 Trk + 1 Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
+    { "HPResidual_B","|#eta| < 0.9 2 Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
+    { "HPResidual_C","0.9<|eta|<1.2 1 Trk + 1Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
+    { "HPResidual_D","0.9<|eta|<1.2 2Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
+    { "HPResidual_E","|eta|>1.2 1 Trk + 1Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
+    { "HPResidual_F","|eta|>1.2 2Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
   };
 
   std::vector<std::string> HistNames = {

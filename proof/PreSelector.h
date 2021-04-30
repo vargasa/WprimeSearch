@@ -181,6 +181,7 @@ class PreSelector : public EventSelection {
   const Int_t ElPdgId = 11;
   const Int_t MuPdgId = 13;
 
+  std::vector<TH1F*> HPResidual;
   std::vector<TH1F*> HElFakeCat;
   std::vector<TH1F*> HMuFakeCat;
   std::vector<TH1F*> HFakeString;
@@ -296,6 +297,7 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
   Double_t GetZPtFromGen() const;
+  Double_t GetPResidual(const Leptons& l, const int& idx) const;
   Int_t GetFakeContent(const int& genPartIdx,const int& pdgId,const int& nLepton) const;
   std::string GetFakeString(const int& genPartIdx, const int& pdgId, const int& idn) const;
   Double_t GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const;
