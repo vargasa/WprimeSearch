@@ -1,0 +1,117 @@
+
+Double_t DCBFunction(Double_t *x, Double_t *par){
+
+  Double_t alpha_l = par[0];
+  Double_t alpha_h = par[1];
+  Double_t n_l     = par[2];
+  Double_t n_h     = par[3];
+  Double_t mean    = par[4];
+  Double_t sigma   = par[5];
+  Double_t N       = par[6];
+  Double_t result;
+
+  if (  x[0] >= alpha_l and x[0] <= alpha_h ) {
+    result = exp(-0.5*pow(x[0]-mean,2.)/pow(sigma,2.));
+  } else if (x[0] < alpha_l) {
+    result = pow(n_l/alpha_l,n_l)*exp(-0.5*pow(alpha_l,2.))*pow( n_l/alpha_l + alpha_l + x[0], -n_l);
+  } else if (x[0] > alpha_h) {
+    result = pow(n_h/alpha_h,n_h)*exp(-0.5*pow(alpha_h,2.))*pow( n_h/alpha_h + alpha_h + x[0], -n_h);
+  }
+
+  return N*result;
+}
+
+int Stack() {
+
+  TFile* f1 = TFile::Open("MuonStudies.root");
+
+  std::vector<std::string> etaBins = { "HPResidualO","HPResidualB","HPResidualE" };
+
+  int etaBins_ = 2;
+
+  std::vector<std::string> samples = {
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_50_120",
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_120_200"
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_400_800",
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_800_1400",
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_1400_2300",
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_2300_3500",
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_3500_4500",
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_4500_6000",
+    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_6000_Inf"
+  };
+
+  TH2D* hp = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s;1",samples[0].c_str(),etaBins[etaBins_].c_str())));
+  for(int i = 1; i < samples.size(); ++i){
+    hp->Add(static_cast<TH2D*>(f1->Get(Form("2017/%s/%s;1",samples[i].c_str(),etaBins[etaBins_].c_str()))));
+  }
+
+  TCanvas* c1 = new TCanvas();
+  Int_t nParams = 7;
+
+  gStyle->SetOptFit(1);
+
+  std::vector<Double_t> sigmas;
+  std::vector<Double_t> sigmaErrors;
+  std::vector<Double_t> ptBins;
+
+  //TGraphAsymmErrors
+
+  for(uint i = 1; i < 12; ++i){
+
+    Double_t ptBinMin = hp->GetXaxis()->GetBinLowEdge(i);
+    Double_t ptBinMax = hp->GetXaxis()->GetBinLowEdge(i+1);
+
+    ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(i));
+
+    TH1D* h = hp->ProjectionY("_h",i);
+
+    Double_t xmin = -2.*h->GetRMS();
+    Double_t xmax = 1.3*h->GetRMS();
+
+    TF1 *fxDCB = new TF1("fxDCB", DCBFunction, xmin, xmax, nParams);
+    fxDCB->SetParNames ("#alpha_{low}","#alpha_{high}","n_{low}", "n_{high}", "#mu", "#sigma", "N");
+    //fxDCB->SetParameters(0.5, 0.5, 100, 100, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
+    fxDCB->SetParameters(60,60 , 150, 150, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
+    h->SetTitle(Form("[%.1f:%.1f] GeV %s;(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str()));
+    h->Fit(fxDCB,"","",xmin,xmax);
+    sigmas.emplace_back(fxDCB->GetParameter(5));
+    sigmaErrors.emplace_back(fxDCB->GetParError(5));
+
+    std::string gaussian = Form("%.8f*exp(-0.5*((x - %.8f)**2)/(%.8f**2))",
+                                fxDCB->GetParameter(6),fxDCB->GetParameter(4),fxDCB->GetParameter(5));
+
+    //std::cout << gaussian << std::endl;
+
+    std::string exp1 = Form("%.8f*pow(%.8f/%.8f,%.8f)*exp(-0.5*(%.8f**2))/pow((%.8f/%.8f)-%.8f-x,%.8f)",
+                            fxDCB->GetParameter(6),
+                            fxDCB->GetParameter(2),fxDCB->GetParameter(0),fxDCB->GetParameter(2),
+                            fxDCB->GetParameter(0),
+                            fxDCB->GetParameter(2),fxDCB->GetParameter(0),fxDCB->GetParameter(2),fxDCB->GetParameter(2));
+
+    //std::cout << exp1 << std::endl;
+
+    TF1 *gausFx = new TF1("gausFx", gaussian.c_str(), xmin, xmax);
+    TF1 *exp1Fx = new TF1("exp1Fx", exp1.c_str(), xmin, xmax);
+
+    h->Draw();
+    fxDCB->Draw("SAME");
+    gausFx->SetLineColor(kBlue);
+    //gausFx->Draw("SAME");
+    exp1Fx->SetLineColor(kYellow);
+    //exp1Fx->Draw("SAME");
+    c1->Print(Form("%s_%.0f-%.0f.png",etaBins[etaBins_].c_str(),ptBinMin,ptBinMax));
+    delete gausFx;
+    delete fxDCB;
+    delete exp1Fx;
+    //break;
+  }
+
+  //TGraphAsymmErrors* g = new TGraphAsymmErrors(12);
+
+  for(int i = 0; i < 12; ++i){
+    std::cout << ptBins[i] << "\t" << ptBins[i+1] << "\t" << sigmas[i] << std::endl;
+  }
+
+  return 0;
+}
