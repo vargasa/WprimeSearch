@@ -47,23 +47,29 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
   fOutput->Add(HCutFlow);
 
-  const Double_t PtBins[12] = {
-    120,200,300,400,600,800,1000,1300,1600,2000,2500,3100
+  const Double_t PtBins[13] = {
+    120,200,300,400,600,800,1000,1300,1600,2000,2500,3100,4500
   };
 
-  const Double_t PResBins[21] = {
-    -0.20,-0.18,-0.16,-0.14,-0.12,-0.10,
-    -0.08,-0.06,-0.04,-0.02, 0.00, 0.02,
-     0.04, 0.06, 0.08, 0.10, 0.12, 0.14,
-     0.16,0.18,0.20
+  const Double_t PResBins[41] = {
+    -0.20,-0.19,-0.18,-0.17,-0.16,-0.15,
+    -0.14,-0.13,-0.12,-0.11,-0.10,-0.09,
+    -0.08,-0.07,-0.06,-0.05,-0.04,-0.03,
+    -0.02,-0.01, 0.00, 0.01, 0.02, 0.03,
+    0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
+    0.10, 0.11, 0.12, 0.13, 0.14, 0.15,
+    0.16, 0.17, 0.18, 0.19, 0.20
   };
 
-  HPResidualB = new TH2F("HPResidualB","",11,PtBins,20,PResBins);
-  HPResidualO = new TH2F("HPResidualO","",11,PtBins,20,PResBins);
-  HPResidualE = new TH2F("HPResidualE","",11,PtBins,20,PResBins);
+  HPResidualB = new TH2F("HPResidualB","",12,PtBins,40,PResBins);
+  HPResidualO = new TH2F("HPResidualO","",12,PtBins,40,PResBins);
+  HPResidualE = new TH2F("HPResidualE","",12,PtBins,40,PResBins);
   fOutput->Add(HPResidualB);
   fOutput->Add(HPResidualO);
   fOutput->Add(HPResidualE);
+
+  HMuonPt = new TH1F("HMuonPt","",50,0,5000);
+  fOutput->Add(HMuonPt);
 
   HMassZ = new TH1F("HMassZ","",62,0,3100);
   fOutput->Add(HMassZ);
@@ -90,10 +96,10 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
 
   leadMuIdx = LeadingIdx(Mu);
 
-  if(Mu.pt[leadMuIdx] < 52.)  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
+  if(Mu.pt[leadMuIdx] < 53.)  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
     return GoodIndex;
   const Float_t MaxEta = 2.4;
-  const Float_t MinPt = 20.;
+  const Float_t MinPt = 53.;
   if(abs(Mu.eta[leadMuIdx]) >= MaxEta){
     HCutFlow->FillS("LeadingMuOut");
     return GoodIndex;
@@ -258,7 +264,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   HCutFlow->FillS("NoCuts");
 
-  if (!MuonTest()) HCutFlow->FillS("FailMuonHLTs");
+  if (!MuonTest()){
+    HCutFlow->FillS("FailMuonHLTs");
+    return kFALSE;
+  }
+
+  if (!FlagsTest()){
+    HCutFlow->FillS("FailFlags");
+    return kFALSE;
+  }
 
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
@@ -302,17 +316,28 @@ Bool_t PreSelector::Process(Long64_t entry) {
    l1 = ztmu.Pair.first;
    l2 = ztmu.Pair.second;
 
-   lep1 = PtEtaPhiMVector(Muon_pt[l1],Muon_eta[l1],
+   lep1 = PtEtaPhiMVector(Muon_pt[l1]*Muon_tunepRelPt[l1],Muon_eta[l1],
                           Muon_phi[l1],Muons::mass);
-   lep2 = PtEtaPhiMVector(Muon_pt[l2],Muon_eta[l2],
+   lep2 = PtEtaPhiMVector(Muon_pt[l2]*Muon_tunepRelPt[l2],Muon_eta[l2],
                           Muon_phi[l2],Muons::mass);
 
    zb   = lep1 + lep2;
+
+   HMuonPt->Fill(lep1.Pt());
+   HMuonPt->Fill(lep2.Pt());
 
    HCutFlow->FillS("ZCandidate");
 
 
    HMassZ->Fill(zb.M());
+
+   if( Muon_highPtId[l1] == 1 xor Muon_highPtId[l2] == 1 ){
+     HCutFlow->FillS("Trk+Glb");
+   } else if ( Muon_highPtId[l1] == 2 and Muon_highPtId[l2] == 2 ){
+     HCutFlow->FillS("Glb+Glb");
+   } else {
+     HCutFlow->FillS("Trk+Trk");
+   }
 
 
    std::pair<float,float> MuonB = { 0., 0.9};
