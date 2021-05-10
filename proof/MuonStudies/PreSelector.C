@@ -51,22 +51,47 @@ void PreSelector::SlaveBegin(TTree *tree) {
     120,200,300,400,600,800,1000,1300,1600,2000,2500,3100,4500
   };
 
-  const Double_t PResBins[41] = {
+  const Double_t PResBins[54] = {
+    -0.26,-0.25,-0.24,-0.23,-0.22,-0.21,
     -0.20,-0.19,-0.18,-0.17,-0.16,-0.15,
     -0.14,-0.13,-0.12,-0.11,-0.10,-0.09,
     -0.08,-0.07,-0.06,-0.05,-0.04,-0.03,
     -0.02,-0.01, 0.00, 0.01, 0.02, 0.03,
     0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
     0.10, 0.11, 0.12, 0.13, 0.14, 0.15,
-    0.16, 0.17, 0.18, 0.19, 0.20
+    0.16, 0.17, 0.18, 0.19, 0.20, 0.21,
+    0.22, 0.23, 0.24, 0.25, 0.26, 0.27
   };
 
-  HPResidualB = new TH2F("HPResidualB","",12,PtBins,40,PResBins);
-  HPResidualO = new TH2F("HPResidualO","",12,PtBins,40,PResBins);
-  HPResidualE = new TH2F("HPResidualE","",12,PtBins,40,PResBins);
-  fOutput->Add(HPResidualB);
-  fOutput->Add(HPResidualO);
-  fOutput->Add(HPResidualE);
+  HPResidualB_TG = new TH2F("HPResidualB_TG","",12,PtBins,53,PResBins);
+  HPResidualO_TG = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualO_TG->SetName("HPResidualO_TG");
+  HPResidualE_TG = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualE_TG->SetName("HPResidualE_TG");
+
+  HPResidualB_GG = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualB_GG->SetName("HPResidualB_GG");
+  HPResidualO_GG = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualO_GG->SetName("HPResidualO_GG");
+  HPResidualE_GG = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualE_GG->SetName("HPResidualE_GG");
+
+  HPResidualB_TT = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualB_TT->SetName("HPResidualB_TT");
+  HPResidualO_TT = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualO_TT->SetName("HPResidualO_TT");
+  HPResidualE_TT = static_cast<TH2F*>(HPResidualB_TG->Clone());
+  HPResidualE_TT->SetName("HPResidualE_TT");
+
+  fOutput->Add(HPResidualB_TG);
+  fOutput->Add(HPResidualO_TG);
+  fOutput->Add(HPResidualE_TG);
+  fOutput->Add(HPResidualB_GG);
+  fOutput->Add(HPResidualO_GG);
+  fOutput->Add(HPResidualE_GG);
+  fOutput->Add(HPResidualB_TT);
+  fOutput->Add(HPResidualO_TT);
+  fOutput->Add(HPResidualE_TT);
 
   HMuonPt = new TH1F("HMuonPt","",50,0,5000);
   fOutput->Add(HMuonPt);
@@ -331,33 +356,40 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    HMassZ->Fill(zb.M());
 
+   auto FillHistos = [&](TH2F* HPResidualB,
+                        TH2F* HPResidualO,
+                        TH2F* HPResidualE) {
+
+     std::pair<float,float> MuonB = { 0., 0.9};
+     std::pair<float,float> MuonO = { 0.9, 1.2};
+     std::pair<float,float> MuonC = { 1.2, 2.4};
+
+     if( abs(lep1.Eta()) < MuonB.second ) {
+       HPResidualB->Fill(lep1.P(),GetPResidual(Mus,l1));
+     } else if (abs(lep1.Eta()) > MuonO.first and abs(lep1.Eta()) < MuonO.second) {
+       HPResidualO->Fill(lep1.P(),GetPResidual(Mus,l1));
+     } else {
+       HPResidualE->Fill(lep1.P(),GetPResidual(Mus,l1));
+     }
+
+     if( abs(lep2.Eta()) < MuonB.second ) {
+       HPResidualB->Fill(lep2.P(),GetPResidual(Mus,l2));
+     } else if (abs(lep2.Eta()) > MuonO.first and abs(lep2.Eta()) < MuonO.second) {
+       HPResidualO->Fill(lep2.P(),GetPResidual(Mus,l2));
+     } else {
+       HPResidualE->Fill(lep2.P(),GetPResidual(Mus,l2));
+     }
+   };
+
    if( Muon_highPtId[l1] == 1 xor Muon_highPtId[l2] == 1 ){
      HCutFlow->FillS("Trk+Glb");
+     FillHistos(HPResidualB_TG, HPResidualO_TG, HPResidualE_TG);
    } else if ( Muon_highPtId[l1] == 2 and Muon_highPtId[l2] == 2 ){
      HCutFlow->FillS("Glb+Glb");
+     FillHistos(HPResidualB_GG, HPResidualO_GG, HPResidualE_GG);
    } else {
      HCutFlow->FillS("Trk+Trk");
-   }
-
-
-   std::pair<float,float> MuonB = { 0., 0.9};
-   std::pair<float,float> MuonO = { 0.9, 1.2};
-   std::pair<float,float> MuonC = { 1.2, 2.4};
-
-   if( abs(lep1.Eta()) < MuonB.second ) {
-     HPResidualB->Fill(lep1.P(),GetPResidual(Mus,l1));
-   } else if (abs(lep1.Eta()) > MuonO.first and abs(lep1.Eta()) < MuonO.second) {
-     HPResidualO->Fill(lep1.P(),GetPResidual(Mus,l1));
-   } else {
-     HPResidualE->Fill(lep1.P(),GetPResidual(Mus,l1));
-   }
-
-   if( abs(lep2.Eta()) < MuonB.second ) {
-     HPResidualB->Fill(lep2.P(),GetPResidual(Mus,l2));
-   } else if (abs(lep2.Eta()) > MuonO.first and abs(lep2.Eta()) < MuonO.second) {
-     HPResidualO->Fill(lep2.P(),GetPResidual(Mus,l2));
-   } else {
-     HPResidualE->Fill(lep2.P(),GetPResidual(Mus,l2));
+     FillHistos(HPResidualB_TT, HPResidualO_TT, HPResidualE_TT);
    }
 
    return kTRUE;
