@@ -199,25 +199,15 @@ ZPairInfo PreSelector::FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
 
   std::vector<ZPairInfo> PairsWithMass;
 
-  const Double_t ZNominalMass = 91.1876;
 
   for(const auto& pair: Pairs){
     UInt_t i = pair.first;
     UInt_t j = pair.second;
     Float_t m = PreSelector::MassRecoZ(l.pt[i],l.eta[i],l.phi[i],l.mass,
                                        l.pt[j],l.eta[j],l.phi[j],l.mass);
-    z1.Delta = abs(ZNominalMass-m);
     z1.Mass = m;
     z1.Pair = pair;
     PairsWithMass.emplace_back(z1);
-  }
-
-  if(PairsWithMass.size() > 1) {
-    auto sortAscByDelta = [&] (const ZPairInfo& p1, const ZPairInfo& p2) {
-      return p1.Delta < p2.Delta;
-    };
-    std::sort(PairsWithMass.begin(),PairsWithMass.end(),
-              sortAscByDelta);
   }
 
   return PairsWithMass[0]; /*Pair with smallest delta*/
@@ -259,6 +249,16 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
   if (Muon_pt[p.second] < MinSubleadPt) return kFALSE;
   const Float_t farFromPV = 1e-2;
   if (Muon_ip3d[p.first] > farFromPV or Muon_ip3d[p.second] > farFromPV) return kFALSE;
+
+  const uint ZPdgId = 23;
+
+  if ( GetMother(Muon_genPartIdx[p.first],MuPdgId).second != ZPdgId
+       or
+       GetMother(Muon_genPartIdx[p.second],MuPdgId).second != ZPdgId ){
+
+    return kFALSE;
+
+  };
 
   Bool_t GlobalHighPtl1 = (Muon_highPtId[p.first] == 2);
   Bool_t GlobalHighPtl2 = (Muon_highPtId[p.second] == 2);
