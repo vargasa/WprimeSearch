@@ -21,29 +21,66 @@ Double_t DCBFunction(Double_t *x, Double_t *par){
   return N*result;
 }
 
+double DSCB_ROOTForum(double *x, double *par){
+
+  double alpha_l = par[0];
+  double alpha_h = par[1];
+  double n_l     = par[2];
+  double n_h     = par[3];
+  double mean    = par[4];
+  double sigma   = par[5];
+  double N       = par[6];
+  double t = (x[0]-mean)/sigma;
+  double result;
+
+  double fAlphaL = alpha_l/n_l;
+  double f2AlphaL = (n_l/alpha_l) - alpha_l - t;
+  double fAlphaH = alpha_h/n_h;
+  double f2AlphaH = (n_h/alpha_h) - alpha_h + t;
+
+  if (-alpha_l <= t && alpha_h >= t){
+       result = exp(-0.5*t*t);
+  } else if (t < -alpha_l) {
+    result = exp(-0.5*alpha_l*alpha_l)*pow(fAlphaL*f2AlphaL, -n_l);
+  } else if (t > alpha_h) {
+    result = exp(-0.5*alpha_h*alpha_h)*pow(fAlphaH*f2AlphaH, -n_h);
+  }
+
+  return N*result;
+
+}
+
 int Stack() {
 
-  TFile* f1 = TFile::Open("MuonStudies.root");
+  TFile* f1 = TFile::Open("MuonStudies_ALT.root");
 
-  std::vector<std::string> etaBins = { "HPResidualO","HPResidualB","HPResidualE" };
-
-  int etaBins_ = 2;
-
-  std::vector<std::string> samples = {
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_50_120",
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_120_200"
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_400_800",
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_800_1400",
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_1400_2300",
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_2300_3500",
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_3500_4500",
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_4500_6000",
-    "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_6000_Inf"
+  std::vector<std::string> etaBins = {
+    //    "HPResidualB_TT", "HPResidualO_TT", "HPResidualE_TT",
+    "HPResidualB_TG", "HPResidualO_TG", "HPResidualE_TG",
+    "HPResidualB_GG", "HPResidualO_GG", "HPResidualE_GG"
   };
 
-  TH2D* hp = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s;1",samples[0].c_str(),etaBins[etaBins_].c_str())));
-  for(int i = 1; i < samples.size(); ++i){
-    hp->Add(static_cast<TH2D*>(f1->Get(Form("2017/%s/%s;1",samples[i].c_str(),etaBins[etaBins_].c_str()))));
+  int etaBins_ = 3;
+
+  std::vector<std::pair<std::string,Double_t>> samples = {
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_50_120", 2.116e+03},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_120_200", 2.058e+01},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_200_400", 2.890e+00},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_400_800", 2.515e-01},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_800_1400", 1.709e-02},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_1400_2300", 1.370e-03},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_2300_3500", 8.282e-05},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_3500_4500", 3.414e-06},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_4500_6000", 3.650e-07},
+    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_6000_Inf", 2.526e-08},
+  };
+
+  TH2D* hp = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s",samples[0].first.c_str(),etaBins[etaBins_].c_str())));
+  //hp->Scale(samples[0].second);
+  for (int i = 1; i < samples.size(); ++i) {
+    TH2D* h = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s",samples[i].first.c_str(),etaBins[etaBins_].c_str())));
+    //hp->Add(h,samples[i].second);
+    hp->Add(h);
   }
 
   TCanvas* c1 = new TCanvas();
@@ -66,13 +103,14 @@ int Stack() {
 
     TH1D* h = hp->ProjectionY("_h",i);
 
-    Double_t xmin = -2.*h->GetRMS();
-    Double_t xmax = 1.3*h->GetRMS();
+    Double_t xmin = -0.2;// -2.*h->GetRMS();
+    Double_t xmax = 0.2;//1.3*h->GetRMS();
 
-    TF1 *fxDCB = new TF1("fxDCB", DCBFunction, xmin, xmax, nParams);
+    TF1 *fxDCB = new TF1("fxDCB", DSCB_ROOTForum, xmin, xmax, nParams);
     fxDCB->SetParNames ("#alpha_{low}","#alpha_{high}","n_{low}", "n_{high}", "#mu", "#sigma", "N");
-    //fxDCB->SetParameters(0.5, 0.5, 100, 100, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
-    fxDCB->SetParameters(60,60 , 150, 150, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
+    //fxDCB->SetParameters(1, 1,10, 10, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
+    //fxDCB->SetParameters( -0.2,0.2 , 20, 20, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
+    fxDCB->SetParameters(2, 5, 20, 20, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
     h->SetTitle(Form("[%.1f:%.1f] GeV %s;(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str()));
     h->Fit(fxDCB,"","",xmin,xmax);
     sigmas.emplace_back(fxDCB->GetParameter(5));
