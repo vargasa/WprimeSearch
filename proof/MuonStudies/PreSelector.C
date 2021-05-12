@@ -63,35 +63,25 @@ void PreSelector::SlaveBegin(TTree *tree) {
     0.22, 0.23, 0.24, 0.25, 0.26, 0.27
   };
 
-  HPResidualB_TG = new TH2F("HPResidualB_TG","",12,PtBins,53,PResBins);
-  HPResidualO_TG = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualO_TG->SetName("HPResidualO_TG");
-  HPResidualE_TG = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualE_TG->SetName("HPResidualE_TG");
+  HPResidualB_T = new TH2F("HPResidualB_T","",12,PtBins,53,PResBins);
+  HPResidualO_T = static_cast<TH2F*>(HPResidualB_T->Clone());
+  HPResidualO_T->SetName("HPResidualO_T");
+  HPResidualE_T = static_cast<TH2F*>(HPResidualB_T->Clone());
+  HPResidualE_T->SetName("HPResidualE_T");
 
-  HPResidualB_GG = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualB_GG->SetName("HPResidualB_GG");
-  HPResidualO_GG = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualO_GG->SetName("HPResidualO_GG");
-  HPResidualE_GG = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualE_GG->SetName("HPResidualE_GG");
+  HPResidualB_G = static_cast<TH2F*>(HPResidualB_T->Clone());
+  HPResidualB_G->SetName("HPResidualB_G");
+  HPResidualO_G = static_cast<TH2F*>(HPResidualB_T->Clone());
+  HPResidualO_G->SetName("HPResidualO_G");
+  HPResidualE_G = static_cast<TH2F*>(HPResidualB_T->Clone());
+  HPResidualE_G->SetName("HPResidualE_G");
 
-  HPResidualB_TT = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualB_TT->SetName("HPResidualB_TT");
-  HPResidualO_TT = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualO_TT->SetName("HPResidualO_TT");
-  HPResidualE_TT = static_cast<TH2F*>(HPResidualB_TG->Clone());
-  HPResidualE_TT->SetName("HPResidualE_TT");
-
-  fOutput->Add(HPResidualB_TG);
-  fOutput->Add(HPResidualO_TG);
-  fOutput->Add(HPResidualE_TG);
-  fOutput->Add(HPResidualB_GG);
-  fOutput->Add(HPResidualO_GG);
-  fOutput->Add(HPResidualE_GG);
-  fOutput->Add(HPResidualB_TT);
-  fOutput->Add(HPResidualO_TT);
-  fOutput->Add(HPResidualE_TT);
+  fOutput->Add(HPResidualB_T);
+  fOutput->Add(HPResidualO_T);
+  fOutput->Add(HPResidualE_T);
+  fOutput->Add(HPResidualB_G);
+  fOutput->Add(HPResidualO_G);
+  fOutput->Add(HPResidualE_G);
 
   HMuonPt = new TH1F("HMuonPt","",50,0,5000);
   fOutput->Add(HMuonPt);
@@ -313,13 +303,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  // PairZMass = ztmu.Mass;
-  // Bool_t IsZMassOk = (PairZMass > MinZMass) && (PairZMass < MaxZMass);
-  // if(!IsZMassOk){
-  //   HCutFlow->FillS("FailZMassWindow");
-  //   return kFALSE;
-  // }
-
    l1 = ztmu.Pair.first;
    l2 = ztmu.Pair.second;
 
@@ -339,39 +322,34 @@ Bool_t PreSelector::Process(Long64_t entry) {
    HMassZ->Fill(zb.M());
 
    auto FillHistos = [&](TH2F* HPResidualB,
-                        TH2F* HPResidualO,
-                        TH2F* HPResidualE) {
+                         TH2F* HPResidualO,
+                         TH2F* HPResidualE,
+                         PtEtaPhiMVector& lep,
+                         int& l) {
 
      std::pair<float,float> MuonB = { 0., 0.9};
      std::pair<float,float> MuonO = { 0.9, 1.2};
      std::pair<float,float> MuonC = { 1.2, 2.4};
 
-     if( abs(lep1.Eta()) < MuonB.second ) {
-       HPResidualB->Fill(lep1.P(),GetPResidual(Mus,l1));
-     } else if (abs(lep1.Eta()) > MuonO.first and abs(lep1.Eta()) < MuonO.second) {
-       HPResidualO->Fill(lep1.P(),GetPResidual(Mus,l1));
+     if( abs(lep.Eta()) < MuonB.second ) {
+       HPResidualB->Fill(lep.P(),GetPResidual(Mus,l));
+     } else if (abs(lep.Eta()) > MuonO.first and abs(lep.Eta()) < MuonO.second) {
+       HPResidualO->Fill(lep.P(),GetPResidual(Mus,l));
      } else {
-       HPResidualE->Fill(lep1.P(),GetPResidual(Mus,l1));
-     }
-
-     if( abs(lep2.Eta()) < MuonB.second ) {
-       HPResidualB->Fill(lep2.P(),GetPResidual(Mus,l2));
-     } else if (abs(lep2.Eta()) > MuonO.first and abs(lep2.Eta()) < MuonO.second) {
-       HPResidualO->Fill(lep2.P(),GetPResidual(Mus,l2));
-     } else {
-       HPResidualE->Fill(lep2.P(),GetPResidual(Mus,l2));
+       HPResidualE->Fill(lep.P(),GetPResidual(Mus,l));
      }
    };
 
-   if( Muon_highPtId[l1] == 1 xor Muon_highPtId[l2] == 1 ){
-     HCutFlow->FillS("Trk+Glb");
-     FillHistos(HPResidualB_TG, HPResidualO_TG, HPResidualE_TG);
-   } else if ( Muon_highPtId[l1] == 2 and Muon_highPtId[l2] == 2 ){
-     HCutFlow->FillS("Glb+Glb");
-     FillHistos(HPResidualB_GG, HPResidualO_GG, HPResidualE_GG);
+   if( Muon_highPtId[l1] == 1 ){
+     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualE_T, lep1, l1);
    } else {
-     HCutFlow->FillS("Trk+Trk");
-     FillHistos(HPResidualB_TT, HPResidualO_TT, HPResidualE_TT);
+     FillHistos(HPResidualB_G, HPResidualO_G, HPResidualE_G, lep1, l1);
+   }
+
+   if( Muon_highPtId[l2] == 1){
+     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualE_T, lep2, l2);
+   } else {
+     FillHistos(HPResidualB_G, HPResidualO_G, HPResidualE_G, lep2, l2);
    }
 
    return kTRUE;
