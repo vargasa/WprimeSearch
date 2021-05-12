@@ -276,12 +276,30 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
 
   if ( GetMother(Muon_genPartIdx[p.first],MuPdgId).second != ZPdgId
        or
-       GetMother(Muon_genPartIdx[p.second],MuPdgId).second != ZPdgId ) {
+       GetMother(Muon_genPartIdx[p.second],MuPdgId).second != ZPdgId ){
+
     return kFALSE;
+
   };
 
+  Bool_t GlobalHighPtl1 = (Muon_highPtId[p.first] == 2);
+  Bool_t GlobalHighPtl2 = (Muon_highPtId[p.second] == 2);
+
+  if (!(GlobalHighPtl1 or GlobalHighPtl2)) {
+    HCutFlow->FillS("FailZGlbHighPt");
+    return kFALSE;
+  } else {
+    if (GlobalHighPtl1 and !Muon_isPFcand[p.first]) {
+      HCutFlow->FillS("FailZGlbHighPt&PFCand");
+      return kFALSE;
+    } else if (GlobalHighPtl2 and !Muon_isPFcand[p.second]) {
+      HCutFlow->FillS("FailZGlbHighPt&PFCand");
+      return kFALSE;
+    }
+  }
   return kTRUE;
 }
+
 
 Bool_t PreSelector::Process(Long64_t entry) {
 

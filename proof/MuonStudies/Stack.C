@@ -52,7 +52,7 @@ double DSCB_ROOTForum(double *x, double *par){
 
 int Stack() {
 
-  TFile* f1 = TFile::Open("MuonStudies.root");
+  TFile* f1 = TFile::Open("MuonStudies_ALT.root");
 
   std::vector<std::string> etaBins = {
     "HPResidualB_T", "HPResidualO_T", "HPResidualE_T",
