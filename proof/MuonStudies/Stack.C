@@ -55,9 +55,8 @@ int Stack() {
   TFile* f1 = TFile::Open("MuonStudies.root");
 
   std::vector<std::string> etaBins = {
-    //    "HPResidualB_TT", "HPResidualO_TT", "HPResidualE_TT",
-    "HPResidualB_TG", "HPResidualO_TG", "HPResidualE_TG",
-    "HPResidualB_GG", "HPResidualO_GG", "HPResidualE_GG"
+    "HPResidualB_T", "HPResidualO_T", "HPResidualE_T",
+    "HPResidualB_G", "HPResidualO_G", "HPResidualE_G"
   };
 
   int etaBins_ = 3;
