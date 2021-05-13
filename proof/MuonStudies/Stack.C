@@ -52,7 +52,7 @@ double DSCB_ROOTForum(double *x, double *par){
 
 int Stack() {
 
-  TFile* f1 = TFile::Open("MuonStudies_ALT.root");
+  TFile* f1 = TFile::Open("MuonStudies.root");
 
   std::vector<std::string> etaBins = {
     "HPResidualB_T", "HPResidualO_T", "HPResidualE_T",
@@ -75,10 +75,10 @@ int Stack() {
   };
 
   TH2D* hp = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s",samples[0].first.c_str(),etaBins[etaBins_].c_str())));
-  //hp->Scale(samples[0].second);
+  hp->Scale(samples[0].second);
   for (int i = 1; i < samples.size(); ++i) {
     TH2D* h = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s",samples[i].first.c_str(),etaBins[etaBins_].c_str())));
-    //hp->Add(h,samples[i].second);
+    hp->Add(h,samples[i].second);
     hp->Add(h);
   }
 
@@ -90,6 +90,9 @@ int Stack() {
   std::vector<Double_t> sigmas;
   std::vector<Double_t> sigmaErrors;
   std::vector<Double_t> ptBins;
+
+  Double_t deltaL = 1. - 0.01;
+  Double_t deltaR = 1. + 0.01;
 
   //TGraphAsymmErrors
 
@@ -109,7 +112,18 @@ int Stack() {
     fxDCB->SetParNames ("#alpha_{low}","#alpha_{high}","n_{low}", "n_{high}", "#mu", "#sigma", "N");
     //fxDCB->SetParameters(1, 1,10, 10, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
     //fxDCB->SetParameters( -0.2,0.2 , 20, 20, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
-    fxDCB->SetParameters(2, 5, 20, 20, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
+    if(etaBins_>=3){
+      fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS(), h->GetMaximum());
+      fxDCB->SetParLimits(4,h->GetMean()*(deltaL+0.05),h->GetMean()*(deltaR-0.05));
+      fxDCB->SetParLimits(6,h->GetMaximum()*deltaL,h->GetMaximum()*deltaR);
+    } else {
+      Double_t mm = h->GetMean()*0.6;
+      fxDCB->SetParameters(1., 1., 100, 10, mm, h->GetRMS(), h->GetMaximum());
+      fxDCB->SetParLimits(4,h->GetMean()*-1.,h->GetMean()*deltaR);
+      fxDCB->SetParLimits(6,h->GetMaximum()*0.8,h->GetMaximum()*deltaR);
+    }
+
+    //fxDCB->SetParLimits(7, h->Integral(xmin,xmax)*0.9, h->Integral(xmin,xmax));
     h->SetTitle(Form("[%.1f:%.1f] GeV %s;(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str()));
     h->Fit(fxDCB,"","",xmin,xmax);
     sigmas.emplace_back(fxDCB->GetParameter(5));
@@ -131,6 +145,11 @@ int Stack() {
     TF1 *gausFx = new TF1("gausFx", gaussian.c_str(), xmin, xmax);
     TF1 *exp1Fx = new TF1("exp1Fx", exp1.c_str(), xmin, xmax);
 
+    if(etaBins_ >=3) {
+      h->GetXaxis()->SetRangeUser(-0.2,0.2);
+    } else {
+      h->GetXaxis()->SetRangeUser(-0.5,0.5);
+    }
     h->Draw();
     fxDCB->Draw("SAME");
     gausFx->SetLineColor(kBlue);
