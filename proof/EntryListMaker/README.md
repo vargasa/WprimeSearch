@@ -151,7 +151,7 @@ f0.Close();
 
 //2018
 auto t1 = (TEntryList*)f0.Get(Form("%s_2018/EntryList;1",MuonSample));
-auto t2 = (TEntryList*)f1.Get(Form("%s_2018/EntryList;1",EGammeSample);
+auto t2 = (TEntryList*)f1.Get(Form("%s_2018/EntryList;1",EGammaSample));
 TEntryList *t4 = new TEntryList("EntryList",Form("%s+%s",MuonSample,EGammaSample));
 t4->Add(t1);
 t4->Add(t2);
