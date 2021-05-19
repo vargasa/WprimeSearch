@@ -39,7 +39,7 @@ double DSCB_ROOTForum(double *x, double *par){
   double f2AlphaH = (n_h/alpha_h) - alpha_h + t;
 
   if (-alpha_l <= t && alpha_h >= t){
-       result = exp(-0.5*t*t);
+    result = exp(-0.5*t*t);
   } else if (t < -alpha_l) {
     result = exp(-0.5*alpha_l*alpha_l)*pow(fAlphaL*f2AlphaL, -n_l);
   } else if (t > alpha_h) {
@@ -125,25 +125,47 @@ int Stack() {
 
     //fxDCB->SetParLimits(7, h->Integral(xmin,xmax)*0.9, h->Integral(xmin,xmax));
     h->SetTitle(Form("[%.1f:%.1f] GeV %s;(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str()));
-    h->Fit(fxDCB,"","",xmin,xmax);
+    h->Fit(fxDCB,"MB","",xmin,xmax);
     sigmas.emplace_back(fxDCB->GetParameter(5));
     sigmaErrors.emplace_back(fxDCB->GetParError(5));
 
-    std::string gaussian = Form("%.8f*exp(-0.5*((x - %.8f)**2)/(%.8f**2))",
-                                fxDCB->GetParameter(6),fxDCB->GetParameter(4),fxDCB->GetParameter(5));
+    std::string gaussian = Form("%.8f*exp(-0.5*pow((x-(%.8f))/%.8f,2.))",
+                                fxDCB->GetParameter(6),
+                                fxDCB->GetParameter(4),
+                                fxDCB->GetParameter(5));
 
-    //std::cout << gaussian << std::endl;
 
-    std::string exp1 = Form("%.8f*pow(%.8f/%.8f,%.8f)*exp(-0.5*(%.8f**2))/pow((%.8f/%.8f)-%.8f-x,%.8f)",
-                            fxDCB->GetParameter(6),
-                            fxDCB->GetParameter(2),fxDCB->GetParameter(0),fxDCB->GetParameter(2),
-                            fxDCB->GetParameter(0),
-                            fxDCB->GetParameter(2),fxDCB->GetParameter(0),fxDCB->GetParameter(2),fxDCB->GetParameter(2));
+    std::cout << gaussian << std::endl;
 
-    //std::cout << exp1 << std::endl;
+    std::string exp1 = Form("%.8f*exp(-0.5*%.8f*%.8f)*pow((%.8f/%.8f)*((%.8f/%.8f) - (%.8f) - (x-(%.8f))/%.8f),-(%.8f))",
+                            fxDCB->GetParameter(6), // N
+                            fxDCB->GetParameter(0), fxDCB->GetParameter(0), // alpha_L*alpha_L
+                            fxDCB->GetParameter(0), fxDCB->GetParameter(2), // alphaL / n_L
+                            fxDCB->GetParameter(2), fxDCB->GetParameter(0), // n_L / alpha_L
+                            fxDCB->GetParameter(0), // alpha_L
+                            fxDCB->GetParameter(4), fxDCB->GetParameter(5), // (x-mean)/sigma
+                            fxDCB->GetParameter(2)  // n_L
+                            );
+
+    std::cout << exp1 << std::endl;
+
+    std::string exp2 = Form("%.8f*exp(-0.5*%.8f*%.8f)*pow((%.8f/%.8f)*((%.8f/%.8f) - (%.8f) + (x-(%.8f))/%.8f),-(%.8f))",
+                            fxDCB->GetParameter(6), // N
+                            fxDCB->GetParameter(1), fxDCB->GetParameter(1), // alpha_H*alpha_H
+                            fxDCB->GetParameter(1), fxDCB->GetParameter(3), // alpha_H / n_H
+                            fxDCB->GetParameter(3), fxDCB->GetParameter(1), // n_H / alpha_H
+                            fxDCB->GetParameter(1), // alpha_H
+                            fxDCB->GetParameter(4), fxDCB->GetParameter(5), // (x-mean)/sigma
+                            fxDCB->GetParameter(3)  // n_H
+                            );
+
+
+
+    std::cout << exp2 << std::endl;
 
     TF1 *gausFx = new TF1("gausFx", gaussian.c_str(), xmin, xmax);
     TF1 *exp1Fx = new TF1("exp1Fx", exp1.c_str(), xmin, xmax);
+    TF1 *exp2Fx = new TF1("exp2Fx", exp2.c_str(), 5e-2, xmax);
 
     if(etaBins_ >=3) {
       h->GetXaxis()->SetRangeUser(-0.2,0.2);
@@ -153,13 +175,16 @@ int Stack() {
     h->Draw();
     fxDCB->Draw("SAME");
     gausFx->SetLineColor(kBlue);
-    //gausFx->Draw("SAME");
+    gausFx->Draw("SAME");
     exp1Fx->SetLineColor(kYellow);
-    //exp1Fx->Draw("SAME");
+    exp1Fx->Draw("SAME");
+    exp2Fx->SetLineColor(kGreen);
+    exp2Fx->Draw("SAME");
     c1->Print(Form("%s_%.0f-%.0f.png",etaBins[etaBins_].c_str(),ptBinMin,ptBinMax));
     delete gausFx;
     delete fxDCB;
-    delete exp1Fx;
+    //delete exp1Fx;
+    delete exp2Fx;
     //break;
   }
 
