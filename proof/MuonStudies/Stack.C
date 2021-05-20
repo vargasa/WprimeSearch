@@ -188,11 +188,30 @@ int Stack() {
     //break;
   }
 
-  //TGraphAsymmErrors* g = new TGraphAsymmErrors(12);
+  ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(12));
 
-  for(int i = 0; i < 12; ++i){
-    std::cout << ptBins[i] << "\t" << ptBins[i+1] << "\t" << sigmas[i] << std::endl;
+  TGraphAsymmErrors* g = new TGraphAsymmErrors(11);
+
+  for(int i = 0; i < 11; ++i){
+    Double_t mid = (ptBins[i]+ptBins[i+1])/2.;
+    Double_t dx = mid - ptBins[i];
+    g->SetPoint(i,mid,sigmas[i]);
+    g->SetPointError(i,dx,dx,sigmaErrors[i],sigmaErrors[i]);
+    std::cout << i << "\t" << ptBins[i] << "\t" << ptBins[i+1] << "\t" << sigmas[i] <<  "\t" << sigmaErrors[i] << std::endl;
   }
+
+  c1->Clear();
+  c1->SetGrid();
+  c1->GetFrame()->SetFillColor(21);
+  c1->GetFrame()->SetBorderSize(12);
+  g->SetMarkerColor(4);
+  g->SetMarkerStyle(21);
+  g->SetTitle("P Resolution [globalHighPtId]; P; Resolution");
+  g->Draw("AP");
+  g->GetXaxis()->SetRangeUser(0,3100);
+  g->GetYaxis()->SetRangeUser(0,0.1);
+
+  c1->Print("PResolution.png");
 
   return 0;
 }
