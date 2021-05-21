@@ -50,35 +50,70 @@ double DSCB_ROOTForum(double *x, double *par){
 
 }
 
-int Stack() {
+TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
   TFile* f1 = TFile::Open("MuonStudies.root");
 
   std::vector<std::string> etaBins = {
-    "HPResidualB_T", "HPResidualO_T", "HPResidualE_T",
-    "HPResidualB_G", "HPResidualO_G", "HPResidualE_G"
+    "HPResidualB_G", "HPResidualO_G", "HPResidualE_G",
+    "HPResidualB_T", "HPResidualO_T", "HPResidualE_T"
   };
 
-  int etaBins_ = 3;
 
-  std::vector<std::pair<std::string,Double_t>> samples = {
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_50_120", 2.116e+03},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_120_200", 2.058e+01},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_200_400", 2.890e+00},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_400_800", 2.515e-01},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_800_1400", 1.709e-02},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_1400_2300", 1.370e-03},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_2300_3500", 8.282e-05},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_3500_4500", 3.414e-06},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_4500_6000", 3.650e-07},
-    { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_6000_Inf", 2.526e-08},
-  };
+  std::unordered_map<int,std::vector<std::pair<std::string,Double_t>>> samples =
+    {
+      {
+        2016,
+        {
+          { "ZToMuMu_NNPDF30_13TeV-powheg_M_120_200",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_200_400",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_400_800",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_50_120",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf",1.},
+          {"ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400",1.}
+        },
+      },
+      {
+        2017,
+        {
+          //{ "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_50_120", 2.116e+03},
+          //{ "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_120_200", 2.058e+01},
+          //{ "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_200_400", 2.890e+00},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_400_800", 2.515e-01},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_800_1400", 1.709e-02},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_1400_2300", 1.370e-03},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_2300_3500", 8.282e-05},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_3500_4500", 3.414e-06},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_4500_6000", 3.650e-07},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_6000_Inf", 2.526e-08},
+        }
+      },
+      {
+        2018,
+        {
+          //{ "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_50_120", 2.116e+03},
+          //{ "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_120_200", 2.058e+01},
+          //{ "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_200_400", 2.890e+00},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_400_800", 2.515e-01},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_800_1400", 1.709e-02},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_1400_2300", 1.370e-03},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_2300_3500", 8.282e-05},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_3500_4500", 3.414e-06},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_4500_6000", 3.650e-07},
+          { "ZToMuMu_NNPDF31_TuneCP5_13TeV-powheg-pythia8_M_6000_Inf", 2.526e-08},
+        }
+      }
+    };
 
-  TH2D* hp = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s",samples[0].first.c_str(),etaBins[etaBins_].c_str())));
-  hp->Scale(samples[0].second);
-  for (int i = 1; i < samples.size(); ++i) {
-    TH2D* h = static_cast<TH2D*>(f1->Get(Form("2017/%s/%s",samples[i].first.c_str(),etaBins[etaBins_].c_str())));
-    hp->Add(h,samples[i].second);
+  TH2D* hp = static_cast<TH2D*>(f1->Get(Form("%d/%s/%s",year,samples[year][0].first.c_str(),etaBins[etaBins_].c_str())));
+  hp->Scale(samples[year][0].second);
+  for (int i = 1; i < samples[year].size(); ++i) {
+    TH2D* h = static_cast<TH2D*>(f1->Get(Form("%d/%s/%s",year,samples[year][i].first.c_str(),etaBins[etaBins_].c_str())));
+    hp->Add(h,samples[year][i].second);
     hp->Add(h);
   }
 
@@ -94,8 +129,6 @@ int Stack() {
   Double_t deltaL = 1. - 0.01;
   Double_t deltaR = 1. + 0.01;
 
-  //TGraphAsymmErrors
-
   for(uint i = 1; i < 12; ++i){
 
     Double_t ptBinMin = hp->GetXaxis()->GetBinLowEdge(i);
@@ -105,14 +138,12 @@ int Stack() {
 
     TH1D* h = hp->ProjectionY("_h",i);
 
-    Double_t xmin = -0.2;// -2.*h->GetRMS();
-    Double_t xmax = 0.2;//1.3*h->GetRMS();
+    Double_t xmin = -0.5;// -2.*h->GetRMS();
+    Double_t xmax = 0.5;//1.3*h->GetRMS();
 
     TF1 *fxDCB = new TF1("fxDCB", DSCB_ROOTForum, xmin, xmax, nParams);
     fxDCB->SetParNames ("#alpha_{low}","#alpha_{high}","n_{low}", "n_{high}", "#mu", "#sigma", "N");
-    //fxDCB->SetParameters(1, 1,10, 10, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
-    //fxDCB->SetParameters( -0.2,0.2 , 20, 20, h->GetMean(), h->GetRMS(), h->Integral(xmin, xmax));
-    if(etaBins_>=3){
+    if(etaBins_ < 3){
       fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS(), h->GetMaximum());
       fxDCB->SetParLimits(4,h->GetMean()*(deltaL+0.05),h->GetMean()*(deltaR-0.05));
       fxDCB->SetParLimits(6,h->GetMaximum()*deltaL,h->GetMaximum()*deltaR);
@@ -123,7 +154,6 @@ int Stack() {
       fxDCB->SetParLimits(6,h->GetMaximum()*0.8,h->GetMaximum()*deltaR);
     }
 
-    //fxDCB->SetParLimits(7, h->Integral(xmin,xmax)*0.9, h->Integral(xmin,xmax));
     h->SetTitle(Form("[%.1f:%.1f] GeV %s;(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str()));
     h->Fit(fxDCB,"MB","",xmin,xmax);
     sigmas.emplace_back(fxDCB->GetParameter(5));
@@ -161,13 +191,13 @@ int Stack() {
 
 
 
-    std::cout << exp2 << std::endl;
+    //std::cout << exp2 << std::endl;
 
     TF1 *gausFx = new TF1("gausFx", gaussian.c_str(), xmin, xmax);
     TF1 *exp1Fx = new TF1("exp1Fx", exp1.c_str(), xmin, xmax);
     TF1 *exp2Fx = new TF1("exp2Fx", exp2.c_str(), 5e-2, xmax);
 
-    if(etaBins_ >=3) {
+    if(etaBins_  < 3) {
       h->GetXaxis()->SetRangeUser(-0.2,0.2);
     } else {
       h->GetXaxis()->SetRangeUser(-0.5,0.5);
@@ -183,9 +213,8 @@ int Stack() {
     c1->Print(Form("%s_%.0f-%.0f.png",etaBins[etaBins_].c_str(),ptBinMin,ptBinMax));
     delete gausFx;
     delete fxDCB;
-    //delete exp1Fx;
+    delete exp1Fx;
     delete exp2Fx;
-    //break;
   }
 
   ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(12));
@@ -210,8 +239,44 @@ int Stack() {
   g->Draw("AP");
   g->GetXaxis()->SetRangeUser(0,3100);
   g->GetYaxis()->SetRangeUser(0,0.1);
+  c1->Print(Form("%d_%d_PResolution.png",year,etaBins_));
+  delete c1;
 
-  c1->Print("PResolution.png");
+  return g;
+
+}
+
+int Stack() {
+
+  std::vector<int> etaBins = { 0, 1, 2,/* 3, 4, 5*/ };
+
+  TCanvas* c2 = new TCanvas("c2","c2",1500,500);
+  c2->Divide(3,1);
+
+  for(auto etaBins_: etaBins){
+    std::cout << "cd etaBins+1 " << etaBins_+1 << std::endl;
+    TMultiGraph *mg = new TMultiGraph();
+    mg->SetTitle("P Resolution [globalHighPtId]; P; Resolution");
+    TGraphAsymmErrors *g17 = GetResolutionGraph(2017,etaBins_);
+    g17->Print();
+    g17->SetLineColor(kRed);
+    mg->Add(g17,"P");
+    mg->GetXaxis()->SetRangeUser(0,3100);
+    mg->GetYaxis()->SetRangeUser(0.03,0.1);
+    TGraphAsymmErrors *g18 = GetResolutionGraph(2018,etaBins_);
+    g18->Print();
+    g18->SetLineColor(kBlack);
+    mg->Add(g18,"P");
+    TGraphAsymmErrors *g16 = GetResolutionGraph(2016,etaBins_);
+    g16->Print();
+    g16->SetLineColor(kGreen);
+    mg->Add(g16,"P");
+    c2->cd(etaBins_+1);
+    mg->Draw("AP");
+    c2->Print(Form("ResolutionMeasurement%d.png",etaBins_));
+  }
+
+  c2->Print(Form("ResolutionMeasurement.png"));
 
   return 0;
 }
