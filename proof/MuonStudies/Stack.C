@@ -154,18 +154,49 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
                          DSCB_ROOTForum, xmin, xmax, nParams);
     fxDCB->SetParNames ("#alpha_{low}","#alpha_{high}","n_{low}", "n_{high}", "#mu", "#sigma", "N");
     if(etaBins_ < 3){
-      fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS(), h->GetMaximum());
-      fxDCB->SetParLimits(4,h->GetMean()*(deltaL+0.05),h->GetMean()*(deltaR-0.05));
+      Double_t lowMean = h->GetMean() - (abs(h->GetMean())*0.8);
+      Double_t highMean = h->GetMean();
+      fxDCB->SetParameters(1., 1., 10, 10, lowMean, h->GetRMS(), h->GetMaximum());
+      fxDCB->SetParLimits(4,lowMean,highMean);
       fxDCB->SetParLimits(6,h->GetMaximum()*deltaL,h->GetMaximum()*deltaR);
     } else {
-      Double_t mm = h->GetMean()*0.6;
-      fxDCB->SetParameters(1., 1., 100, 10, mm, h->GetRMS(), h->GetMaximum());
-      fxDCB->SetParLimits(4,h->GetMean()*-1.,h->GetMean()*deltaR);
-      fxDCB->SetParLimits(6,h->GetMaximum()*0.8,h->GetMaximum()*deltaR);
+      Double_t lowMean = h->GetMean() - (abs(h->GetMean())*0.9);
+      Double_t highMean = h->GetMean()*0.6;
+      Double_t lowN = h->GetMaximum()*0.8;
+      Double_t highN = h->GetMaximum();
+      fxDCB->SetParameters(1., 1., 10, 10, lowMean, h->GetRMS(), h->GetMaximum());
+      if(ptBinMin == 2500.){
+         fxDCB->SetParameters(4.1, 1.1, 27., 1.2, -0.1, h->GetRMS(), lowN);
+         fxDCB->SetParLimits(4,-0.12,-0.07);
+      }
+      fxDCB->SetParLimits(4, lowMean, highMean);
+      fxDCB->SetParLimits(6,lowN,highN);
     }
 
+    h->Fit(fxDCB,"M R","",xmin,xmax);
+
+    auto getParameter =[](Double_t p) {
+      Double_t fx;
+      if (p < 0){
+        fx = p * 1.1;
+      } else {
+        fx = p * 0.9;
+      }
+      return fx;
+    };
+
+    fxDCB->SetParameters(getParameter(fxDCB->GetParameter(0)),
+                         getParameter(fxDCB->GetParameter(1)),
+                         getParameter(fxDCB->GetParameter(2)),
+                         getParameter(fxDCB->GetParameter(3)),
+                         getParameter(fxDCB->GetParameter(4)),
+                         getParameter(fxDCB->GetParameter(5)),
+                         getParameter(fxDCB->GetParameter(6)));
+
+    h->Fit(fxDCB,"M R ","",xmin,xmax);
+
     h->SetTitle(Form("[%.1f:%.1f] GeV %s;(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str()));
-    h->Fit(fxDCB,"MB","",xmin,xmax);
+
     sigmas.emplace_back(fxDCB->GetParameter(5));
     sigmaErrors.emplace_back(fxDCB->GetParError(5));
 
