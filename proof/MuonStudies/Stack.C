@@ -117,10 +117,11 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     hp->Add(h);
   }
 
-  TCanvas* c1 = new TCanvas();
+  TCanvas* c1 = new TCanvas("c1","c1",4*500,3*500);
+  c1->Divide(4,3);
   Int_t nParams = 7;
 
-  gStyle->SetOptFit(1);
+  gStyle->SetOptFit(1111);
 
   std::vector<Double_t> sigmas;
   std::vector<Double_t> sigmaErrors;
@@ -130,6 +131,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   Double_t deltaR = 1. + 0.01;
 
   for(uint i = 1; i < 12; ++i){
+    c1->cd(i);
 
     Double_t ptBinMin = hp->GetXaxis()->GetBinLowEdge(i);
     Double_t ptBinMax = hp->GetXaxis()->GetBinLowEdge(i+1);
@@ -137,11 +139,19 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(i));
 
     TH1D* h = hp->ProjectionY("_h",i);
+    h->SetName(Form("h_%d_%s",year,etaBins[etaBins_].c_str()));
+    h->Sumw2();
 
     Double_t xmin = -0.5;// -2.*h->GetRMS();
     Double_t xmax = 0.5;//1.3*h->GetRMS();
 
-    TF1 *fxDCB = new TF1("fxDCB", DSCB_ROOTForum, xmin, xmax, nParams);
+    if (etaBins_ >= 3) {
+      xmin = -0.35;
+      xmax = 0.5;
+    }
+
+    TF1 *fxDCB = new TF1(Form("fxDCB_%d_%s",year,etaBins[etaBins_].c_str()),
+                         DSCB_ROOTForum, xmin, xmax, nParams);
     fxDCB->SetParNames ("#alpha_{low}","#alpha_{high}","n_{low}", "n_{high}", "#mu", "#sigma", "N");
     if(etaBins_ < 3){
       fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS(), h->GetMaximum());
@@ -193,29 +203,36 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
     //std::cout << exp2 << std::endl;
 
-    TF1 *gausFx = new TF1("gausFx", gaussian.c_str(), xmin, xmax);
-    TF1 *exp1Fx = new TF1("exp1Fx", exp1.c_str(), xmin, xmax);
-    TF1 *exp2Fx = new TF1("exp2Fx", exp2.c_str(), 5e-2, xmax);
+    TF1 *gausFx = new TF1(Form("gausFx_%d_%s",year,etaBins[etaBins_].c_str()),
+                          gaussian.c_str(), xmin, xmax);
+    TF1 *exp1Fx = new TF1(Form("exp1Fx_%d_%s",year,etaBins[etaBins_].c_str()),
+                          exp1.c_str(), xmin, xmax);
+    TF1 *exp2Fx = new TF1(Form("exp2Fx_%d_%s",year,etaBins[etaBins_].c_str()),
+                          exp2.c_str(), 5e-2, xmax);
 
     if(etaBins_  < 3) {
       h->GetXaxis()->SetRangeUser(-0.2,0.2);
     } else {
-      h->GetXaxis()->SetRangeUser(-0.5,0.5);
+      h->GetXaxis()->SetRangeUser(-0.35,0.5);
     }
     h->Draw();
     fxDCB->Draw("SAME");
     gausFx->SetLineColor(kBlue);
+    gausFx->SetLineStyle(7);
     gausFx->Draw("SAME");
     exp1Fx->SetLineColor(kYellow);
-    exp1Fx->Draw("SAME");
+    exp1Fx->SetLineStyle(7);
+    //exp1Fx->Draw("SAME");
     exp2Fx->SetLineColor(kGreen);
-    exp2Fx->Draw("SAME");
-    c1->Print(Form("%s_%.0f-%.0f.png",etaBins[etaBins_].c_str(),ptBinMin,ptBinMax));
+    exp2Fx->SetLineStyle(7);
+    //exp2Fx->Draw("SAME");
     delete gausFx;
     delete fxDCB;
     delete exp1Fx;
     delete exp2Fx;
   }
+
+  c1->Print(Form("%d%s_.png",year,etaBins[etaBins_].c_str()));
 
   ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(12));
 
@@ -238,7 +255,11 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   g->SetTitle("P Resolution [globalHighPtId]; P; Resolution");
   g->Draw("AP");
   g->GetXaxis()->SetRangeUser(0,3100);
-  g->GetYaxis()->SetRangeUser(0,0.1);
+  if(etaBins_ <3){
+    g->GetYaxis()->SetRangeUser(0,0.1);
+  } else {
+    g->GetYaxis()->SetRangeUser(0,0.25);
+  }
   c1->Print(Form("%d_%d_PResolution.png",year,etaBins_));
   delete c1;
 
@@ -248,32 +269,57 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
 int Stack() {
 
-  std::vector<int> etaBins = { 0, 1, 2,/* 3, 4, 5*/ };
+  std::vector<int> etaBins = { 0, 1, 2, 3, 4, 5};
 
-  TCanvas* c2 = new TCanvas("c2","c2",1500,500);
-  c2->Divide(3,1);
+  TCanvas* c2 = new TCanvas("c2","c2",1500,1000);
+  c2->Divide(3,2);
+
+  std::vector<std::string> titleEtaBins = {
+    "Barrel [globalHighPtId]; P [GeV]; Resolution [%]",
+    "Overlap [globalHighPtId]; P [GeV]; Resolution [%]",
+    "Endcap [globalHighPtId]; P [GeV]; Resolution [%]",
+    "Barrel [trackerHighPtId]; P [GeV]; Resolution [%]",
+    "Overlap [trackerHighPtId]; P [GeV]; Resolution [%]",
+    "Endcap [trackerHighPtId]; P [GeV]; Resolution [%]",
+  };
 
   for(auto etaBins_: etaBins){
     std::cout << "cd etaBins+1 " << etaBins_+1 << std::endl;
     TMultiGraph *mg = new TMultiGraph();
-    mg->SetTitle("P Resolution [globalHighPtId]; P; Resolution");
+    mg->SetTitle(titleEtaBins[etaBins_].c_str());
     TGraphAsymmErrors *g17 = GetResolutionGraph(2017,etaBins_);
     g17->Print();
+    g17->SetMarkerStyle(27);
+    g17->SetMarkerColor(kRed);
     g17->SetLineColor(kRed);
     mg->Add(g17,"P");
-    mg->GetXaxis()->SetRangeUser(0,3100);
-    mg->GetYaxis()->SetRangeUser(0.03,0.1);
     TGraphAsymmErrors *g18 = GetResolutionGraph(2018,etaBins_);
     g18->Print();
     g18->SetLineColor(kBlack);
+    g18->SetMarkerColor(kRed);
+    g18->SetMarkerStyle(28);
     mg->Add(g18,"P");
     TGraphAsymmErrors *g16 = GetResolutionGraph(2016,etaBins_);
     g16->Print();
     g16->SetLineColor(kGreen);
+    g16->SetMarkerColor(kGreen);
+    g16->SetMarkerStyle(26);
     mg->Add(g16,"P");
     c2->cd(etaBins_+1);
     mg->Draw("AP");
-    c2->Print(Form("ResolutionMeasurement%d.png",etaBins_));
+    mg->GetXaxis()->SetRangeUser(0,3100);
+    if(etaBins_ < 3){
+      mg->GetYaxis()->SetRangeUser(0.03,0.1);
+    } else {
+      mg->GetYaxis()->SetRangeUser(0.03,0.25);
+    }
+
+
+    TLegend *l = new TLegend();
+    l->AddEntry(g16,"2016");
+    l->AddEntry(g17,"2017");
+    l->AddEntry(g18,"2018");
+    l->Draw();
   }
 
   c2->Print(Form("ResolutionMeasurement.png"));
