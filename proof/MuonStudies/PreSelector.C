@@ -20,7 +20,10 @@ PreSelector::PreSelector(TTree *)
   HPResidualB_G = 0;
   HPResidualO_G = 0;
   HPResidualE_G = 0;
-  HMassZ = 0;
+  HMassZPt_BB_G = 0;
+  HMassZPt_BE_G = 0;
+  HMassZPt_BB_T = 0;
+  HMassZPt_BE_T = 0;
   HMuonPt = 0;
 }
 
@@ -131,20 +134,20 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   // BB - Both Muons are within abs(eta) < 1.2
   HMassZPt_BB_G = new TH2F("HMassZPt_BB_G","", 7, PtBins_MRes, 18, ZMassBins);
-  fOutput->Add(HMassZPtl1_BB);
+  fOutput->Add(HMassZPt_BB_G);
 
   // BE - At least one Muon is within abs(eta) < 1.2;
   HMassZPt_BE_G = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
   HMassZPt_BE_G->SetName("HMassZPt_BE_G");
-  Output->Add(HMassZPtl1_BB);
+  fOutput->Add(HMassZPt_BE_G);
 
   HMassZPt_BB_T = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
   HMassZPt_BB_T->SetName("HMassZPt_BB_T");
-  Output->Add(HMassZPt_BB_T);
+  fOutput->Add(HMassZPt_BB_T);
 
   HMassZPt_BE_T = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
   HMassZPt_BE_T->SetName("HMassZPt_BE_T");
-  Output->Add(HMassZPt_BE_T);
+  fOutput->Add(HMassZPt_BE_T);
 
   HNMu = new TH1I("HNMu","",7,0,7);
   fOutput->Add(HNMu);
@@ -400,7 +403,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
      Float_t etaLimit = 1.2;
      Int_t globalId = 2;
 
-     if( abs(lep1.Eta()) < etaLimit and abs(lep1.Eta()) < etaLimit; ){ // BB
+     if( abs(lep1.Eta()) < etaLimit and abs(lep1.Eta()) < etaLimit ){ // BB
        if(Muon_highPtId[l1] == globalId){
          hl1 = BB_G;
        } else {
@@ -423,14 +426,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
          hl2 = BE_T;
        }
      }
-     hl1->Fill(zb.M(), lep1.Pt());
-     hl2->Fill(zb.M(), lep2.Pt());
+     hl1->Fill(lep1.Pt(), zb.M());
+     hl2->Fill(lep2.Pt(), zb.M());
    };
 
 
    std::pair<float,float> MassWindow = { 75., 110. };
 
-   if ( zb.M() > MassWindow.first and zb.M < MassWindow.second ){
+   if ( zb.M() > MassWindow.first and zb.M() < MassWindow.second ){
      FillHistos53(HMassZPt_BB_G, HMassZPt_BE_G, HMassZPt_BB_T, HMassZPt_BE_T);
    }
 

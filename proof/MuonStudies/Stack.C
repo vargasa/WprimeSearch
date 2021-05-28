@@ -130,6 +130,8 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   Double_t deltaL = 1. - 0.01;
   Double_t deltaR = 1. + 0.01;
 
+  Double_t prevSigma = 0.;
+
   for(uint i = 1; i < 12; ++i){
     c1->cd(i);
 
@@ -160,17 +162,41 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
       fxDCB->SetParLimits(4,lowMean,highMean);
       fxDCB->SetParLimits(6,h->GetMaximum()*deltaL,h->GetMaximum()*deltaR);
     } else {
-      Double_t lowMean = h->GetMean() - (abs(h->GetMean())*0.9);
-      Double_t highMean = h->GetMean()*0.6;
+      Double_t lowMean = h->GetMean() - (abs(h->GetMean()));
+      Double_t highMean = h->GetMean();
       Double_t lowN = h->GetMaximum()*0.8;
       Double_t highN = h->GetMaximum();
       fxDCB->SetParameters(1., 1., 10, 10, lowMean, h->GetRMS(), h->GetMaximum());
-      if(ptBinMin == 2500.){
-         fxDCB->SetParameters(4.1, 1.1, 27., 1.2, -0.1, h->GetRMS(), lowN);
-         fxDCB->SetParLimits(4,-0.12,-0.07);
-      }
       fxDCB->SetParLimits(4, lowMean, highMean);
+      fxDCB->SetParLimits(5, 0., 100.);
       fxDCB->SetParLimits(6,lowN,highN);
+      if(prevSigma > 0.){
+        fxDCB->SetParLimits(5,prevSigma*0.9,prevSigma*2.0);
+      }
+      if(year == 2016 and ptBinMin > 1999.){
+        fxDCB->SetParameters(2., 0.5, -1e6, 1e4, -0.12, h->GetRMS(), lowN);
+        fxDCB->SetParLimits(4,-0.2,-0.06);
+      }
+      if(year == 2017 and ptBinMin == 2500.){
+        fxDCB->SetParameters(10., 1., 0.1, 1., 0.16, h->GetRMS(), lowN);
+      }
+      if(year == 2018){
+	if(ptBinMin == 2000.){
+	  if(etaBins_ == 4 or etaBins_ == 5){
+	    fxDCB->SetParLimits(5,prevSigma,prevSigma*1.2);
+	  }
+	}
+	if(ptBinMin == 2500.){
+	  fxDCB->SetParameters(0.5, 0.2, 8e5, 5., -0.05, h->GetRMS(), lowN);
+	  fxDCB->SetParLimits(4,-0.2,0.05);
+	  if(etaBins_ == 4){
+	    fxDCB->SetParLimits(4,-0.2,-0.05);
+	    fxDCB->SetParLimits(5,0.10,0.11);
+	  }
+	}
+      }
+     
+
     }
 
     h->Fit(fxDCB,"M R","",xmin,xmax);
@@ -195,7 +221,9 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
     h->Fit(fxDCB,"M R ","",xmin,xmax);
 
-    h->SetTitle(Form("[%.1f:%.1f] GeV %s;(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str()));
+    prevSigma = fxDCB->GetParameter(5);
+
+    h->SetTitle(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year));
 
     sigmas.emplace_back(fxDCB->GetParameter(5));
     sigmaErrors.emplace_back(fxDCB->GetParError(5));
@@ -263,7 +291,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     delete exp2Fx;
   }
 
-  c1->Print(Form("%d%s_.png",year,etaBins[etaBins_].c_str()));
+  c1->Print(Form("%d_%s_.png",year,etaBins[etaBins_].c_str()));
 
   ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(12));
 
@@ -283,7 +311,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   c1->GetFrame()->SetBorderSize(12);
   g->SetMarkerColor(4);
   g->SetMarkerStyle(21);
-  g->SetTitle("P Resolution [globalHighPtId]; P; Resolution");
+  g->SetTitle(Form("%s [%d]; P; Resolution",etaBins[etaBins_].c_str(),year));
   g->Draw("AP");
   g->GetXaxis()->SetRangeUser(0,3100);
   if(etaBins_ <3){

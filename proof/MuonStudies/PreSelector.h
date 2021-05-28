@@ -129,6 +129,11 @@ class PreSelector : public EventSelection {
   TH2F* HPResidualO_G;
   TH2F* HPResidualE_G;
 
+  TH2F* HMassZPt_BB_G;
+  TH2F* HMassZPt_BE_G;
+  TH2F* HMassZPt_BB_T;
+  TH2F* HMassZPt_BE_T;
+
   // THs
   std::vector<TH1F*> HnMu;
   TH1F* HMassZ;
