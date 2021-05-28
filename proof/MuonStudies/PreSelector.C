@@ -118,8 +118,33 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMuonPt = new TH1F("HMuonPt","",50,0,5000);
   fOutput->Add(HMuonPt);
 
-  HMassZ = new TH1F("HMassZ","",62,0,3100);
-  fOutput->Add(HMassZ);
+  const Double_t PtBins_MRes[8] = {
+    53,75,100,150,200,300,450,800
+  };
+
+  const Double_t ZMassBins[19] = {
+    70., 72., 74., 76., 78.,
+    80., 82., 84., 86., 88.,
+    90., 92., 94., 96., 98.,
+    100., 102., 104., 106.
+  };
+
+  // BB - Both Muons are within abs(eta) < 1.2
+  HMassZPt_BB_G = new TH2F("HMassZPt_BB_G","", 7, PtBins_MRes, 18, ZMassBins);
+  fOutput->Add(HMassZPtl1_BB);
+
+  // BE - At least one Muon is within abs(eta) < 1.2;
+  HMassZPt_BE_G = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
+  HMassZPt_BE_G->SetName("HMassZPt_BE_G");
+  Output->Add(HMassZPtl1_BB);
+
+  HMassZPt_BB_T = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
+  HMassZPt_BB_T->SetName("HMassZPt_BB_T");
+  Output->Add(HMassZPt_BB_T);
+
+  HMassZPt_BE_T = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
+  HMassZPt_BE_T->SetName("HMassZPt_BE_T");
+  Output->Add(HMassZPt_BE_T);
 
   HNMu = new TH1I("HNMu","",7,0,7);
   fOutput->Add(HNMu);
@@ -368,8 +393,46 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    HCutFlow->FillS("ZCandidate");
 
+   auto FillHistos53 = [&](TH2F* BB_G, TH2F* BE_G,
+                           TH2F* BB_T, TH2F* BE_T) {
+     TH2F *hl1, *hl2;
 
-   HMassZ->Fill(zb.M());
+     Float_t etaLimit = 1.2;
+     Int_t globalId = 2;
+
+     if( abs(lep1.Eta()) < etaLimit and abs(lep1.Eta()) < etaLimit; ){ // BB
+       if(Muon_highPtId[l1] == globalId){
+         hl1 = BB_G;
+       } else {
+         hl1 = BB_T;
+       }
+       if(Muon_highPtId[l2] == globalId){
+         hl2 = BB_G;
+       } else {
+         hl2 = BB_T;
+       }
+     } else { //BE
+       if(Muon_highPtId[l1] == globalId){
+         hl1 = BE_G;
+       } else {
+         hl1 = BE_T;
+       }
+       if(Muon_highPtId[l2] == globalId){
+         hl2 = BE_G;
+       } else {
+         hl2 = BE_T;
+       }
+     }
+     hl1->Fill(zb.M(), lep1.Pt());
+     hl2->Fill(zb.M(), lep2.Pt());
+   };
+
+
+   std::pair<float,float> MassWindow = { 75., 110. };
+
+   if ( zb.M() > MassWindow.first and zb.M < MassWindow.second ){
+     FillHistos53(HMassZPt_BB_G, HMassZPt_BE_G, HMassZPt_BB_T, HMassZPt_BE_T);
+   }
 
    auto FillHistos = [&](TH2F* HPResidualB,
                          TH2F* HPResidualO,
