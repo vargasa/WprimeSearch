@@ -1,3 +1,6 @@
+#include "RooTFnBinding.h"
+
+using namespace RooFit ;
 
 Double_t DCBFunction(Double_t *x, Double_t *par){
 
@@ -119,6 +122,10 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
   TCanvas* c1 = new TCanvas("c1","c1",4*500,3*500);
   c1->Divide(4,3);
+  TCanvas* cPull = new TCanvas("cPull","cPull",4*500,3*500);
+  cPull->Divide(4,3);
+  TCanvas* cResidual = new TCanvas("cResidual","cResidual",4*500,3*500);
+  cResidual->Divide(4,3);
   Int_t nParams = 7;
 
   gStyle->SetOptFit(1111);
@@ -158,9 +165,11 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     if(etaBins_ < 3){
       Double_t lowMean = h->GetMean() - (abs(h->GetMean())*0.8);
       Double_t highMean = h->GetMean();
+      Double_t lowN = h->GetMaximum()*0.8;
+      Double_t highN = h->GetMaximum();
       fxDCB->SetParameters(1., 1., 10, 10, lowMean, h->GetRMS(), h->GetMaximum());
       fxDCB->SetParLimits(4,lowMean,highMean);
-      fxDCB->SetParLimits(6,h->GetMaximum()*deltaL,h->GetMaximum()*deltaR);
+      fxDCB->SetParLimits(6,lowN,highN);
     } else {
       Double_t lowMean = h->GetMean() - (abs(h->GetMean()));
       Double_t highMean = h->GetMean();
@@ -181,22 +190,20 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
         fxDCB->SetParameters(10., 1., 0.1, 1., 0.16, h->GetRMS(), lowN);
       }
       if(year == 2018){
-	if(ptBinMin == 2000.){
-	  if(etaBins_ == 4 or etaBins_ == 5){
-	    fxDCB->SetParLimits(5,prevSigma,prevSigma*1.2);
-	  }
-	}
-	if(ptBinMin == 2500.){
-	  fxDCB->SetParameters(0.5, 0.2, 8e5, 5., -0.05, h->GetRMS(), lowN);
-	  fxDCB->SetParLimits(4,-0.2,0.05);
-	  if(etaBins_ == 4){
-	    fxDCB->SetParLimits(4,-0.2,-0.05);
-	    fxDCB->SetParLimits(5,0.10,0.11);
-	  }
-	}
+        if(ptBinMin == 2000.){
+          if(etaBins_ == 4 or etaBins_ == 5){
+            fxDCB->SetParLimits(5,prevSigma,prevSigma*1.2);
+          }
+        }
+        if(ptBinMin == 2500.){
+          fxDCB->SetParameters(0.5, 0.2, 8e5, 5., -0.05, h->GetRMS(), lowN);
+          fxDCB->SetParLimits(4,-0.2,0.05);
+          if(etaBins_ == 4){
+            fxDCB->SetParLimits(4,-0.2,-0.05);
+            fxDCB->SetParLimits(5,0.10,0.11);
+          }
+        }
       }
-     
-
     }
 
     h->Fit(fxDCB,"M R","",xmin,xmax);
@@ -219,7 +226,25 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
                          getParameter(fxDCB->GetParameter(5)),
                          getParameter(fxDCB->GetParameter(6)));
 
-    h->Fit(fxDCB,"M R ","",xmin,xmax);
+    // h->Fit(fxDCB,"M R ","",xmin,xmax);
+
+    RooRealVar pres("pres","P Residual",xmin,xmax);
+    RooAbsPdf* dcb = RooFit::bindPdf(fxDCB,pres);
+    RooDataHist dh1("dh1","dh1",pres,h);
+    RooPlot* frame = pres.frame(Title(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year)));
+
+    dcb->fitTo(dh1);
+    dh1.plotOn(frame);
+    dcb->plotOn(frame);
+
+    RooHist* hpull = frame->pullHist();
+    hpull->SetName(Form("hPull_%.0f_%.0f_%s_%d",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year));
+    RooPlot* framePull = pres.frame(Title(Form("Pull [%.1f:%.1f] GeV %s [%d]",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year)));
+    framePull->SetName(Form("fPull_%.0f_%.0f_%s_%d",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year));
+    framePull->addPlotable(hpull,"P");
+    RooHist* hresid = frame->residHist();
+    RooPlot* frameResid= pres.frame(Title(Form("Residual [%.1f:%.1f] GeV %s [%d]",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year)));
+    frameResid->addPlotable(hresid,"P");
 
     prevSigma = fxDCB->GetParameter(5);
 
@@ -274,24 +299,31 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     } else {
       h->GetXaxis()->SetRangeUser(-0.35,0.5);
     }
-    h->Draw();
-    fxDCB->Draw("SAME");
+    //h->Draw();
+    frame->Draw();
+    //fxDCB->Draw("SAME");
     gausFx->SetLineColor(kBlue);
-    gausFx->SetLineStyle(7);
-    gausFx->Draw("SAME");
+    //gausFx->SetLineStyle(7);
+    //gausFx->Draw("SAME");
     exp1Fx->SetLineColor(kYellow);
     exp1Fx->SetLineStyle(7);
     //exp1Fx->Draw("SAME");
     exp2Fx->SetLineColor(kGreen);
     exp2Fx->SetLineStyle(7);
     //exp2Fx->Draw("SAME");
+    cPull->cd(i);
+    framePull->Draw();
+    cResidual->cd(i);
+    frameResid->Draw();
     delete gausFx;
-    delete fxDCB;
+    //delete fxDCB;
     delete exp1Fx;
     delete exp2Fx;
   }
 
   c1->Print(Form("%d_%s_.png",year,etaBins[etaBins_].c_str()));
+  cPull->Print(Form("%d_%s_Pull.png",year,etaBins[etaBins_].c_str()));
+  cResidual->Print(Form("%d_%s_Residual.png",year,etaBins[etaBins_].c_str()));
 
   ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(12));
 
@@ -321,6 +353,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   }
   c1->Print(Form("%d_%d_PResolution.png",year,etaBins_));
   delete c1;
+  //delete cPull;
 
   return g;
 
@@ -330,8 +363,8 @@ int Stack() {
 
   std::vector<int> etaBins = { 0, 1, 2, 3, 4, 5};
 
-  TCanvas* c2 = new TCanvas("c2","c2",1500,1000);
-  c2->Divide(3,2);
+  TCanvas* c = new TCanvas("c","c",1500,1000);
+  c->Divide(3,2);
 
   std::vector<std::string> titleEtaBins = {
     "Barrel [globalHighPtId]; P [GeV]; Resolution [%]",
@@ -364,7 +397,7 @@ int Stack() {
     g16->SetMarkerColor(kGreen);
     g16->SetMarkerStyle(26);
     mg->Add(g16,"P");
-    c2->cd(etaBins_+1);
+    c->cd(etaBins_+1);
     mg->Draw("AP");
     mg->GetXaxis()->SetRangeUser(0,3100);
     if(etaBins_ < 3){
@@ -381,7 +414,7 @@ int Stack() {
     l->Draw();
   }
 
-  c2->Print(Form("ResolutionMeasurement.png"));
+  c->Print(Form("ResolutionMeasurement.png"));
 
   return 0;
 }
