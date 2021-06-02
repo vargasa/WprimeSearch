@@ -300,6 +300,7 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
   const Float_t farFromPV = 1e-2;
   if (Muon_ip3d[p.first] > farFromPV or Muon_ip3d[p.second] > farFromPV) return kFALSE;
 
+#ifndef CMSDATA
   const uint ZPdgId = 23;
 
   if ( GetMother(Muon_genPartIdx[p.first],MuPdgId).second != ZPdgId
@@ -309,6 +310,7 @@ Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
     return kFALSE;
 
   };
+#endif
 
   Bool_t GlobalHighPtl1 = (Muon_highPtId[p.first] == 2);
   Bool_t GlobalHighPtl2 = (Muon_highPtId[p.second] == 2);
@@ -349,10 +351,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+#ifndef CMSDATA
   Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_ip3d,Muon_sip3d,
             Muon_tightId, Muon_genPartIdx, Muon_pdgId);
+#endif
+#ifdef CMSDATA
+  Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+            Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
+            Muon_ip3d,Muon_sip3d,
+            Muon_tightId);
+#endif
 
 
   GoodMuon = PreSelector::GetGoodMuon(Mus);
@@ -437,15 +447,16 @@ Bool_t PreSelector::Process(Long64_t entry) {
      FillHistos53(HMassZPt_BB_G, HMassZPt_BE_G, HMassZPt_BB_T, HMassZPt_BE_T);
    }
 
+#ifndef CMSDATA
    auto FillHistos = [&](TH2F* HPResidualB,
                          TH2F* HPResidualO,
                          TH2F* HPResidualE,
                          PtEtaPhiMVector& lep,
                          int& l) {
 
-     std::pair<float,float> MuonB = { 0., 0.9};
-     std::pair<float,float> MuonO = { 0.9, 1.2};
-     std::pair<float,float> MuonC = { 1.2, 2.4};
+     std::pair<float,float> MuonB = { 0., 1.2};
+     std::pair<float,float> MuonO = { 1.2, 2.1};
+     std::pair<float,float> MuonC = { 2.1, 2.4};
 
      if( abs(lep.Eta()) < MuonB.second ) {
        HPResidualB->Fill(lep.P(),GetPResidual(Mus,l));
@@ -467,6 +478,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
    } else {
      FillHistos(HPResidualB_G, HPResidualO_G, HPResidualE_G, lep2, l2);
    }
+#endif
 
    return kTRUE;
 }
