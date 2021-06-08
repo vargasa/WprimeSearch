@@ -2,29 +2,7 @@
 
 using namespace RooFit ;
 
-Double_t DCBFunction(Double_t *x, Double_t *par){
-
-  Double_t alpha_l = par[0];
-  Double_t alpha_h = par[1];
-  Double_t n_l     = par[2];
-  Double_t n_h     = par[3];
-  Double_t mean    = par[4];
-  Double_t sigma   = par[5];
-  Double_t N       = par[6];
-  Double_t result;
-
-  if (  x[0] >= alpha_l and x[0] <= alpha_h ) {
-    result = exp(-0.5*pow(x[0]-mean,2.)/pow(sigma,2.));
-  } else if (x[0] < alpha_l) {
-    result = pow(n_l/alpha_l,n_l)*exp(-0.5*pow(alpha_l,2.))*pow( n_l/alpha_l + alpha_l + x[0], -n_l);
-  } else if (x[0] > alpha_h) {
-    result = pow(n_h/alpha_h,n_h)*exp(-0.5*pow(alpha_h,2.))*pow( n_h/alpha_h + alpha_h + x[0], -n_h);
-  }
-
-  return N*result;
-}
-
-double DSCB_ROOTForum(double *x, double *par){
+double DSCB(double *x, double *par){
 
   double alpha_l = par[0];
   double alpha_h = par[1];
@@ -55,7 +33,7 @@ double DSCB_ROOTForum(double *x, double *par){
 
 TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
-  TFile* f1 = TFile::Open("MuonStudies.root");
+  TFile* f1 = TFile::Open("MuonStudies.root.bk");
 
   std::vector<std::string> etaBins = {
     "HPResidualB_G", "HPResidualO_G", "HPResidualE_G",
@@ -160,75 +138,64 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     }
 
     TF1 *fxDCB = new TF1(Form("fxDCB_%d_%s",year,etaBins[etaBins_].c_str()),
-                         DSCB_ROOTForum, xmin, xmax, nParams);
+                         DSCB, xmin, xmax, nParams);
     fxDCB->SetParNames ("#alpha_{low}","#alpha_{high}","n_{low}", "n_{high}", "#mu", "#sigma", "N");
+
+    std::string fitOption = "";
     if(etaBins_ < 3){
-      Double_t lowMean = h->GetMean() - (abs(h->GetMean())*0.8);
-      Double_t highMean = h->GetMean();
+      Double_t lowMean = -0.2;
+      Double_t highMean = h->GetMean() + abs(3.*h->GetMean());
       Double_t lowN = h->GetMaximum()*0.8;
-      Double_t highN = h->GetMaximum();
-      fxDCB->SetParameters(1., 1., 10, 10, lowMean, h->GetRMS(), h->GetMaximum());
+      Double_t highN = h->GetMaximum()*1.01;
+      fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS(), h->GetMaximum());
       fxDCB->SetParLimits(4,lowMean,highMean);
+      fxDCB->SetParLimits(5,0,0.5);
       fxDCB->SetParLimits(6,lowN,highN);
+      fitOption = "M R";
     } else {
-      Double_t lowMean = h->GetMean() - (abs(h->GetMean()));
-      Double_t highMean = h->GetMean();
-      Double_t lowN = h->GetMaximum()*0.8;
+      Double_t lowN = h->GetMaximum()*0.75;
       Double_t highN = h->GetMaximum();
-      fxDCB->SetParameters(1., 1., 10, 10, lowMean, h->GetRMS(), h->GetMaximum());
-      fxDCB->SetParLimits(4, lowMean, highMean);
-      fxDCB->SetParLimits(5, 0., 100.);
+      fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS() , h->GetMaximum());
+      fxDCB->SetParLimits(5, prevSigma > 0.? prevSigma : 0.04, 100.);
       fxDCB->SetParLimits(6,lowN,highN);
-      if(prevSigma > 0.){
-        fxDCB->SetParLimits(5,prevSigma*0.9,prevSigma*2.0);
+
+      if ( highN < 10. ) {
+        fitOption = "M R WL";
+      } else {
+        fitOption = "M R";
       }
-      if(year == 2016 and ptBinMin > 1999.){
-        fxDCB->SetParameters(2., 0.5, -1e6, 1e4, -0.12, h->GetRMS(), lowN);
-        fxDCB->SetParLimits(4,-0.2,-0.06);
-      }
-      if(year == 2017 and ptBinMin == 2500.){
-        fxDCB->SetParameters(10., 1., 0.1, 1., 0.16, h->GetRMS(), lowN);
-      }
-      if(year == 2018){
-        if(ptBinMin == 2000.){
-          if(etaBins_ == 4 or etaBins_ == 5){
-            fxDCB->SetParLimits(5,prevSigma,prevSigma*1.2);
-          }
-        }
-        if(ptBinMin == 2500.){
-          fxDCB->SetParameters(0.5, 0.2, 8e5, 5., -0.05, h->GetRMS(), lowN);
-          fxDCB->SetParLimits(4,-0.2,0.05);
-          if(etaBins_ == 4){
-            fxDCB->SetParLimits(4,-0.2,-0.05);
-            fxDCB->SetParLimits(5,0.10,0.11);
-          }
-        }
-      }
+
+      // if(year == 2016 and ptBinMin > 1999.){
+      //   fxDCB->SetParameters(2., 0.5, -1e6, 1e4, -0.12, h->GetRMS(), lowN);
+      //   fxDCB->SetParLimits(4,-0.2,-0.06);
+      // }
+      // if(year == 2017 and ptBinMin == 2500.){
+      //   fxDCB->SetParameters(10., 1., 0.1, 1., 0.16, h->GetRMS(), lowN);
+      // }
+      // if(year == 2018){
+      //   if(ptBinMin == 2000.){
+      //     if(etaBins_ == 4 or etaBins_ == 5){
+
+      //     }
+      //   }
+      //   if(ptBinMin == 2500.){
+      //     fxDCB->SetParameters(0.5, 0.2, 8e5, 5., -0.05, h->GetRMS(), lowN);
+      //     fxDCB->SetParLimits(4,-0.2,0.05);
+      //     if(etaBins_ == 4){
+      //       fxDCB->SetParLimits(4,-0.2,-0.05);
+      //       fxDCB->SetParLimits(5,0.10,0.11);
+      //     }
+      //   }
+      // }
     }
 
-    h->Fit(fxDCB,"M R","",xmin,xmax);
+    for(int i = 0; i < 6; ++i){
+      h->Fit(fxDCB,fitOption.c_str(),"",xmin,xmax);
+    }
 
-    auto getParameter =[](Double_t p) {
-      Double_t fx;
-      if (p < 0){
-        fx = p * 1.1;
-      } else {
-        fx = p * 0.9;
-      }
-      return fx;
-    };
-
-    fxDCB->SetParameters(getParameter(fxDCB->GetParameter(0)),
-                         getParameter(fxDCB->GetParameter(1)),
-                         getParameter(fxDCB->GetParameter(2)),
-                         getParameter(fxDCB->GetParameter(3)),
-                         getParameter(fxDCB->GetParameter(4)),
-                         getParameter(fxDCB->GetParameter(5)),
-                         getParameter(fxDCB->GetParameter(6)));
-
-    // h->Fit(fxDCB,"M R ","",xmin,xmax);
 
     RooRealVar pres("pres","P Residual",xmin,xmax);
+    pres.setBins(10000);
     RooAbsPdf* dcb = RooFit::bindPdf(fxDCB,pres);
     RooDataHist dh1("dh1","dh1",pres,h);
     RooPlot* frame = pres.frame(Title(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year)));
@@ -347,7 +314,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   g->Draw("AP");
   g->GetXaxis()->SetRangeUser(0,3100);
   if(etaBins_ <3){
-    g->GetYaxis()->SetRangeUser(0,0.1);
+    g->GetYaxis()->SetRangeUser(0,0.2);
   } else {
     g->GetYaxis()->SetRangeUser(0,0.25);
   }
@@ -366,13 +333,17 @@ int Stack() {
   TCanvas* c = new TCanvas("c","c",1500,1000);
   c->Divide(3,2);
 
+  std::pair<float,float> MuonB = { 0., 1.2 };
+  std::pair<float,float> MuonO = { 1.2, 2.1 };
+  std::pair<float,float> MuonE = { 2.1, 2.4 };
+
   std::vector<std::string> titleEtaBins = {
-    "Barrel [globalHighPtId]; P [GeV]; Resolution [%]",
-    "Overlap [globalHighPtId]; P [GeV]; Resolution [%]",
-    "Endcap [globalHighPtId]; P [GeV]; Resolution [%]",
-    "Barrel [trackerHighPtId]; P [GeV]; Resolution [%]",
-    "Overlap [trackerHighPtId]; P [GeV]; Resolution [%]",
-    "Endcap [trackerHighPtId]; P [GeV]; Resolution [%]",
+    Form("%.1f <= |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),
+    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),
+    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),
+    Form("%.1f <= |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),
+    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),
+    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),
   };
 
   for(auto etaBins_: etaBins){
@@ -400,12 +371,7 @@ int Stack() {
     c->cd(etaBins_+1);
     mg->Draw("AP");
     mg->GetXaxis()->SetRangeUser(0,3100);
-    if(etaBins_ < 3){
-      mg->GetYaxis()->SetRangeUser(0.03,0.1);
-    } else {
-      mg->GetYaxis()->SetRangeUser(0.03,0.25);
-    }
-
+    mg->GetYaxis()->SetRangeUser(0.,0.18);
 
     TLegend *l = new TLegend();
     l->AddEntry(g16,"2016");
