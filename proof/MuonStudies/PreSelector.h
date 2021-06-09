@@ -17,7 +17,7 @@
 #include "Math/Vector4D.h"
 #include "Math/Vector4Dfwd.h"
 #include "TEntryList.h"
-#include "../EntryListMaker/EventSelection.h"
+#include "EventSelection.h"
 #include "TGraphAsymmErrors.h"
 #include "IsData.h"
 #include <unordered_map>
