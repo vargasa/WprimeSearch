@@ -40,7 +40,7 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
 
   std::string histopath = Form("%d/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/%s",year,hname.c_str());
   if(isData)
-    histopath = Form("%d/SingleMuon/%s",year,hname.c_str());
+    histopath = Form("%d/ULSingleMuon/%s",year,hname.c_str());
 
   std::cout << histopath << "\n";
   
@@ -161,6 +161,7 @@ int StackMRes(){
     gdata->SetMarkerColor(kBlack);
     mg->Add(gmc,"P");
     mg->Add(gdata,"P");
+    mg->GetYaxis()->SetRangeUser(-1.,10.);
     cp1->cd(k);
     mg->Draw("AP");
 

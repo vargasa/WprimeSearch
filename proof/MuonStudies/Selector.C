@@ -28,6 +28,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
     while(std::getline(infile, line)){
       if(line.empty() or line.find("#") == 0) continue;
       line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
+      //line = Form("root://cms-xrd-global.cern.ch/%s",line.c_str());
       std::cout << "Chaining " << line << std::endl;
       fChain->AddFile(line.c_str());
     }

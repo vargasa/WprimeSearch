@@ -33,7 +33,7 @@ double DSCB(double *x, double *par){
 
 TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
-  TFile* f1 = TFile::Open("MuonStudies.root.bk");
+  TFile* f1 = TFile::Open("MuonStudies.root");
 
   std::vector<std::string> etaBins = {
     "HPResidualB_G", "HPResidualO_G", "HPResidualE_G",
@@ -144,7 +144,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     std::string fitOption = "";
     if(etaBins_ < 3){
       Double_t lowMean = -0.2;
-      Double_t highMean = h->GetMean() + abs(3.*h->GetMean());
+      Double_t highMean = h->GetMean() + 0.1;
       Double_t lowN = h->GetMaximum()*0.8;
       Double_t highN = h->GetMaximum()*1.01;
       fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS(), h->GetMaximum());
@@ -158,35 +158,11 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
       fxDCB->SetParameters(1., 1., 10, 10, h->GetMean(), h->GetRMS() , h->GetMaximum());
       fxDCB->SetParLimits(5, prevSigma > 0.? prevSigma : 0.04, 100.);
       fxDCB->SetParLimits(6,lowN,highN);
-
       if ( highN < 10. ) {
         fitOption = "M R WL";
       } else {
         fitOption = "M R";
       }
-
-      // if(year == 2016 and ptBinMin > 1999.){
-      //   fxDCB->SetParameters(2., 0.5, -1e6, 1e4, -0.12, h->GetRMS(), lowN);
-      //   fxDCB->SetParLimits(4,-0.2,-0.06);
-      // }
-      // if(year == 2017 and ptBinMin == 2500.){
-      //   fxDCB->SetParameters(10., 1., 0.1, 1., 0.16, h->GetRMS(), lowN);
-      // }
-      // if(year == 2018){
-      //   if(ptBinMin == 2000.){
-      //     if(etaBins_ == 4 or etaBins_ == 5){
-
-      //     }
-      //   }
-      //   if(ptBinMin == 2500.){
-      //     fxDCB->SetParameters(0.5, 0.2, 8e5, 5., -0.05, h->GetRMS(), lowN);
-      //     fxDCB->SetParLimits(4,-0.2,0.05);
-      //     if(etaBins_ == 4){
-      //       fxDCB->SetParLimits(4,-0.2,-0.05);
-      //       fxDCB->SetParLimits(5,0.10,0.11);
-      //     }
-      //   }
-      // }
     }
 
     for(int i = 0; i < 6; ++i){
@@ -270,27 +246,27 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     frame->Draw();
     //fxDCB->Draw("SAME");
     gausFx->SetLineColor(kBlue);
-    //gausFx->SetLineStyle(7);
+    gausFx->SetLineStyle(7);
     //gausFx->Draw("SAME");
-    exp1Fx->SetLineColor(kYellow);
+    exp1Fx->SetLineColor(kBlack);
     exp1Fx->SetLineStyle(7);
     //exp1Fx->Draw("SAME");
-    exp2Fx->SetLineColor(kGreen);
+    //exp2Fx->SetLineColor(kRed);
     exp2Fx->SetLineStyle(7);
-    //exp2Fx->Draw("SAME");
+    ///exp2Fx->Draw("SAME");
     cPull->cd(i);
     framePull->Draw();
     cResidual->cd(i);
     frameResid->Draw();
-    delete gausFx;
+    //delete gausFx;
     //delete fxDCB;
-    delete exp1Fx;
-    delete exp2Fx;
+    //delete exp1Fx;
+    //delete exp2Fx;
   }
 
   c1->Print(Form("%d_%s_.png",year,etaBins[etaBins_].c_str()));
   cPull->Print(Form("%d_%s_Pull.png",year,etaBins[etaBins_].c_str()));
-  cResidual->Print(Form("%d_%s_Residual.png",year,etaBins[etaBins_].c_str()));
+  //cResidual->Print(Form("%d_%s_Residual.png",year,etaBins[etaBins_].c_str()));
 
   ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(12));
 
