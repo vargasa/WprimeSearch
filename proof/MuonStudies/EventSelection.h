@@ -6,7 +6,7 @@
 #include "TSelector.h"
 #include "TH2F.h"
 #include "TH2D.h"
-#include "../IsData.h"
+#include "IsData.h"
 
 class EventSelection : public TSelector{
 
@@ -65,7 +65,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<UInt_t> nMuon = {fReader, MakeBranchList("nMuon")};
   Int_t Year;
   Bool_t IsMissingBranch{};
-  Bool_t IsMissingAllHLTMuonBranches;
+  Bool_t IsMissingAllHLTMuonBranches{};
   Bool_t MinLeptons{};
   Bool_t MuonHLTs{};
   Bool_t Flags{};
@@ -176,7 +176,7 @@ void EventSelection::ReadEntry(const Long64_t& entry){
   MinLeptons = (*nMuon) >= 2;
 
 #if defined(Y2016)
-  MuonHLTs = (*HLT_Mu50||*HLT_TkMu50);
+  MuonHLTs = *HLT_Mu50 or *HLT_TkMu50;
   Flags = *Flag_goodVertices and *Flag_globalSuperTightHalo2016Filter
     and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
     and *Flag_EcalDeadCellTriggerPrimitiveFilter
