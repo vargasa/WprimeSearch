@@ -58,7 +58,7 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
   TTreeReaderValue<Bool_t> Flag_BadChargedCandidateFilter = {fReader, MakeBranchList("Flag_BadChargedCandidateFilter")};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
-  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilterV2 = {fReader, MakeBranchList("Flag_ecalBadCalibFilterV2")};
+  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilterV2 = {fReader, MakeBranchList("Flag_ecalBadCalibFilter")};
 #endif
 
   TTreeReaderValue<Int_t> PV_npvsGood = {fReader, MakeBranchList("PV_npvsGood")}; // total number of reconstructed primary vertices

@@ -37,9 +37,20 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
   std::vector<std::string> etaBins = {
     "HPResidualB_G", "HPResidualO_G", "HPResidualE_G",
-    "HPResidualB_T", "HPResidualO_T", "HPResidualE_T"
+    "HPResidualB_T", "HPResidualO_T",
   };
 
+  std::pair<float,float> MuonB = { 0., 1.2 };
+  std::pair<float,float> MuonO = { 1.2, 2.1 };
+  std::pair<float,float> MuonE = { 2.1, 2.4 };
+
+  std::vector<std::string> titleEtaBins = {
+    Form("%.1f <= |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),  //B_G
+    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),   //O_G
+    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),   //E_G
+    Form("%.1f <= |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second), //B_T
+    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonE.second),  //O_T
+  };
 
   std::unordered_map<int,std::vector<std::pair<std::string,Double_t>>> samples =
     {
@@ -112,10 +123,11 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   std::vector<Double_t> sigmaErrors;
   std::vector<Double_t> ptBins;
 
-  Double_t deltaL = 1. - 0.01;
-  Double_t deltaR = 1. + 0.01;
-
   Double_t prevSigma = 0.;
+
+  Double_t YLimit = 0.;
+  Double_t YLowLimitPull = 0.;
+  Double_t YHighLimitPull = 0.;
 
   for(uint i = 1; i < 12; ++i){
     c1->cd(i);
@@ -128,6 +140,9 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     TH1D* h = hp->ProjectionY("_h",i);
     h->SetName(Form("h_%d_%s",year,etaBins[etaBins_].c_str()));
     h->Sumw2();
+
+    if (i == 1)
+      YLimit = h->GetMaximum() * 1.1;
 
     Double_t xmin = -0.5;// -2.*h->GetRMS();
     Double_t xmax = 0.5;//1.3*h->GetRMS();
@@ -174,7 +189,8 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     pres.setBins(10000);
     RooAbsPdf* dcb = RooFit::bindPdf(fxDCB,pres);
     RooDataHist dh1("dh1","dh1",pres,h);
-    RooPlot* frame = pres.frame(Title(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year)));
+    RooPlot* frame = pres.frame(Title(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,titalEtaBins[etaBins_].c_str(),year)));
+
 
     dcb->fitTo(dh1);
     dh1.plotOn(frame);
@@ -244,6 +260,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     }
     //h->Draw();
     frame->Draw();
+    frame->GetYaxis()->SetRangeUser(0.,YLimit);
     //fxDCB->Draw("SAME");
     gausFx->SetLineColor(kBlue);
     gausFx->SetLineStyle(7);
@@ -256,6 +273,11 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     ///exp2Fx->Draw("SAME");
     cPull->cd(i);
     framePull->Draw();
+    if (i == 1){
+      YLowLimitPull = framePull->GetYaxis()->GetXmin();
+      YHighLimitPull = framePull->GetYaxis()->GetXmax();
+    }
+    framePull->GetYaxis()->SetRangeUser(YLowLimitPull,YHighLimitPull);
     cResidual->cd(i);
     frameResid->Draw();
     //delete gausFx;
@@ -304,7 +326,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
 int Stack() {
 
-  std::vector<int> etaBins = { 0, 1, 2, 3, 4, 5};
+  std::vector<int> etaBins = { 0, 1, 2, 3, 4};
 
   TCanvas* c = new TCanvas("c","c",1500,1000);
   c->Divide(3,2);
@@ -318,8 +340,7 @@ int Stack() {
     Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),
     Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),
     Form("%.1f <= |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),
-    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),
-    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),
+    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonE.second),
   };
 
   for(auto etaBins_: etaBins){
