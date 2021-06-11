@@ -16,7 +16,6 @@ PreSelector::PreSelector(TTree *)
   HNMu = 0;
   HPResidualB_T = 0;
   HPResidualO_T = 0;
-  HPResidualE_T = 0;
   HPResidualB_G = 0;
   HPResidualO_G = 0;
   HPResidualE_G = 0;
@@ -101,8 +100,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HPResidualB_T = new TH2F("HPResidualB_T","",12,PtBins,197,PResBins);
   HPResidualO_T = static_cast<TH2F*>(HPResidualB_T->Clone());
   HPResidualO_T->SetName("HPResidualO_T");
-  HPResidualE_T = static_cast<TH2F*>(HPResidualB_T->Clone());
-  HPResidualE_T->SetName("HPResidualE_T");
 
   HPResidualB_G = static_cast<TH2F*>(HPResidualB_T->Clone());
   HPResidualB_G->SetName("HPResidualB_G");
@@ -113,7 +110,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   fOutput->Add(HPResidualB_T);
   fOutput->Add(HPResidualO_T);
-  fOutput->Add(HPResidualE_T);
   fOutput->Add(HPResidualB_G);
   fOutput->Add(HPResidualO_G);
   fOutput->Add(HPResidualE_G);
@@ -436,8 +432,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
          hl2 = BE_T;
        }
      }
-     hl1->Fill(lep1.Pt(), zb.M());
-     hl2->Fill(lep2.Pt(), zb.M());
+     hl1->Fill(lep1.Pt(), zb.M(),*genWeight);
+     hl2->Fill(lep2.Pt(), zb.M(),*genWeight);
    };
 
 
@@ -468,13 +464,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
    };
 
    if( Muon_highPtId[l1] == 1 ){
-     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualE_T, lep1, l1);
+     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualO_T, lep1, l1);
    } else {
      FillHistos(HPResidualB_G, HPResidualO_G, HPResidualE_G, lep1, l1);
    }
 
    if( Muon_highPtId[l2] == 1){
-     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualE_T, lep2, l2);
+     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualO_T, lep2, l2);
    } else {
      FillHistos(HPResidualB_G, HPResidualO_G, HPResidualE_G, lep2, l2);
    }

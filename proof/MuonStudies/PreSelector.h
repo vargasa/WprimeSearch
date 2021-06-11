@@ -122,8 +122,7 @@ class PreSelector : public EventSelection {
   Bool_t PairMu;
 
   TH2F* HPResidualB_T;
-  TH2F* HPResidualO_T;
-  TH2F* HPResidualE_T;
+  TH2F* HPResidualO_T; // O+E bins Merged
 
   TH2F* HPResidualB_G;
   TH2F* HPResidualO_G;
