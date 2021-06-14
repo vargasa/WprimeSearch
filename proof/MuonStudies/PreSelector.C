@@ -177,7 +177,11 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   }
   GoodIndex.reserve(10);
   for (UInt_t i=0; i<*Mu.n;++i){
-    if( Muon_highPtId[i] >=1 && Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
+    Double_t pt = Mu.[i]*Muon_tunepRelPt[i];
+    if( Muon_highPtId[i] >=1 and
+        abs(Mu.eta[i]) < MaxEta and
+        pt > MinPt and
+        Muon_tkRelIso[i] < 0.1 )
       GoodIndex.emplace_back(i);
   }
 
