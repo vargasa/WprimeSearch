@@ -60,8 +60,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
   fOutput->Add(HCutFlow);
 
-  const Double_t PtBins[13] = {
-    120,200,300,400,600,800,1000,1300,1600,2000,2500,3100,4500
+  const Double_t PBins[16] = {
+    52.,72.,100.,150.,200.,
+    300.,400.,600.,800.,1000.,
+    1300.,1600.,2000.,2500,3100,
+    4500
   };
 
   const Double_t PResBins[198] = {
@@ -100,7 +103,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
     0.93,0.94,0.95,0.96,0.97,0.98,
   };
 
-  HPResidualB_T = new TH2F("HPResidualB_T","",12,PtBins,197,PResBins);
+  HPResidualB_T = new TH2F("HPResidualB_T","",15,PBins,197,PResBins);
   HPResidualO_T = static_cast<TH2F*>(HPResidualB_T->Clone());
   HPResidualO_T->SetName("HPResidualO_T");
 
