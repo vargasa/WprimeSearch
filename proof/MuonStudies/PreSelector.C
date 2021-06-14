@@ -19,11 +19,14 @@ PreSelector::PreSelector(TTree *)
   HPResidualB_G = 0;
   HPResidualO_G = 0;
   HPResidualE_G = 0;
-  HMassZPt_BB_G = 0;
-  HMassZPt_BE_G = 0;
-  HMassZPt_BB_T = 0;
-  HMassZPt_BE_T = 0;
+  HMassZPt_A_G = 0;
+  HMassZPt_B_G = 0;
+  HMassZPt_C_G = 0;
+  HMassZPt_A_T = 0;
+  HMassZPt_B_T = 0;
+  HMassZPt_C_T = 0;
   HMuonPt = 0;
+
 }
 
 #ifndef CMSDATA
@@ -128,22 +131,32 @@ void PreSelector::SlaveBegin(TTree *tree) {
     100., 102., 104., 106.
   };
 
-  // BB - Both Muons are within abs(eta) < 1.2
-  HMassZPt_BB_G = new TH2F("HMassZPt_BB_G","", 7, PtBins_MRes, 18, ZMassBins);
-  fOutput->Add(HMassZPt_BB_G);
+  // A - Both Muons are within abs(eta) <= 1.2
+  HMassZPt_A_G = new TH2F("HMassZPt_A_G","", 7, PtBins_MRes, 18, ZMassBins);
+  fOutput->Add(HMassZPt_A_G);
 
-  // BE - At least one Muon is within abs(eta) < 1.2;
-  HMassZPt_BE_G = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
-  HMassZPt_BE_G->SetName("HMassZPt_BE_G");
-  fOutput->Add(HMassZPt_BE_G);
+  // B - Leading Muon is within 1.2 < abs(eta) <= 1.6
+  HMassZPt_B_G = static_cast<TH2F*>(HMassZPt_A_G->Clone());
+  HMassZPt_B_G->SetName("HMassZPt_B_G");
+  fOutput->Add(HMassZPt_B_G);
 
-  HMassZPt_BB_T = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
-  HMassZPt_BB_T->SetName("HMassZPt_BB_T");
-  fOutput->Add(HMassZPt_BB_T);
+  // C - Leading Muon is within abs(eta) > 1.6
+  HMassZPt_C_G = static_cast<TH2F*>(HMassZPt_A_G->Clone());
+  HMassZPt_C_G->SetName("HMassZPt_C_G");
+  fOutput->Add(HMassZPt_C_G);
 
-  HMassZPt_BE_T = static_cast<TH2F*>(HMassZPt_BB_G->Clone());
-  HMassZPt_BE_T->SetName("HMassZPt_BE_T");
-  fOutput->Add(HMassZPt_BE_T);
+  HMassZPt_A_T = static_cast<TH2F*>(HMassZPt_A_G->Clone());
+  HMassZPt_A_T->SetName("HMassZPt_A_T");
+  fOutput->Add(HMassZPt_A_T);
+
+  HMassZPt_B_T = static_cast<TH2F*>(HMassZPt_A_G->Clone());
+  HMassZPt_B_T->SetName("HMassZPt_B_T");
+  fOutput->Add(HMassZPt_B_T);
+
+  HMassZPt_C_T = static_cast<TH2F*>(HMassZPt_A_G->Clone());
+  HMassZPt_C_T->SetName("HMassZPt_C_T");
+  fOutput->Add(HMassZPt_C_T);
+
 
   HNMu = new TH1I("HNMu","",7,0,7);
   fOutput->Add(HNMu);
@@ -177,7 +190,7 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   }
   GoodIndex.reserve(10);
   for (UInt_t i=0; i<*Mu.n;++i){
-    Double_t pt = Mu.[i]*Muon_tunepRelPt[i];
+    Double_t pt = Mu.pt[i]*Muon_tunepRelPt[i];
     if( Muon_highPtId[i] >=1 and
         abs(Mu.eta[i]) < MaxEta and
         pt > MinPt and
@@ -216,8 +229,13 @@ std::vector<std::pair<UInt_t,UInt_t>> PreSelector::GetMuonPairs(const Muons& m) 
 
   for(uint i = 0; i < GoodMuon.size(); ++i){
     for(uint j = i+1; j < GoodMuon.size(); ++j){
-      if (m.charge[i] != m.charge[j])
-        pairs.push_back(std::make_pair(GoodMuon[i],GoodMuon[j]));
+      if (m.charge[i] != m.charge[j]) {
+        if(m.pt[i] > m.pt[j]) {
+          pairs.push_back(std::make_pair(GoodMuon[i],GoodMuon[j]));
+        } else {
+          pairs.push_back(std::make_pair(GoodMuon[j],GoodMuon[i]));
+        }
+      }
     }
   }
 
@@ -406,45 +424,60 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    HCutFlow->FillS("ZCandidate");
 
-   auto FillHistos53 = [&](TH2F* BB_G, TH2F* BE_G,
-                           TH2F* BB_T, TH2F* BE_T) {
-     TH2F *hl1, *hl2;
+   auto FillHistos53 = [&](TH2F* A_G, TH2F* B_G, TH2F* C_G,
+                           TH2F* A_T, TH2F* B_T, TH2F* C_T) {
+     TH2F *hl1, *hl2 = NULL;
 
-     Float_t etaLimit = 1.2;
+     std::pair<Float_t,Float_t> etaLimit = { 1.2, 1.6 };
      Int_t globalId = 2;
 
-     if( abs(lep1.Eta()) < etaLimit and abs(lep1.Eta()) < etaLimit ){ // BB
+     if( abs(lep1.Eta()) <= etaLimit.first ) { // A
        if(Muon_highPtId[l1] == globalId){
-         hl1 = BB_G;
+         hl1 = A_G;
        } else {
-         hl1 = BB_T;
+         hl1 = A_T;
        }
        if(Muon_highPtId[l2] == globalId){
-         hl2 = BB_G;
+         hl2 = A_G;
        } else {
-         hl2 = BB_T;
+         hl2 = A_T;
        }
-     } else { //BE
+     } else if ( abs(lep1.Eta()) > etaLimit.first and
+                 abs(lep1.Eta()) <= etaLimit.second ) { //B
        if(Muon_highPtId[l1] == globalId){
-         hl1 = BE_G;
+         hl1 = B_G;
        } else {
-         hl1 = BE_T;
+         hl1 = B_T;
        }
        if(Muon_highPtId[l2] == globalId){
-         hl2 = BE_G;
+         hl2 = B_G;
        } else {
-         hl2 = BE_T;
+         hl2 = B_T;
+       }
+     } else if (abs(lep1.Eta()) > etaLimit.second) {
+       if(Muon_highPtId[l1] == globalId){
+         hl1 = C_G;
+       } else {
+         hl1 = C_T;
+       }
+       if(Muon_highPtId[l2] == globalId){
+         hl2 = C_G;
+       } else {
+         hl2 = C_T;
        }
      }
+
      hl1->Fill(lep1.Pt(), zb.M(),*genWeight);
      hl2->Fill(lep2.Pt(), zb.M(),*genWeight);
+
    };
 
 
    std::pair<float,float> MassWindow = { 75., 110. };
 
    if ( zb.M() > MassWindow.first and zb.M() < MassWindow.second ){
-     FillHistos53(HMassZPt_BB_G, HMassZPt_BE_G, HMassZPt_BB_T, HMassZPt_BE_T);
+     FillHistos53(HMassZPt_A_G, HMassZPt_B_G, HMassZPt_C_G,
+                  HMassZPt_A_T, HMassZPt_B_T, HMassZPt_C_T);
    }
 
 #ifndef CMSDATA
@@ -458,13 +491,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
      std::pair<float,float> MuonO = { 1.2, 2.1};
      std::pair<float,float> MuonC = { 2.1, 2.4};
 
-     if( abs(lep.Eta()) < MuonB.second ) {
+     if( abs(lep.Eta()) <= MuonB.second ) {
        HPResidualB->Fill(lep.P(),GetPResidual(Mus,l));
-     } else if (abs(lep.Eta()) > MuonO.first and abs(lep.Eta()) < MuonO.second) {
+     } else if (abs(lep.Eta()) > MuonO.first and abs(lep.Eta()) <= MuonO.second) {
        HPResidualO->Fill(lep.P(),GetPResidual(Mus,l));
-     } else {
+     } else if (abs(lep.Eta()) > MuonC.first and abs(lep.Eta()) <= MuonC.second){
        HPResidualE->Fill(lep.P(),GetPResidual(Mus,l));
-     }
+     } 
    };
 
    if( Muon_highPtId[l1] == 1 ){
