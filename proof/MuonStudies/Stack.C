@@ -45,11 +45,11 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   std::pair<float,float> MuonE = { 2.1, 2.4 };
 
   std::vector<std::string> titleEtaBins = {
-    Form("%.1f <= |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),  //B_G
-    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),   //O_G
-    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),   //E_G
-    Form("%.1f <= |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second), //B_T
-    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonE.second),  //O_T
+    Form("%.1f <=|#eta|<= %.1f [globalHighPtId]; (1/p-1/p^{GEN})/(1/p^{GEN}); Event Count", MuonB.first, MuonB.second),  //B_G
+    Form("%.1f <|#eta|<= %.1f [globalHighPtId]; (1/p-1/p^{GEN})/(1/p^{GEN}); Event Count", MuonO.first, MuonO.second),   //O_G
+    Form("%.1f <|#eta|<= %.1f [globalHighPtId]; (1/p-1/p^{GEN})/(1/p^{GEN}); Event Count", MuonE.first, MuonE.second),   //E_G
+    Form("%.1f <=|#eta|<= %.1f [trackerHighPtId]; (1/p-1/p^{GEN})/(1/p^{GEN}); Event Count", MuonB.first, MuonB.second), //B_T
+    Form("%.1f <|#eta|<= %.1f [trackerHighPtId]; (1/p-1/p^{GEN})/(1/p^{GEN}); Event Count", MuonO.first, MuonE.second),  //O_T
   };
 
   std::unordered_map<int,std::vector<std::pair<std::string,Double_t>>> samples =
@@ -126,8 +126,6 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   Double_t prevSigma = 0.;
 
   Double_t YLimit = 0.;
-  Double_t YLowLimitPull = 0.;
-  Double_t YHighLimitPull = 0.;
 
   for(uint i = 1; i < 12; ++i){
     c1->cd(i);
@@ -180,7 +178,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
       }
     }
 
-    for(int i = 0; i < 6; ++i){
+    for(int i = 0; i < 8; ++i){
       h->Fit(fxDCB,fitOption.c_str(),"",xmin,xmax);
     }
 
@@ -189,7 +187,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     pres.setBins(10000);
     RooAbsPdf* dcb = RooFit::bindPdf(fxDCB,pres);
     RooDataHist dh1("dh1","dh1",pres,h);
-    RooPlot* frame = pres.frame(Title(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,titalEtaBins[etaBins_].c_str(),year)));
+    RooPlot* frame = pres.frame(Title(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,titleEtaBins[etaBins_].c_str(),year)));
 
 
     dcb->fitTo(dh1);
@@ -198,7 +196,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
     RooHist* hpull = frame->pullHist();
     hpull->SetName(Form("hPull_%.0f_%.0f_%s_%d",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year));
-    RooPlot* framePull = pres.frame(Title(Form("Pull [%.1f:%.1f] GeV %s [%d]",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year)));
+    RooPlot* framePull = pres.frame(Title(Form("Pull %s",titleEtaBins[etaBins_].c_str())));
     framePull->SetName(Form("fPull_%.0f_%.0f_%s_%d",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year));
     framePull->addPlotable(hpull,"P");
     RooHist* hresid = frame->residHist();
@@ -259,6 +257,8 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
       h->GetXaxis()->SetRangeUser(-0.35,0.5);
     }
     //h->Draw();
+    gPad->SetLeftMargin(0.15);
+    gPad->SetBottomMargin(0.15);
     frame->Draw();
     frame->GetYaxis()->SetRangeUser(0.,YLimit);
     //fxDCB->Draw("SAME");
@@ -273,11 +273,6 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     ///exp2Fx->Draw("SAME");
     cPull->cd(i);
     framePull->Draw();
-    if (i == 1){
-      YLowLimitPull = framePull->GetYaxis()->GetXmin();
-      YHighLimitPull = framePull->GetYaxis()->GetXmax();
-    }
-    framePull->GetYaxis()->SetRangeUser(YLowLimitPull,YHighLimitPull);
     cResidual->cd(i);
     frameResid->Draw();
     //delete gausFx;
@@ -328,53 +323,81 @@ int Stack() {
 
   std::vector<int> etaBins = { 0, 1, 2, 3, 4};
 
-  TCanvas* c = new TCanvas("c","c",1500,1000);
+  TCanvas* c = new TCanvas("c","c",3*500,2*500);
   c->Divide(3,2);
+
+  std::vector<int>  Years = { 2016, 2017, 2018 };
 
   std::pair<float,float> MuonB = { 0., 1.2 };
   std::pair<float,float> MuonO = { 1.2, 2.1 };
   std::pair<float,float> MuonE = { 2.1, 2.4 };
 
   std::vector<std::string> titleEtaBins = {
-    Form("%.1f <= |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),
-    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),
-    Form("%.1f < |#eta| <= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),
-    Form("%.1f <= |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),
-    Form("%.1f < |#eta| <= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonE.second),
+    Form("%.1f <=|#eta|<= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),
+    Form("%.1f <|#eta|<= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonO.second),
+    Form("%.1f <|#eta|<= %.1f [globalHighPtId]; P [GeV]; Resolution [%%]", MuonE.first, MuonE.second),
+    Form("%.1f <=|#eta|<= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonB.first, MuonB.second),
+    Form("%.1f <|#eta|<= %.1f [trackerHighPtId]; P [GeV]; Resolution [%%]", MuonO.first, MuonE.second),
   };
 
-  for(auto etaBins_: etaBins){
-    std::cout << "cd etaBins+1 " << etaBins_+1 << std::endl;
-    TMultiGraph *mg = new TMultiGraph();
-    mg->SetTitle(titleEtaBins[etaBins_].c_str());
-    TGraphAsymmErrors *g17 = GetResolutionGraph(2017,etaBins_);
-    g17->Print();
-    g17->SetMarkerStyle(27);
-    g17->SetMarkerColor(kRed);
-    g17->SetLineColor(kRed);
-    mg->Add(g17,"P");
-    TGraphAsymmErrors *g18 = GetResolutionGraph(2018,etaBins_);
-    g18->Print();
-    g18->SetLineColor(kBlack);
-    g18->SetMarkerColor(kRed);
-    g18->SetMarkerStyle(28);
-    mg->Add(g18,"P");
-    TGraphAsymmErrors *g16 = GetResolutionGraph(2016,etaBins_);
-    g16->Print();
-    g16->SetLineColor(kGreen);
-    g16->SetMarkerColor(kGreen);
-    g16->SetMarkerStyle(26);
-    mg->Add(g16,"P");
-    c->cd(etaBins_+1);
-    mg->Draw("AP");
-    mg->GetXaxis()->SetRangeUser(0,3100);
-    mg->GetYaxis()->SetRangeUser(0.,0.18);
+  std::vector<Int_t> colorEtaBins = {
+    kRed, kBlack, kBlue, kRed, kBlack
+  };
 
-    TLegend *l = new TLegend();
-    l->AddEntry(g16,"2016");
-    l->AddEntry(g17,"2017");
-    l->AddEntry(g18,"2018");
-    l->Draw();
+  std::vector<std::string> legendEtaBins = {
+    Form("%.1f <=|#eta|<= %.1f", MuonB.first, MuonB.second),
+    Form("%.1f <|#eta|<= %.1f", MuonO.first, MuonO.second),
+    Form("%.1f <|#eta|<= %.1f", MuonE.first, MuonE.second),
+    Form("%.1f <=|#eta|<= %.1f", MuonB.first, MuonB.second),
+    Form("%.1f <|#eta|<= %.1f", MuonO.first, MuonE.second),
+  };
+
+  for(auto yr: Years){
+
+    TMultiGraph *mgG = new TMultiGraph();
+    mgG->SetName(Form("mgG_%d",yr));
+    mgG->SetTitle(Form("P Resolution [%d] [globalHighPt]; P Reco; P Resolution [#sigma]",yr));
+
+    TMultiGraph *mgT = new TMultiGraph();
+    mgT->SetName(Form("mgT_%d",yr));
+    mgT->SetTitle(Form("P Resolution [%d] [trackerHighPt]; P Reco; P Resolution [#sigma]",yr));
+
+    TLegend *lG = new TLegend(0.7,0.2,0.95,0.3);
+    lG->SetName(Form("lG_%d",yr));
+
+    TLegend *lT = new TLegend(0.7,0.2,0.95,0.3);
+    lG->SetName(Form("lT_%d",yr));
+
+    for(auto etaBins_: etaBins){
+      TGraphAsymmErrors *g = GetResolutionGraph(yr,etaBins_);
+      g->Print();
+      g->SetLineColor(colorEtaBins[etaBins_]);
+      g->SetMarkerColor(colorEtaBins[etaBins_]);
+      g->SetMarkerStyle(23);
+      if (etaBins_ < 3){
+        lG->AddEntry(g,legendEtaBins[etaBins_].c_str());
+        mgG->Add(g,"P");
+      } else {
+        mgT->Add(g,"P");
+        lT->AddEntry(g,legendEtaBins[etaBins_].c_str());
+      }
+    }
+
+    c->cd(yr%2015);
+    gPad->SetLeftMargin(0.15);
+    gPad->SetBottomMargin(0.15);
+    mgG->Draw("AP");
+    lG->Draw();
+    mgG->GetXaxis()->SetRangeUser(0,3100);
+    mgG->GetYaxis()->SetRangeUser(0.,0.18);
+
+    c->cd((yr%2015)+3);
+    gPad->SetLeftMargin(0.15);
+    gPad->SetBottomMargin(0.15);
+    mgT->Draw("AP");
+    lT->Draw();
+    mgT->GetXaxis()->SetRangeUser(0,3100);
+    mgT->GetYaxis()->SetRangeUser(0.,0.18);
   }
 
   c->Print(Form("ResolutionMeasurement.png"));
