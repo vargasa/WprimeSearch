@@ -38,6 +38,9 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
   TCanvas* c1 = new TCanvas("c1","c1",2000,1000);
   c1->Divide(4,2);
 
+  TCanvas* cPull = new TCanvas("cPull","cPull",4*500,2*500);
+  cPull->Divide(4,2);
+
   std::string histopath = Form("%d/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/%s",year,hname.c_str());
   if(isData)
     histopath = Form("%d/ULSingleMuon/%s",year,hname.c_str());
@@ -50,6 +53,10 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
 
   TH2F* h2 = static_cast<TH2F*>(f1->Get(histopath.c_str()));
 
+  Double_t YLimit = 0.;
+
+  TH1D *h;
+
   for(int k = 1; k < 8; ++k){
     c1->cd(k);
 
@@ -61,8 +68,12 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
     if(k==7)
       ptBins.emplace_back(ptBinHigh);
 
-    TH1D *h = static_cast<TH1D*>(h2->ProjectionY(Form("%s_%.0f",hname.c_str(),ptBinHigh),k));
+    h = static_cast<TH1D*>(h2->ProjectionY(Form("%s_%.0f",hname.c_str(),ptBinHigh),k));
     h->SetTitle(Form("%s [%.0f:%.0f];Pt [GeV];Event Count", hname.c_str(),ptBinLow, ptBinHigh));
+
+    
+    if (k == 1)
+      YLimit = h->GetMaximum()*1.1;
 
     std::pair<float,float> MassWindow = {75., 105};
 
@@ -99,7 +110,26 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
 
     dcb->plotOn(frame);
     //h->Draw();
+
+    RooPlot* framePull = mass->frame(Title(Form("Pull %s",title.c_str())));
+    framePull->SetName(Form("fPull_%.0f_%.0f_%s_%d",ptBinLow,ptBinHigh,hname.c_str(),year));
+    RooHist* hpull = frame->pullHist();
+    hpull->SetName(Form("hPull_%.0f_%.0f_%s_%d",ptBinLow,ptBinHigh,hname.c_str(),year));
+    framePull->addPlotable(hpull,"P");
+
+
     frame->Draw();
+    frame->GetYaxis()->SetRangeUser(0.,YLimit);
+    if( ptBinLow >= 150. ){
+      frame->GetYaxis()->SetRangeUser(0.1,YLimit*10.);
+      gPad->SetLogy();
+      gPad->Modified();
+      gPad->Update();
+    }
+
+    cPull->cd(k);
+    framePull->Draw();
+
     //fxDCB->Draw("SAME");
   }
 
@@ -107,8 +137,15 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
 
   if(isData)
     fname = Form("%d_%s_Fits_Data.png",year,hname.c_str());
-  
+
   c1->Print(fname.c_str());
+
+  if(!isData){
+    cPull->Print(Form("%d_%s_Pull_Fits.png",year,hname.c_str()));
+  }else{
+    cPull->Print(Form("%d_%s_Pull_Fits_Data.png",year,hname.c_str()));
+  }
+
 
   TGraphAsymmErrors* g = new TGraphAsymmErrors(7);
   g->SetName(Form("%d_%s_g",year,hname.c_str()));
