@@ -69,9 +69,8 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
       ptBins.emplace_back(ptBinHigh);
 
     h = static_cast<TH1D*>(h2->ProjectionY(Form("%s_%.0f",hname.c_str(),ptBinHigh),k));
-    h->SetTitle(Form("%s [%.0f:%.0f];Pt [GeV];Event Count", hname.c_str(),ptBinLow, ptBinHigh));
+    h->SetTitle(Form("%s [%.0f:%.0f];Dimuon Mass [GeV];Event Count", hname.c_str(),ptBinLow, ptBinHigh));
 
-    
     if (k == 1)
       YLimit = h->GetMaximum()*1.1;
 

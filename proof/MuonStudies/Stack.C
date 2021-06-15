@@ -102,6 +102,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     };
 
   TH2D* hp = static_cast<TH2D*>(f1->Get(Form("%d/%s/%s",year,samples[year][0].first.c_str(),etaBins[etaBins_].c_str())));
+  hp->SetName(Form("%d_%s_%s",year,samples[year][0].first.c_str(),etaBins[etaBins_].c_str()));
   hp->Scale(samples[year][0].second);
   for (int i = 1; i < samples[year].size(); ++i) {
     TH2D* h = static_cast<TH2D*>(f1->Get(Form("%d/%s/%s",year,samples[year][i].first.c_str(),etaBins[etaBins_].c_str())));
@@ -109,12 +110,13 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     hp->Add(h);
   }
 
-  TCanvas* c1 = new TCanvas("c1","c1",4*500,3*500);
-  c1->Divide(4,3);
-  TCanvas* cPull = new TCanvas("cPull","cPull",4*500,3*500);
-  cPull->Divide(4,3);
-  TCanvas* cResidual = new TCanvas("cResidual","cResidual",4*500,3*500);
-  cResidual->Divide(4,3);
+  TCanvas* c1 = new TCanvas("c1","c1",5*500,3*500);
+  c1->Divide(5,3);
+  TCanvas* cPull = new TCanvas("cPull","cPull",5*500,3*500);
+  cPull->Divide(5,3);
+  TCanvas* cResidual = new TCanvas("cResidual","cResidual",5*500,3*500);
+  cResidual->Divide(5,3);
+
   Int_t nParams = 7;
 
   gStyle->SetOptFit(1111);
@@ -123,11 +125,16 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
   std::vector<Double_t> sigmaErrors;
   std::vector<Double_t> ptBins;
 
+  std::vector<Double_t> means;
+  std::vector<Double_t> meanErrors;
+
   Double_t prevSigma = 0.;
 
   Double_t YLimit = 0.;
 
-  for(uint i = 1; i < 12; ++i){
+  TCanvas* c0 = new TCanvas("c0","c0",500,500);
+
+  for(uint i = 1; i <= 15; ++i){
     c1->cd(i);
 
     Double_t ptBinMin = hp->GetXaxis()->GetBinLowEdge(i);
@@ -136,7 +143,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(i));
 
     TH1D* h = hp->ProjectionY("_h",i);
-    h->SetName(Form("h_%d_%s",year,etaBins[etaBins_].c_str()));
+    h->SetName(Form("h_%d_%s_%d",year,etaBins[etaBins_].c_str(),i));
     h->Sumw2();
 
     if (i == 1)
@@ -190,7 +197,7 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     RooPlot* frame = pres.frame(Title(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,titleEtaBins[etaBins_].c_str(),year)));
 
 
-    dcb->fitTo(dh1);
+    dcb->fitTo(dh1,SumW2Error(true));
     dh1.plotOn(frame);
     dcb->plotOn(frame);
 
@@ -207,7 +214,10 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
     h->SetTitle(Form("[%.1f:%.1f] GeV %s [%d];(1/p-1/p^{GEN})/(1/p^{GEN});Event Count",ptBinMin,ptBinMax,etaBins[etaBins_].c_str(),year));
 
+    means.emplace_back(fxDCB->GetParameter(4));
     sigmas.emplace_back(fxDCB->GetParameter(5));
+
+    meanErrors.emplace_back(fxDCB->GetParError(4));
     sigmaErrors.emplace_back(fxDCB->GetParError(5));
 
     std::string gaussian = Form("%.8f*exp(-0.5*pow((x-(%.8f))/%.8f,2.))",
@@ -287,14 +297,20 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
   ptBins.emplace_back(hp->GetXaxis()->GetBinLowEdge(12));
 
-  TGraphAsymmErrors* g = new TGraphAsymmErrors(11);
+  const int nPoints = 11;
 
-  for(int i = 0; i < 11; ++i){
+  std::vector<TGraphAsymmErrors*> plots;
+
+  TGraphAsymmErrors* g = new TGraphAsymmErrors(nPoints);
+  TGraphAsymmErrors* gMeans = new TGraphAsymmErrors(nPoints);
+
+  for(int i = 0; i < nPoints; ++i){
     Double_t mid = (ptBins[i]+ptBins[i+1])/2.;
     Double_t dx = mid - ptBins[i];
     g->SetPoint(i,mid,sigmas[i]);
+    gMeans->SetPoint(i,mid,means[i]);
     g->SetPointError(i,dx,dx,sigmaErrors[i],sigmaErrors[i]);
-    std::cout << i << "\t" << ptBins[i] << "\t" << ptBins[i+1] << "\t" << sigmas[i] <<  "\t" << sigmaErrors[i] << std::endl;
+    gMeans->SetPointError(i,dx,dx,meanErrors[i],meanErrors[i]);
   }
 
   c1->Clear();
@@ -312,8 +328,17 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     g->GetYaxis()->SetRangeUser(0,0.25);
   }
   c1->Print(Form("%d_%d_PResolution.png",year,etaBins_));
+
+
+  c1->Clear();
+  gMeans->SetMarkerColor(4);
+  gMeans->SetMarkerStyle(21);
+  gMeans->SetTitle(Form("%s [%d]; P; #mu",etaBins[etaBins_].c_str(),year));
+  gMeans->Draw("AP")
+  c1->Print(Form("%d_%d_P_Bias.png",year,etaBins_));
+  plots.emplace_back(gMeans);
+
   delete c1;
-  //delete cPull;
 
   return g;
 

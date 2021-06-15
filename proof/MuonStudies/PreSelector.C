@@ -470,9 +470,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
        }
      }
 
+#ifndef CMSDATA
      hl1->Fill(lep1.Pt(), zb.M(),*genWeight);
      hl2->Fill(lep2.Pt(), zb.M(),*genWeight);
-
+#elif defined(CMSDATA)
+     hl1->Fill(lep1.Pt(), zb.M());
+     hl2->Fill(lep2.Pt(), zb.M());
+#endif
    };
 
 
@@ -500,7 +504,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
        HPResidualO->Fill(lep.P(),GetPResidual(Mus,l));
      } else if (abs(lep.Eta()) > MuonC.first and abs(lep.Eta()) <= MuonC.second){
        HPResidualE->Fill(lep.P(),GetPResidual(Mus,l));
-     } 
+     }
    };
 
    if( Muon_highPtId[l1] == 1 ){
