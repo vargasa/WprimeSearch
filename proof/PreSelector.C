@@ -1123,6 +1123,17 @@ void PreSelector::DefineSFs(){
     }
     wcentral *= ksf;
   }
+
+  wcentral *= *genWeight;
+  WElTrigUp *= *genWeight;
+  WElTrigDown *= *genWeight;
+  WMuTrigUp *= *genWeight;
+  WMuTrigDown *= *genWeight;
+  WElIDUp *= *genWeight;
+  WElIDDown *= *genWeight;
+  WMuIDUp *= *genWeight;
+  WMuIDDown *= *genWeight;
+
 }
 #endif
 #ifndef CMSDATA
