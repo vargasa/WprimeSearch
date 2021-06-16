@@ -63,20 +63,6 @@ Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
 }
 #endif
 #ifndef CMSDATA
-Double_t PreSelector::GetPResidual(const Leptons& l, const int& idx) const{
-
-  const int gpidx = l.genPartIdx[idx];
-
-  PtEtaPhiMVector v4 = PtEtaPhiMVector(l.pt[idx],l.eta[idx],l.phi[idx],l.mass);
-  PtEtaPhiMVector v4Gen = PtEtaPhiMVector(GenPart_pt[gpidx],
-                                          GenPart_eta[gpidx],
-                                          GenPart_phi[gpidx],
-                                          GenPart_mass[gpidx]);
-
-  return ( (1 / v4.P()) - (1/v4Gen.P()) ) / ( 1/v4Gen.P() );
-}
-#endif
-#ifndef CMSDATA
 Double_t PreSelector::GetZPtFromGen() const{
 
   const int zid = 23;
@@ -242,12 +228,6 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
     "SR1_D",
   };
 
-#ifndef CMSDATA
-  if (name == "HPResidual"){
-    idst.emplace_back("SR1_E");
-    idst.emplace_back("SR1_F");
-  }
-#endif
 
   idst.emplace_back("SR1_A_Central");
   idst.emplace_back("SR1_B_Central");
@@ -258,13 +238,6 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
   idst.emplace_back("CR1_B");
   idst.emplace_back("CR1_C");
   idst.emplace_back("CR1_D");
-
-#ifndef CMSDATA
-  if (name == "HPResidual"){
-    idst.emplace_back("CR1_E");
-    idst.emplace_back("CR1_F");
-  }
-#endif
 
   idst.emplace_back("CR1_A_Central");
   idst.emplace_back("CR1_B_Central");
@@ -383,7 +356,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   const Int_t nJetBins = 15;
   InitHVec<TH1F>(HnJet,"HnJet",nJetBins,0.,(float)nJetBins);
-  InitHVec<TH1F>(HnbTag,"HnbTag",nJetBins,0.,(float)nJetBins);
+
 
   const Float_t MinMass = 0.;
   const Float_t MaxMass = 2200.;
@@ -472,10 +445,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Float_t PdgIdMax = 50.5;
 
 #ifndef CMSDATA
-  InitHVec<TH1F>(HPResidual,"HPResidual",100,-0.5,0.5);
-  InitHVec<TH1F>(HElFakeCat,"HElFakeCat",5,-2.5,2.5);
-  InitHVec<TH1F>(HMuFakeCat,"HMuFakeCat",5,-2.5,2.5);
-
   InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
 
   std::vector<std::string> prefill = {
@@ -1137,44 +1106,6 @@ void PreSelector::DefineSFs(){
 }
 #endif
 #ifndef CMSDATA
-Int_t PreSelector::GetFakeContent(const int& genPartIdx,
-                                  const int& pdgId,
-                                  const int& nLepton) const{
-
-  std::function<Bool_t(const int&)> isPrompt = [&] (const int& gpidx) {
-    const int maxNFlags = 14;
-    const int isPromptFlag = 0;
-    std::bitset<maxNFlags> flags(GenPart_statusFlags[gpidx]);
-    return flags[isPromptFlag];
-  };
-
-  Int_t pdgIdMother = GetMother(genPartIdx,pdgId).second;
-  Int_t fakeContent = 0;
-  Bool_t isPaired = (nLepton == 1 or nLepton == 2);
-  Bool_t isUnpaired = (nLepton == 3);
-
-  std::vector accept = { pdgId /*e or Mu*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
-
-  if ( isPrompt(genPartIdx)
-       or ( std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end())){
-    if (isPaired) {
-      fakeContent = -2; // Real and Paired
-    } else {
-      assert(isUnpaired);
-      fakeContent = -1; // Real and UnPaired
-    }
-  } else { // fake
-    if (isPaired) {
-      fakeContent = 1;  // Fake and paired
-    } else {
-      fakeContent = 2; // Fake and unpaired;
-    }
-  }
-  return fakeContent;
-
-}
-#endif
-#ifndef CMSDATA
 std::string PreSelector::GetFakeString(const int& genPartIdx,
                                        const int& pdgId, const int& idn) const{
 
@@ -1274,54 +1205,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 
 #ifndef CMSDATA
 
-
-  if(IsC or IsD) { // PairMu
-
-    // 3 Regions in Eta:
-    // B(     |eta|<0.9)
-    //        1Trk+1Glb _A +0
-    //        1Glb+1Glb _B +1
-    // O( 0.9<|eta|<1.2)
-    //        1Trk+1Glb _C +2
-    //        1Glb+1Glb _D +3
-    // E(     |eta|>1.2)
-    //        1Trk+1Glb _E +4
-    //        1Glb+1Glb _F +5
-
-
-
-    auto getHId = [&] (const int& idx) {
-
-      int histoId = 0;
-
-      if (Muon_highPtId[l1] == 1 or Muon_highPtId[l2] == 1) { //1Trk+1Glb
-        if ( abs(Muon_eta[idx]) < 0.9) {
-          histoId = 0;
-        } else if ( abs(Muon_eta[idx]) > 0.9 and abs(Muon_eta[idx]) < 1.2 ){
-          histoId = 2;
-        } else if (abs(Muon_eta[idx]) > 1.2 ) {
-          histoId = 4;
-        }
-      } else { // 2Glb
-        if (abs (Muon_eta[idx]) < 0.9) {
-          histoId = 1;
-        } else if ( abs(Muon_eta[idx]) > 0.9 and abs(Muon_eta[idx]) < 1.2 ){
-          histoId = 3;
-        } else if ( abs(Muon_eta[idx]) > 1.2 ) {
-          histoId = 5;
-        }
-      }
-
-      return histoId;
-
-    };
-
-    HPResidual[crOffset + getHId(l1)]->Fill(GetPResidual(lz,l1));
-    HPResidual[crOffset + getHId(l2)]->Fill(GetPResidual(lz,l2));
-
-  }
-
-
   DefineSFs();
 
   HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
@@ -1360,7 +1243,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HnEl,nh,(double)GoodElectron.size());
   FillH1(HnMu,nh,(double)GoodMuon.size());
   FillH1(HnJet,nh,(double)*nJet);
-  FillH1(HnbTag,nh,(double)nbQ);
 
   // Mass Histos
   double wzm = (wb+zb).M();
@@ -1395,9 +1277,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
         HMassWZ[HIdx["SR1_A_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],ElPdgId,3));
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId,Electron_cutBased[l2])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l3],ElPdgId,Electron_cutBased[l3])).c_str());
@@ -1430,9 +1309,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
         HMassWZ[HIdx["SR1_B_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l1],ElPdgId,1));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l2],ElPdgId,2));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],MuPdgId,3));
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId,Electron_cutBased[l2])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l3],MuPdgId,Muon_highPtId[l3])).c_str());
@@ -1465,9 +1341,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
         HMassWZ[HIdx["SR1_C_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
-    HElFakeCat[nh]->Fill(GetFakeContent(Electron_genPartIdx[l3],ElPdgId,3));
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l2],MuPdgId,Muon_highPtId[l2])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l3],ElPdgId,Electron_cutBased[l3])).c_str());
@@ -1495,9 +1368,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
         HMassWZ[HIdx["SR1_D_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l1],MuPdgId,1));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l2],MuPdgId,2));
-    HMuFakeCat[nh]->Fill(GetFakeContent(Muon_genPartIdx[l3],MuPdgId,3));
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l2],MuPdgId,Muon_highPtId[l2])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l3],MuPdgId,Muon_highPtId[l3])).c_str());
@@ -1624,23 +1494,6 @@ void PreSelector::FillRegion(const int regOffset,
   }
   // 3leptons
   HOverlap->Fill(IsA_+IsB+IsC+IsD);
-}
-
-Int_t PreSelector::nbTag(){
-#if defined(Y2016)
-  const float medium = 0.3093;
-#elif defined(Y2017)
-  const float medium = 0.3033;
-#elif defined(Y2018)
-  const float medium = 0.2770;
-#endif
-  Int_t nbtag = 0;
-  for(uint i = 0; i < *nJet; ++i){
-    if( Jet_btagDeepFlavB[i] > medium){
-      ++nbtag;
-    }
-  }
-  return nbtag;
 }
 
 Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
@@ -1991,17 +1844,9 @@ void PreSelector::Terminate() {
   const Int_t Year = 2018;
 #endif
 
-  auto getFullPath = [&](const std::string name){
-    const std::string dir = "plots";
-    return Form("%s/%d/%s_%s.png",dir.c_str(),Year,SampleName.Data(),name.c_str());
-  };
-
-
   gStyle->SetOptStat(1111111);
-  std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
-  std::unique_ptr<TCanvas> chc(new TCanvas("chc","chc",1200,800));
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_PResidual.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_All.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
@@ -2011,29 +1856,6 @@ void PreSelector::Terminate() {
     lnk->GetObject()->Write();
     lnk = lnk->Next();
   }
-
-  ch->cd();
-  HCutFlow->LabelsDeflate();
-  gPad->SetLogy();
-  HCutFlow->Draw("HIST TEXT45");
-  ch->Print(getFullPath("HCutFlow"));
-
-  ch->cd(0);
-  HOverlap->Draw();
-  ch->Print(getFullPath("Overlap"));
-
-  ch->Clear();
-  gStyle->SetOptStat(0);
-  ch->Divide(2,1);
-  ch->cd(1);
-  gPad->SetLogz();
-  HNEl->SetTitle("nElectron vs size(GoodElectron); nElectron; size(GoodElectron)");
-  HNEl->Draw("COL,TEXT");
-  ch->cd(2);
-  gPad->SetLogz();
-  HNMu->SetTitle("nMuon vs size(GoodMuon); nMuon; size(GoodMuon)");
-  HNMu->Draw("COL,TEXT");
-  ch->Print(getFullPath("CheckGoodLeptons"));
 
   fOut->Write();
   fOut->Close();

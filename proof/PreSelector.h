@@ -156,7 +156,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HRelIsol2;
   std::vector<TH1F*> HRelIsol3;
   std::vector<TH1F*> HnJet;
-  std::vector<TH1F*> HnbTag;
 
   std::vector<TH2F*> HMassZWZ;
 
@@ -181,9 +180,6 @@ class PreSelector : public EventSelection {
   const Int_t ElPdgId = 11;
   const Int_t MuPdgId = 13;
 
-  std::vector<TH1F*> HPResidual;
-  std::vector<TH1F*> HElFakeCat;
-  std::vector<TH1F*> HMuFakeCat;
   std::vector<TH1F*> HFakeString;
   std::vector<TH1F*> HGenPartPdgIdl1;
   std::vector<TH1F*> HGenPartPdgIdl2;
@@ -290,15 +286,11 @@ class PreSelector : public EventSelection {
   void FillCategory(const Int_t& crOffset,
                     const Leptons& lz,const Leptons& lw);
   void FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent);
-  Int_t nbTag();
-  Int_t nbQ;
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
   Double_t GetZPtFromGen() const;
-  Double_t GetPResidual(const Leptons& l, const int& idx) const;
-  Int_t GetFakeContent(const int& genPartIdx,const int& pdgId,const int& nLepton) const;
   std::string GetFakeString(const int& genPartIdx, const int& pdgId, const int& idn) const;
   Double_t GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const;
   Double_t GetElTriggerSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
