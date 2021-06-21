@@ -26,6 +26,7 @@ PreSelector::PreSelector(TTree *)
   HMassZPt_C_T = 0;
   HMuonPtl1 = 0;
   HMuonPtl2 = 0;
+  HMassZ = 0;
 }
 
 #ifndef CMSDATA
@@ -163,6 +164,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMassZPt_C_T->SetName("HMassZPt_C_T");
   fOutput->Add(HMassZPt_C_T);
 
+  HMassZ = new TH1F("HMassZ","", 100,50,10000);
+  fOutput->Add(HMassZ);
+
 
 }
 
@@ -197,7 +201,7 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
     if( Muon_highPtId[i] >=1 and
         abs(Mu.eta[i]) < MaxEta and
         pt > MinPt and
-        Muon_tkRelIso[i] < 0.1 )
+        Muon_tkRelIso[i] < 0.1)
       GoodIndex.emplace_back(i);
   }
 
@@ -421,8 +425,15 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    zb   = lep1 + lep2;
 
-   HMuonPtl1->Fill(lep1.Pt());
-   HMuonPtl2->Fill(lep2.Pt());
+   Double_t w = 1.;
+
+#ifndef CMSDATA
+   w = *genWeight;
+#endif
+
+   HMuonPtl1->Fill(lep1.Pt(),w);
+   HMuonPtl2->Fill(lep2.Pt(),w);
+   HMassZ->Fill(zb.M(),w);
 
    HCutFlow->FillS("ZCandidate");
 
@@ -497,12 +508,14 @@ Bool_t PreSelector::Process(Long64_t entry) {
      std::pair<float,float> MuonO = { 1.2, 2.1};
      std::pair<float,float> MuonC = { 2.1, 2.4};
 
+     double w = *genWeight;
+
      if( abs(lep.Eta()) <= MuonB.second ) {
-       HPResidualB->Fill(lep.P(),GetPResidual(Mus,l));
+       HPResidualB->Fill(lep.P(),GetPResidual(Mus,l),w);
      } else if (abs(lep.Eta()) > MuonO.first and abs(lep.Eta()) <= MuonO.second) {
-       HPResidualO->Fill(lep.P(),GetPResidual(Mus,l));
+       HPResidualO->Fill(lep.P(),GetPResidual(Mus,l),w);
      } else if (abs(lep.Eta()) > MuonC.first and abs(lep.Eta()) <= MuonC.second){
-       HPResidualE->Fill(lep.P(),GetPResidual(Mus,l));
+       HPResidualE->Fill(lep.P(),GetPResidual(Mus,l),w);
      }
    };
 
@@ -525,22 +538,17 @@ Bool_t PreSelector::Process(Long64_t entry) {
 void PreSelector::Terminate() {
 
 #ifdef Y2016
-  const Int_t Year = 2016;
+  const Int_t Year_ = 2016;
 #elif defined(Y2017)
-  const Int_t Year = 2017;
+  const Int_t Year_ = 2017;
 #elif defined(Y2018)
-  const Int_t Year = 2018;
+  const Int_t Year_ = 2018;
 #endif
 
-  auto getFullPath = [&](const std::string name){
-    const std::string dir = "plots";
-    return Form("%s/%d/%s_%s.png",dir.c_str(),Year,SampleName.Data(),name.c_str());
-  };
-
   std::unique_ptr<TFile> fOut(TFile::Open("MuonStudies.root","UPDATE"));
-  fOut->mkdir(Form("%d",Year));
-  fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
-  fOut->cd(Form("%d/%s",Year,SampleName.Data()));
+  fOut->mkdir(Form("%d",Year_));
+  fOut->mkdir(Form("%d/%s",Year_,SampleName.Data()));
+  fOut->cd(Form("%d/%s",Year_,SampleName.Data()));
 
   TObjLink *lnk = fOutput->FirstLink();
   while (lnk) {

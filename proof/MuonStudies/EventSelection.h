@@ -154,10 +154,10 @@ Bool_t EventSelection::Notify() {
   std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
 
 #if defined(Y2016)
-  std::clog << Form("Branch being processed (HLT_TkMu50): %s\n", HLT_TkMu50.GetBranchName());
+  std::clog << Form("Branch being processed (HLT_TkMu50) [2016]: %s\n", HLT_TkMu50.GetBranchName());
 #elif defined(Y2017)
-  std::clog << Form("Branch being processed (HLT_OldMu100): %s\n", HLT_OldMu100.GetBranchName());
-  std::clog << Form("Branch being processed (HLT_TkMu100): %s\n", HLT_TkMu100.GetBranchName());
+  std::clog << Form("Branch being processed (HLT_OldMu100) [2017]: %s\n", HLT_OldMu100.GetBranchName());
+  std::clog << Form("Branch being processed (HLT_TkMu100) [2017]: %s\n", HLT_TkMu100.GetBranchName());
 #endif
   return kTRUE;
 }
