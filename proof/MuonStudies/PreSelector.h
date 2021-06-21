@@ -172,7 +172,8 @@ class PreSelector : public EventSelection {
 
   std::vector<TH1F*> HPtl1;
   std::vector<TH1F*> HPtl2;
-  TH1F* HMuonPt;
+  TH1F* HMuonPtl1;
+  TH1F* HMuonPtl2;
 
   std::vector<TH1F*> HEtal1;
   std::vector<TH1F*> HEtal2;
@@ -189,9 +190,7 @@ class PreSelector : public EventSelection {
   TH1D *HTruePileup;
   std::vector<TH1F*> HPileup_;
 
-  TH1I* HNMu;
-
-  Int_t l1, l2; // Lepton pair index 
+  Int_t l1, l2; // Lepton pair index
   Int_t leadMuIdx; // Leading is not 0th index
   Int_t leadElIdx;
   Float_t lt; // Sum of leptons Pt

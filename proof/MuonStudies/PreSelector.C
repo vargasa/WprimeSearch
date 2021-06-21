@@ -13,7 +13,6 @@ PreSelector::PreSelector(TTree *)
 {
 
   HCutFlow = 0;
-  HNMu = 0;
   HPResidualB_T = 0;
   HPResidualO_T = 0;
   HPResidualB_G = 0;
@@ -25,8 +24,8 @@ PreSelector::PreSelector(TTree *)
   HMassZPt_A_T = 0;
   HMassZPt_B_T = 0;
   HMassZPt_C_T = 0;
-  HMuonPt = 0;
-
+  HMuonPtl1 = 0;
+  HMuonPtl2 = 0;
 }
 
 #ifndef CMSDATA
@@ -120,8 +119,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
   fOutput->Add(HPResidualO_G);
   fOutput->Add(HPResidualE_G);
 
-  HMuonPt = new TH1F("HMuonPt","",50,0,5000);
-  fOutput->Add(HMuonPt);
+  HMuonPtl1 = new TH1F("HMuonPtl1","",50,0,5000);
+  fOutput->Add(HMuonPtl1);
+
+  HMuonPtl2 = new TH1F("HMuonPtl2","",50,0,5000);
+  fOutput->Add(HMuonPtl2);
+
 
   const Double_t PtBins_MRes[8] = {
     53,75,100,150,200,300,450,800
@@ -160,9 +163,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HMassZPt_C_T->SetName("HMassZPt_C_T");
   fOutput->Add(HMassZPt_C_T);
 
-
-  HNMu = new TH1I("HNMu","",7,0,7);
-  fOutput->Add(HNMu);
 
 }
 
@@ -281,6 +281,7 @@ ZPairInfo PreSelector::FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
     PairsWithMass.emplace_back(z1);
   }
 
+
   return PairsWithMass[0]; /*Pair with smallest delta*/
 
 }
@@ -388,8 +389,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   GoodMuon = PreSelector::GetGoodMuon(Mus);
 
-  HNMu->Fill(*nMuon,GoodMuon.size());
-
   if( (GoodMuon.size()) < 2 ){
     HCutFlow->FillS("goodMu<2");
     return kFALSE;
@@ -422,8 +421,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    zb   = lep1 + lep2;
 
-   HMuonPt->Fill(lep1.Pt());
-   HMuonPt->Fill(lep2.Pt());
+   HMuonPtl1->Fill(lep1.Pt());
+   HMuonPtl2->Fill(lep2.Pt());
 
    HCutFlow->FillS("ZCandidate");
 
