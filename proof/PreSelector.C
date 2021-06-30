@@ -1663,17 +1663,17 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
 #ifndef CMSDATA
-  Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+  Muons Mus(nMuon,Muon_tunepRelPt,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_ip3d,Muon_sip3d,
-            Muon_tightId, Muon_genPartIdx, Muon_pdgId);
+            Muon_tightId, Muon_genPartIdx, Muon_pdgId );
 
   Electrons Els(nElectron,Electron_pt,Electron_eta,Electron_phi,
                 Electron_charge,Electron_dxy,Electron_dz,Electron_pfRelIso03_all,
                 Electron_ip3d,Electron_sip3d,
                 Electron_cutBased, Electron_genPartIdx, Electron_pdgId);
 #else
-  Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+  Muons Mus(nMuon,Muon_tunepRelPt,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_ip3d,Muon_sip3d,
             Muon_tightId);
@@ -1846,14 +1846,14 @@ void PreSelector::Terminate() {
 
   gStyle->SetOptStat(1111111);
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_All.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_MuonTunepPt.root","UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));
 
   TObjLink *lnk = fOutput->FirstLink();
   while (lnk) {
-    lnk->GetObject()->Write();
+    lnk->GetObject()->Write(lnk->GetObject()->GetName(),TObject::kOverwrite);
     lnk = lnk->Next();
   }
 
