@@ -119,12 +119,20 @@ class PreSelector : public EventSelection {
 
   Bool_t PairMu;
 
-  TH2F* HPResidualB_T;
-  TH2F* HPResidualO_T; // O+E bins Merged
+  TH3F* HPResB_T;
+  TH3F* HPResO_T; // O+E bins Merged
 
-  TH2F* HPResidualB_G;
-  TH2F* HPResidualO_G;
-  TH2F* HPResidualE_G;
+  TH3F* HPtResB_T;
+  TH3F* HPtResO_T; // O+E bins Merged
+
+  TH3F* HPResB_G;
+  TH3F* HPResO_G;
+  TH3F* HPResE_G;
+
+  TH3F* HPtResB_G;
+  TH3F* HPtResO_G;
+  TH3F* HPtResE_G;
+
 
   TH2F* HMassZPt_A_G;
   TH2F* HMassZPt_B_G;
@@ -223,6 +231,7 @@ class PreSelector : public EventSelection {
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
   std::pair<Int_t,Int_t> GetMother(std::pair<Int_t,Int_t> Daughter) const;
   Double_t GetPResidual(const Leptons& l, const int& idx) const;
+  Double_t GetPtResidual(const Leptons& l, const int& idx) const;
 
 
   std::vector<std::pair<UInt_t,UInt_t>> GetMuonPairs(const Muons& m) const;

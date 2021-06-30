@@ -13,23 +13,46 @@ PreSelector::PreSelector(TTree *)
 {
 
   HCutFlow = 0;
-  HPResidualB_T = 0;
-  HPResidualO_T = 0;
-  HPResidualB_G = 0;
-  HPResidualO_G = 0;
-  HPResidualE_G = 0;
+  HPResB_T = 0;
+  HPResO_T = 0;
+  HPResB_G = 0;
+  HPResO_G = 0;
+  HPResE_G = 0;
+
+  HPtResB_T = 0;
+  HPtResO_T = 0;
+  HPtResB_G = 0;
+  HPtResO_G = 0;
+  HPtResE_G = 0;
+
   HMassZPt_A_G = 0;
   HMassZPt_B_G = 0;
   HMassZPt_C_G = 0;
   HMassZPt_A_T = 0;
   HMassZPt_B_T = 0;
   HMassZPt_C_T = 0;
+
   HMuonPtl1 = 0;
   HMuonPtl2 = 0;
+
   HMassZ = 0;
 }
 
 #ifndef CMSDATA
+Double_t PreSelector::GetPtResidual(const Leptons& l, const int& idx) const{
+
+  const int gpidx = l.genPartIdx[idx];
+
+  PtEtaPhiMVector v4 = PtEtaPhiMVector(l.pt[idx],l.eta[idx],l.phi[idx],l.mass);
+  PtEtaPhiMVector v4Gen = PtEtaPhiMVector(GenPart_pt[gpidx],
+                                          GenPart_eta[gpidx],
+                                          GenPart_phi[gpidx],
+                                          GenPart_mass[gpidx]);
+
+  return ( (1 / v4.Pt()) - (1/v4Gen.Pt()) ) / ( 1/v4Gen.Pt() );
+
+}
+
 Double_t PreSelector::GetPResidual(const Leptons& l, const int& idx) const{
 
   const int gpidx = l.genPartIdx[idx];
@@ -103,22 +126,40 @@ void PreSelector::SlaveBegin(TTree *tree) {
     0.93,0.94,0.95,0.96,0.97,0.98,
   };
 
-  HPResidualB_T = new TH2F("HPResidualB_T","",15,PBins,197,PResBins);
-  HPResidualO_T = static_cast<TH2F*>(HPResidualB_T->Clone());
-  HPResidualO_T->SetName("HPResidualO_T");
+  HPResB_T = new TH3F("HPResB_T","",15,PBins,15,PBins,197,PResBins);
+  HPResO_T = static_cast<TH3F*>(HPResB_T->Clone());
+  HPResO_T->SetName("HPResO_T");
 
-  HPResidualB_G = static_cast<TH2F*>(HPResidualB_T->Clone());
-  HPResidualB_G->SetName("HPResidualB_G");
-  HPResidualO_G = static_cast<TH2F*>(HPResidualB_T->Clone());
-  HPResidualO_G->SetName("HPResidualO_G");
-  HPResidualE_G = static_cast<TH2F*>(HPResidualB_T->Clone());
-  HPResidualE_G->SetName("HPResidualE_G");
+  HPtResB_T = static_cast<TH3F*>(HPResB_T->Clone());
+  HPtResB_T->SetName("HPtResB_T");
+  HPtResO_T = static_cast<TH3F*>(HPtResB_T->Clone());
+  HPtResO_T->SetName("HPtResO_T");
 
-  fOutput->Add(HPResidualB_T);
-  fOutput->Add(HPResidualO_T);
-  fOutput->Add(HPResidualB_G);
-  fOutput->Add(HPResidualO_G);
-  fOutput->Add(HPResidualE_G);
+  HPResB_G = static_cast<TH3F*>(HPResB_T->Clone());
+  HPResB_G->SetName("HPResB_G");
+  HPResO_G = static_cast<TH3F*>(HPResB_T->Clone());
+  HPResO_G->SetName("HPResO_G");
+  HPResE_G = static_cast<TH3F*>(HPResB_T->Clone());
+  HPResE_G->SetName("HPResE_G");
+
+  HPtResB_G = static_cast<TH3F*>(HPResB_T->Clone());
+  HPtResB_G->SetName("HPtResB_G");
+  HPtResO_G = static_cast<TH3F*>(HPResB_T->Clone());
+  HPtResO_G->SetName("HPtResO_G");
+  HPtResE_G = static_cast<TH3F*>(HPResB_T->Clone());
+  HPtResE_G->SetName("HPtResE_G");
+
+  fOutput->Add(HPResB_T);
+  fOutput->Add(HPResO_T);
+  fOutput->Add(HPResB_G);
+  fOutput->Add(HPResO_G);
+  fOutput->Add(HPResE_G);
+
+  fOutput->Add(HPtResB_T);
+  fOutput->Add(HPtResO_T);
+  fOutput->Add(HPtResB_G);
+  fOutput->Add(HPtResO_G);
+  fOutput->Add(HPtResE_G);
 
   HMuonPtl1 = new TH1F("HMuonPtl1","",50,0,5000);
   fOutput->Add(HMuonPtl1);
@@ -427,13 +468,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
    Double_t w = 1.;
 
-#ifndef CMSDATA
-   w = *genWeight;
-#endif
-
-   HMuonPtl1->Fill(lep1.Pt(),w);
-   HMuonPtl2->Fill(lep2.Pt(),w);
-   HMassZ->Fill(zb.M(),w);
+   HMuonPtl1->Fill(lep1.Pt());
+   HMuonPtl2->Fill(lep2.Pt());
+   HMassZ->Fill(zb.M());
 
    HCutFlow->FillS("ZCandidate");
 
@@ -481,8 +518,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
      }
 
 #ifndef CMSDATA
-     hl1->Fill(lep1.Pt(), zb.M(),*genWeight);
-     hl2->Fill(lep2.Pt(), zb.M(),*genWeight);
+     hl1->Fill(lep1.Pt(), zb.M());
+     hl2->Fill(lep2.Pt(), zb.M());
 #elif defined(CMSDATA)
      hl1->Fill(lep1.Pt(), zb.M());
      hl2->Fill(lep2.Pt(), zb.M());
@@ -498,37 +535,39 @@ Bool_t PreSelector::Process(Long64_t entry) {
    }
 
 #ifndef CMSDATA
-   auto FillHistos = [&](TH2F* HPResidualB,
-                         TH2F* HPResidualO,
-                         TH2F* HPResidualE,
-                         PtEtaPhiMVector& lep,
-                         int& l) {
+   auto FillHistos = [&](TH3F* HPB,
+                         TH3F* HPO,
+                         TH3F* HPE,
+                         PtEtaPhiMVector& l,
+                         Double_t pRes_) {
 
      std::pair<float,float> MuonB = { 0., 1.2};
      std::pair<float,float> MuonO = { 1.2, 2.1};
      std::pair<float,float> MuonC = { 2.1, 2.4};
 
-     double w = *genWeight;
-
-     if( abs(lep.Eta()) <= MuonB.second ) {
-       HPResidualB->Fill(lep.P(),GetPResidual(Mus,l),w);
-     } else if (abs(lep.Eta()) > MuonO.first and abs(lep.Eta()) <= MuonO.second) {
-       HPResidualO->Fill(lep.P(),GetPResidual(Mus,l),w);
-     } else if (abs(lep.Eta()) > MuonC.first and abs(lep.Eta()) <= MuonC.second){
-       HPResidualE->Fill(lep.P(),GetPResidual(Mus,l),w);
+     if( abs(l.Eta()) <= MuonB.second ) {
+       HPB->Fill(l.P(), l.Pt(), pRes_);
+     } else if (l.Eta() > MuonO.first and l.Eta() <= MuonO.second) {
+       HPO->Fill(l.P(), l.Pt(), pRes_);
+     } else if (l.Eta() > MuonC.first and l.Eta() <= MuonC.second){
+       HPE->Fill(l.P(), l.Pt(), pRes_);
      }
    };
 
    if( Muon_highPtId[l1] == 1 ){
-     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualO_T, lep1, l1);
+     FillHistos(HPResB_T, HPResO_T, HPResO_T, lep1, GetPResidual(Mus,11));
+     FillHistos(HPtResB_T, HPtResO_T, HPtResO_T, lep1, GetPtResidual(Mus,11));
    } else {
-     FillHistos(HPResidualB_G, HPResidualO_G, HPResidualE_G, lep1, l1);
+     FillHistos(HPResB_G, HPResO_G, HPResE_G, lep1, GetPResidual(Mus,l1));
+     FillHistos(HPtResB_G, HPtResO_G, HPtResE_G, lep1,GetPtResidual(Mus,l1));
    }
 
    if( Muon_highPtId[l2] == 1){
-     FillHistos(HPResidualB_T, HPResidualO_T, HPResidualO_T, lep2, l2);
+     FillHistos(HPResB_T, HPResO_T, HPResO_T, lep2, GetPResidual(Mus,l2));
+     FillHistos(HPtResB_T, HPtResO_T, HPtResO_T, lep2, GetPtResidual(Mus,l2));
    } else {
-     FillHistos(HPResidualB_G, HPResidualO_G, HPResidualE_G, lep2, l2);
+     FillHistos(HPResB_G, HPResO_G, HPResE_G, lep2, GetPResidual(Mus,l2));
+     FillHistos(HPtResB_G, HPtResO_G, HPtResE_G, lep2, GetPtResidual(Mus,l2));
    }
 #endif
 
@@ -545,7 +584,7 @@ void PreSelector::Terminate() {
   const Int_t Year_ = 2018;
 #endif
 
-  std::unique_ptr<TFile> fOut(TFile::Open("MuonStudies.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open("MuonStudies_PtHistos.root","UPDATE"));
   fOut->mkdir(Form("%d",Year_));
   fOut->mkdir(Form("%d/%s",Year_,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year_,SampleName.Data()));
