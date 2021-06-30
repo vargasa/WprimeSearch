@@ -9,7 +9,7 @@ using RAI = TTreeReaderArray<Int_t>&;
 class Leptons{
  public:
   RVUI n;
-  std::vector<Double_t> pt;
+  const std::vector<Double_t> pt;
   RAF eta;
   RAF phi;
   RAI charge;
@@ -25,8 +25,8 @@ class Leptons{
 #endif
 
  protected:
-  std::vector<Double_t> InitializePtEls(RAF pti);
-  std::vector<Double_t> InitializePtMus(RAF pti, RAF relPt);
+  std::vector<Double_t> InitializePtEls(RAF pti) const;
+  std::vector<Double_t> InitializePtMus(RAF pti, RAF relPt) const;
 
   //Leptons constructor for Electrons
   Leptons(RVUI n, Float_t mass, RAF pt, RAF eta, RAF phi,
@@ -47,7 +47,7 @@ class Leptons{
 };
 
 
-std::vector<Double_t> Leptons::InitializePtEls(RAF pti) {
+std::vector<Double_t> Leptons::InitializePtEls(RAF pti) const{
 
   std::vector<Double_t> ptf;
 
@@ -59,12 +59,12 @@ std::vector<Double_t> Leptons::InitializePtEls(RAF pti) {
 
 }
 
-std::vector<Double_t> Leptons::InitializePtMus(RAF pti, RAF relPt){
+std::vector<Double_t> Leptons::InitializePtMus(RAF pti, RAF relPt) const{
 
   std::vector<Double_t> ptf;
 
   for(size_t i = 0; i < *n/*pti.GetSize()*/; ++i){
-    pt.emplace_back(relPt[i]*pti[i]);
+    ptf.emplace_back(relPt[i]*pti[i]);
   }
 
   return ptf;

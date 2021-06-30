@@ -976,14 +976,14 @@ void PreSelector::DefineSFs(){
 
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
-    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
     wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
-    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
-    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
+    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
     WElIDUp = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),1);
     WElIDUp *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),1);
@@ -1004,13 +1004,13 @@ void PreSelector::DefineSFs(){
   } else if (IsC) {
 
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
-    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
-    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
+    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
     if ( Muon_highPtId[l1] == 2 ) {
       wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
@@ -1039,10 +1039,10 @@ void PreSelector::DefineSFs(){
   } else if (IsD) {
 
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],0);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
 
-    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],1);
-    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_pt[leadMuIdx],-1);
+    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
+    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
     if ( Muon_highPtId[l1] == 2 ) {
       wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
@@ -1449,9 +1449,9 @@ Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
 
 Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
 
-  if (Muon_pt[p.first] < 70.) return kFALSE;
+  if (Muon_tunepRelPt[p.first]*Muon_pt[p.first] < 70.) return kFALSE;
   const Float_t MinSubleadPt = 10.;
-  if (Muon_pt[p.second] < MinSubleadPt) return kFALSE;
+  if (Muon_tunepRelPt[p.second]*Muon_pt[p.second] < MinSubleadPt) return kFALSE;
   const Float_t farFromPV = 1e-2;
   if (Muon_ip3d[p.first] > farFromPV or Muon_ip3d[p.second] > farFromPV) return kFALSE;
 
@@ -1519,7 +1519,7 @@ Bool_t PreSelector::PairMuDefineW(const Electrons& Els, const Muons& Mus){
     l3 = SameFlvWCand[0];
     IsD = true;
   } else if( SameFlvWCand.size() > 0 and GoodElectron.size() > 0 ) {
-    if( Muon_pt[SameFlvWCand[0]] > Electron_pt[GoodElectron[0]] ){
+    if( Muon_tunepRelPt[SameFlvWCand[0]]*Muon_pt[SameFlvWCand[0]] > Electron_pt[GoodElectron[0]] ){
       l3 = SameFlvWCand[0];
       IsD = true;
     } else if (WElectronOk()) {
@@ -1556,7 +1556,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
     for (const int& i: GoodMuon) {
       const Float_t minPt = 50.;
       const Float_t farFromPV = 1e-2;
-      if(Muon_highPtId[i] == 2 and Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV){
+      if(Muon_highPtId[i] == 2 and Muon_tunepRelPt[i]*Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV){
         l3 = i;
         ok = true;
         break;
@@ -1592,7 +1592,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
       return kFALSE;
     }
   } else if (SameFlvWCand.size() > 0 and GoodMuon.size() > 0) {
-    if( WMuonOk() and (Muon_pt[l3] > Electron_pt[SameFlvWCand[0]]) ){
+    if( WMuonOk() and (Muon_tunepRelPt[l3]*Muon_pt[l3] > Electron_pt[SameFlvWCand[0]]) ){
       // l3 defined through WMuonOk
       IsB = true;
     } else if (WElectronOk()) {
@@ -1758,9 +1758,9 @@ Bool_t PreSelector::Process(Long64_t entry) {
     lep2 = PtEtaPhiMVector(Electron_pt[l2],Electron_eta[l2],
                            Electron_phi[l2],Electrons::mass);
   } else { //PairMu
-    lep1 = PtEtaPhiMVector(Muon_pt[l1],Muon_eta[l1],
+    lep1 = PtEtaPhiMVector(Muon_tunepRelPt[l1]*Muon_pt[l1],Muon_eta[l1],
                            Muon_phi[l1],Muons::mass);
-    lep2 = PtEtaPhiMVector(Muon_pt[l2],Muon_eta[l2],
+    lep2 = PtEtaPhiMVector(Muon_tunepRelPt[l2]*Muon_pt[l2],Muon_eta[l2],
                            Muon_phi[l2],Muons::mass);
   }
 
@@ -1781,7 +1781,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
       if(i!=l1 && i!=l2){
         const Float_t minPt = 50.;
         const Float_t farFromPV = 1e-2;
-        if(Muon_highPtId[i] == 2 and Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV)
+        if(Muon_highPtId[i] == 2 and Muon_tunepRelPt[i]*Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV)
           SameFlvWCand.emplace_back(i);
       }
     }
