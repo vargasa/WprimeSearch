@@ -237,12 +237,16 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
     return GoodIndex;
   }
   GoodIndex.reserve(10);
+  const int MuonPdgId = 13;
   for (UInt_t i=0; i<*Mu.n;++i){
-    Double_t pt = Mu.pt[i]*Muon_tunepRelPt[i];
     if( Muon_highPtId[i] >=1 and
         abs(Mu.eta[i]) < MaxEta and
-        pt > MinPt and
-        Muon_tkRelIso[i] < 0.1)
+        Mu.pt[i] > MinPt and
+        Muon_tkRelIso[i] < 0.1
+#ifndef CMSDATA
+        and abs(Mu.pdgId[i]) == MuonPdgId
+#endif
+        )
       GoodIndex.emplace_back(i);
   }
 
@@ -419,13 +423,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
 #ifndef CMSDATA
-  Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+  Muons Mus(nMuon,Muon_tunepRelPt,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_ip3d,Muon_sip3d,
             Muon_tightId, Muon_genPartIdx, Muon_pdgId);
 #endif
 #ifdef CMSDATA
-  Muons Mus(nMuon,Muon_pt,Muon_eta,Muon_phi,
+  Muons Mus(nMuon,Muon_tunepRelPt,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_ip3d,Muon_sip3d,
             Muon_tightId);

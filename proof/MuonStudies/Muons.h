@@ -11,8 +11,8 @@ using RAI = TTreeReaderArray<Int_t>&;
 using RAB = TTreeReaderArray<Bool_t>&;
 
 class Muons : public Leptons{
- public:
-  Muons(RVUI, RAF, RAF, RAF, RAI, RAF,
+public:
+  Muons(RVUI, RAF, RAF, RAF, RAF, RAI, RAF,
         RAF, RAF, RAF, RAF, RAB
 #ifndef CMSDATA
         , RAI, RAI
@@ -22,10 +22,10 @@ class Muons : public Leptons{
 
   RAB tightId;
 
-  static constexpr Float_t mass = 0.105658755;
+  static constexpr Float_t mass = 0.105658755e-3; //GeV
 };
 
-Muons::Muons(TTreeReaderValue<UInt_t>& n, RAF pt, RAF eta,
+Muons::Muons(TTreeReaderValue<UInt_t>& n, RAF tunepRelPt, RAF pt, RAF eta,
              RAF phi, RAI charge,
              RAF dxy, RAF dz, RAF relIso,
              RAF ip3d, RAF sip3d,
@@ -34,7 +34,7 @@ Muons::Muons(TTreeReaderValue<UInt_t>& n, RAF pt, RAF eta,
              , RAI gpIdx, RAI pdgId
 #endif
              ) :
-  Leptons(n,mass,pt,eta,phi,charge,dxy,dz,relIso,ip3d,sip3d
+  Leptons(n,mass,tunepRelPt,pt,eta,phi,charge,dxy,dz,relIso,ip3d,sip3d
 #ifndef CMSDATA
   , gpIdx, pdgId
 #endif

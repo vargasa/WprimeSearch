@@ -42,6 +42,12 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
     "HPResB_T", "HPResO_T",
   };
 
+  // std::vector<std::string> etaBins = {
+  //   "HPtResB_G", "HPtResO_G", "HPtResE_G",
+  //   "HPtResB_T", "HPtResO_T",
+  // };
+
+
   std::pair<float,float> MuonB = { 0., 1.2 };
   std::pair<float,float> MuonO = { 1.2, 2.1 };
   std::pair<float,float> MuonE = { 2.1, 2.4 };
