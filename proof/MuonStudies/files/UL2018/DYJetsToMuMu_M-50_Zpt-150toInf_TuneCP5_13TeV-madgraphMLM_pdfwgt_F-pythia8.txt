@@ -1,3 +1,0 @@
-/store/mc/RunIISummer19UL18NanoAODv2/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/NANOAODSIM/PUForMUOVal_106X_upgrade2018_realistic_v15_L1v1-v1/280000/5367F53C-7FE6-114D-9455-5687037264A7.root
-/store/mc/RunIISummer19UL18NanoAODv2/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/NANOAODSIM/PUForMUOVal_106X_upgrade2018_realistic_v15_L1v1-v1/40000/119FB4E2-6BD0-2F4D-9EEB-853B833F810E.root
-/store/mc/RunIISummer19UL18NanoAODv2/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/NANOAODSIM/PUForMUOVal_106X_upgrade2018_realistic_v15_L1v1-v1/40000/481C81FE-0E95-DF4A-9D9F-678C4848D50B.root

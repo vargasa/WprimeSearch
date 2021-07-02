@@ -1,3 +1,0 @@
-/store/mc/RunIISummer19UL17NanoAODv2/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/NANOAODSIM/PUForMUOVal_106X_mc2017_realistic_v8-v1/250000/DC183AFC-CD22-F147-8FB1-A270499F39D5.root
-/store/mc/RunIISummer19UL17NanoAODv2/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/NANOAODSIM/PUForMUOVal_106X_mc2017_realistic_v8-v1/250000/F4C536C8-7700-E448-BD8C-6D021CB1FE85.root
-/store/mc/RunIISummer19UL17NanoAODv2/DYJetsToMuMu_M-50_Zpt-150toInf_TuneCP5_13TeV-madgraphMLM_pdfwgt_F-pythia8/NANOAODSIM/PUForMUOVal_106X_mc2017_realistic_v8-v1/280000/06EBAB1F-B832-5F40-BDF3-3A9D5837EB3D.root
