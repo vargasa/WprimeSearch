@@ -33,11 +33,13 @@ double DSCB(double *x, double *par){
 
 TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
 
-  TFile* f1 = TFile::Open("MuonStudies.root");
+  std::cout << "=============\t" << year << "\t=============\t" << etaBins_ << "\t=============\n";
+
+  TFile* f1 = TFile::Open("MuonStudies_PtHistos.root","READ");
 
   std::vector<std::string> etaBins = {
-    "HPResidualB_G", "HPResidualO_G", "HPResidualE_G",
-    "HPResidualB_T", "HPResidualO_T",
+    "HPResB_G", "HPResO_G", "HPResE_G",
+    "HPResB_T", "HPResO_T",
   };
 
   std::pair<float,float> MuonB = { 0., 1.2 };
@@ -101,12 +103,20 @@ TGraphAsymmErrors* GetResolutionGraph(const int year, const int& etaBins_) {
       }
     };
 
-  TH2D* hp = static_cast<TH2D*>(f1->Get(Form("%d/%s/%s",year,samples[year][0].first.c_str(),etaBins[etaBins_].c_str())));
+  // TH3D: P,Pt,PRes
+  // "zx" z(PRes)-> Y; x(P) -> X;
+  // "zy" z(PRes)-> Y; y(Pt) -> X;
+  std::string projection = "zx";
+  std::string hpath = Form("%d/%s/%s",year,samples[year][0].first.c_str(),etaBins[etaBins_].c_str());
+  std::clog << hpath << "\n";
+  auto hp =
+    static_cast<TH2D*>((static_cast<TH3D*>(f1->Get(hpath.c_str())))->Project3D(projection.c_str()));
   hp->SetName(Form("%d_%s_%s",year,samples[year][0].first.c_str(),etaBins[etaBins_].c_str()));
-  hp->Scale(samples[year][0].second);
+  //hp->Scale(samples[year][0].second);
   for (int i = 1; i < samples[year].size(); ++i) {
-    TH2D* h = static_cast<TH2D*>(f1->Get(Form("%d/%s/%s",year,samples[year][i].first.c_str(),etaBins[etaBins_].c_str())));
-    hp->Add(h,samples[year][i].second);
+    TH2D* h =
+      static_cast<TH2D*>((static_cast<TH3D*>(f1->Get(Form("%d/%s/%s",year,samples[year][i].first.c_str(),etaBins[etaBins_].c_str()))))->Project3D(projection.c_str()));
+    //hp->Add(h,samples[year][i].second);
     hp->Add(h);
   }
 

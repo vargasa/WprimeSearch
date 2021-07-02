@@ -176,11 +176,11 @@ TGraphAsymmErrors* plotFits(Int_t year, std::string hname, Bool_t isData = false
 int StackMRes(){
 
   std::vector<std::string> Histos2D =
-    { "HMassZPt_BB_G", "HMassZPt_BE_G",
-      "HMassZPt_BB_T","HMassZPt_BE_T" };
+    { "HMassZPt_A_G", "HMassZPt_B_G", "HMassZPt_C_G",
+      "HMassZPt_A_T","HMassZPt_B_T", "HMassZPt_C_T" };
 
-  TCanvas* cp1 = new TCanvas("cp1","cp1", 1000, 1000);
-  cp1->Divide(2,2);
+  TCanvas* cp1 = new TCanvas("cp1","cp1", 3*500, 2*500);
+  cp1->Divide(3,2);
 
   Int_t year = 2018;
   Int_t k = 1;
