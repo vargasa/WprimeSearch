@@ -503,7 +503,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t MetBins = 60;
 
   InitHVec<TH1F>(HPtl1,"HPtl1",100,0.,MaxPt);
-  InitHVec<TH1F>(HPtl2,"HPtl2",100,0.,MaxPt);
+  InitHVec<TH1F>(HPtl2,"HPtl2",40,0.,100.);
   InitHVec<TH1F>(HPtl3,"HPtl3",100,0.,MaxPt);
   InitHVec<TH1F>(HElPt,"HElPt",100,0.,MaxPt);
   InitHVec<TH1F>(HMuPt,"HMuPt",100,0.,MaxPt);
@@ -1635,7 +1635,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   HCutFlow->FillS("NoCuts");
 #ifndef CMSDATA
   HCutFlow->Fill("genWeight",*genWeight);
-  HTruePileup->Fill(static_cast<Double_t>(*Pileup_nTrueInt));
+  HTruePileup->Fill(static_cast<Double_t>(*Pileup_nTrueInt),*genWeight);
 #endif
 
   HPileup->Fill(static_cast<Double_t>(*PV_npvs));
