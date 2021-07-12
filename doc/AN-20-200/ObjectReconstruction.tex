@@ -1,25 +1,27 @@
 \section{Object definitions and Event selection}
 
+\subsection{Event cleanup and vertex selection}
+
 Events with at least one primary vertex passing an OR combination
-of the HLTs shown on table \ref{tab:Datasets} containing at least three
-electrons are selected provided that its missing energy $E_T^{Miss}$ is
-greater than $40GeV$.
+of the HLTs shown on table \ref{tab:HLTDatasets}, and containing at least three
+leptons are selected provided that its missing energy $E_T^{Miss}$ is
+greater than $40~GeV$.
 
 In addition, the following flags are required for the event:
 
 \begin{itemize}
-  \item \verb|Flag\_goodVertices|
-  \item \verb|Flag\_globalSuperTightHalo2016Filter|
-  \item \verb|Flag\_HBHENoiseFilter|
-  \item \verb|Flag\_HBHENoiseIsoFilter|
-  \item \verb|Flag\_EcalDeadCellTriggerPrimitiveFilter|
-  \item \verb|Flag\_BadPFMuonFilter|
+  \item \verb|Flag_goodVertices|
+  \item \verb|Flag_globalSuperTightHalo2016Filter|
+  \item \verb|Flag_HBHENoiseFilter|
+  \item \verb|Flag_HBHENoiseIsoFilter|
+  \item \verb|Flag_EcalDeadCellTriggerPrimitiveFilter|
+  \item \verb|Flag_BadPFMuonFilter|
 \end{itemize}
 
 One additional flag is required for 2017, 2018:
 
 \begin{itemize}
-\item \verb|Flag\_ecalBadCalibFilterV2|
+\item \verb|Flag_ecalBadCalibFilterV2|
 \end{itemize}
 
 Events are then splitted in four modes depending on the leptonic flavour:
@@ -34,7 +36,7 @@ Events are then splitted in four modes depending on the leptonic flavour:
 
 \subsection{High Level Trigger Selection}
 
-The table \ref{Datasets} shows the HLTs used and the different datasets used for the three years.
+The table \ref{tab:HLTDatasets} shows the HLTs used and the different datasets used for the three years.
 Each event is required to pass either the Muon or Electron triggers based on the high-Pt
 recommendations from the POG.
 
@@ -60,15 +62,13 @@ Year & Dataset & HLT                \\ \hline
      & EGamma     & HLT\_Ele32\_WPTight\_Gsf \\
      &            & HLT\_Photon200           \\ \hline
 \end{tabular}
-\label{tab:Datasets}
+\label{tab:HLTDatasets}
 \end{table}
 
 
 \subsection{Lepton Selection}
 
-\subsection{Primary vertex}
-
-\subsection{Electrons}
+\subsection{Electron Selection}
 
 \verb|Electron| collection in \verb|NanoAOD|
 
@@ -89,7 +89,7 @@ may ask for \emph{loose} or \emph{tight} electrons, the former with an
 average efficiency of approximately 95\% and 70\% for
 the latter ~\cite{EGammaPOG_el}.
 
-\subsection{Muons}
+\subsection{Muon Selection}
 
 \verb|Muon| collection in \verb|NanoAOD|
 
@@ -100,7 +100,7 @@ Muons are required to be within the pseudorapidity range $\abs{eta}<2.4$ and
 to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon of
 the event is required to have $P_t>52$ in line with the trigger plateau.
 
-\subsection{Missing Energy}
+\subsection{Missing Transverse Energy}
 
 The missing transverse energy $E_T$ is reconstructed with the particle flow
 algorithm ~\cite{particleflow}
@@ -134,19 +134,31 @@ energy, and consequently $E_{Pt}^{miss}$ is considered the transverse momentum
 corresponding to the undetected neutrino. The longitudinal momentum $P_z$ can be
 recovered by imposing the $M_W = 80.379 GeV $ nominal mass and $M_\nu = 0.$
 
-
+As $\eta$ is unknown for the Missing Energy transverse, the neutrino 4-vector is
+not well defined. However, by assuming the mass of W[pdg] the longitudinal component
+of the neutrino is reduced to a quadratic equation. The less energetic of the
+solutions gives the correct value ~70\% of the time according to simulation [AN].
+When no real solutions are available (transverse mass > W Mass), the invariant
+mass is set to the reconstructed transverse mass and we are left with two real
+identical solutions. The transverse mass may be higher to W mass due to detector
+resolution effects.
 
 $W$ boson is reconstructed from the remaining lepton and the missing energy
 $E_T^{miss}$. The ramining lepton is required to be either
 a \emph{tight} electron or a global High-Pt muon with a transverse momentum
 of at least $Pt=50GeV$.
 
-
-
 \subsection{WZ Candidate}
 
 * Mass of the three leptons system should be greater than $120GeV$
 * The sum of the transverse momentum of the leptons should be greater than $110GeV$
+
+\subsection{Pileup Reweighting}
+
+MC Samples are reweighted with $69.2~mb$ as MinBias cross section to adjust the
+simulated pileup to the conditions observed in data.
+
+\subsection{Lepton Misidentification}
 
 
 

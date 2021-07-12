@@ -1,0 +1,58 @@
+\section{Data Samples}
+
+The datasets used for the analysis presented in this note were collected using
+the CMS detector during the period 2016-2018. Data was recorded at the
+center-of-mass energy $\sqrt{s}=13~TeV$ and a total of $137.4~fb^{-1}$ was collected
+and reconstructed with the 10.2.18 version of the CMS software. The standard
+CMS selection of good runs and luminosity sections was applied
+(see table \ref{tab:GoldenJson}).
+
+The analysis makes use of datasets which combine several High Level Trigger
+(HLT) paths. The datasets used are shown in table \ref{tab:Datasets}, each
+dataset contains in the order of hundreds of millions events. As an event
+may trigger different HLTs it may be stored in multiple datasets simultaneously.
+In order to prevent double counting an index list is built containing unique
+references to events based on their run and event number.
+
+\begin{table}[h]
+\centering
+\caption{List of datasets used in the analysis.}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Year & Dataset & Run & Version \\ \hline
+2016 & SingleMuon     & B           & ver2-v1 \\
+     &                & C,D,E,F,G,H & v1      \\
+     & SingleElectron & B           & ver2-v1 \\
+     &                & C,D,E,F,G,H & v1      \\
+     & SinglePhoton   & B           & ver2-v1 \\
+     &                & C,D,E,F,G,H & v1      \\ \hline
+2017 & SingleMuon     & B,C,D,E,F & v1 \\
+     & SingleElectron & B,C,D,E,F & v1 \\
+     & SinglePhoton   & B,C,D,E,F & v1 \\\hline
+2018 & SingleMuon & A,B,C,D & v1 \\
+     & EGamma     & A,B,C,D & v1 \\ \hline
+\end{tabular}
+\label{tab:Datasets}
+\end{table}
+
+
+\begin{table}[htbp]
+  \footnotesize
+  \topcaption{
+    The golden JSON files
+  }
+  \centering
+  \label{tab:gJSON}
+  \begin{tabular}{ c l }
+    \hline
+    Year & File \\
+    \hline
+    2016 & Cert\_271036-284044\_13TeV\_ReReco\_07Aug2017\_Collisions16\_JSON.txt \\
+    2017 & Cert\_294927-306462\_13TeV\_PromptReco\_Collisions17\_JSON.txt \\
+    2018 & Cert\_314472-325175\_13TeV\_PromptReco\_Collisions18\_JSON.txt \\
+    \hline
+  \end{tabular}
+  \label{tab:GoldenJson}
+\end{table}
+
+
