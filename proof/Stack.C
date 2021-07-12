@@ -69,10 +69,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2016,
         {
-          BackgroundInfo{"WZ","WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8",
-                         kOrange,4.664e+00},  /*XSecAnalyzer 0.*/
-          //BackgroundInfo{"WZ","WZTo3LNu_mllmin01_13TeV-powheg-pythia8",
-          //kOrange,6.217e+01}, /*XSecAnalyzer 0.*/
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_13TeV-powheg-pythia8",
+                         kOrange,6.217e+01}, /*XSecAnalyzer 0.*/
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
                          kBlue,1.256},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
@@ -130,10 +128,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2017,
         {
-          //BackgroundInfo{"WZ","WZTo3LNu_13TeV-powheg-pythia8",
-	  //kOrange,4.664e+00},
-	  BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
-			 kOrange, 6.217e+01},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
+                         kOrange, 6.217e+01},
           BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
                          kBlue,1.325},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -191,10 +187,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2018,
         {
-          //BackgroundInfo{"WZ","WZTo3LNu_TuneCP5_13TeV-powheg-pythia8",
-	  //kOrange,4.664e+00},
-	  BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
-			 kOrange,6.217e+01},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
+                         kOrange,6.217e+01},
           BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
                          kBlue,1.373},
           BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
