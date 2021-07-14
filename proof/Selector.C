@@ -178,6 +178,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
 #endif
   TFile *f7 = TFile::Open("PileupWeights.root","READ");
   auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
+  SFPileup->SetName("PileupSFList");
   SFDb->Add(SFPileup);
   fProof->AddInputData(SFDb);
 #endif
