@@ -33,6 +33,26 @@ for(const auto& year: years){
 }
 ```
 
+```cpp
+//Delete specific samples from file:
+
+TFile *f = TFile::Open("WprimeHistos_NewPileupWeight.root","UPDATE");
+std::vector<std::string> histos = {
+   "2017/TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+   "2018/ZZTo4L_13TeV_powheg_pythia8_TuneCP5",
+   "2018/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8"
+};
+
+for(const auto& hs: histos){
+  f->cd(Form("%s",hs.c_str()));
+  for (auto i: *(gDirectory->GetListOfKeys())) {
+    std::cout << Form("%s/%s;1",hs.c_str(),i->GetName()) << std::endl;
+    gDirectory->Delete(Form("%s;1",i->GetName()));
+  }
+}
+
+```
+
 
 ### Setup for MC
 
@@ -177,21 +197,21 @@ echo "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2016/*.txt #Loop over set of the list files
 for i in $FILES
 do
- root -l -b -q "Selector.C(\"$i\", 8)"; # 8 Workers
+ root -l -b -q "Selector.C(\"$i\", 4)";
 done
 
 echo "#define Y2017" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2017/*.txt #Loop over set of the list files
 for i in $FILES
 do
- root -l -b -q "Selector.C(\"$i\", 8)"; # 8 Workers
+ root -l -b -q "Selector.C(\"$i\", 4)";
 done
 
 echo "#define Y2018" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2018/*.txt #Loop over set of the list files
 for i in $FILES
 do
- root -l -b -q "Selector.C(\"$i\", 8)"; # 8 Workers
+ root -l -b -q "Selector.C(\"$i\", 4)";
 done
 ```
 
