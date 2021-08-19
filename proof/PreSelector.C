@@ -214,6 +214,11 @@ void PreSelector::Begin(TTree *tree) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
     SampleName = p->GetTitle();
   }
+
+  if (fInput->FindObject("FileNameOut")) {
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("FileNameOut"));
+    FileNameOut = p->GetTitle();
+  }
 }
 
 template<typename T, typename... Args>
@@ -306,6 +311,11 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 }
 
 void PreSelector::SlaveBegin(TTree *tree) {
+
+  if (fInput->FindObject("FileNameOut")) {
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("FileNameOut"));
+    FileNameOut = p->GetTitle();
+  }
 
   TH1::SetDefaultSumw2();
 
@@ -1847,7 +1857,7 @@ void PreSelector::Terminate() {
 
   gStyle->SetOptStat(1111111);
 
-  std::unique_ptr<TFile> fOut(TFile::Open("WprimeHistos_UL.root","UPDATE"));
+  std::unique_ptr<TFile> fOut(TFile::Open(FileNameOut.Data(),"UPDATE"));
   fOut->mkdir(Form("%d",Year));
   fOut->mkdir(Form("%d/%s",Year,SampleName.Data()));
   fOut->cd(Form("%d/%s",Year,SampleName.Data()));

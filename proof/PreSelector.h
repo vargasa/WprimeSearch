@@ -261,6 +261,7 @@ class PreSelector : public EventSelection {
  public :
 
   TString SampleName;
+  TString FileNameOut;
 
   PreSelector(TTree * = 0);
   ~PreSelector() { }

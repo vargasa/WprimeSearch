@@ -20,19 +20,30 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   istringstream f(files);
   std::string file;
   std::string sample;
+  std::string fileNameOut = "WprimeHistos_KFactorIncluded.root";
 
   while(std::getline(f,file,'+')){
+    sample += file.substr(file.rfind("/")+1);
+    sample.resize(sample.size()-4);
+
+    TFile* outFile = TFile::Open(fileNameOut.c_str(),"READ");
+    Bool_t skip = outFile->cd(Form("%d/%s", Year, sample.c_str()));
+    outFile->Close();
+    if (skip) {
+      std::clog << Form("Sample found in output file, skipping : %s \n",sample.c_str()) ;
+      return 0;
+    }
     std::ifstream infile(file);
     std::string line;
     while(std::getline(infile, line)){
       if(line.empty() or line.find("#") == 0) continue;
       line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
+      //line = Form("root://cms-xrd-global.cern.ch/%s",line.c_str());
       std::cout << "Chaining " << line << std::endl;
       fChain->AddFile(line.c_str());
     }
-    sample += file.substr(file.rfind("/")+1);
-    sample.resize(sample.size()-4);
   }
+
 
   TEntryList *EList;
   TFile *FileEList;
@@ -55,6 +66,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
 
   fProof->SetProgressDialog(false);
   fProof->SetParameter("SampleName",sample.c_str());
+  fProof->SetParameter("FileNameOut", fileNameOut.c_str());
 
 
 
