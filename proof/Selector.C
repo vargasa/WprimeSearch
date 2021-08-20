@@ -27,11 +27,13 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
     sample.resize(sample.size()-4);
 
     TFile* outFile = TFile::Open(fileNameOut.c_str(),"READ");
-    Bool_t skip = outFile->cd(Form("%d/%s", Year, sample.c_str()));
-    outFile->Close();
-    if (skip) {
-      std::clog << Form("Sample found in output file, skipping : %s \n",sample.c_str()) ;
-      return 0;
+    if (outFile != NULL){
+      Bool_t skip = outFile->cd(Form("%d/%s", Year, sample.c_str()));
+      outFile->Close();
+      if (skip) {
+	std::clog << Form("Sample found in output file, skipping : %s \n",sample.c_str()) ;
+	return 0;
+      }
     }
     std::ifstream infile(file);
     std::string line;

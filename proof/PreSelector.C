@@ -1282,10 +1282,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_A_ElID_Up"]]->Fill(wzm,WElIDUp);
       HMassWZ[HIdx["SR1_A_ElID_Down"]]->Fill(wzm,WElIDDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_A_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_A_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_A_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_A_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_A_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR1_A_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR1_A_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR1_A_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
@@ -1314,10 +1314,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_B_MuID_Up"]]->Fill(wzm,WMuIDUp);
       HMassWZ[HIdx["SR1_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_B_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_B_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_B_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_B_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_B_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR1_B_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR1_B_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR1_B_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
@@ -1346,10 +1346,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_C_MuID_Up"]]->Fill(wzm,WMuIDUp);
       HMassWZ[HIdx["SR1_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_C_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_C_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_C_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_C_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_C_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR1_C_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR1_C_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR1_C_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
@@ -1373,10 +1373,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
       HMassWZ[HIdx["SR1_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_D_KFactorEWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_D_KFactorEWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_D_KFactorQCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_D_KFactorQCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_D_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
+        HMassWZ[HIdx["SR1_D_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
+        HMassWZ[HIdx["SR1_D_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
+        HMassWZ[HIdx["SR1_D_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
