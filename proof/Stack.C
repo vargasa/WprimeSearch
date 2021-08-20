@@ -1027,6 +1027,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string rootFilename = Form("CombineFile_%d_%d.root",year,wpmass);
     TFile* fCombine = TFile::Open(rootFilename.c_str(),"UPDATE");
 
+    std::string DYSample = "DYJetsToLL";
+
     std::string bin0 = "bin\t";
     std::string obs  = "observation\t";
     std::string bin1 = "bin\t";
@@ -1084,10 +1086,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         }
       }
 
-      for (auto s: systK) {
-        hname = Form("%s_%s_%s",fromHisto,ch.c_str(),Form("KFactor_%s",s.c_str()));
-        saveUpDown(folderName,hname,Form("KFactor%s",s.c_str()));
+      if(folderName.find(DYSample.c_str()) != std::string::npos){
+        for (auto s: systK) {
+          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),Form("KFactor_%s",s.c_str()));
+          saveUpDown(folderName,hname,Form("KFactor%s",s.c_str()));
+        }
       }
+
     };
 
     for(auto ch: channels){
@@ -1125,7 +1130,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       for (auto BGN: BgNames[year]) {
         bin1 += ch.second + "\t";
         processn += Form("%d\t",counter);
-        process += BGN.folderName + "\t";
+        process += Form("%s\t",BGN.folderName.c_str());
         std::string fname = Form("%d/%s",year,BGN.folderName.c_str());
         auto h = getHistoFromFile(fname.c_str(),Form("%s_%s_Central",fromHisto,ch.first.c_str()));
         applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
@@ -1159,7 +1164,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         }
 
-        if (BGN.folderName.find("DYJets") != std::string::npos){
+        if (BGN.folderName.find(DYSample.c_str()) != std::string::npos){
           unc6 += "1.0\t";
           unc7 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
@@ -1172,7 +1177,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
 
 
-    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t5\n";
+    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t7\n";
     dcFile << "------------\n";
     dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $CHANNEL/$PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
     dcFile << bin0 << std::endl;
@@ -1283,7 +1288,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   auto plotPunziSignificance = [&] (const int& yr) {
 
-    const std::string fromHisto = "HMassWZ_SR_+ABCD";
+    const std::string fromHisto = "HMassWZ_SR1_+ABCD";
     TCanvas* c1 = new TCanvas("c1","c1");
 
     THStack *hs = new THStack("hs","");
