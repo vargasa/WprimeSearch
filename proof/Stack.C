@@ -1046,21 +1046,38 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string unc6     = "CMS_KFactorQCD\tshape\t";
     std::string unc7     = "CMS_KFactorEWK\tshape\t";
 
+
+    std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
+      TH1* hzero = static_cast<TH1*>(hneg->Clone());
+      for(int i = 0; i <= hzero->GetNbinsX() ; ++i){
+        double priorValue = hzero->GetBinContent(i);
+        if( priorValue < 0. ){
+          hzero->SetBinContent(i, 0.);
+          hzero->SetBinError(i, 0.);
+          std::clog << Form("***saveHisto: Negative value found: %s\tBinNumber: %d\t%.4f\n",
+                            hzero->GetName(), i, priorValue);
+        }
+      }
+      return hzero;
+    };
+
+
     std::function<void(const std::string&, const std::string&, const float&)>
     saveHisto = [&] (const std::string& sampleName,
                      const std::string& ch,
                      const float& xsec) {
 
+
       std::function<void(const std::string&,
                          const std::string&,
                          const std::string&)>
       saveUpDown = [&] (std::string folder, std::string hname, std::string s/*ystematic*/){
-        auto hup = getHistoFromFile(folder.c_str(),Form("%s_Up",hname.c_str()));
+        auto hup = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_Up",hname.c_str())));
         applyLumiSF(hup, folder.c_str(), xsec);
         hup->Write(std::string(sampleName+Form("_CMS_%sUp",s.c_str())).c_str());
-        auto hdown = getHistoFromFile(folder.c_str(),Form("%s_Down",hname.c_str()));
+        auto hdown = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_Down",hname.c_str())));
         applyLumiSF(hdown, folder.c_str(), xsec);
-        hup->Write(std::string(sampleName+Form("_CMS_%sDown",s.c_str())).c_str());
+        hdown->Write(std::string(sampleName+Form("_CMS_%sDown",s.c_str())).c_str());
       };
 
       std::string folderName = Form("%d/%s",year,sampleName.c_str());
@@ -1132,7 +1149,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         processn += Form("%d\t",counter);
         process += Form("%s\t",BGN.folderName.c_str());
         std::string fname = Form("%d/%s",year,BGN.folderName.c_str());
-        auto h = getHistoFromFile(fname.c_str(),Form("%s_%s_Central",fromHisto,ch.first.c_str()));
+        auto h = stripNegativeBins(getHistoFromFile(fname.c_str(),Form("%s_%s_Central",fromHisto,ch.first.c_str())));
         applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
         rate += Form("%.2f\t",h->Integral());
         h->Write(BGN.folderName.c_str());
@@ -1167,7 +1184,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         if (BGN.folderName.find(DYSample.c_str()) != std::string::npos){
           unc6 += "1.0\t";
           unc7 += "1.0\t";
-          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else {
           unc6 += "-\t";
           unc7 += "-\t";
