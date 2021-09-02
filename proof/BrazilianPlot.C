@@ -81,27 +81,27 @@
     std::cout << Form("M: %d\n", m);
 
     fReader.Next(); // 0 2.5%
-    yYellowLow[counter] = *limit  ;
+    yYellowLow[counter] = (*limit) * (modelA[counter].second)  ;
     std::cout << "YellowLow: " << yYellowLow[counter] << std::endl;
 
     fReader.Next(); // 1 16.0%
-    yGreenLow[counter] = *limit  ;
+    yGreenLow[counter] = (*limit) * (modelA[counter].second);
     std::cout << "GreenLow: " << yGreenLow[counter] << std::endl;
 
     fReader.Next(); // 2 50.0% Expected
-    yCentral[counter] = *limit  ;
+    yCentral[counter] = (*limit) * (modelA[counter].second);
     std::cout << "Central: " << yCentral[counter] << std::endl;
 
     fReader.Next(); // 3 84.0%
-    yGreenHigh[counter] = *limit  ;
+    yGreenHigh[counter] = (*limit) * (modelA[counter].second);
     std::cout << "GreenHigh: " << yGreenHigh[counter] << std::endl;
 
     fReader.Next(); // 4 97.5%
-    yYellowHigh[counter] = *limit  ;
+    yYellowHigh[counter] = (*limit) * (modelA[counter].second);
     std::cout << "YellowHigh: " << yYellowHigh[counter]  << std::endl;
 
     fReader.Next(); // 5 Observed
-    gObs->SetPoint(counter, m, *limit );
+    gObs->SetPoint(counter, m, (*limit) * (modelA[counter].second));
     ++counter;
     std::cout << "\n\n\n" ;
   }
