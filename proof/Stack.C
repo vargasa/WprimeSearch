@@ -1509,7 +1509,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     Int_t j = 1;
 
-    std::string pngname;
+    std::string pngName;
 
     for (auto hName : names) {
       int year = std::stoi(hName.substr(0,4));
@@ -1520,8 +1520,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       c1->cd(r+1);
       std::string dataHName = hName;
       removeCentral(dataHName);
-      pngname += dataHName + "_";
-      pngname = pngname.substr(0,20);
+      pngName += dataHName + "_";
+      pngName = pngName.substr(0,20);
+      if(includeAllYears) pngName += "Run2_";
 
       const Float_t leftMargin = 0.12;
       const Float_t rightMargin = 0.12;
@@ -1572,7 +1573,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         std::unordered_map<int/*color*/,std::vector<TH1*>> samples;
 
         for(auto yr_: Run2Years){
-          THStack *hs_ = getBGStack(yr_, hName, legend);
+          THStack *hs_ = getBGStack(yr_, hName);
           TList* lst = hs_->GetHists();
           TIter next(lst);
           while(auto h = static_cast<TH1*>(next())){
@@ -1584,9 +1585,16 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           }
         };
 
+        std::vector<int> colorSeen;
         for(auto const& sampleVector : samples){
           for(auto h_: sampleVector.second){
             hsRun2->Add(h_);
+            std::vector<int>::iterator it
+              = find(colorSeen.begin(), colorSeen.end(), sampleVector.first);
+            if(it == colorSeen.end()){
+              legend->AddEntry(h_);
+              colorSeen.emplace_back(sampleVector.first);
+            }
           }
         }
 
@@ -1654,7 +1662,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         hdata->Draw("SAME P");
         TH1F* herror = getErrorHisto(hs);
         herror->Draw("SAME E2");
-        legend->AddEntry(hdata, Form("Data%d",year));
+        legend->AddEntry(hdata,includeAllYears? "Run 2 Data" : Form("Data %d",year));
 
         auto hcdata = getRatio(hdata,hs);
         subPad->cd();
@@ -1668,7 +1676,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       legend->Draw();
       if( r+1 == npads ){
-        c1->Print(Form("plots/%d/%s_%sM%d.png",year,fileLabel.c_str(),pngname.c_str(),WpMass));
+        c1->Print(Form("plots/%d/%s_%sM%d.png",year,fileLabel.c_str(),pngName.c_str(),WpMass));
         c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName.c_str(),WpMass));
       }
     }
