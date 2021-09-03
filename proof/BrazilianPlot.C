@@ -23,7 +23,7 @@
   };
 
   TGraph* gModelA = new TGraph();
-  gModelA->SetLineColor(kBlue);
+  gModelA->SetLineColor(kRed);
   gModelA->SetLineStyle(7);
 
   int counter = 0;
@@ -49,8 +49,8 @@
 
 
   TGraph* gModelB = new TGraph();
-  gModelB->SetLineColor(kRed);
-  gModelB->SetLineStyle(7);
+  gModelB->SetLineColor(kBlue);
+  gModelB->SetLineStyle(5);
 
   counter = 0;
   for (auto pair: modelB) {
