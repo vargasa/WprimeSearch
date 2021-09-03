@@ -1382,7 +1382,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     mg->Add(GHLTEff,"P");
     mg->Draw("A");
     gPad->BuildLegend();
-    c1->Print(Form("plots/%d/%s_%d_SignalTriggerEfficiency.pdf",yr,fileLabel.c_str(),yr));
+    c1->Print(Form("plots/%d/%s_%d_SignalTriggerEfficiency.png",yr,fileLabel.c_str(),yr));
     c1->Write(Form("%d_%s_SignalTriggerEfficiency",yr,fileLabel.c_str()));
 
     delete c1;
@@ -1705,31 +1705,67 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::vector<int> pyear = { 2016, 2017, 2018 };
   std::vector<std::string> chs = { "A","B","C","D" };
   std::vector<std::string> hints = {
-    "HMassZ_CR1_+ABCD","HMassWZ_CR1_+ABCD",
-    "HMassTW_CR1_+ABCD","HMetPt_CR1_+ABCD"
+    // "HElPt","HMuPt",
+    // "HElEta","HMuEta",
+    // "HElPhi","HMuPhi",
+    // "HPtZMWZ","HPtWMWZ",
+    // "HDistZl3","HDistZW",
+    // "HDistl1l2","HDistl1l2","HDistl2l3","HDistl1l3","HDistZW",
+    // "HDxyl1","HDxyl2","HDxyl3",
+    // "HPtWMWZ",
+    // "HLt",
+    // "HIP3Dl1","HIP3Dl2","HIP3Dl3",
+    // "HRelIsol1","HRelIsol2","HRelIsol3",
+    // "HDzl1","HDzl2","HDzl3",
+    // "HEtal1","HEtal2",
+    // "HEtal3","HPhil1",
+    // "HPhil2","HPhil3",
+    // "HDistl1l2"
+    // "HIP3Dl1","HIP3Dl2","HIP3Dl3",
+    // "HFakeString",
+    // "HPileup",
+    // "HRelIsol1",
+    // "HRelIsol2",
+    // "HRelIsol3",
+    "HPtl1","HPtl2","HPtl3","HMetPt",
+    "HMassZ", "HMassWZ",//,"HMassTW"
   };
 
-  for(auto yr: pyear){
+  for(auto h : hints){
+     for(auto ch: chs){
+       std::vector<std::string> hNames;
+       for(auto yr: pyear){
+         hNames.emplace_back(Form("%d/%s_SR1_%s",yr,h.c_str(),ch.c_str()));
+         if(hNames.size() == 3){
+           canvasStacked(/*s.first*/600,hNames,false);
+           hNames.clear() ;
+         }
+       }
+     }
+   }
+
+  // Run2 Plots
+  for(auto h : hints){
     std::vector<std::string> hNames;
-    for(auto h : hints){
-      for(auto ch: chs){
-        hNames.emplace_back(Form("%d/%s_CR1_%s",yr,h.c_str(),ch.c_str()));
-        if(hNames.size() == 4){
-          canvasStacked(600,hNames,true);
-          hNames.clear();
-        }
+    for(auto ch: chs){
+      hNames.emplace_back(Form("0000/%s_CR1_%s",h.c_str(),ch.c_str())); //0000 -> Run2
+      std::cout << Form("0000/%s_CR1_%s\n\n",h.c_str(),ch.c_str()) ;
+      if(hNames.size() == 4){
+        canvasStacked(600,hNames,true);
+        hNames.clear() ;
       }
     }
   }
 
+  //plotHLTSelectionRatio(2016);
+  //plotSelectionRatio(2016);
 
   for (auto& item: SignalSamples) {
 
     const int year = item.first;
 
-    // plotPunziSignificance(year);
-    // plotSelectionRatio(year);
-    // plotHLTSelectionRatio(year);
+    //plotSelectionRatio(year);
+    //plotHLTSelectionRatio(year);
 
     for (auto signal: item.second) {
 
