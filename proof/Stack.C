@@ -19,10 +19,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::unordered_map<int, float> luminosity = {
     {2016, 35.92},
     {2017, 41.43},
-    {2018, 59.74}
+    {2018, 59.74},
+    {0, 137.09}  /*Run2 Luminosity: 137.4 fb^-1 ?*/
   };
 
-  /*Run2 Luminosity: 137.4 fb^-1*/
+
 
   struct BackgroundInfo {
     std::string legendName;
@@ -1461,10 +1462,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  std::function<void(const Int_t, std::vector<std::string>,bool)>
+  std::function<void(const Int_t, std::vector<std::string>,bool,bool)>
     canvasStacked = [&] (const Int_t WpMass,
                          std::vector<std::string> names,
-                         bool includeData = true) {
+                         bool includeData = true,
+                         bool includeAllYears = false) {
 
     const Int_t npads = names.size();
 
@@ -1512,12 +1514,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     for (auto hName : names) {
       int year = std::stoi(hName.substr(0,4));
       hName = hName.substr(5,hName.size());
+      hName += "_Central"; // Include Central SF and genWeight 
       SignalInfo signal = SignalSamples[year][SignalPos[WpMass]];
       Int_t r = (j-1)%npads;
       c1->cd(r+1);
       std::string dataHName = hName;
       removeCentral(dataHName);
       pngname += dataHName + "_";
+      pngname = pngname.substr(0,20);
 
       const Float_t leftMargin = 0.12;
       const Float_t rightMargin = 0.12;
@@ -1550,15 +1554,46 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
       lumiLabel->SetFillColor(0);
       lumiLabel->SetBorderSize(0);
-      lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[year]));
+      lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",includeAllYears? luminosity[0]: luminosity[year]));
       lumiLabel->SetTextAlign(12);
       lumiLabel->Draw();
 
       auto legend = new TLegend(0.3, 0.66, .87, .89);
       legend->SetNColumns(2);
 
-      THStack *hs = new THStack("hs","");
-      hs = getBGStack(year,hName,legend);
+      THStack *hs;
+      if(!includeAllYears){
+        hs = getBGStack(year,hName,legend);
+      } else {
+
+        std::vector<int> Run2Years = {2016,2017,2018};
+
+        THStack* hsRun2 = new THStack("hsRun2","");
+        std::unordered_map<int/*color*/,std::vector<TH1*>> samples;
+
+        for(auto yr_: Run2Years){
+          THStack *hs_ = getBGStack(yr_, hName, legend);
+          TList* lst = hs_->GetHists();
+          TIter next(lst);
+          while(auto h = static_cast<TH1*>(next())){
+            try {
+              samples[h->GetFillColor()].push_back(h);
+            } catch(...) {
+              samples.insert(std::map<int,std::vector<TH1*>>::value_type(h->GetFillColor(),{ h }));
+            }
+          }
+        };
+
+        for(auto const& sampleVector : samples){
+          for(auto h_: sampleVector.second){
+            hsRun2->Add(h_);
+          }
+        }
+
+        hs = hsRun2;
+
+      }
+
       TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
       auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
@@ -1608,6 +1643,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         subPad->SetBottomMargin(bottomMargin);
 
         auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
+        if(includeAllYears){
+          hdata = getHistoFromFile(Form("%d/%s",2016,DataSampleNames[2016].c_str()),dataHName);
+          hdata->Add(getHistoFromFile(Form("%d/%s",2017,DataSampleNames[2017].c_str()),dataHName));
+          hdata->Add(getHistoFromFile(Form("%d/%s",2018,DataSampleNames[2018].c_str()),dataHName));
+        }
         mainPad->cd();
         hdata->SetMarkerStyle(kFullCircle);
         fixYRange(hs,getMaxY(hdata));
