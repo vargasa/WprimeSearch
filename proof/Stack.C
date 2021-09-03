@@ -1007,6 +1007,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   std::function<void(const int&, const int&)>
     printDataCard = [&] (const int& year, const int& wpmass) {
 
+    std::clog << Form("Printing datacard: Year[%d], WpMass[%d]\n",year,wpmass);
+
     const char* fromHisto = "HMassWZ_SR1";
 
     std::unordered_map<std::string,std::string> channels = {
@@ -1462,13 +1464,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  std::function<void(const Int_t, std::vector<std::string>,bool,bool)>
+  std::function<void(const Int_t, std::vector<std::string>,bool)>
     canvasStacked = [&] (const Int_t WpMass,
                          std::vector<std::string> names,
-                         bool includeData = true,
-                         bool includeAllYears = false) {
+                         bool includeData = true) {
 
     const Int_t npads = names.size();
+    bool includeAllYears{};
 
     std::function<void(std::string&)> removeCentral = [&] (std::string& s){
       if (s.find("_Central") != std::string::npos){
@@ -1513,9 +1515,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     for (auto hName : names) {
       int year = std::stoi(hName.substr(0,4));
+      if (year == 0) includeAllYears = true;
       hName = hName.substr(5,hName.size());
       hName += "_Central"; // Include Central SF and genWeight 
-      SignalInfo signal = SignalSamples[year][SignalPos[WpMass]];
+      SignalInfo signal;
+      if (!includeAllYears) signal = SignalSamples[year][SignalPos[WpMass]];
       Int_t r = (j-1)%npads;
       c1->cd(r+1);
       std::string dataHName = hName;
@@ -1555,7 +1559,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
       lumiLabel->SetFillColor(0);
       lumiLabel->SetBorderSize(0);
-      lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",includeAllYears? luminosity[0]: luminosity[year]));
+      lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[year]));
       lumiLabel->SetTextAlign(12);
       lumiLabel->Draw();
 
@@ -1563,15 +1567,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       legend->SetNColumns(2);
 
       THStack *hs;
+
+      std::vector<int> Run2Years = {2016,2017,2018};
       if(!includeAllYears){
         hs = getBGStack(year,hName,legend);
       } else {
-
-        std::vector<int> Run2Years = {2016,2017,2018};
-
         THStack* hsRun2 = new THStack("hsRun2","");
         std::unordered_map<int/*color*/,std::vector<TH1*>> samples;
-
         for(auto yr_: Run2Years){
           THStack *hs_ = getBGStack(yr_, hName);
           TList* lst = hs_->GetHists();
@@ -1604,10 +1606,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
 
-      auto hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
-      applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+      TH1* hsig;
+      if(includeAllYears){
+        TH1* hsigRun2;
+        for(auto yr_: Run2Years){
+          signal = SignalSamples[yr_][SignalPos[WpMass]];
+          hsig = getHistoFromFile(Form("%d/%s",yr_,signal.folderName.c_str()),hName);
+          applyLumiSF(hsig, Form("%d/%s",yr_,signal.folderName.c_str()), signal.xsec);
+          if (yr_ == 2016) hsigRun2 = hsig;
+          hsigRun2->Add(hsig);
+        }
+        hsig = hsigRun2;
+      } else {
+        hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
+        applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+      }
       hsig->SetTitle(signal.legendName.c_str());
-      legend->AddEntry( hsig,signal.legendName.c_str(),"L");
+      legend->AddEntry(hsig,signal.legendName.c_str(),"L");
       hsig->SetLineColor(kBlack);
       hsig->SetLineWidth(3);
       hsig->SetFillColor(0);
@@ -1650,11 +1665,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         subPad->SetTopMargin(1e-3);
         subPad->SetBottomMargin(bottomMargin);
 
-        auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
+        TH1* hdata;
         if(includeAllYears){
           hdata = getHistoFromFile(Form("%d/%s",2016,DataSampleNames[2016].c_str()),dataHName);
           hdata->Add(getHistoFromFile(Form("%d/%s",2017,DataSampleNames[2017].c_str()),dataHName));
           hdata->Add(getHistoFromFile(Form("%d/%s",2018,DataSampleNames[2018].c_str()),dataHName));
+        } else {
+          hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
         }
         mainPad->cd();
         hdata->SetMarkerStyle(kFullCircle);
