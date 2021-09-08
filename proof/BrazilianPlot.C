@@ -3,8 +3,15 @@
   std::vector<Int_t> masses = {600, 800, 1000, 1200, 1400, 1600,
                                1800, 2000, 2500, 3000, 3500, 4000};
 
-  const int year = 2018;
+  const int year = 0;
   const uint n = 12;
+
+  std::unordered_map<int, float> luminosity = {
+    {2016, 35.92},
+    {2017, 41.43},
+    {2018, 59.74},
+    {0, 137.09}
+  };
 
   std::vector<std::pair<int,double>> modelA = {
     {600,4.170265262},
@@ -136,7 +143,7 @@
 
   TCanvas* c1 = new TCanvas("c1","Brazilian Band Plot");
   auto mg  = new TMultiGraph();
-  mg->SetTitle(Form("95%% CL Upper Limits [%d]; m_{WZ} (GeV);#sigma(W')#timesBr(W'#rightarrowWZ)(pb))",year));
+  mg->SetTitle(Form("95%% CL Upper Limits [Run%d]  L = %.2f fb^{-1}; m_{WZ} (GeV);#sigma(W')#timesBr(W'#rightarrowWZ)(pb))",year,luminosity[year]));
   c1->SetLogy();
   mg->Add(gYellow,"A3");
   mg->Add(gGreen,"A3");
