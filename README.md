@@ -301,7 +301,8 @@ for i in 600 800 1000 1200 \
   1400 1600 1800 2000 2500 \
   3000 3500 4000
 do
-  combine  -m 125 -n "."$i -M AsymptoticLimits -d "datacards/2016_"$i"_DataCard.txt"
+  combineCards.py Y16="datacards/2016_"$i"_DataCard.txt" Y17="datacards/2017_"$i"_DataCard.txt" Y18="datacards/2018_"$i"_DataCard.txt">"datacards/RunII_"$i"_Datacard.txt"
+  combine  -m 125 -n "."$i -M AsymptoticLimits -d "datacards/RunII_"$i"_Datacard.txt"
 done
 ```
 
