@@ -40,6 +40,14 @@ The table \ref{tab:HLTDatasets} shows the HLTs used and the different datasets u
 Each event is required to pass either the Muon or Electron triggers based on the high-Pt
 recommendations from the POG.
 
+Due to the presence of multiple leptonic flavors in the final state, we require
+the signal events to satisfy at least one of the following High Level Trigger
+Requirements.
+
+We reproduce the High Level Trigger requirements by applying the corresponding
+$p_T$ threshold
+
+
 
 \begin{table}[h]
 \centering
@@ -176,4 +184,97 @@ simulated pileup to the conditions observed in data.
   \caption{Signal efficiency for individual and combined High Level Triggers for Run II}
   \label{fig:hltSignalEfficiency}
 \end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HDistl1l2_CR1_A+HDisM600.pdf}
+  \caption{Definition of the signal and control regions. All the final signatures
+    show how the region $dr_{l_{1}l_{2}} > 1.5$ is signal-depleted. A $600 GeV$
+    mass resonance is used for illustration purposes. The larger the resonance
+    mass, the narrower the signal distribution gets and it is shifted towards
+    the lower $dR$ region as the leptons product of the $Z$ decay get closer
+    forming a boosted topology.
+    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
+    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
+    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
+    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
+  \label{fig:ControlRegionDefinition}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HPtl1_CR1_A_Run2_HPtRun2_M600.pdf}
+  \caption{Leading lepton transverse momentum distributions for each final
+    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
+    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
+    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
+    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
+    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
+  \label{fig:CR1_Run2_HPtl1}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HEtal1_CR1_A_Run2_HERun2_M600.pdf}
+  \caption{Leading lepton $\eta$ distributions for each final
+    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
+    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
+    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
+    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
+    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
+  \label{fig:CR1_Run2_HEtal1}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HPhil1_CR1_A_Run2_HPRun2_M600.pdf}
+  \caption{Leading lepton $phi$ distributions for each final
+    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
+    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
+    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
+    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
+    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
+  \label{fig:CR1_Run2_HPhil1}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassZ_CR1_A_Run2_HMRun2_M600.pdf}
+  \caption{$M_{Z}$ distributions of $Z\rightarrow\ell\ell$ candidates for each final
+    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
+    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
+    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
+    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
+    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
+  \label{fig:CR1_Run2_HMassZ}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassWZ_CR1_A_Run2_HRun2_M600.pdf}
+  \caption{The $WZ$ invariant mass after the $WZ$ candidate selection for each final
+    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
+    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
+    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
+    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
+    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
+  \label{fig:CR1_Run2_HMassWZ}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassTW_CR1_A_Run2_HRun2_M600.pdf}
+  \caption{The transverse mass distribution for the $W$ candidate for each final
+    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
+    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
+    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
+    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
+    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
+  \label{fig:CR1_Run2_HMassTW}
+\end{figure}
+
+
+
+
+
 
