@@ -1,12 +1,31 @@
 \section{Muon Momentum Resolution}
 
-High-Pt muons ($P_{t}>200GeV$) suffer from high energy loss by travelling in Iron
-due to radiative processes. The transverse momentum measurement relays on
+by travelling in Iron, High-Pt muons ($P_{t}>200GeV$) suffer from high energy
+loss due to radiative processes. The transverse momentum measurement relays on
 sagita ($s \propto 1/Pt$) which is associated with the number of hits found on
-the Tracker and the Muon systems. As the number of hits is lower on the so called
+the Tracker and the Muon subsystems. As the number of hits is lower on the so called
 tracker muons, i.e muons that were reconstructed from hits in the tracker and the
-first statition of the muon sistem, a study is needed to determine
+first station of the muon sistem, a study is needed to determine
 the resolution of this Pt measurement for tracker-HighPt ID muons.
+
+From MC simulations it is possible to access the true momenta of the muons and
+a comparison with the reconstructed momentum can be given in terms of the
+residual momentum:
+
+\begin{equation}
+  \frac{P_{GEN}}{P_{RECO}} - 1 = \frac{\dfrac{1}{P_{RECO}}-\dfrac{1}{P_{GEN}}}{\dfrac{1}{P_{RECO}}}
+\end{equation}
+
+The resolution can be extracted by fitting the event profile with a
+Double-Sided Crystal Ball distribution wich consists of three diferent regions:
+a gaussian center described by a mean $\mu$ and standard deviation $\sigma$ with two
+exponential tails modelling the effects of radiative processes in the detector.
+The two tails are controlled by four parameters, $n_L$ and $\alpha_L$ for the
+left tail and $n_R$ and $\alpha_R$ for the right tail. $\alpha$ describes how
+far away (as a factor of $sigma$) from the gaussian mean the exponential decay
+intersects the guassian core, while $n$ controls the growth (decay) of the
+left (right) exponential tail.
+
 
 \begin{sidewaystable}[htb]
 \begin{center}
@@ -53,13 +72,6 @@ Year & Sample & XSec [pb] \\ \hline
 \label{tab:MomentumResolutionSamples}
 \end{center}
 \end{sidewaystable}
-
-The momentum resolution can be defined as a relative difference between the
-momentum reconstructed and the true momentum from monte carlo simulations.
-
-\begin{equation}
-\frac{P_{GEN}}{P_{RECO}} - 1 = \frac{\dfrac{1}{P_{RECO}}-\dfrac{1}{P_{GEN}}}{\dfrac{1}{P_{RECO}}}
-\end{equation}
 
 These studies were performed by simulating the standard model Z boson production
 decaying to a pair of Muons ($Z\rightarrow\mu\mu$) the complete list of samples is
@@ -108,6 +120,8 @@ exponential tails which help model the nature of radiative processes occurring i
 the detector. The width of the gaussian portion of the DSCB provides the
 resolution (as a percentage) while the mean accounts for any bias present on the
 momentum measurements. An example of the fit is shown in \ref{fig:DSCB_Fit_Example}
+
+% Events with low statistics in bins are discarded
 
 \subsection{Z-Mass Resolution}
 

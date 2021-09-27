@@ -4,8 +4,8 @@
 
 Events with at least one primary vertex passing an OR combination
 of the HLTs shown on table \ref{tab:HLTDatasets}, and containing at least three
-leptons are selected provided that its missing energy $E_T^{Miss}$ is
-greater than $40~GeV$.
+leptons (number of muons and electrons) are selected provided that its
+missing energy $E_T^{Miss}$ is greater than $40~GeV$.
 
 In addition, the following flags are required for the event:
 
@@ -18,13 +18,14 @@ In addition, the following flags are required for the event:
   \item \verb|Flag_BadPFMuonFilter|
 \end{itemize}
 
-One additional flag is required for 2017, 2018:
+One additional flag is required for the year 2017, 2018:
 
 \begin{itemize}
 \item \verb|Flag_ecalBadCalibFilterV2|
 \end{itemize}
 
-Events are then splitted in four modes depending on the leptonic flavour:
+Events are then splitted in four modes depending on the leptonic flavour of the
+diboson decay:
 
 \begin{description}
 \item[$\bullet$3e] $Z\rightarrow e^{+}e^{-} W\rightarrow e+\nu$
@@ -118,7 +119,7 @@ algorithm ~\cite{particleflow}
 Two same flavored, opposite charged leptons are required to reconstruct a Z
 candidate. If more than one pair is found, the one with reconstructed mass
 closer to the nominal mass $M_z= 91.1876 GeV$ is chosen. The pair's mass
-is required to fall in the Z mass window $ 70. GeV < M_Z < 111.$. In favor an
+is required to fall in the Z mass window $ 70. GeV < M_Z < 111.$. In favor of an
 increase in the signal efficiency the opposite charged requirement is dropped
 for the $3e0\mu$ category.
 
@@ -176,102 +177,10 @@ simulated pileup to the conditions observed in data.
 
 
 
-\begin{figure}[tph]
-  \centering
-        \subfigure[2016]{\includegraphics[width=.28\textwidth]{fig/2016_SignalTriggerEfficiency.pdf}}
-        \subfigure[2017]{\includegraphics[width=.28\textwidth]{fig/2017_SignalTriggerEfficiency.pdf}}
-        \subfigure[2018]{\includegraphics[width=.28\textwidth]{fig/2018_SignalTriggerEfficiency.pdf}}
-  \caption{Signal efficiency for individual and combined High Level Triggers for Run II}
-  \label{fig:hltSignalEfficiency}
-\end{figure}
 
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HDistl1l2_CR1_A+HDisM600.pdf}
-  \caption{Definition of the signal and control regions. All the final signatures
-    show how the region $dr_{l_{1}l_{2}} > 1.5$ is signal-depleted. A $600 GeV$
-    mass resonance is used for illustration purposes. The larger the resonance
-    mass, the narrower the signal distribution gets and it is shifted towards
-    the lower $dR$ region as the leptons product of the $Z$ decay get closer
-    forming a boosted topology.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:ControlRegionDefinition}
-\end{figure}
 
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HPtl1_CR1_A_Run2_HPtRun2_M600.pdf}
-  \caption{Leading lepton transverse momentum distributions for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HPtl1}
-\end{figure}
 
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HEtal1_CR1_A_Run2_HERun2_M600.pdf}
-  \caption{Leading lepton $\eta$ distributions for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HEtal1}
-\end{figure}
 
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HPhil1_CR1_A_Run2_HPRun2_M600.pdf}
-  \caption{Leading lepton $phi$ distributions for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HPhil1}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassZ_CR1_A_Run2_HMRun2_M600.pdf}
-  \caption{$M_{Z}$ distributions of $Z\rightarrow\ell\ell$ candidates for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HMassZ}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassWZ_CR1_A_Run2_HRun2_M600.pdf}
-  \caption{The $WZ$ invariant mass after the $WZ$ candidate selection for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HMassWZ}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassTW_CR1_A_Run2_HRun2_M600.pdf}
-  \caption{The transverse mass distribution for the $W$ candidate for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HMassTW}
-\end{figure}
 
 
 
