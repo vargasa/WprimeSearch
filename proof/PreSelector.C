@@ -1832,11 +1832,20 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+  auto printEventInfo = [&](){
+    std::cout << Form("Run: %u\tEvent: %llu\tLumiblock: %u\tmll: %.4f\n",
+                       *run, *event, *luminosityBlock, zb.M());
+  };
+
+
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist < 1.5;
   if(ZDistCut){
     HCutFlow->FillS("SR1");
     FillRegion(0,Els,Mus); // 1st SR
+#ifdef CMSDATA
+    printEventInfo();
+#endif
   } else {
     HCutFlow->FillS("CR1");
     FillRegion(8,Els,Mus); // 8 -> CR1 Slot
