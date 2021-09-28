@@ -80,7 +80,7 @@ Year & Sample & XSec Model A [pb] & XSec Model B [pb]\\ \hline
 Background processes have been generated using MadGraph, Pythia and Powheg
 generators. These backgrounds include irreducible processes which produce the
 same final state as the signal and also reducible processes which produce
-different physics, but lead to similar signals in the detector. The backgrounds
+different physics, but lead to similar signatures in the detector. The backgrounds
 are dominated by the production of electroweak heavy vector boson pairs (WZ), but
 also include ZZ production where one of the leptons is either outside the detector
 acceptance or mis-reconstructed. Other backgrounds such as Z+Jets, $t\bar{t}$,
@@ -247,9 +247,10 @@ Background  & Sample & XSec [pb] \\ \hline
 
 \begin{figure}[tph]
   \centering
-        \subfigure[2016]{\includegraphics[width=.28\textwidth]{fig/2016_SignalTriggerEfficiency.pdf}}
-        \subfigure[2017]{\includegraphics[width=.28\textwidth]{fig/2017_SignalTriggerEfficiency.pdf}}
-        \subfigure[2018]{\includegraphics[width=.28\textwidth]{fig/2018_SignalTriggerEfficiency.pdf}}
+        \subfigure[2016]{\includegraphics[width=.5\textwidth]{fig/2016_SignalTriggerEfficiency.pdf}}
+        \subfigure[2017]{\includegraphics[width=.5\textwidth]{fig/2017_SignalTriggerEfficiency.pdf}}
+        \vfil
+        \subfigure[2018]{\includegraphics[width=.5\textwidth]{fig/2018_SignalTriggerEfficiency.pdf}}
   \caption{Signal efficiency for individual and combined High Level Triggers for Run II}
   \label{fig:hltSignalEfficiency}
 \end{figure}
@@ -257,7 +258,7 @@ Background  & Sample & XSec [pb] \\ \hline
 \begin{figure}[tph]
   \centering
   \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HDistl1l2_CR1_A+HDisM600.pdf}
-  \caption{Definition of the signal and control regions. All the final signatures
+  \caption{Definition of the signal and control regions. All the channels
     show how the region $dr_{l_{1}l_{2}} > 1.5$ is signal-depleted. A $600 GeV$
     mass resonance is used for illustration purposes. The larger the resonance
     mass, the narrower the signal distribution gets and it is shifted towards
@@ -273,8 +274,8 @@ Background  & Sample & XSec [pb] \\ \hline
 In order to analyse the simulation quality, the data/MC ratio is studied on
 a signal-depleted control region. As Figure \ref{fig:ControlRegionDefinition}
 shows, the distance in the $\eta-\phi$ plane between the products
-of the Z boson decay allow a distinct separation between a signal-enriched
-($dr_{l_{1}l_{2}} <= 1.5$) region and a signal depleted region
+of the Z boson decay $Z(\rightarrow l_{1}+l_{2})$ allow a distinct separation between a signal-enriched
+region ($dr_{l_{1}l_{2}} <= 1.5$) and a signal depleted region
 ($dr_{l_{1}l_{2}} > 1.5$). The signal-delepted region is dominated mainly by
 the SM WZ production process.
 
@@ -353,19 +354,52 @@ the SM WZ production process.
 The $\eta$, $\phi$, $P_{T}$ distributions for the leading lepton en each category
 are shown in figures \ref{fig:CR1_Run2_HEtal1}, \ref{fig:CR1_Run2_HPhil1}, and
 \ref{fig:CR1_Run2_HPtl1}, as well as composite distributions like the mass of the
-reconstructed Z candidate \ref{fig:CR1_Run2_HMassZ}, the $W$ boson transverse mass
-\ref{fig:CR1_Run2_HMassTW} and the discriminant variable, the mass for the
-reconstructed diboson system \ref{fig:CR1_Run2_HMassWZ} show a good data/MC
-agreement.
+reconstructed Z candidate (Figure \ref{fig:CR1_Run2_HMassZ}), the $W$ boson transverse mass
+(Figure \ref{fig:CR1_Run2_HMassTW}) and the discriminant variable: the mass for the
+reconstructed diboson system (Figure \ref{fig:CR1_Run2_HMassWZ}) show a good data/MC
+agreement in the control region.
 
+
+\section{Corrections on MC}
+
+\subsection{Luminosity Scale factors}
+
+\begin{table}
+  \caption{Run 2 Luminosity}
+ \begin{center}
+ \begin{tabular}{cc}\hline\hline
+ Year & Luminosity [$fb^{-1}$] \\ \hline\hline
+ 2016 & 35.92  \\
+ 2017 & 41.43 \\
+ 2018 & 59.74 \\
+ \end{tabular}
+ \end{center}
+ \label{tab:LuminosityPerYear}
+\end{table}
+
+The number of generated MC events listed on tables \ref{tab:BkgList2016}, \ref{tab:BkgList2017},
+and \ref{tab:BkgList2018} are arbitrary. In order to compare it with data, the
+former has to be rescaled to account for the amount of data collected each year
+during the data taking period. The luminosity scale factor is computed as follows:
+
+\begin{equation}
+  L_{sf}=\frac{L_{\rm data}}{L_{\rm MC}} = \frac{L_{\rm data}\times\sigma_{\rm MC}}{n_{\rm MC}},
+\label{eq:lumiSF}
+\end{equation}
+
+Where $L_{\rm data}$ is the luminosity per year, see table \ref{tab:LuminosityPerYear},
+$n_{MC}$ the number of generated MC events as provided by the sum of weighted events
+from the generator (\verb|genWeight| branch on \verb|NanoAOD|), and $\sigma_{\rm MC}$
+is the cross section of the MC samples as provided by \verb|XSecAnalyzer|.
 
 \subsection{Pileup Reweighting}
 
 \begin{figure}[tph]
   \centering
-        \subfigure[Standard model WZ production MC simulations normalized pileup distributions]{\includegraphics[width=.28\textwidth]{fig/ScaleFactors/MC_Pileup_Linear.pdf}}
-        \subfigure[Pileup profile from RunII Data, Linear Scale]{\includegraphics[width=.28\textwidth]{fig/ScaleFactors/GoldenPileup_Linear.pdf}}
-        \subfigure[Pileup profile from RunII Data, Logarithmic Scale]{\includegraphics[width=.28\textwidth]{fig/ScaleFactors/GoldenPileup_LogScale.pdf}}
+        \subfigure[Standard model WZ production MC simulations normalized pileup distributions]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/MC_Pileup_Linear.pdf}}
+        \subfigure[Pileup profile from RunII Data, Linear Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_Linear.pdf}}
+        \vfil
+        \subfigure[Pileup profile from RunII Data, Logarithmic Scale]{\includegraphics[width=.6\textwidth]{fig/ScaleFactors/GoldenPileup_LogScale.pdf}}
   \caption{Pileup profile distributions for MC and Data}
   \label{fig:RunII_PileupProfiles}
 \end{figure}
@@ -373,7 +407,7 @@ agreement.
 The number of reconstructed primary vertices in each collision during a period
 of time generates a distribution commonly referred as pileup. Montecarlo simulations
 are produced with an estimated pileup profile and a correction is needed
-in order to match the distributions obtained in the collected data. Therefore,
+in order to match the distributions obtained in the collected data. 
 MC Samples are reweighted with $69.2~mb$ as MinBias cross section.
 Figure \ref{fig:RunII_PileupProfiles} shows the differences between the
 pileup distributions for run 2 data and montecarlo
@@ -385,9 +419,6 @@ The normalization of each distribution is eachieved by scaling it by a factor
 equivalent to the the inverse of its integral. Each MC event is then reweighted
 with the appropiate factor based on the number of reconstructed primary vertices. 
 
-
-\section{Corrections on MC}
-
 \begin{figure}[tph]
   \centering
         \subfigure[Electron Loose ID]{\includegraphics[width=.28\textwidth]{fig/2016Electron_LooseID.pdf}}
@@ -396,3 +427,10 @@ with the appropiate factor based on the number of reconstructed primary vertices
   \caption{SF for different lepton ids}
   \label{fig:leptonidsf}
 \end{figure}
+
+
+\subsection{Lepton scale factors}
+
+Trigger and lepton identification efficiencies are different between data
+and montecarlo.
+
