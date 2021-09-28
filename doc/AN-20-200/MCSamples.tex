@@ -1,15 +1,15 @@
 \section{Montecarlo Samples}
 
 This analysis uses a set of centrally produced Montecarlo (MC) \verb|NanoAODv6|
-samples corresponding to the \verb|Summer16|, \verb|Fall17|, and \verb|Autumn18|
-campaigns.
+simulated samples corresponding to the \verb|Summer16|, \verb|Fall17|,
+and \verb|Autumn18| campaigns.
 
 
 \subsection {Signal Samples}
 
 Signal events for electrically charged diboson resonances in the $600~GeV$
 to $4.5~TeV$ mass range under the theoretical assumptions of the HVT model ~\cite{hvt2014}
-have been generated using Monte Carlo (MC) simulations with \verb|MadGraph5_aMC@NL| ~\cite{madgraph}
+have been generated using MC simulations with \verb|MadGraph5_aMC@NL| ~\cite{madgraph}
 interfaced with Pythia 8 ~\cite{pythia} for showering and hadronization, and a
 full detector response simulated with the \verb|Geant4| toolkit ~\cite{geant4}.
 Physics objects are then reconstructed using the Particle-flow
@@ -328,7 +328,7 @@ the SM WZ production process.
 
 \begin{figure}[tph]
   \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassWZ_CR1_A_Run2_HRun2_M600.pdf}
+  \includegraphics[width=\textwidth]{fig/Run2/Rebining_HMassWZ_CR1_A_Run2_HRun2_M600.pdf}
   \caption{The $WZ$ invariant mass after the $WZ$ candidate selection for each final
     signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
     Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
@@ -359,3 +359,40 @@ reconstructed diboson system \ref{fig:CR1_Run2_HMassWZ} show a good data/MC
 agreement.
 
 
+\subsection{Pileup Reweighting}
+
+\begin{figure}[tph]
+  \centering
+        \subfigure[Standard model WZ production MC simulations normalized pileup distributions]{\includegraphics[width=.28\textwidth]{fig/ScaleFactors/MC_Pileup_Linear.pdf}}
+        \subfigure[Pileup profile from RunII Data, Linear Scale]{\includegraphics[width=.28\textwidth]{fig/ScaleFactors/GoldenPileup_Linear.pdf}}
+        \subfigure[Pileup profile from RunII Data, Logarithmic Scale]{\includegraphics[width=.28\textwidth]{fig/ScaleFactors/GoldenPileup_LogScale.pdf}}
+  \caption{Pileup profile distributions for MC and Data}
+  \label{fig:RunII_PileupProfiles}
+\end{figure}
+
+The number of reconstructed primary vertices in each collision during a period
+of time generates a distribution commonly referred as pileup. Montecarlo simulations
+are produced with an estimated pileup profile and a correction is needed
+in order to match the distributions obtained in the collected data. Therefore,
+MC Samples are reweighted with $69.2~mb$ as MinBias cross section.
+Figure \ref{fig:RunII_PileupProfiles} shows the differences between the
+pileup distributions for run 2 data and montecarlo
+simulations for the predominant background process (standard model
+WZ production). These differences are then
+corrected by computing a pileup weight bin by bin that matches the normalized
+distribution from montecarlo with the normalized distribution from data.
+The normalization of each distribution is eachieved by scaling it by a factor
+equivalent to the the inverse of its integral. Each MC event is then reweighted
+with the appropiate factor based on the number of reconstructed primary vertices. 
+
+
+\section{Corrections on MC}
+
+\begin{figure}[tph]
+  \centering
+        \subfigure[Electron Loose ID]{\includegraphics[width=.28\textwidth]{fig/2016Electron_LooseID.pdf}}
+        \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.28\textwidth]{fig/2016Muon_GlobalHighPtID.pdf}}
+        \subfigure[Muon TrkHighPtId]{\includegraphics[width=.28\textwidth]{fig/2016Muon_TrkHighPtID.pdf}}
+  \caption{SF for different lepton ids}
+  \label{fig:leptonidsf}
+\end{figure}

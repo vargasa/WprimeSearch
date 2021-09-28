@@ -493,20 +493,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HMetPt_C","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow e#nu}_{T}#mu;#slash{E}^{#mu#mue#nu}_{T}(GeV);Event count"},
     { "HMetPt_D","#slash{E}^{Z#rightarrow #mu#mu W#rightarrow #mu#nu}_{T};#slash{E}^{#mu#mu#mu#nu}_{T}(GeV);Event count"},
     { "HMetPt_+ABCD","#slash{E}_{T} lll#nu;#slash{E}_{T}(GeV);Event count"},
-    { "HEtal1_A", "#eta_{e1} eee#nu;Eta e_{1};Event count"},
-    { "HEtal1_B", "#eta_{e1} ee#mu#nu;Eta;Event count"},
-    { "HEtal1_C", "#eta_{#mu1} #mu#mue#nu;Eta;Event count"},
-    { "HEtal1_D", "#eta_{#mu1} #mu#mu#mu#nu;Eta;Event count"},
-    { "HEtal1_+ABCD ", "Eta_{l1} lll#nu;Eta e_{2};Event count"},
-    { "HEtal2_A", "#eta_{e2} eee#nu;Eta;Event count"},
-    { "HEtal2_B", "#eta_{e2} ee#mu#nu;Eta;Event count"},
-    { "HEtal2_C", "#eta_{#mu2} #mu#mue#nu;Eta;Event count"},
-    { "HEtal2_D", "#eta_{#mu2} #mu#mu#mu#nu;Eta;Event count"},
+    { "HEtal1_A", "#eta_{e1} eee#nu;#eta e_{1};Event count"},
+    { "HEtal1_B", "#eta_{e1} ee#mu#nu;#eta e_{1};Event count"},
+    { "HEtal1_C", "#eta_{#mu1} #mu#mue#nu;#eta #mu_{1};Event count"},
+    { "HEtal1_D", "#eta_{#mu1} #mu#mu#mu#nu;#eta #mu_{1};Event count"},
+    { "HEtal1_+ABCD ", "Eta_{l1} lll#nu;#eta e_{2};Event count"},
+    { "HEtal2_A", "#eta_{e2} eee#nu;#eta e_{2};Event count"},
+    { "HEtal2_B", "#eta_{e2} ee#mu#nu;#eta e_{2};Event count"},
+    { "HEtal2_C", "#eta_{#mu2} #mu#mue#nu;#eta #mu_{2};Event count"},
+    { "HEtal2_D", "#eta_{#mu2} #mu#mu#mu#nu;#eta #mu_{2};Event count"},
     { "HEtal2_+ABCD ", "Eta_{l2} lll#nu;Eta;Event count"},
-    { "HEtal3_A", "#eta_{e3} eee#nu;Eta e_{3};Event count"},
-    { "HEtal3_B", "#eta_{#mu} ee#mu#nu;Eta #mu;Event count"},
-    { "HEtal3_C", "#eta_{e} #mu#mue#nu;Eta e;Event count"},
-    { "HEtal3_D", "#eta_{#mu3} #mu#mu#mu#nu;Eta #mu_{3};Event count"},
+    { "HEtal3_A", "#eta_{e3} eee#nu;#eta e_{3};Event count"},
+    { "HEtal3_B", "#eta_{#mu} ee#mu#nu;#eta #mu;Event count"},
+    { "HEtal3_C", "#eta_{e} #mu#mue#nu;#eta e;Event count"},
+    { "HEtal3_D", "#eta_{#mu3} #mu#mu#mu#nu;#eta #mu_{3};Event count"},
     { "HEtal3_+ABCD ", "Eta_{l2} lll#nu;Eta;Event count"},
     { "HPhil1_A", "#phi_{e1} eee#nu;#phi (rad);Event count"},
     { "HPhil1_B", "#phi_{e1} ee#mu#nu;#phi (rad);Event count"},
@@ -741,8 +741,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hratio->SetMarkerSize(.5);
       hratio->SetLineWidth(1);
       const int font = 43;
-      const float fontSize = 17.;
-      const float labelSize = 0.17;
+      const float fontSize = 12.;
+      const float labelSize = 0.14;
       hratio->SetTitle("");
       hratio->GetXaxis()->SetTitle(hss->GetHistogram()->GetXaxis()->GetTitle());
       hratio->GetXaxis()->SetTitleFont(font);
@@ -757,6 +757,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hratio->GetYaxis()->SetTitle("Data/MC");
       hratio->SetMinimum(0.1);
       hratio->SetMaximum(1.9);
+      hratio->SetFillColor(2);
+      hratio->SetFillStyle(3001);
+      hratio->SetDrawOption("ap");
       return hratio;
   };
 
@@ -1622,7 +1625,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
       }
       hsig->SetTitle(signal.legendName.c_str());
-      legend->AddEntry(hsig,signal.legendName.c_str(),"L");
+      legend->AddEntry(hsig,Form("%s",signal.legendName.c_str()),"L");
       hsig->SetLineColor(kBlack);
       hsig->SetLineWidth(3);
       hsig->SetFillColor(0);
@@ -1662,7 +1665,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         subPad->Draw();
         subPad->SetLeftMargin(leftMargin);
         subPad->SetRightMargin(rightMargin);
-        subPad->SetTopMargin(1e-3);
+        subPad->SetTopMargin(0);
         subPad->SetBottomMargin(bottomMargin);
 
         TH1* hdata;

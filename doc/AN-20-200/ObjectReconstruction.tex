@@ -24,15 +24,124 @@ One additional flag is required for the year 2017, 2018:
 \item \verb|Flag_ecalBadCalibFilterV2|
 \end{itemize}
 
-Events are then splitted in four modes depending on the leptonic flavour of the
+Events are then splitted in four channels depending on the leptonic flavour of the
 diboson decay:
 
 \begin{description}
-\item[$\bullet$3e] $Z\rightarrow e^{+}e^{-} W\rightarrow e+\nu$
-\item[$\bullet$2e+1mu] $Z\rightarrow e^{+}e^{-} W\rightarrow \mu+\nu$
-\item[$\bullet$2mu+1e] $Z\rightarrow \mu^{+}\mu^{-} W\rightarrow e+\nu$
-\item[$\bullet$3mu] $Z\rightarrow \mu^{+}\mu^{-} W\rightarrow \mu+\nu$
+\item[$\bullet$3e] three electrons and missing transverse energy are found, two of the
+  electrons correspond to the decay of the $Z$ boson and the remaining electron corresponds
+  to the decay of the $W$ boson. $Z\rightarrow e^{+}e^{-} W\rightarrow e+\nu$
+  The three electrons are expected to leave traces on the
+  tracker subsystem with low curvature due to their high transverse momentum and
+  energy depositions are expected in the electromagnetic calorimeter
+  The signature left on the CMS detector is shown on figure \ref{fig:Fireworks_eeev}.
+\item[$\bullet$2e+1mu] two electrons, one muon and missing transverse energy are found,
+  the two electrons correspond to the decay of the $Z$ boson and the muon corresponds to the
+  decay of the $W$ boson. $Z\rightarrow e^{+}e^{-} W\rightarrow \mu+\nu$ the two electrons are
+  expected to leave traces on the tracker subsystem with low curvature and energy
+  depositions are expected in the electromagnetic calorimeter while the muon leaves
+  traces in the tracker and muon subsytem. The signature left on the CMS
+  detector is shown on figure \ref{fig:Fireworks_eemuv}.
+\item[$\bullet$2mu+1e] two muons, one electron and missing transverse energy are found,
+  the two muons correspond to the decay of the $Z$ boson and the electron corresponds to the
+  decay of the $W$ boson. $Z\rightarrow \mu^{+}\mu^{-} W\rightarrow e+\nu$ the two
+  muons leave traces on the tracker and muon subsystems with negligible curvature due
+  to its high transverse momentum while the electron is expected to leave hits in
+  the tracker and energy deposition in the electromagnetica calorimeter.
+  The signature left on the CMS detector is shown on figure \ref{fig:Fireworks_mumuev}.
+\item[$\bullet$3mu] three muons and missing transverse energy are found, the muon pair
+  correspond to the decay of the $Z$ boson and the remianing muon corresponds
+  to the decay of the $W$ boson. $Z\rightarrow \mu^{+}\mu^{-} W\rightarrow \mu+\nu$.
+  The three muons are expected to leave traces on the tracker subsystem and muon chambers
+  with low curvature due to their high transverse momenta. The signature
+  left on the CMS detector is shown on figure \ref{fig:Fireworks_eemuv}.
 \end{description}
+
+\begin{figure}
+  \centering
+  \subfigure[Projection on the $\rho-\phi$ plane. \label{fig:A_RhoPhi}]{\includegraphics[width=0.8\linewidth]{fig/Fireworks/A_RhoPhi.png}}
+  \vfil
+  \subfigure[Projection on the $\rho-z$ plane\label{fig:A_RhoZ}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/A_RhoZ.png}}
+  \subfigure[3D view\label{fig:A_Rho3D}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/A_3D.png}}
+  \caption{Example of the signature left on the detector by a signal-like event
+    for the $eee\nu$ channel. This event was taken on July 13th 2018. Run: $319579$,
+    Lumiblock: $2957$, Event: $4487890911$. The reconstructed primary vertex is shown in yellow.
+    Depositions on the electromagnetic calorimeter and tracks left by the three electrons
+    are shown in turquoise, the negligible curvature
+    shown by their tracks is a reflection of their high transverse momentum.
+    The amount of missing transverse energy is proportional to the length of the purple arrow. Low momentum
+    tracks for particle-flow candidates in the inner tracker are shown in green for
+    reference, these PF candidates are filtered by the preselection. }
+  \label{fig:Fireworks_eeev}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \subfigure[Projection on the $\rho-\phi$ plane. \label{fig:B_RhoPhi}]{\includegraphics[width=0.8\linewidth]{fig/Fireworks/B_RhoPhi.png}}
+  \vfil
+  \subfigure[Projection on the $\rho-z$ plane\label{fig:B_RhoZ}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/B_RhoZ.png}}
+  \subfigure[3D view\label{fig:B_Rho3D}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/B_3D.png}}
+  \caption{Example of the signature left on the detector by a signal-like event
+    for the $ee\mu\nu$ channel. This event was taken on October 21st 2018. Run: $32500$,
+    Lumiblock: $188$, Event: $346288517$. The reconstructed primary vertex is shown in yellow.
+    Depositions on the electromagnetic calorimeter
+    and tracks left by the electronic pair are shown in turquoise, the negligible curvature
+    shown by their tracks is a reflection of their high transverse momentum. Tracks left by the muon
+    in the tracker detector and muon chambers are shown in red, in this particular event it
+    is possible to see the muon will be classified as a global-High Pt muon as its traces
+    are found in the tracker system and beyond the first station of the muon subsystem.
+    The amount of missing
+    transverse energy is proportional to the length of the purple arrow. Low momentum
+    tracks for particle-flow candidates in the inner tracker are shown in green for
+    reference, these PF candidates are filtered by the preselection. }
+  \label{fig:Fireworks_eemuv}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \subfigure[Projection on the $\rho-\phi$ plane. \label{fig:C_RhoPhi}]{\includegraphics[width=0.8\linewidth]{fig/Fireworks/C_RhoPhi.png}}
+  \vfil
+  \subfigure[Projection on the $\rho-z$ plane\label{fig:C_RhoZ}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/C_RhoZ.png}}
+  \subfigure[3D view\label{fig:C_Rho3D}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/C_3D.png}}
+  \caption{Example of the signature left on the detector by a signal-like event
+    for the $\mu\mu e \nu$ channel. This event was taken on August 14th 2018.
+    Run: $321295$, Lumiblock: $553$, Event: $873839127$. The reconstructed primary vertex is shown in yellow.
+    The deposition on the electromagnetic calorimeter and tracks left by the electron are shown in turquoise,
+    the negligible curvature shown by their tracks is a reflection of their high transverse momentum.
+    Tracks left by the muon pair in the tracker detector and muon chambers are shown in red, it
+    is possible to see the muon will be classified as a global-High Pt muon as their traces
+    are found in the tracker system and beyond the first station of the muon subsystem.
+    The amount of missing
+    transverse energy is proportional to the length of the purple arrow. Low momentum
+    tracks for particle-flow candidates in the inner tracker are shown in green for
+    reference, these PF candidates are filtered by the preselection. }
+  \label{fig:Fireworks_mumuev}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \subfigure[Projection on the $\rho-\phi$ plane. \label{fig:D_RhoPhi}]{\includegraphics[width=0.8\linewidth]{fig/Fireworks/D_RhoPhi.png}}
+  \vfil
+  \subfigure[Projection on the $\rho-z$ plane\label{fig:D_RhoZ}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/D_RhoZ.png}}
+  \subfigure[3D view\label{fig:D_Rho3D}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/D_3D.png}}
+  \caption{Example of the signature left on the detector by a signal-like event
+    for the $\mu\mu\mu\nu$ channel. This event was taken on July 21st 2018.
+    Run: $320024$, Lumiblock: $211$, Event: $355149645$. The reconstructed primary vertex is shown in yellow.
+    Tracks left by the muon pair in the tracker detector and muon chambers are shown in red,
+    the negligible curvature shown by their tracks is a reflection of their high transverse momentum.
+    it is possible to see the muon will be classified as a global-High Pt muon as their traces
+    are found in the tracker system and beyond the first station of the muon subsystem.
+    The amount of missing
+    transverse energy is proportional to the length of the purple arrow. Low momentum
+    tracks for particle-flow candidates in the inner tracker are shown in green for
+    reference, these PF candidates are filtered by the preselection. }
+  \label{fig:Fireworks_mumumuv}
+\end{figure}
+
+
+
+
 
 
 \subsection{High Level Trigger Selection}
@@ -162,28 +271,6 @@ of at least $Pt=50GeV$.
 * Mass of the three leptons system should be greater than $120GeV$
 * The sum of the transverse momentum of the leptons should be greater than $110GeV$
 
-\subsection{Pileup Reweighting}
-
-MC Samples are reweighted with $69.2~mb$ as MinBias cross section to adjust the
-simulated pileup to the conditions observed in data.
 
 \subsection{Lepton Misidentification}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
