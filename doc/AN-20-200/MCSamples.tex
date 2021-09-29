@@ -396,10 +396,11 @@ is the cross section of the MC samples as provided by \verb|XSecAnalyzer|.
 
 \begin{figure}[tph]
   \centering
-        \subfigure[Standard model WZ production MC simulations normalized pileup distributions]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/MC_Pileup_Linear.pdf}}
-        \subfigure[Pileup profile from RunII Data, Linear Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_Linear.pdf}}
+        \subfigure[Standard model WZ production normalized pileup distributions for Run 2 years]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/MC_Pileup_Linear.pdf}}
+        \subfigure[Pileup profile from Run 2 Data, Linear Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_Linear.pdf}}
         \vfil
-        \subfigure[Pileup profile from RunII Data, Logarithmic Scale]{\includegraphics[width=.6\textwidth]{fig/ScaleFactors/GoldenPileup_LogScale.pdf}}
+        \subfigure[Pileup profile from Run 2 Data, Logarithmic Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_LogScale.pdf}}
+        \subfigure[Pileup weight profiles for different background samples]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/PileupWeight_LogScale.pdf}}
   \caption{Pileup profile distributions for MC and Data}
   \label{fig:RunII_PileupProfiles}
 \end{figure}
@@ -419,18 +420,46 @@ The normalization of each distribution is eachieved by scaling it by a factor
 equivalent to the the inverse of its integral. Each MC event is then reweighted
 with the appropiate factor based on the number of reconstructed primary vertices. 
 
-\begin{figure}[tph]
-  \centering
-        \subfigure[Electron Loose ID]{\includegraphics[width=.28\textwidth]{fig/2016Electron_LooseID.pdf}}
-        \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.28\textwidth]{fig/2016Muon_GlobalHighPtID.pdf}}
-        \subfigure[Muon TrkHighPtId]{\includegraphics[width=.28\textwidth]{fig/2016Muon_TrkHighPtID.pdf}}
-  \caption{SF for different lepton ids}
-  \label{fig:leptonidsf}
-\end{figure}
-
-
 \subsection{Lepton scale factors}
 
+\begin{figure}[tph]
+  \centering
+  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_LooseID.pdf}}
+  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_TightID.pdf}}
+  \vfil
+  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_GlobalHighPtID.pdf}}
+  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_TrkHighPtID.pdf}}
+  \caption{Lepton ID Scale Factors 2016}
+  \label{fig:leptonidsf_2016}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_LooseID.pdf}}
+  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_TightID.pdf}}
+  \vfil
+  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_GlobalHighPtID.pdf}}
+  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_TrkHighPtID.pdf}}
+  \caption{Lepton ID Scale Factors 2017}
+  \label{fig:leptonidsf_2017}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_LooseID.pdf}}
+  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_TightID.pdf}}
+  \vfil
+  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_GlobalHighPtID.pdf}}
+  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_TrkHighPtID.pdf}}
+  \caption{Lepton ID Scale Factors 2018}
+  \label{fig:leptonidsf_2018}
+\end{figure}
+
 Trigger and lepton identification efficiencies are different between data
-and montecarlo.
+and montecarlo. Scale factors are provided centrally by the Muon and EGamma POG
+and show an $\eta-P_{t}$ dependence, see Figures \ref{fig:leptonidsf_2016},
+\ref{fig:leptonidsf_2017}, and \ref{fig:leptonidsf_2018}.
+
+
+
 

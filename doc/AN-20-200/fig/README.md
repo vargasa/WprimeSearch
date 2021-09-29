@@ -1,4 +1,96 @@
+
+### Electron SF Tight Id
+
+```cpp
+auto f = TFile::Open("files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Tight ID SF 2016; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2016Electron_TightID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2017/sf/2017_ElectronTight.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Tight ID SF 2017; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2017Electron_TightID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2018/sf/2018_ElectronTight.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Tight ID SF 2018; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2018Electron_TightID.pdf");
+```
+
+
 #### TODO
+
+```cpp
+auto f = TFile::Open("files/mc/2016/sf/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root");
+auto h = static_cast<TH2F*>(f->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt")->Clone());
+h->SetTitle("TrkHighPtID SF 2016; |#eta|;Muon Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2016Muon_TrkHighPtID.pdf");
+```
 
 
 ```cpp
@@ -19,9 +111,10 @@ h->GetYaxis()->SetTitleOffset(1.6);
 h->GetZaxis()->SetLabelOffset(0.01);
 h->GetZaxis()->SetLabelSize(0.03);
 h->GetZaxis()->SetTitleSize(0.03);
-h->GetZaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetTitleOffset(1.0);
 c1->Print("2016Muon_TrkHighPtID.pdf");
 ```
+
 
 ```cpp
 auto f = TFile::Open("files/mc/2016/sf/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root");
@@ -65,6 +158,50 @@ h->GetZaxis()->SetLabelSize(0.03);
 h->GetZaxis()->SetTitleSize(0.03);
 h->GetZaxis()->SetTitleOffset(1.6);
 c1->Print("2016Electron_LooseID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2017/sf/2017_ElectronLoose.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Loose ID SF 2017; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2017Electron_LooseID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2018/sf/2018_ElectronLoose.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Loose ID SF 2018; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2018Electron_LooseID.pdf");
 ```
 
 
@@ -135,4 +272,203 @@ legend->Draw();
 c1->Print("MC_Pileup_Linear.pdf");
 c1->SetLogy();
 c1->Print("MC_Pileup_LogScale.pdf");
+```
+
+#### MC Pileup Weights
+
+```cpp
+TFile* f1 = TFile::Open("PileupWeights.root","READ");
+TH1F* h6 = (TH1F*)f1->Get("2016/WZTo3LNu_mllmin01_13TeV-powheg-pythia8/lumiWeights");
+h6->SetTitle("Pileup Reweighting [2016]; NPvx; Pileup Weight");
+h6->SetLineColor(kBlue);
+h6->SetMarkerColor(kBlue);
+h6->SetMarkerStyle(20);
+h6->SetMarkerSize(1);
+TH1F* h7 = (TH1F*)f1->Get("2016/ZZTo4L_13TeV_powheg_pythia8/lumiWeights");
+h7->SetLineColor(kGreen);
+h7->SetMarkerColor(kGreen);
+h7->SetMarkerStyle(21);
+h7->SetMarkerSize(0.7);
+TH1F* h8 = (TH1F*)f1->Get("2016/WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/lumiWeights");
+h8->SetLineColor(kRed);
+h8->SetMarkerColor(kRed);
+h8->SetMarkerStyle(22);
+h8->SetMarkerSize(1);
+
+TLegend* legend = new TLegend(0.7, 0.75, .9, .9);
+legend->AddEntry(h6,"WZ");
+legend->AddEntry(h7,"ZZ");
+legend->AddEntry(h8,"WZZ");
+
+h6->Draw("LC");
+h6->GetYaxis()->SetRangeUser(1e-4,10);
+h6->GetXaxis()->SetRangeUser(0,80);
+h7->Draw("LC SAME");
+h8->Draw("LC SAME");
+
+gStyle->SetOptStat(0);
+legend->Draw();
+c1->SetLogy();
+c1->Print("PileupWeight_LogScale.pdf");
+```
+
+
+#### Muon Lepton ID Scale Factors
+
+
+```cpp
+auto f = TFile::Open("files/mc/2017/sf/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root");
+auto h = static_cast<TH2F*>(f->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt")->Clone());
+h->SetTitle("TrkHighPtID SF 2017; |#eta|;Muon Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT ERROR");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.6);
+c1->Print("2017Muon_TrkHighPtID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2017/sf/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root");
+auto h = static_cast<TH2F*>(f->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt")->Clone());
+h->SetTitle("GlobalHighPtID SF 2017; |#eta|;Muon Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT ERROR");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.6);
+c1->Print("2017Muon_GlobalHighPtID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2018/sf/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root");
+auto h = static_cast<TH2F*>(f->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt")->Clone());
+h->SetTitle("TrkHighPtID SF 2018; |#eta|;Muon Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT ERROR");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.);
+c1->Print("2018Muon_TrkHighPtID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2018/sf/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root");
+auto h = static_cast<TH2F*>(f->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt")->Clone());
+h->SetTitle("GlobalHighPtID SF 2018; |#eta|;Muon Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT ERROR");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.);
+c1->Print("2018Muon_GlobalHighPtID.pdf");
+```
+
+
+### Electron SF Tight Id
+
+```cpp
+auto f = TFile::Open("files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Tight ID SF 2016; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2016Electron_TightID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2017/sf/2017_ElectronTight.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Tight ID SF 2017; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2017Electron_TightID.pdf");
+```
+
+```cpp
+auto f = TFile::Open("files/mc/2018/sf/2018_ElectronTight.root");
+auto h = static_cast<TH2F*>(f->Get("EGamma_SF2D")->Clone());
+h->SetTitle("Electron Tight ID SF 2018; #eta;Electron Pt; SF")
+TCanvas* c1 = new TCanvas("c1","c1", 1200,1200);
+gStyle->SetOptStat(0);
+h->Draw("COLZH TEXT45");
+h->GetXaxis()->SetLabelOffset(0.01);
+h->GetXaxis()->SetLabelSize(0.03);
+h->GetXaxis()->SetTitleSize(0.03);
+h->GetXaxis()->SetTitleOffset(1.6);
+h->GetYaxis()->SetLabelOffset(0.01);
+h->GetYaxis()->SetLabelSize(0.03);
+h->GetYaxis()->SetTitleSize(0.03);
+h->GetYaxis()->SetTitleOffset(1.6);
+h->GetZaxis()->SetLabelOffset(0.01);
+h->GetZaxis()->SetLabelSize(0.03);
+h->GetZaxis()->SetTitleSize(0.03);
+h->GetZaxis()->SetTitleOffset(1.0);
+c1->Print("2018Electron_TightID.pdf");
 ```
