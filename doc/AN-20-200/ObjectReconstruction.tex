@@ -100,18 +100,19 @@ diboson decay:
 
 \begin{figure}
   \centering
-  \subfigure[Projection on the $\rho-\phi$ plane. \label{fig:C_RhoPhi}]{\includegraphics[width=0.8\linewidth]{fig/Fireworks/C_RhoPhi.png}}
+  \subfigure[Projection on the $\rho-\phi$ plane. \label{fig:C_RhoPhi}]{\includegraphics[width=0.8\linewidth]{fig/Fireworks/Cv2_RhoPhi.png}}
   \vfil
-  \subfigure[Projection on the $\rho-z$ plane\label{fig:C_RhoZ}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/C_RhoZ.png}}
-  \subfigure[3D view\label{fig:C_Rho3D}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/C_3D.png}}
+  \subfigure[Projection on the $\rho-z$ plane\label{fig:C_RhoZ}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/Cv2_RhoZ.png}}
+  \subfigure[3D view\label{fig:C_Rho3D}]{\includegraphics[width=0.40\linewidth]{fig/Fireworks/Cv2_3D.png}}
   \caption{Example of the signature left on the detector by a signal-like event
-    for the $\mu\mu e \nu$ channel. This event was taken on August 14th 2018.
-    Run: $321295$, Lumiblock: $553$, Event: $873839127$. The reconstructed primary vertex is shown in yellow.
+    for the $\mu\mu e \nu$ channel. This event was taken on October 1st 2018.
+    Run: $323790$, Lumiblock: $376$, Event: $646065569$. The reconstructed primary vertex is shown in yellow.
     The deposition on the electromagnetic calorimeter and tracks left by the electron are shown in turquoise,
     the negligible curvature shown by their tracks is a reflection of their high transverse momentum.
-    Tracks left by the muon pair in the tracker detector and muon chambers are shown in red, it
-    is possible to see the muon will be classified as a global-High Pt muon as their traces
-    are found in the tracker system and beyond the first station of the muon subsystem.
+    Tracks left by the muon pair in the tracker detector and muon chambers are shown in red. It
+    is possible to see one of the muons will be classified as a tracker-High Pt muon as its traces
+    are found in the tracker system and the first muon station while the other one is a global-High Pt
+    Muon as its muon trackes go beyond the first station of the muon subsystem.
     The amount of missing
     transverse energy is proportional to the length of the purple arrow. Low momentum
     tracks for particle-flow candidates in the inner tracker are shown in green for
@@ -146,18 +147,10 @@ diboson decay:
 
 \subsection{High Level Trigger Selection}
 
-The table \ref{tab:HLTDatasets} shows the HLTs used and the different datasets used for the three years.
-Each event is required to pass either the Muon or Electron triggers based on the high-Pt
+Table \ref{tab:HLTDatasets} shows the HLTs and the different datasets used for the three years.
+Due to the presence of multiple leptonic flavors in the final state, each event
+is required to pass either the Muon or Electron triggers based on the high-Pt
 recommendations from the POG.
-
-Due to the presence of multiple leptonic flavors in the final state, we require
-the signal events to satisfy at least one of the following High Level Trigger
-Requirements.
-
-We reproduce the High Level Trigger requirements by applying the corresponding
-$p_T$ threshold
-
-
 
 \begin{table}[h]
 \centering
@@ -205,25 +198,48 @@ Electron identification is based on a cut based ID as defined by the
 EGamma POG. Depending on the channel, this requirement
 may ask for \emph{loose} or \emph{tight} electrons, the former with an
 average efficiency of approximately 95\% and 70\% for
-the latter ~\cite{EGammaPOG_el}.
+the latter ~\cite{EGammaPOG_el}: channels portraying a $Z\rightarrow e+e$
+decay ($eee\nu$ and $ee\mu\nu$) require two loose electrons, while the
+electron corresponding to the $W\rightarrow e\nu$ is required to pass
+the cut-based tight ID.
+
+We reproduce the High Level Trigger transverse momentum requirements by
+applying a cut on the corresponding $p_T$ threshold on all the electrons:
+2016 ($27~GeV$), 2017 ($35~GeV$), and 28 ($32~GeV$).
 
 \subsection{Muon Selection}
 
 \verb|Muon| collection in \verb|NanoAOD|
 
 The muon objects in this analysis can be divided into two categories:
-Tracker and highPt Global muons ~\cite{MuonPOG}.
+Tracker and Global highPt muons ~\cite{MuonPOG}. Tracker highPt muons are
+reconstructed from hits in the tracker matched with hits in the first
+muon station, while global highPt muons leave trace beyond the first
+layer of the muon subsystem.
 
 Muons are required to be within the pseudorapidity range $\abs{eta}<2.4$ and
-to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon of
-the event is required to have $P_t>52$ in line with the trigger plateau.
+to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon
+is required to have a transverse momentum $P_t>52~GeV$ in line with
+the trigger plateau.
 
-Transverse momentum is measured with the TuneP algorithm
+For events portraying a $Z\rightarrow\mu+\mu$ decay a stricter cut is applied on the
+leading muon $P_{t}>70~GeV$. The muon pair is required to be a composite of a
+cut-based global highPt ID muon and either a tracker or global highPt ID muon
+that is simultaneously a particle-flow candidate. This combination of highPt
+muons shows the highest efficiency. %%% Need plot %%%
+
+Events with a pair of muons with an impact parameter $ip3d>0.01~cm$ are
+discarded in order to increase background rejection.
+
+\subsection{Lepton Misidentification}
+
+%%%%%%%%%%%%%FAKES%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Missing Transverse Energy}
 
 The missing transverse energy $E_T$ is reconstructed with the particle flow
-algorithm ~\cite{particleflow}
+algorithm ~\cite{particleflow} and events are required to have at least a
+missing transverse energy of $E_T^{miss}=40~GeV$.
 
 \subsection{Z Candidate}
 
@@ -232,47 +248,69 @@ candidate. If more than one pair is found, the one with reconstructed mass
 closer to the nominal mass $M_z= 91.1876 GeV$ is chosen. The pair's mass
 is required to fall in the Z mass window $ 70. GeV < M_Z < 111.$. In favor of an
 increase in the signal efficiency the opposite charged requirement is dropped
-for the $3e0\mu$ category.
+for the $eee\nu$ category.
 
 If the Z candidate is formed from a muon pair with a leading (subleading) muon with
 a transverse momentum of at least $P_t=70 GeV$ ($P_t=10GeV$). One of the
 muons is required to pass two additional requirements: being a global high-Pt muon and a
 particle-flow candidate. In the case of electrons, the requirement is to pass the
 selection criteria of the cut-based \emph{loose} ID and a transverse momentum of
-at least $P_t=27GeV$ (2016) matching the trigger plateau, $P_t=35GeV$ (2017),
-$P_t=32GeV$ (2018).
+matching the trigger plateau.
 
-The event is rejected if the distance in the $\eta-\phi$ plane for the two
-leptons product of the decay of the Z is less than $1.5$.
+The event is rejected from the signal region if the distance in the $\eta-\phi$
+plane for the two leptons product of the decay of the Z is less than $1.5$.
 
 \subsection{W Candidate}
 
-The neutrino coming from The $W \rightarrow l\nu$ candidate escapes undetected,
+The $W$ candidate is reconstructed from the remaining lepton and the missing energy
+$E_T^{miss}$. The ramining lepton is required to be either a cut based \emph{tight}
+ID electron or a global High-Pt muon with a transverse momentum
+of at least $Pt>52~GeV$.
+
+The neutrino from the $W \rightarrow l\nu$ decay escapes undetected,
 and therefore the following assumptions are made in order to perform a kinematic
-reconstruction of the $W$ candidate: there is no additional sources of missing
+reconstruction of the $W$ candidate: there are no additional sources of missing
 energy, and consequently $E_{Pt}^{miss}$ is considered the transverse momentum
 corresponding to the undetected neutrino. The longitudinal momentum $P_z$ can be
-recovered by imposing the $M_W = 80.379 GeV $ nominal mass and $M_\nu = 0.$
+recovered by imposing the $M_W=80.379~GeV $ nominal mass and assuming
+a massless neutrino $M_\nu = 0.$
 
-As $\eta$ is unknown for the Missing Energy transverse, the neutrino 4-vector is
-not well defined. However, by assuming the mass of W[pdg] the longitudinal component
-of the neutrino is reduced to a quadratic equation. The less energetic of the
-solutions gives the correct value ~70\% of the time according to simulation [AN].
+As $\eta$ is unknown for the missing transverse energy, the neutrino 4-vector is
+not well defined. However, by assuming the mass of $W$ the longitudinal component
+of the neutrino is reduced to a quadratic equation:
+
+\[
+P_{Z}^{\nu} = \frac{P_{Z}^{l}({M_{W}^{2}-{M_{t}^{W}}^2+2P_{t}^{l}{P_{t}^{\nu}}}) \pm P^{l}\sqrt{(M_{W}^{2}-{M_{t}^{W}}^2)((M_{W}^{2}-{M_{t}^{W}}^2)+4P_{t}^{l}P_{t}^{\nu})}}{{2P_{t}^{l}}^{2}}
+\]
+
+Where the transverse mass $M_{t}^{W}$ is defined
+as ${M_{t}^{W}}=\sqrt{2P_{t}^{l}P_{t}^{\nu}(1-cos\phi_{l\nu})}$.
+Due to detector resolution effects and systematic uncertainties on the
+reconstruction of missing transverse energy, the transverse mass may
+exceed the mass of the $W$ boson $M_W$ and the
+longitudinal component of the momentum would remain undefined, in these cases
+we set the transverse mass equal to the nominal value $M_{t}^{W}=M_W$.
+
+The less energetic of the solutions gives the correct value ~70\% of the time
+according to simulation [AN].
 When no real solutions are available (transverse mass > W Mass), the invariant
 mass is set to the reconstructed transverse mass and we are left with two real
-identical solutions. The transverse mass may be higher to W mass due to detector
-resolution effects.
+identical solutions.
 
-$W$ boson is reconstructed from the remaining lepton and the missing energy
-$E_T^{miss}$. The ramining lepton is required to be either
-a \emph{tight} electron or a global High-Pt muon with a transverse momentum
-of at least $Pt=50GeV$.
 
 \subsection{WZ Candidate}
 
-* Mass of the three leptons system should be greater than $120GeV$
-* The sum of the transverse momentum of the leptons should be greater than $110GeV$
+The $W^{\prime}$ is reconstructed from the $W$ and $Z$ candidates.
+Events are rejected if the sum of the leptonic mass is less than $120~GeV$ and
+if the sum of the transverse momentum $L_{t}<110~GeV$, where $L_{t}$ is defined
+as:
+
+\[
+L_{t} = \sum_{n=1}^{3} Pt_{ln}
+\]
 
 
-\subsection{Lepton Misidentification}
+
+
+
 
