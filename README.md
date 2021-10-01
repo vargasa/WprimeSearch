@@ -417,6 +417,19 @@ for(auto hs: hname){
 }
 ```
 
+#### Signature Examples
+
+```bash
+# 1000     Run: 319579     Event: 4487890911       Lumiblock: 2957 mll: 86.8262
+xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018C/EGamma/MINIAOD/12Nov2019_UL2018-v2/100000/AFCAE2E8-4264-0D4F-A80C-516B47323CE3.root ./A_319579_2957_4487890911.root
+# 0100     Run: 325000     Event: 346288517        Lumiblock: 188  mll: 91.8193
+xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018D/EGamma/MINIAOD/12Nov2019_UL2018-v8/280002/BF1FA64B-89BB-F14B-8DF6-E2CFB1CAE6EC.root ./B_325000_188_346288517.root
+# 0010     Run: 321295     Event: 873839127        Lumiblock: 553  mll: 91.1356
+xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018D/SingleMuon/MINIAOD/12Nov2019_UL2018-v8/270001/F9F6EB22-345F-9C49-88BF-3D9B7F442CDD.root ./C_321295_553_873839127.root
+# 0001     Run: 320024     Event: 355149645        Lumiblock: 211  mll: 91.4401
+xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018C/SingleMuon/MINIAOD/12Nov2019_UL2018-v3/110000/ECDCC359-CB8D-6A44-97EC-2A04895DF1F3.root ./D_320024_211_355149645.root
+```
+
 ### References:
 
 * [Muon POG Momentum Resolution update Jul/26th/2021](https://indico.cern.ch/event/1061707/contributions/4464423/attachments/2287342/3887855/MomentumResolution%20Update.pdf)

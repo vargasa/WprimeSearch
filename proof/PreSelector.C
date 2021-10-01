@@ -637,12 +637,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HScaleFactors,"HScaleFactors",70,-1.,6.);
 #endif
 
-  const Double_t wzbins[15] = {
-    0,100,150,210,280,360,
-    450,550,660,780,910,1050,
-    1190,1340,3000
+  const Double_t wzbins[25] = {
+    60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,1190,1340,3000
   };
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",14,wzbins);
+
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",24,wzbins);
 
 }
 
@@ -1461,8 +1460,6 @@ Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
 Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
 
   if (Muon_tunepRelPt[p.first]*Muon_pt[p.first] < 70.) return kFALSE;
-  const Float_t MinSubleadPt = 10.;
-  if (Muon_tunepRelPt[p.second]*Muon_pt[p.second] < MinSubleadPt) return kFALSE;
   const Float_t farFromPV = 1e-2;
   if (Muon_ip3d[p.first] > farFromPV or Muon_ip3d[p.second] > farFromPV) return kFALSE;
 
@@ -1833,8 +1830,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   auto printEventInfo = [&](){
-    std::cout << Form("Run: %u\tEvent: %llu\tLumiblock: %u\tmll: %.4f\n",
-                       *run, *event, *luminosityBlock, zb.M());
+    std::cout <<
+      Form("%d%d%d%d\tRun: %u\tEvent: %llu\tLumiblock: %u\tmll: %.4f\n",
+           IsA_,IsB,IsC,IsD,
+           *run, *event, *luminosityBlock, zb.M());
   };
 
 
