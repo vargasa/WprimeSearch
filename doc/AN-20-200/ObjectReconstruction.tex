@@ -222,16 +222,41 @@ to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon
 is required to have a transverse momentum $P_t>52~GeV$ in line with
 the trigger plateau.
 
+
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=0.6\textwidth]{fig/LeptonIDStudies/MuonIDEfficiency.pdf}
+  \caption{Signal Efficiency for different Muon ID combinations for the product of
+    the decay $Z\rightarrow\mu+\mu$. The less efficient combination is requiring
+    the Muon pair to be a cut-based Tight ID pair, increasing efficiency towards less
+    strict cut-based requirements (Loose and Medium ID). The most efficient combination in
+    the signal reconstruction is the combination of one global-highPt ID Muon
+    with another muon that can be either a tracker or global-HighPt ID.}
+  \label{fig:MuonIDEfficiency}
+\end{figure}
+
 For events portraying a $Z\rightarrow\mu+\mu$ decay a stricter cut is applied on the
 leading muon $P_{t}>70~GeV$. The muon pair is required to be a composite of a
 cut-based global highPt ID muon and either a tracker or global highPt ID muon
 that is simultaneously a particle-flow candidate. This combination of highPt
-muons shows the highest efficiency. %%% Need plot %%%
+muons shows the highest efficiency, see Figure \ref{fig:MuonIDEfficiency}.
+%%% Add reference to B2G-19-006 %%%
 
 Events with a pair of muons with an impact parameter $ip3d>0.01~cm$ are
 discarded in order to increase background rejection.
 
 \subsection{Lepton Misidentification}
+
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=0.6\textwidth]{fig/PunziTest_Ip3DCut.pdf}
+  \caption{Punzi significance as a function of the mass resonce by implementing
+    the cut on the impact parameter in order to reduce the number of non-prompt
+    muons}
+  \label{fig:Punzi_Ip3DCut}
+\end{figure}
 
 The nature of the reconstruction process may lead to some objects being
 wrongly identified. A dedicated study was performed in order to evaluate
@@ -245,6 +270,9 @@ shows how the Drell-Yan and $t\bar{t}$ processes are suceptible to present
 reconstructed non-prompt muons. To account for this, we impose a cut on the
 3D impact parameter $ip3D<0.01~cm$, figure %%Missing Figure %%%
 shows the effect of the cut on reducing the number of non-prompt muons.
+The Punzi significance of the impact parameter requirement as a function
+of the WZ resonance mass is shown in figure \ref{fig:Punzi_Ip3DCut}. %%% expand %%%
+
 
 
 \begin{figure}[tph]
