@@ -1004,7 +1004,39 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c2;
   };
 
+  std::function<void(THStack*,TH1*)>
+    printYieldsTable = [] (THStack* hss, TH1* hdata) {
 
+    std::cout << "%%%% Yields Table %%%%\n";
+    std::map<std::string, double> table;
+
+    TList* lst = hss->GetHists();
+    TIter next(lst);
+
+    int prevColor = -1;
+    std::string prevLabel = "NULL";
+    double integral = -1;
+    while(auto h = static_cast<TH1*>(next())){
+      if(prevColor == h->GetFillColor()){
+        integral += h->Integral();
+      } else {
+        if(integral != -1) {
+          table[prevLabel] = integral;
+        }
+        integral = h->Integral();
+      }
+      prevLabel = h->GetTitle();
+      prevColor = h->GetFillColor();
+    }
+
+    table["Data"] = hdata->Integral();
+
+    for(const auto& row : table) {
+      std::cout << row.first << "\t" << row.second << "\n";
+    }
+    std::cout << "%%%%%%%%%%%%%%%%%%%%%%\n";
+
+  };
 
 
   std::function<void(const int&, const int&)>
@@ -1676,6 +1708,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         } else {
           hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
         }
+
+        printYieldsTable(hs, hdata);
+
         mainPad->cd();
         hdata->SetMarkerStyle(kFullCircle);
         fixYRange(hs,getMaxY(hdata));
