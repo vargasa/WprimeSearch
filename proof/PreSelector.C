@@ -393,6 +393,14 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t NLtBins = 50;
   InitHVec<TH1F>(HLt,"HLt",NLtBins,0.,MaxLt);
 
+  InitHVec<TH1F>(HPtl1Lt,"HPtl1Lt",50 , 0., 1.);
+  InitHVec<TH1F>(HPtl2Lt,"HPtl2Lt",50 , 0., 1.);
+  InitHVec<TH1F>(HPtl3Lt,"HPtl3Lt",50 , 0., 1.);
+  InitHVec<TH1F>(HMetPtLt,"HMetPtLt",50 , 0., 1.);
+  InitHVec<TH1F>(HPtl3Met,"HPtl3Met",150 , 0., 3.);
+
+  InitHVec<TH1F>(HCosl3Met,"HCosl3Met",100 , -1., 1.);
+
   InitHVec<TH2F>(HMassZWZ,"HMassZWZ",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
 
   InitHVec<TH2F>(HZElId,"HZElId",6,-0.5,5.5,6,-0.5,5.5);
@@ -507,7 +515,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t MetBins = 60;
 
   InitHVec<TH1F>(HPtl1,"HPtl1",100,0.,MaxPt);
-  InitHVec<TH1F>(HPtl2,"HPtl2",40,0.,100.);
+  InitHVec<TH1F>(HPtl2,"HPtl2",200,0.,500.);
   InitHVec<TH1F>(HPtl3,"HPtl3",100,0.,MaxPt);
   InitHVec<TH1F>(HElPt,"HElPt",100,0.,MaxPt);
   InitHVec<TH1F>(HMuPt,"HMuPt",100,0.,MaxPt);
@@ -1248,6 +1256,14 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HMetPt,nh,*MET_pt);
   FillH1(HWZPt,nh,(wb+zb).Pt());
   FillH1(HLt,nh,lt);
+
+  FillH1(HPtl1Lt,nh,lep1.Pt()/lt);
+  FillH1(HPtl2Lt,nh,lep2.Pt()/lt);
+  FillH1(HPtl3Lt,nh,lep3.Pt()/lt);
+  FillH1(HMetPtLt,nh,*MET_pt/lt);
+  FillH1(HPtl3Met,nh,*MET_pt/lep3.Pt());
+
+  FillH1(HCosl3Met,nh,TMath::Cos(lep3.Phi()-*MET_phi));
 
   // n Histos
   FillH1(HnEl,nh,(double)GoodElectron.size());
