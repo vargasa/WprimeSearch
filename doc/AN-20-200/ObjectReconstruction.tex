@@ -4,8 +4,8 @@
 
 Events with at least one primary vertex passing an OR combination
 of the HLTs shown on table \ref{tab:HLTDatasets}, and containing at least three
-leptons (number of muons and electrons) are selected provided that its
-missing energy $E_T^{Miss}$ is greater than $40~GeV$.
+preselected leptons (number of muons plus number of electrons) are selected
+provided that its missing energy $E_T^{Miss}$ is greater than $40~GeV$.
 
 In addition, the following flags are required for the event:
 
@@ -194,17 +194,30 @@ Electrons in this analysis are required to be within the ECAL fiducial
 region i.e $\abs{eta}<2.5$ excluding the transition region betwen the
 barrel and the endcaps $1.4442<\abs{eta}<1.5660$.
 
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=0.6\textwidth]{fig/LeptonIDStudies/ElectronIDPunzi.png}
+  \caption{Punzi significance for the different Electron's cut-based IDs for the
+    electron decay $Z\rightarrow e+e$. The cut-based loose ID shows high efficiency
+    specially at high masses where the distance in the $\eta-\phi$ plane is
+    expected to be small.}
+  \label{fig:PunziElectronIDs}
+\end{figure}
+
 Electron identification is based on a cut based ID as defined by the
 EGamma POG. Depending on the channel, this requirement
 may ask for \emph{loose} or \emph{tight} electrons, the former with an
 average efficiency of approximately 95\% and 70\% for
 the latter ~\cite{EGammaPOG_el}: channels portraying a $Z\rightarrow e+e$
-decay ($eee\nu$ and $ee\mu\nu$) require two loose electrons, while the
-electron corresponding to the $W\rightarrow e\nu$ is required to pass
+decay ($eee\nu$ and $ee\mu\nu$) require two loose
+electrons due to its high efficiency, specially at high resonant mass where
+the electrons are expected to be highly collimated (see Figure \ref{fig:PunziElectronIDs}).
+The electron corresponding to the $W\rightarrow e\nu$ decay is required to pass
 the cut-based tight ID.
 
 We reproduce the High Level Trigger transverse momentum requirements by
-applying a cut on the corresponding $p_T$ threshold on all the electrons:
+applying a cut on the corresponding $p_T$ threshold on all
+preselected electrons:
 2016 ($27~GeV$), 2017 ($35~GeV$), and 28 ($32~GeV$).
 
 \subsection{Muon Selection}
@@ -252,7 +265,7 @@ discarded in order to increase background rejection.
 \begin{figure}[tph]
   \centering
   \includegraphics[width=0.6\textwidth]{fig/PunziTest_Ip3DCut.pdf}
-  \caption{Punzi significance as a function of the mass resonce by implementing
+  \caption{Punzi significance as a function of the mass resonce prior to and after implementing
     the cut on the impact parameter in order to reduce the number of non-prompt
     muons}
   \label{fig:Punzi_Ip3DCut}
@@ -315,7 +328,7 @@ plane for the two leptons product of the decay of the Z is less than $1.5$.
 \subsection{W Candidate}
 
 The $W$ candidate is reconstructed from the remaining lepton and the missing energy
-$E_T^{miss}$. The ramining lepton is required to be either a cut based \emph{tight}
+of the event $E_T^{miss}$. The ramining lepton is required to be either a cut based \emph{tight}
 ID electron or a global High-Pt muon with a transverse momentum
 of at least $Pt>52~GeV$.
 
