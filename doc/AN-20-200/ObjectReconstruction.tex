@@ -287,16 +287,28 @@ The Punzi significance of the impact parameter requirement as a function
 of the WZ resonance mass is shown in figure \ref{fig:Punzi_Ip3DCut}. %%% expand %%%
 
 
-
 \begin{figure}[tph]
   \centering
-  \includegraphics[width=\textwidth]{fig/Run2/Rebining_HFakeString_SR1_A_RuRun2_M600.pdf}
-  \caption{Lepton categories after the 3D impact parameter has been tightened}
-  \label{fig:HFakeString_AfterIp3DCut}
+  \subfigure[Lepton origin classification prior to constraining the impact parameter]
+            {\includegraphics[width=.8\textwidth]{fig/Run2/NoIp3DCut_HFakeString_SR1_A_RuRun2_M600.pdf}}
+  \vfil
+  \subfigure[Lepton origin classification after constraining the impact parameter $ip3D<0.01~cm$]
+            {\includegraphics[width=.8\textwidth]{fig/Run2/Rebining_HFakeString_SR1_A_RuRun2_M600.pdf}}
+  \caption{Lepton origin classification according to simulation prior and after applying
+    an impact parameter requirement $ip3D<0.01~cm$. Each lepton is considered individually
+    when filling the histogram. The main contribution to non-prompt leptons come
+    from Muons in Drell-Yan and $t\bar{t}$ events.
+  }
+  \label{fig:hltSignalEfficiency}
 \end{figure}
 
 
-
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=\textwidth]{}
+  \caption{Lepton categories after the 3D impact parameter has been tightened}
+  \label{fig:HFakeString_AfterIp3DCut}
+\end{figure}
 
 
 
