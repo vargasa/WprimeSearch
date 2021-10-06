@@ -603,6 +603,30 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HPResidual_D","0.9<|eta|<1.2 2Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
     { "HPResidual_E","|eta|>1.2 1 Trk + 1Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
     { "HPResidual_F","|eta|>1.2 2Glb;(1/p-1/p^{gen})/(1/p^{gen});Event count" },
+    { "HPtl1Lt_A","eee#nu;P_{t}^{l1}/P_{t}^{lep};Event count" },
+    { "HPtl1Lt_B","ee#mu#nu;P_{t}^{l1}/P_{t}^{lep};Event count" },
+    { "HPtl1Lt_C","#mu#mue#nu;P_{t}^{l1}/P_{t}^{lep};Event count" },
+    { "HPtl1Lt_D","#mu#mu#mu#nu;P_{t}^{l1}/P_{t}^{lep};Event count" },
+    { "HPtl2Lt_A","eee#nu;P_{t}^{l2}/P_{t}^{lep};Event count" },
+    { "HPtl2Lt_B","ee#mu#nu;P_{t}^{l2}/P_{t}^{lep};Event count" },
+    { "HPtl2Lt_C","#mu#mue#nu;P_{t}^{l2}/P_{t}^{lep};Event count" },
+    { "HPtl2Lt_D","#mu#mu#mu#nu;P_{t}^{l2}/P_{t}^{lep};Event count" },
+    { "HPtl3Lt_A","eee#nu;P_{t}^{l3}/P_{t}^{lep};Event count" },
+    { "HPtl3Lt_B","ee#mu#nu;P_{t}^{l3}/P_{t}^{lep};Event count" },
+    { "HPtl3Lt_C","#mu#mue#nu;P_{t}^{l3}/P_{t}^{lep};Event count" },
+    { "HPtl3Lt_D","#mu#mu#mu#nu;P_{t}^{l3}/P_{t}^{lep};Event count" },
+    { "HMetPtLt_A","eee#nu;P_{t}^{MET}/P_{t}^{lep};Event count" },
+    { "HMetPtLt_B","ee#mu#nu;P_{t}^{MET}/P_{t}^{lep};Event count" },
+    { "HMetPtLt_C","#mu#mue#nu;P_{t}^{MET}/P_{t}^{lep};Event count" },
+    { "HMetPtLt_D","#mu#mu#mu#nu;P_{t}^{MET}/P_{t}^{lep};Event count" },
+    { "HPtl3Met_A","eee#nu;P_{t}^{MET}/P_{t}^{l3};Event count" },
+    { "HPtl3Met_B","ee#mu#nu;P_{t}^{MET}/P_{t}^{l3};Event count" },
+    { "HPtl3Met_C","#mu#mue#nu;P_{t}^{MET}/P_{t}^{l3};Event count" },
+    { "HPtl3Met_D","#mu#mu#mu#nu;P_{t}^{MET}/P_{t}^{l3};Event count" },
+    { "HCosl3Met_A","eee#nu;cos(#phi_{l3}-#phi_{MET});Event count" },
+    { "HCosl3Met_B","ee#mu#nu;cos(#phi_{l3}-#phi_{MET});Event count" },
+    { "HCosl3Met_C","#mu#mue#nu;cos(#phi_{l3}-#phi_{MET});Event count" },
+    { "HCosl3Met_D","#mu#mu#mu#nu;cos(#phi_{l3}-#phi_{MET});Event count" },
   };
 
   std::vector<std::string> HistNames = {
@@ -1552,7 +1576,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       int year = std::stoi(hName.substr(0,4));
       if (year == 0) includeAllYears = true;
       hName = hName.substr(5,hName.size());
-      hName += "_Central"; // Include Central SF and genWeight 
+      if(hName.find("HFakeString") == std::string::npos)
+        hName += "_Central"; // Include Central SF and genWeight 
       SignalInfo signal;
       if (!includeAllYears) signal = SignalSamples[year][SignalPos[WpMass]];
       Int_t r = (j-1)%npads;
@@ -1607,7 +1632,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       if(!includeAllYears){
         hs = getBGStack(year,hName,legend);
       } else {
-        THStack* hsRun2 = new THStack("hsRun2","");
+        THStack* hsRun2 = new THStack(Form("hsRun2_%s",hName.c_str()),"");
         std::unordered_map<int/*color*/,std::vector<TH1*>> samples;
         for(auto yr_: Run2Years){
           THStack *hs_ = getBGStack(yr_, hName);
@@ -1765,8 +1790,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     // "HRelIsol1",
     // "HRelIsol2",
     // "HRelIsol3",
-    "HPtl1","HPtl2","HPtl3","HMetPt",
-    "HMassZ", "HMassWZ",//,"HMassTW"
+    //"HPtl1","HPtl2","HPtl3",
+    //"HMetPt",
+    //"HMassZ",
+    //"HMassWZ",
+    "HPtl1Lt","HPtl2Lt","HPtl3Lt","HMetPtLt","HCosl3Met"
   };
 
   for(auto h : hints){
