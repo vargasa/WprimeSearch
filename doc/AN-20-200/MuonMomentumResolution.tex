@@ -6,7 +6,8 @@ sagita ($s \propto 1/Pt$) which is associated with the number of hits found on
 the Tracker and the Muon subsystems. As the number of hits is lower on the so called
 tracker muons, i.e muons that were reconstructed from hits in the tracker and the
 first station of the muon sistem, a study is needed to determine
-the resolution of this Pt measurement for tracker-HighPt ID muons.
+the resolution of this Pt measurement for \verb|trackerHighPt| ID muons.
+
 
 From MC simulations it is possible to access the true momenta of the muons and
 a comparison with the reconstructed momentum can be given in terms of the
@@ -17,14 +18,71 @@ residual momentum:
 \end{equation}
 
 The resolution can be extracted by fitting the event profile with a
-Double-Sided Crystal Ball distribution wich consists of three diferent regions:
+Double-Sided Crystal Ball (DSCB) distribution which consists of three diferent regions:
 a gaussian center described by a mean $\mu$ and standard deviation $\sigma$ with two
 exponential tails modelling the effects of radiative processes in the detector.
-The two tails are controlled by four parameters, $n_L$ and $\alpha_L$ for the
-left tail and $n_R$ and $\alpha_R$ for the right tail. $\alpha$ describes how
+The two tails are controlled by four parameters, $n_{L}$ and $\alpha_{L}$ for the
+left tail and $n_{R}$ and $\alpha_{R}$ for the right tail. $\alpha$ describes how
 far away (as a factor of $sigma$) from the gaussian mean the exponential decay
 intersects the guassian core, while $n$ controls the growth (decay) of the
 left (right) exponential tail.
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/2016_HPResB_G_.pdf}
+  \caption{Residual momentum for different transverse momentum bins
+    or \texttt{globalHighPt} muons in the muon barrel $(0.0<\eta<1.2)$.
+    The double-sided crystal ball fit is shown with a blue solid line,
+    the number of events as counted from MC samples are shown in black markers.
+    The width $(\sigma)$ of the gaussian portion of the distribution is
+    shown on the bottom label, it shows evidence of how the resolution
+    increases as the momentum range gets higher.}
+  \label{fig:MomentumResolutionBins_Barrel_Global}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/2016_HPResB_T_.pdf}
+  \caption{Residual momentum for different transverse momentum bins
+    for \texttt{trackerHighPt} muons in the muon barrel $(0.0<\eta<1.2)$.
+    The double-sided crystal ball fit is shown with a blue solid line,
+    the width $(\sigma)$ of the gaussian portion of the distribution is
+    shown on the bottom label.}
+  \label{fig:MomentumResolutionBins_Barrel_Tracker}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/2016_HPResE_G_.pdf}
+  \caption{Residual momentum for different transverse momentum bins
+    or \texttt{globalHighPt} muons in the muon endcap $(1.2<\eta<2.4)$.
+    The double-sided crystal ball fit is shown with a blue solid line,
+    the number of events as counted from MC samples are shown in black markers.
+    The width $(\sigma)$ of the gaussian portion of the distribution is
+    shown on the bottom label.}
+  \label{fig:MomentumResolutionBins_Endcap_Global}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/2016_HPResE_T_.pdf}
+  \caption{Residual momentum for different transverse momentum bins
+    for \texttt{trackerHighPt} muons in the muon endcap $(1.2<\eta<2.4)$.
+    The double-sided crystal ball fit is shown with a blue solid line,
+    the width $(\sigma)$ of the gaussian portion of the distribution is
+    shown on the bottom label.}
+  \label{fig:MomentumResolutionBins_Endcap_Tracker}
+\end{figure}
+
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/ResolutionMeasurement.pdf}
+  \caption{Momentum resolution for Run II. A second degree polynomial shown in
+    colored solid lines is used to fit the momentum resolution as a function of
+    the reconstructed momentum.}
+  \label{fig:ResolutionMeasurement}
+\end{figure}
 
 
 \begin{sidewaystable}[htb]
@@ -75,7 +133,7 @@ Year & Sample & XSec [pb] \\ \hline
 
 These studies were performed by simulating the standard model Z boson production
 decaying to a pair of Muons ($Z\rightarrow\mu\mu$) the complete list of samples is
-provided on table \ref{tab:MomentumResolutionSamples}
+provided on table \ref{tab:MomentumResolutionSamples}.
 Z-Mass binned samples were used in order to increase the number of available
 statistics in a wide range of transverse momentum, specially on the High-Pt sector.
 
@@ -86,42 +144,31 @@ statistics in a wide range of transverse momentum, specially on the High-Pt sect
   \label{fig:MomentumResolutionBins}
 \end{figure}
 
+
 A counting experiment following the trigger and muon selection described on
 section %\ref{}%
-collects the momentum resolution for each indivual Muon which is then classified
-on different bins depending on its ID, either global or tracker High-Pt; the $\eta$
+collects the momentum resolution for each indivual muon which is then classified
+in different bins depending on their ID, either global or tracker High-Pt; the $\eta$
 region in the Muon detector, i.e the barrel ($\lvert eta\lvert< 1.2$) or
 the endcap ($1.2 < \lvert eta \lvert < 2.4$); and its transverse momentum range
 (see figure \ref{fig:MomentumResolutionBins}).
 
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=.7\textwidth]{fig/MomentumResolution/DSCB_Example.png}
-  \caption{
-    The Double-Sided Crystall Ball fit is shown as the blue solid line,
-    the number of events as counted from MC samples are shown in black markers for
-    the momentum resolution. The example shows the 2016 samples for muons labeled
-    as globalHigh-Pt, seen in the barrel of the muon system. Different momentum
-    ranges are shown, the
-    top-left figure shows muons with momentum in the range $[52:72]~GeV$,
-    the top-right figure $[72:100]~GeV$, bottom-left $[300:450]~GeV$,
-    bottom-right $[450:800]~GeV$. The value for the width $\sigma$ for the DSCB
-    distribution is shown on the horizontal axis and it shows evidence of how
-    the resolution increases as the momentum range gets higher.
-  }
-  \label{fig:DSCB_Fit_Example}
-\end{figure}
-
-The distribution is then fitted by using a Double-Sided Crystall Ball (DSCB)
-(\verb|RooCrystalBall| in \verb|RooFit|) which is a distribution defined
-by parts, with a range-limited gaussian form around its mean with two
-exponential tails which help model the nature of radiative processes occurring in
-the detector. The width of the gaussian portion of the DSCB provides the
+A fit is performed on the distribution by using a Double-Sided Crystall Ball (DSCB)
+(\verb|RooCrystalBall| in \verb|RooFit|)
+The width of the gaussian portion of the DSCB provides the
 resolution (as a percentage) while the mean accounts for any bias present on the
-momentum measurements. An example of the fit is shown in \ref{fig:DSCB_Fit_Example}
+momentum measurements. Distributions with their fits are shown for \verb|globalHighPt|
+within the muon barrel on figure \ref{fig:MomentumResolutionBins_Barrel_Global}, the muon
+endcap on figure \ref{fig:MomentumResolutionBins_Endcap_Global};
+and \verb|trackerHighPt| muons on the barrel
+(figure \ref{fig:MomentumResolutionBins_Barrel_Tracker})
+and the endcap (figure \ref{fig:MomentumResolutionBins_Endcap_Tracker}).
+The results from the fits are shown in figure \ref{fig:ResolutionMeasurement}.
 
-% Events with low statistics in bins are discarded
+As shown by figures \ref{fig:MomentumResolutionBins_Barrel_Global} and
+\ref{fig:MomentumResolutionBins_Barrel_Tracker} the amount of statistics
+available for \verb|globalHighPt| muons is greater than for
+\verb|trackerHighPt| muons. 
 
 \subsection{Z-Mass Resolution}
 
@@ -144,12 +191,44 @@ Year & Sample & XSec [pb] \\ \hline
 \end{center}
 \end{sidewaystable}
 
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/2016_ZPeakResoultion_G_Fits_MC.pdf}
+  \caption{Dimuon mass resolution for different transverse momentum bins from MC
+    simulation for \texttt{globalHighPt} muons. The Breit-Wigner convoluted with the
+    double-sided crystal ball fit is shown in solid yellow line and parameters
+    of the fit are shown on the bottom of each plot.}
+  \label{fig:ZMassResolution_MC_Global}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/2016_ZPeakResolution_G_Fits_Data.pdf}
+  \caption{Dimuon mass resolution for different transverse momentum bins from 2016
+    Data for \texttt{globalHighPt} muons. The Breit-Wigner convoluted with the
+    double-sided crystal ball fit is shown in solid yellow line and parameters
+    of the fit are shown on the bottom of each plot.}
+  \label{fig:ZMassResolution_Data_Global}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=.9\textwidth]{fig/MomentumResolution/2016_ZPeakResolution_Summary.pdf}
+  \caption{Mass resolution at Z peak as a function of the leading muon's transverse
+    momentum for the \texttt|global| and \texttt|trackerHighPt| found in the barrel and endcaps
+    on the muon systems}
+  \label{fig:ZMassResolution_Summary}
+\end{figure}
+
 The dimuon mass can be used to validate simulation in data, where the true momentum
 of the muon is unknown. For this, a Data/MC comparisson is done over the
 distributions for the reconstructed dimuon mass. The distributions are built
 from the reconstructed mass as a function of the muon transverse momentum and
 obtained for each individual muon. The mass resolution distribution is then fitted with
-a Breit-Weigner convolution of the Double-Sided crystal ball, from this fit the
+a Breit-Wigner convolution of the Double-Sided crystal ball, from this fit the
 standard deviation of the gaussian portion of the DSCB equates the dimuon
-mass resolution.
+mass resolution. Fits for data and montecarlo simulation are shown in figures
+\ref{fig:ZMassResolution_Data_Global} and \ref{fig:ZMassResolution_MC_Global}
+with the results from the fits and the Data/MC comparison is shown on figure
+\ref{fig:ZMassResolution_Summary}.
 
