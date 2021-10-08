@@ -428,6 +428,8 @@ xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018D/EGamma/MINIAOD/12Nov2019
 xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018D/SingleMuon/MINIAOD/12Nov2019_UL2018-v8/270001/F9F6EB22-345F-9C49-88BF-3D9B7F442CDD.root ./C_321295_553_873839127.root
 # 0001     Run: 320024     Event: 355149645        Lumiblock: 211  mll: 91.4401
 xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018C/SingleMuon/MINIAOD/12Nov2019_UL2018-v3/110000/ECDCC359-CB8D-6A44-97EC-2A04895DF1F3.root ./D_320024_211_355149645.root
+# 0010     Run: 323790     Event: 646065569        Lumiblock: 376  mll: 91.6585
+xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018D/SingleMuon/MINIAOD/12Nov2019_UL2018-v8/270002/136E0085-023C-B34F-8501-1805588399B0.root ./C_323790_376_646065569.root
 ```
 
 ### References:
