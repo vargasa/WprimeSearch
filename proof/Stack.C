@@ -421,22 +421,22 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HDistl1l2_B","dR ee#mu#nu;dR(e_{1},e_{2}) (cm);Event count"},
     { "HDistl1l2_C","dR #mu#mue#nu;dR(#mu_{1},#mu_{2}) (cm);Event count"},
     { "HDistl1l2_D","dR #mu#mue#nu;dR(#mu_{1},#mu_{2}) (cm);Event count"},
-    { "HDistl1l2_+ABCD","dR(l_{1},l_{2}) lll#nu;dR (cm);Event count"},
-    { "HDistl1l3_A","dR(e_{1},e_{3}) eee#nu;dR (cm);Event count"},
-    { "HDistl1l3_B","dR(e_{1},e_{3}) ee#mu#nu;dR (cm);Event count"},
-    { "HDistl1l3_C","dR(#mu_{1},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
-    { "HDistl1l3_D","dR(#mu_{1},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
-    { "HDistl1l3_+ABCD","dR(l_{1},l_{3}) lll#nu;dR (cm);Event count"},
-    { "HDistl2l3_A","dR(e_{2},e_{3}) eee#nu;dR (cm);Event count"},
-    { "HDistl2l3_B","dR(e_{2},e_{3}) ee#mu#nu;dR (cm);Event count"},
-    { "HDistl2l3_C","dR(#mu_{2},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
-    { "HDistl2l3_D","dR(#mu_{2},#mu_{3}) #mu#mue#nu;dR (cm);Event count"},
-    { "HDistl2l3_+ABCD","dR(l_{2},l_{3}) lll#nu;dR (cm);Event count"},
-    { "HWZDist_A","dr(W,Z) eee#nu;dR (cm);Event count"},
-    { "HWZDist_B","dr(W,Z) ee#mu#nu;dR (cm);Event count"},
-    { "HWZDist_C","dr(W,Z) ee#mu#nu;dR (cm);Event count"},
-    { "HWZDist_D","dr(W,Z) #mu#mu#mu#nu;dR (cm);Event count"},
-    { "HWZDist_+ABCD","dR(W,Z) lll#nu;dR (cm);Event count"},
+    { "HDistl1l2_+ABCD","dR(l_{1},l_{2}) lll#nu;dR;Event count"},
+    { "HDistl1l3_A","dR(e_{1},e_{3}) eee#nu;dR;Event count"},
+    { "HDistl1l3_B","dR(e_{1},e_{3}) ee#mu#nu;dR;Event count"},
+    { "HDistl1l3_C","dR(#mu_{1},#mu_{3}) #mu#mue#nu;dR;Event count"},
+    { "HDistl1l3_D","dR(#mu_{1},#mu_{3}) #mu#mue#nu;dR;Event count"},
+    { "HDistl1l3_+ABCD","dR(l_{1},l_{3}) lll#nu;dR;Event count"},
+    { "HDistl2l3_A","dR(e_{2},e_{3}) eee#nu;dR;Event count"},
+    { "HDistl2l3_B","dR(e_{2},e_{3}) ee#mu#nu;dR;Event count"},
+    { "HDistl2l3_C","dR(#mu_{2},#mu_{3}) #mu#mue#nu;dR;Event count"},
+    { "HDistl2l3_D","dR(#mu_{2},#mu_{3}) #mu#mue#nu;dR;Event count"},
+    { "HDistl2l3_+ABCD","dR(l_{2},l_{3}) lll#nu;dR;Event count"},
+    { "HWZDist_A","dr(W,Z) eee#nu;dR;Event count"},
+    { "HWZDist_B","dr(W,Z) ee#mu#nu;dR;Event count"},
+    { "HWZDist_C","dr(W,Z) ee#mu#nu;dR;Event count"},
+    { "HWZDist_D","dr(W,Z) #mu#mu#mu#nu;dR;Event count"},
+    { "HWZDist_+ABCD","dR(W,Z) lll#nu;dR;Event count"},
     { "HPtZMWZ_A","eee#nu;P_{t}^{Z}/M_{WZ};Event count"},
     { "HPtZMWZ_B","ee#mu#nu;P_{t}^{Z}/M_{WZ};Event count"},
     { "HPtZMWZ_C","#mu#mue#nu;P_{t}^{Z}/M_{WZ};Event count"},
@@ -1037,20 +1037,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TList* lst = hss->GetHists();
     TIter next(lst);
 
-    int prevColor = -1;
     std::string prevLabel = "NULL";
-    double integral = -1;
+
     while(auto h = static_cast<TH1*>(next())){
-      if(prevColor == h->GetFillColor()){
-        integral += h->Integral();
-      } else {
-        if(integral != -1) {
-          table[prevLabel] = integral;
-        }
-        integral = h->Integral();
-      }
-      prevLabel = h->GetTitle();
-      prevColor = h->GetFillColor();
+      table[std::string(h->GetTitle())] += h->Integral();
     }
 
     table["Data"] = hdata->Integral();
