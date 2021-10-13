@@ -38,30 +38,110 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     {2018, "SingleMuonEGamma"}
   };
 
+  // std::unordered_map<int, std::string> DataSampleNames = {
+  //   {2016, "ULSinglePhotonULSingleElectronULSingleMuon"},
+  //   {2017, "SinglePhotonSingleElectronSingleMuon"},
+  //   {2018, "SingleMuonEGamma"}
+  // };
+
+
   // ShortName, DasName, kColor, Style, XSection
   std::unordered_map<int, std::vector<BackgroundInfo>> BgNamesUL =
     {
       {
         2016,
         {
-
-          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",kOrange+7,6.637e+03},
-          BackgroundInfo{"WZ","WZ_TuneCP5_13TeV-pythia8",kOrange,2.750e+01},
-          BackgroundInfo{"WWZ","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",15,1.707e-01},
-          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
-          BackgroundInfo{"ST","ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,7.174e+01},
-          BackgroundInfo{"ST","ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,1.197e+02},
-          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue+3,7.592e+02},
-          BackgroundInfo{"TT","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kBlue+3,6.871e+02},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,},
+          BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,},
+          BackgroundInfo{"TTV","TTZToLL*",kCyan+1,}, /*XSecAnayzer 0.*/
+          BackgroundInfo{"TTV","ttZJets*",kCyan+1,}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
         }
       },
       {
         2017,
         {
-          BackgroundInfo{"WZ","WZ_TuneCP5_13TeV-pythia8",kOrange,2.750e+01},
-          BackgroundInfo{"WWZ","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",15,1.707e-01},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,},
+          BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,},
+          // BackgroundInfo{"TTV","TTZToLL*",kCyan+1,},
+          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5CR2_13TeV-powheg-madspin-pythia8",kGreen+3,},
+          // BackgroundInfo{"ST","ST_t-channel_top",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
+        },
+        2018,
+        {
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,},
+          BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,},
+          //BackgroundInfo{"TTV","TTZToLL_M-1to10*",kCyan+1,},
+          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
         }
-      }
     };
 
   // ShortName, DasName, kColor, Style, XSection
