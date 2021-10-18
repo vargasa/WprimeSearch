@@ -1,0 +1,90 @@
+\section{Corrections on MC}
+
+\subsection{Luminosity Scale factors}
+
+The number of generated MC events listed on tables \ref{tab:BkgList2016}, \ref{tab:BkgList2017},
+and \ref{tab:BkgList2018} are arbitrary. In order to compare it with data, the
+former has to be rescaled to account for the amount of data collected each year
+during the data taking period. The luminosity scale factor is computed as follows:
+
+\begin{equation}
+  L_{sf}=\frac{L_{\rm data}}{L_{\rm MC}} = \frac{L_{\rm data}\times\sigma_{\rm MC}}{n_{\rm MC}},
+\label{eq:lumiSF}
+\end{equation}
+
+Where $L_{\rm data}$ is the luminosity per year, see table \ref{tab:LuminosityPerYear},
+$n_{MC}$ the number of generated MC events as provided by the sum of weighted events
+from the generator (\verb|genWeight| branch on \verb|NanoAOD|), and $\sigma_{\rm MC}$
+is the cross section of the MC samples as provided by \verb|XSecAnalyzer|.
+
+\subsection{Pileup Reweighting}
+
+\begin{figure}[tph]
+  \centering
+        \subfigure[Standard model WZ production normalized pileup distributions for Run 2 years]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/MC_Pileup_Linear.pdf}}
+        \subfigure[Pileup profile from Run 2 Data, Linear Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_Linear.pdf}}
+        \vfil
+        \subfigure[Pileup profile from Run 2 Data, Logarithmic Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_LogScale.pdf}}
+        \subfigure[Pileup weight profiles for several background samples]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/PileupWeight_LogScale.pdf}}
+  \caption{Pileup profile distributions for MC and Data}
+  \label{fig:RunII_PileupProfiles}
+\end{figure}
+
+The number of reconstructed primary vertices in each collision during a period
+of time generates a distribution commonly referred as pileup. Montecarlo simulations
+are produced with an estimated pileup profile and a correction is needed
+in order to match the distributions obtained in the collected data. 
+MC Samples are reweighted with $69.2~mb$ as MinBias cross section.
+Figure \ref{fig:RunII_PileupProfiles} shows the differences between the
+pileup distributions for run 2 data and montecarlo
+simulations for the predominant background process (standard model
+WZ production). These differences are then
+corrected by computing a pileup weight bin by bin that matches the normalized
+distribution from montecarlo with the normalized distribution from data.
+The normalization of each distribution is eachieved by scaling it by a factor
+equivalent to the the inverse of its integral. Each MC event is then reweighted
+with the appropiate factor based on the number of reconstructed primary vertices. 
+
+\subsection{Lepton scale factors}
+
+\begin{figure}[tph]
+  \centering
+  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_LooseID.pdf}}
+  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_TightID.pdf}}
+  \vfil
+  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_GlobalHighPtID.pdf}}
+  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_TrkHighPtID.pdf}}
+  \caption{Lepton ID Scale Factors 2016}
+  \label{fig:leptonidsf_2016}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_LooseID.pdf}}
+  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_TightID.pdf}}
+  \vfil
+  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_GlobalHighPtID.pdf}}
+  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_TrkHighPtID.pdf}}
+  \caption{Lepton ID Scale Factors 2017}
+  \label{fig:leptonidsf_2017}
+\end{figure}
+
+\begin{figure}[tph]
+  \centering
+  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_LooseID.pdf}}
+  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_TightID.pdf}}
+  \vfil
+  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_GlobalHighPtID.pdf}}
+  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_TrkHighPtID.pdf}}
+  \caption{Lepton ID Scale Factors 2018}
+  \label{fig:leptonidsf_2018}
+\end{figure}
+
+Trigger and lepton identification efficiencies are different between data
+and montecarlo. Scale factors are provided centrally by the Muon and EGamma POG
+and show an $\eta-P_{t}$ dependence, see Figures \ref{fig:leptonidsf_2016},
+\ref{fig:leptonidsf_2017}, and \ref{fig:leptonidsf_2018}. Trigger and
+identification systematics are evaluated by moving up and down the scale factors
+by their uncertainties. These uncertainties are considered flat, independent
+of the resonance mass, and uncorrelated in terms of lepton flavour.
+
