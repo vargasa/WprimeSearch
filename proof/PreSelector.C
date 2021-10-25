@@ -249,6 +249,16 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
   idst.emplace_back("CR1_C_Central");
   idst.emplace_back("CR1_D_Central");
 
+  idst.emplace_back("CR2_A");
+  idst.emplace_back("CR2_B");
+  idst.emplace_back("CR2_C");
+  idst.emplace_back("CR2_D");
+
+  idst.emplace_back("CR2_A_Central");
+  idst.emplace_back("CR2_B_Central");
+  idst.emplace_back("CR2_C_Central");
+  idst.emplace_back("CR2_D_Central");
+
 
   for(const auto id: idst){
     vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
@@ -1770,7 +1780,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
   Bool_t IsZMassOk = (PairZMass > MinZMass) && (PairZMass < MaxZMass);
   if(!IsZMassOk){
     HCutFlow->FillS("FailZMassWindow");
-    return kFALSE;
   }
 
   l1 = (*zt).Pair.first;
@@ -1855,16 +1864,24 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist < 1.5;
-  if(ZDistCut){
-    HCutFlow->FillS("SR1");
-    FillRegion(0,Els,Mus); // 1st SR
+  if(IsZMassOk){
+    if(ZDistCut){
+      HCutFlow->FillS("SR1");
+      FillRegion(0,Els,Mus); // 1st SR
 #ifdef CMSDATA
-    printEventInfo();
+      printEventInfo();
 #endif
+    } else {
+      HCutFlow->FillS("CR1");
+      FillRegion(8,Els,Mus); // 8 -> CR1 Slot
+    }
   } else {
-    HCutFlow->FillS("CR1");
-    FillRegion(8,Els,Mus); // 8 -> CR1 Slot
+    HCutFlow->FillS("CR2");
+    FillRegion(16,Els,Mus);
   }
+
+
+
 
   return kTRUE;
 }
