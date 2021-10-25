@@ -80,7 +80,7 @@ Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) c
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-  ReadEntry(entry);
+  if(!ReadEntry(entry)) return kFALSE;
 
   hlog->FillS("Total");
 
