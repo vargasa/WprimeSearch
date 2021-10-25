@@ -213,6 +213,30 @@ for i in $FILES
 do
  root -l -b -q "Selector.C(\"$i\", 4)";
 done
+
+#### UL Samples
+
+echo "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
+FILES=files/mc/2016/UL/*.txt #Loop over set of the list files
+for i in $FILES
+do
+ root -l -b -q "Selector.C(\"$i\", 4)";
+done
+
+echo "#define Y2017" > IsData.h # Make sure CMSDATA is undefined
+FILES=files/mc/2017/UL/*.txt #Loop over set of the list files
+for i in $FILES
+do
+ root -l -b -q "Selector.C(\"$i\", 4)";
+done
+
+echo "#define Y2018" > IsData.h # Make sure CMSDATA is undefined
+FILES=files/mc/2018/UL/*.txt #Loop over set of the list files
+for i in $FILES
+do
+ root -l -b -q "Selector.C(\"$i\", 4)";
+done
+
 ```
 
 ### Setup for Data
@@ -303,6 +327,11 @@ for i in 600 800 1000 1200 \
 do
   combineCards.py Y16="datacards/2016_"$i"_DataCard.txt" Y17="datacards/2017_"$i"_DataCard.txt" Y18="datacards/2018_"$i"_DataCard.txt">"datacards/RunII_"$i"_Datacard.txt"
   combine  -m 125 -n "."$i -M AsymptoticLimits -d "datacards/RunII_"$i"_Datacard.txt"
+  text2workspace.py "datacards/RunII_"$i"_Datacard.txt"
+  combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i --doInitialFit --robustFit 1
+  combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i --robustFit 1 --doFits --parallel 4
+  combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i -o "impacts_"$i".json"
+  plotImpacts.py -i "impacts_"$i".json" -o "ImpactsPlot"$i".json"
 done
 ```
 

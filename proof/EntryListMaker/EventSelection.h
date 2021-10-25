@@ -75,6 +75,8 @@ class EventSelection : public TSelector{
   Bool_t ElectronHLTs{};
   Bool_t MuonHLTs{};
   Bool_t Flags{};
+  Bool_t FailMuonHLTs{};
+  Bool_t FailElectronHLTs{};
 
  public:
 
@@ -85,7 +87,7 @@ class EventSelection : public TSelector{
   Bool_t MuonTest() const { return MuonHLTs; };
   Bool_t FlagsTest() const { return Flags; };
   Bool_t MinLeptonsTest() const { return MinLeptons; };
-  void ReadEntry(const Long64_t& entry);
+  Bool_t ReadEntry(const Long64_t& entry);
   Bool_t Notify();
 };
 
@@ -133,6 +135,34 @@ void EventSelection::Init(TTree *tree)
   //
 #endif
 
+  if(IsMissingBranch){
+
+    /* This is the last resort HLT: HLT_Mu50 */
+    TBranch *b = tree->FindBranch(HLT_Mu50.GetBranchName());
+
+    if (b == nullptr) {
+      FailMuonHLTs = true;
+    }
+
+    std::vector<std::string> ElectronHLTs = {
+#if defined(Y2016)
+      "HLT_Ele27_WPTight_Gsf","HLT_Photon175"
+#elif defined(Y2017)
+      "HLT_Ele32_WPTight_Gsf","HLT_Photon200"
+#elif defined(Y2018)
+      "HLT_Ele32_WPTight_Gsf","HLT_Photon200"
+#endif
+    };
+
+    for (auto path: ElectronHLTs) {
+      b = tree->FindBranch(path.c_str());
+      if (b == nullptr) {
+        FailElectronHLTs = true;
+      }
+    }
+
+  }
+
   fReader.SetTree(tree);
 
 }
@@ -154,9 +184,13 @@ const char* EventSelection::MakeBranchList(const char *bname){
   return bname;
 };
 
-void EventSelection::ReadEntry(const Long64_t& entry){
+Bool_t EventSelection::ReadEntry(const Long64_t& entry){
 
   fReader.SetEntry(entry);
+
+  if (FailMuonHLTs and FailElectronHLTs) return kFALSE;
+  if (FailMuonHLTs and (*nElectron < 3)) return kFALSE;
+  if (FailElectronHLTs and (*nMuon < 3)) return kFALSE;
 
   MinLeptons = (*nElectron + *nMuon) > 2;
 
@@ -185,6 +219,8 @@ void EventSelection::ReadEntry(const Long64_t& entry){
     and *Flag_ecalBadCalibFilterV2
     and *PV_npvsGood > 0;
 #endif
+
+  return kTRUE;
 
 }
 #endif
