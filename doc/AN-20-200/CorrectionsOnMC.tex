@@ -33,8 +33,8 @@ is the cross section of the MC samples as provided by \verb|XSecAnalyzer|.
 The number of reconstructed primary vertices in each collision during a period
 of time generates a distribution commonly referred as pileup. Montecarlo simulations
 are produced with an estimated pileup profile and a correction is needed
-in order to match the distributions obtained in the collected data. 
-MC Samples are reweighted with $69.2~mb$ as MinBias cross section.
+in order to match the distributions obtained in the collected data.
+MC Samples are reweighted with $69.2~mb$ as MinBias cross section \ref{bib:pureweight}.
 Figure \ref{fig:RunII_PileupProfiles} shows the differences between the
 pileup distributions for run 2 data and montecarlo
 simulations for the predominant background process (standard model
@@ -49,33 +49,88 @@ with the appropiate factor based on the number of reconstructed primary vertices
 
 \begin{figure}[tph]
   \centering
-  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_LooseID.pdf}}
-  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_TightID.pdf}}
+  \subfigure[Electron Loose ID. Applied to the $eee$ and $ee\mu$ channels
+    based on the pseudorapidity $\eta$ and transverse momentum $P_{t}$ of each
+    of the electrons used to define a $Z$ candidate in the event.
+    The applied weight is the product of the scale factors of each individual electron.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2016Electron_LooseID.pdf}}
+  \hspace{5mm}
+  \subfigure[Electron Tight ID. Applied to the $eee$ and $\mu\mu e$ channels
+    based on the pseudorapidity $\eta$ and transverse momentum $P_{t}$ of the
+    electron used to define the $W$ candidate.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2016Electron_TightID.pdf}}
   \vfil
-  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_GlobalHighPtID.pdf}}
-  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_TrkHighPtID.pdf}}
+  \subfigure[Muon GlobalHighPtId. Applied to the $\mu\mu e$, $ee\mu$,
+    and $\mu\mu\mu$ channels based on the pseudorapidity $\eta$ and transverse
+    momentum $P_{t}$ of each of the muons used to define a $WZ$ candidate in the event
+    identified as GlobalHighPt.
+    The applied weight is the product of the scale factors of each individual muon.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2016Muon_GlobalHighPtID.pdf}}
+  \hspace{5mm}
+  \subfigure[Muon TrkHighPtId. Applied to the $\mu\mu e$ and $ee\mu$,
+     and $\mu\mu\mu$ channels based on the pseudorapidity $\eta$ and transverse
+     momentum $P_{t}$ of each of the muons used to define a $WZ$ candidate in the event
+     identified as TrackerHighPt.
+     The applied weight is the product of the scale factors of each individual muon.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2016Muon_TrkHighPtID.pdf}}
   \caption{Lepton ID Scale Factors 2016}
   \label{fig:leptonidsf_2016}
 \end{figure}
 
 \begin{figure}[tph]
   \centering
-  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_LooseID.pdf}}
-  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_TightID.pdf}}
+  \subfigure[Electron Loose ID. Applied to the $eee$ and $ee\mu$ channels
+    based on the pseudorapidity $\eta$ and transverse momentum $P_{t}$ of each
+    of the electrons used to define a $Z$ candidate in the event.
+    The applied weight is the product of the scale factors of each individual electron.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2017Electron_LooseID.pdf}}
+  \hspace{5mm}
+  \subfigure[Electron Tight ID. Applied to the $eee$ and $\mu\mu e$ channels
+    based on the pseudorapidity $\eta$ and transverse momentum $P_{t}$ of the
+    electron used to define the $W$ candidate.]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2017Electron_TightID.pdf}}
   \vfil
-  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_GlobalHighPtID.pdf}}
-  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_TrkHighPtID.pdf}}
+  \subfigure[Muon GlobalHighPtId. Applied to the $\mu\mu e$, $ee\mu$,
+    and $\mu\mu\mu$ channels based on the pseudorapidity $\eta$ and transverse
+    momentum $P_{t}$ of each of the muons used to define a $WZ$ candidate in the event
+    identified as GlobalHighPt.
+    The applied weight is the product of the scale factors of each individual muon.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2017Muon_GlobalHighPtID.pdf}}
+  \hspace{5mm}
+  \subfigure[Muon TrkHighPtId. Applied to the $\mu\mu e$ and $ee\mu$,
+     and $\mu\mu\mu$ channels based on the pseudorapidity $\eta$ and transverse
+     momentum $P_{t}$ of each of the muons used to define a $WZ$ candidate in the event
+     identified as TrackerHighPt.
+    The applied weight is the product of the scale factors of each individual muon.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2017Muon_TrkHighPtID.pdf}}
   \caption{Lepton ID Scale Factors 2017}
   \label{fig:leptonidsf_2017}
 \end{figure}
 
 \begin{figure}[tph]
   \centering
-  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_LooseID.pdf}}
-  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_TightID.pdf}}
+  \subfigure[Electron Loose ID. Applied to the $eee$ and $ee\mu$ channels
+    based on the pseudorapidity $\eta$ and transverse momentum $P_{t}$ of each
+    of the electrons used to define a $Z$ candidate in the event.
+    The applied weight is the product of the scale factors of each individual electron.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2018Electron_LooseID.pdf}}
+  \hspace{5mm}
+  \subfigure[Electron Tight ID. Applied to the $eee$ and $\mu\mu e$ channels
+    based on the pseudorapidity $\eta$ and transverse momentum $P_{t}$ of the
+    electron used to define the $W$ candidate.]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2018Electron_TightID.pdf}}
   \vfil
-  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_GlobalHighPtID.pdf}}
-  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_TrkHighPtID.pdf}}
+  \subfigure[Muon GlobalHighPtId. Applied to the $\mu\mu e$, $ee\mu$,
+    and $\mu\mu\mu$ channels based on the pseudorapidity $\eta$ and transverse
+    momentum $P_{t}$ of each of the muons used to define a $WZ$ candidate in the event
+    identified as GlobalHighPt.
+    The applied weight is the product of the scale factors of each individual muon.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2018Muon_GlobalHighPtID.pdf}}
+  \hspace{5mm}
+  \subfigure[Muon TrkHighPtId. Applied to the $\mu\mu e$ and $ee\mu$,
+     and $\mu\mu\mu$ channels based on the pseudorapidity $\eta$ and transverse
+     momentum $P_{t}$ of each of the muons used to define a $WZ$ candidate in the event
+     identified as TrackerHighPt.
+     The applied weight is the product of the scale factors of each individual muon.
+  ]{\includegraphics[width=.45\textwidth]{fig/ScaleFactors/2018Muon_TrkHighPtID.pdf}}
   \caption{Lepton ID Scale Factors 2018}
   \label{fig:leptonidsf_2018}
 \end{figure}
@@ -83,8 +138,18 @@ with the appropiate factor based on the number of reconstructed primary vertices
 Trigger and lepton identification efficiencies are different between data
 and montecarlo. Scale factors are provided centrally by the Muon and EGamma POG
 and show an $\eta-P_{t}$ dependence, see Figures \ref{fig:leptonidsf_2016},
-\ref{fig:leptonidsf_2017}, and \ref{fig:leptonidsf_2018}. Trigger and
-identification systematics are evaluated by moving up and down the scale factors
-by their uncertainties. These uncertainties are considered flat, independent
-of the resonance mass, and uncorrelated in terms of lepton flavour.
+\ref{fig:leptonidsf_2017}, and \ref{fig:leptonidsf_2018}.
+
+The lepton identification scale factor is applied to the event
+as a result of the product of each individual scale factor for each lepton in
+the channel based on its transverse momentum $P_{t}$ and pseudorapidity $\eta$.
+The HLT scale factor is applied based on the $P_{t}$ and $\eta$ of the leading
+lepton: events corresponding to channels that include muons and electrons
+will contain the product of the muon and electron HLT scale factor while events
+from channels that include exclusively muon or electrons will be weighted with
+the corresponding HLT scale factor.
+Trigger and identification systematics are evaluated by moving up
+and down the scale factors by their uncertainties. These uncertainties
+are considered flat, independent of the resonance mass, and uncorrelated
+in terms of lepton flavour.
 
