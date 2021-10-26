@@ -55,8 +55,8 @@ The electron's sign charge can be identified by its signature in the tracker
 due to the presence of the strong magnetic field in the CMS detector.
 
 Electrons in this analysis are required to be within the ECAL fiducial
-region i.e $\abs{eta}<2.5$ excluding the transition region betwen the
-barrel and the endcaps $1.4442<\abs{eta}<1.5660$.
+region i.e $\abs{\eta}<2.5$ excluding the transition region betwen the
+barrel and the endcaps $1.4442<\abs{\eta}<1.5660$.
 
 \begin{figure}[tph]
   \centering
@@ -72,7 +72,7 @@ Electron identification is based on a cut based ID as defined by the
 EGamma POG. Depending on the channel, this requirement
 may ask for \emph{loose} or \emph{tight} electrons, the former with an
 average efficiency of approximately 95\% and 70\% for
-the latter ~\cite{EGammaPOG_el}: channels portraying a $Z\rightarrow e+e$
+the latter ~\cite{EGammaPOG_el}: channels with a $Z\rightarrow e+e$
 decay ($eee\nu$ and $ee\mu\nu$) require two loose
 electrons due to its high efficiency, specially at high resonant mass where
 the electrons are expected to be highly collimated (see Figure \ref{fig:PunziElectronIDs}).
@@ -82,7 +82,7 @@ the cut-based tight ID.
 We reproduce the High Level Trigger transverse momentum requirements by
 applying a cut on the corresponding $p_T$ threshold on all
 preselected electrons:
-2016 ($27~GeV$), 2017 ($35~GeV$), and 28 ($32~GeV$).
+2016 ($27~GeV$), 2017 ($35~GeV$), and 2018 ($32~GeV$).
 
 \subsection{Muon Selection}
 
@@ -94,7 +94,7 @@ reconstructed from hits in the tracker matched with hits in the first
 muon station, while global highPt muons leave trace beyond the first
 layer of the muon subsystem.
 
-Muons are required to be within the pseudorapidity range $\abs{eta}<2.4$ and
+Muons are required to be within the pseudorapidity range $\abs{\eta}<2.4$ and
 to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon
 is required to have a transverse momentum $P_t>52~GeV$ in line with
 the trigger plateau.
@@ -194,7 +194,7 @@ plane for the two leptons product of the decay of the Z is less than $1.5$.
 \subsection{W Candidate}
 
 The $W$ candidate is reconstructed from the remaining lepton and the missing energy
-of the event $E_T^{miss}$. The ramining lepton is required to be either a cut based \emph{tight}
+of the event $E_T^{miss}$. The remaining lepton is required to be either a cut based \emph{tight}
 ID electron or a global High-Pt muon with a transverse momentum
 of at least $Pt>52~GeV$.
 
@@ -224,14 +224,14 @@ we set the transverse mass equal to the nominal value $M_{t}^{W}=M_W$.
 
 The less energetic of the solutions gives the correct value ~70\% of the time
 according to simulation [AN].
-When no real solutions are available (transverse mass > W Mass), the invariant
+When no real solutions are available ($W_{mt}$ > $Wm$), the invariant
 mass is set to the reconstructed transverse mass and we are left with two real
 identical solutions.
 
 \subsection{WZ Candidate}
 
 The $W^{\prime}$ is reconstructed from the $W$ and $Z$ candidates.
-Events are rejected if the sum of the leptonic mass is less than $120~GeV$ and
+Events are rejected if the sum of the leptonic masses are less than $120~GeV$ and
 if the sum of the transverse momentum $L_{t}<110~GeV$, where $L_{t}$ is defined
 as:
 
@@ -243,28 +243,28 @@ Events are splitted in four channels depending on the leptonic flavour of the
 diboson decay:
 
 \begin{description}
-\item[$\bullet$3e] three electrons and missing transverse energy are found, two of the
+\item[$\bullet$ $eee$] three electrons and missing transverse energy are found, two of the
   electrons correspond to the decay of the $Z$ boson and the remaining electron corresponds
   to the decay of the $W$ boson. $Z\rightarrow e^{+}e^{-} W\rightarrow e+\nu$
   The three electrons are expected to leave hits on the
   tracker subsystem with low curvature due to their high transverse momentum and
   energy depositions are expected in the electromagnetic calorimeter
   The signature left on the CMS detector is shown on figure \ref{fig:Fireworks_eeev}.
-\item[$\bullet$2e+1mu] two electrons, one muon and missing transverse energy are found,
+\item[$\bullet$ $ee\mu$] two electrons, one muon and missing transverse energy are found,
   the two electrons correspond to the decay of the $Z$ boson and the muon corresponds to the
   decay of the $W$ boson. $Z\rightarrow e^{+}e^{-} W\rightarrow \mu+\nu$ The two electrons are
   expected to leave hits on the tracker subsystem with low curvature and energy
   depositions are expected in the electromagnetic calorimeter while the muon leaves
   hits in the tracker and muon subsytem. The signature left on the CMS
   detector is shown on figure \ref{fig:Fireworks_eemuv}.
-\item[$\bullet$2mu+1e] two muons, one electron and missing transverse energy are found,
+\item[$\bullet$ $\mu\mu e$] two muons, one electron and missing transverse energy are found,
   the two muons correspond to the decay of the $Z$ boson and the electron corresponds to the
   decay of the $W$ boson. $Z\rightarrow \mu^{+}\mu^{-} W\rightarrow e+\nu$ The two
   muons leave hits on the tracker and muon subsystems with negligible curvature due
   to its high transverse momentum while the electron is expected to leave hits in
   the tracker and energy deposition in the electromagnetica calorimeter.
   The signature left on the CMS detector is shown on figure \ref{fig:Fireworks_mumuev}.
-\item[$\bullet$3mu] three muons and missing transverse energy are found, the muon pair
+\item[$\bullet$ $\mu\mu\mu$] three muons and missing transverse energy are found, the muon pair
   correspond to the decay of the $Z$ boson and the remianing muon corresponds
   to the decay of the $W$ boson. $Z\rightarrow \mu^{+}\mu^{-} W\rightarrow \mu+\nu$.
   The three muons are expected to leave hits on the tracker subsystem and muon chambers
@@ -282,8 +282,9 @@ diboson decay:
     for the $eee\nu$ channel. This event was taken on July 13th 2018. Run: $319579$,
     Lumiblock: $2957$, Event: $4487890911$. The reconstructed primary vertex is shown in yellow.
     Depositions on the electromagnetic calorimeter and tracks left by the three electrons
-    are shown in turquoise, the negligible curvature
-    shown by their tracks is a reflection of their high transverse momentum.
+    are shown in cyan, their area is proportional to the amount of energy deposited,
+    the negligible curvature
+    shown by their tracks is a reflection of their high transverse momentum. 
     The amount of missing transverse energy is proportional to the length of the purple arrow. Low momentum
     tracks for particle-flow candidates in the inner tracker are shown in green for
     reference, these PF candidates are filtered by the preselection. }
@@ -301,8 +302,9 @@ diboson decay:
     for the $ee\mu\nu$ channel. This event was taken on October 21st 2018. Run: $32500$,
     Lumiblock: $188$, Event: $346288517$. The reconstructed primary vertex is shown in yellow.
     Depositions on the electromagnetic calorimeter
-    and tracks left by the electronic pair are shown in turquoise, the negligible curvature
-    shown by their tracks is a reflection of their high transverse momentum. Tracks left by the muon
+    and tracks left by the electronic pair are shown in cyan, the negligible curvature
+    shown by their tracks is a reflection of their high transverse momentum, the cyan
+    area is proportional to the amount of energy deposited in the calorimeter. Tracks left by the muon
     in the tracker detector and muon chambers are shown in red, in this particular event it
     is possible to see the muon will be classified as a global-High Pt muon as its hits
     are found in the tracker system and beyond the first station of the muon subsystem.
@@ -322,7 +324,7 @@ diboson decay:
   \caption{Example of the signature left on the detector by a signal-like event
     for the $\mu\mu e \nu$ channel. This event was taken on October 1st 2018.
     Run: $323790$, Lumiblock: $376$, Event: $646065569$. The reconstructed primary vertex is shown in yellow.
-    The deposition on the electromagnetic calorimeter and tracks left by the electron are shown in turquoise,
+    The deposition on the electromagnetic calorimeter and tracks left by the electron are shown in cyan,
     the negligible curvature shown by their tracks is a reflection of their high transverse momentum.
     Tracks left by the muon pair in the tracker detector and muon chambers are shown in red.
     Both muons would be classified as global-High Pt Muon as their hits
