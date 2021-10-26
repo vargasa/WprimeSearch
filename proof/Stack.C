@@ -719,12 +719,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   auto fixYRange = [&](THStack* hss, Double_t maxY = -1.){
-    const Float_t LegendSpace = 10.; // Log Scale ;/
+    const Float_t LegendSpace = 1.8; // Log Scale ;/
     if ( maxY<0 ) {
       TH1 *last = (TH1*)hss->GetStack()->Last();
       maxY = getMaxY(last);
     }
     hss->SetMaximum(maxY * LegendSpace);
+    std::cout << hss->GetHistogram()->GetName() << "\n";
+    // hss->SetMaximum(3500.);
+    // if(std::string(hss->GetName()).find("_A") != std::string::npos){
+    //   hss->SetMaximum(800.);
+    // } else if(std::string(hss->GetName()).find("_B") != std::string::npos) {
+    //   hss->SetMaximum(2000.);
+    // } else if(std::string(hss->GetName()).find("_C") != std::string::npos) {
+    //   hss->SetMaximum(1800.);
+    // } else if(std::string(hss->GetName()).find("_D") != std::string::npos) {
+    //   hss->SetMaximum(3800.);
+    // }
   };
 
   auto sortStack = [](THStack* hss){
@@ -760,10 +771,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto hcdata = static_cast<TH1*>(hhdata->Clone());
       auto hcmc = static_cast<TH1*>(hss->GetStack()->Last());
       auto hratio = new TGraphAsymmErrors(hcdata,hcmc,"pois");
-      for(uint i = 0; i < hratio->GetN(); i++){
-        hratio->SetPointEXhigh(i,0);
-        hratio->SetPointEXlow(i,0);
-      }
+      // for(uint i = 0; i < hratio->GetN(); i++){
+      //   hratio->SetPointEXhigh(i,0);
+      //   hratio->SetPointEXlow(i,0);
+      // }
       hratio->SetMarkerColor(kBlack);
       hratio->SetMarkerStyle(20);
       hratio->SetMarkerSize(.5);
@@ -1269,9 +1280,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
-  for(auto n: SignalPos){
-    printDataCard(2016,n.first);
-  }
+  // for (auto n: SignalPos) {
+  //   printDataCard(2017,n.first);
+  // }
 
 
   std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [&](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
@@ -1599,7 +1610,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->Draw();
       mainPad->SetLeftMargin(leftMargin);
       mainPad->SetRightMargin(rightMargin);
-      mainPad->SetLogy();
+      //mainPad->SetLogy();
       mainPad->SetTickx();
       mainPad->SetTicky();
 
@@ -1695,6 +1706,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         labelIdx.erase(labelIdx.find("+",8));
       }
       hs->SetTitle(Labels[labelIdx].c_str());
+
+      std::cout << "TITLE::::::::\\n\n\n\n\n\n" << labelIdx.c_str() << "\n\n\n\n\n";
+
       if (hName.find("CR1_") != std::string::npos) {
         hs->SetTitle((Labels[labelIdx].c_str() + std::string(" CR")).c_str());
       }
@@ -1705,9 +1719,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       hs->Draw("HIST");
       hsig->Draw("HIST SAME");
-      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.25)+1);
-      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.25)-1);
-      hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
+      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.5)+1);
+      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.5)-1);
+      //hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
       fixYRange(hs,getMaxY(last));
 
       if (includeData) {
@@ -1741,9 +1755,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         auto hcdata = getRatio(hdata,hs);
         subPad->cd();
         subPad->SetGrid();
-        hcdata->Draw("AP");
+        hcdata->Draw("ap");
+        hcdata->GetXaxis()->SetRangeUser(hs->GetHistogram()->GetXaxis()->GetXmin(),                hs->GetHistogram()->GetXaxis()->GetXmax());
+	hcdata->GetXaxis()->SetNdivisions(hs->GetHistogram()->GetXaxis()->GetNdivisions());
         subPad->SetFrameLineWidth(1);
-        hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+
       }
       ++j;
 
@@ -1759,63 +1775,94 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
-  std::vector<int> pyear = { 2016, 2017, 2018 };
+  std::vector<int> pyear = { 2016/*, 2017, 2018 */};
   std::vector<std::string> chs = { "A","B","C","D" };
   std::vector<std::string> hints = {
     // "HElPt","HMuPt",
     // "HElEta","HMuEta",
     // "HElPhi","HMuPhi",
     // "HPtZMWZ","HPtWMWZ",
-    // "HDistZl3","HDistZW",
-    // "HDistl1l2","HDistl1l2","HDistl2l3","HDistl1l3","HDistZW",
-    // "HDxyl1","HDxyl2","HDxyl3",
+    //"HDistZl3",
+    //"HDistZW",
+    // "HDistl1l2",
+    // "HDistl2l3",
+    // "HDistl1l3",
+    //"HDxyl1","HDxyl2","HDxyl3",
+    // "HPtZMWZ",
     // "HPtWMWZ",
-    // "HLt",
-    // "HIP3Dl1","HIP3Dl2","HIP3Dl3",
+    //"HMassTW",
+    //,"HWZDist"
+    //"HLt",
+    //"HIP3Dl1","HIP3Dl2","HIP3Dl3",
     // "HRelIsol1","HRelIsol2","HRelIsol3",
-    // "HDzl1","HDzl2","HDzl3",
-    // "HEtal1","HEtal2",
-    // "HEtal3","HPhil1",
-    // "HPhil2","HPhil3",
+    //"HDzl1","HDzl2","HDzl3",
+    //"HEtal1","HEtal2",
+    //"HEtal3",
+    //"HPhil1","HPhil2","HPhil3",
     // "HDistl1l2"
-    // "HIP3Dl1","HIP3Dl2","HIP3Dl3",
-    // "HFakeString",
+    //"HIP3Dl1","HIP3Dl2","HIP3Dl3",
+    //"HFakeString",
     // "HPileup",
     // "HRelIsol1",
     // "HRelIsol2",
     // "HRelIsol3",
     //"HPtl1","HPtl2","HPtl3",
     //"HMetPt",
-    //"HMassZ",
-    //"HMassWZ",
-    "HPtl1Lt","HPtl2Lt","HPtl3Lt","HMetPtLt","HCosl3Met"
+    "HMassZ",
+    "HMassWZ",
+    //"HPtl1Lt","HPtl2Lt","HPtl3Lt","HMetPtLt","HCosl3Met"
   };
 
+  // // Difference in channels per year
+  // for(auto h : hints){
+  //   for(auto ch: chs){
+  //     std::vector<std::string> hNames;
+  //   for(auto yr: pyear){
+  //       hNames.emplace_back(Form("%d/%s_SR1_%s",yr,h.c_str(),ch.c_str()));
+  //        if(hNames.size() == 3){
+  //          canvasStacked(/*s.first*/600,hNames,false);
+  //          hNames.clear() ;
+  //        }
+  //      }
+  //    }
+  //  }
+
+
+  //// 4 Channels in same plot
   for(auto h : hints){
-     for(auto ch: chs){
-       std::vector<std::string> hNames;
-       for(auto yr: pyear){
-         hNames.emplace_back(Form("%d/%s_SR1_%s",yr,h.c_str(),ch.c_str()));
-         if(hNames.size() == 3){
-           canvasStacked(/*s.first*/600,hNames,false);
+    for(auto yr: pyear){
+      std::vector<std::string> hNames;
+      for(auto ch: chs){
+        hNames.emplace_back(Form("%d/%s_CR2_%s",yr,h.c_str(),ch.c_str()));
+         if(hNames.size() == 4){
+           canvasStacked(600,hNames,false);
            hNames.clear() ;
          }
        }
      }
    }
 
-  // Run2 Plots
-  for(auto h : hints){
-    std::vector<std::string> hNames;
-    for(auto ch: chs){
-      hNames.emplace_back(Form("0000/%s_CR1_%s",h.c_str(),ch.c_str())); //0000 -> Run2
-      std::cout << Form("0000/%s_CR1_%s\n\n",h.c_str(),ch.c_str()) ;
-      if(hNames.size() == 4){
-        canvasStacked(600,hNames,true);
-        hNames.clear() ;
-      }
-    }
-  }
+  //plotPunziSignificance(2016);
+
+  //Run2 Plots
+  // for(auto h : hints){
+  //   std::vector<std::string> hNames;
+  //   for(auto ch: chs){
+  //     hNames.emplace_back(Form("0000/%s_CR1_%s",h.c_str(),ch.c_str())); //0000 -> Run2
+  //     if(hNames.size() == 4){
+  //       canvasStacked(600,hNames,true);
+  //       hNames.clear() ;
+  //     }
+  //   }
+  // }
+
+  // std::vector<std::string> hNames_1 = {
+  //   "2016/HPtZMWZ_SR1_A+HPtZMWZ_SR1_A","2016/HPtZMWZ_SR1_B+HPtZMWZ_SR1_B",
+  //   "2016/HPtZMWZ_SR1_C+HPtZMWZ_SR1_C","2016/HPtZMWZ_SR1_D+HPtZMWZ_SR1_D"
+  // };
+
+  // canvasStacked(1200,hNames_1,true);
+
 
   //plotHLTSelectionRatio(2016);
   //plotSelectionRatio(2016);
