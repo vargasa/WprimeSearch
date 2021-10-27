@@ -80,9 +80,14 @@ Long64_t EventIDMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) c
 
 Bool_t EventIDMaker::Process(Long64_t entry) {
 
-  if(!ReadEntry(entry)) return kFALSE;
-
   hlog->FillS("Total");
+
+  if(!ReadEntry(entry)){
+    hlog->FillS("MissingMultipleBranches");
+    return kFALSE;
+  }
+
+
 
   if(IsMissingBranch) hlog->FillS("MissingBranch");
 
