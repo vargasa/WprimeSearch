@@ -41,7 +41,7 @@ do
  root -l -b -q "MakeEventIDTree.C(\"$i\",4)"
 done
 
-echo -e "#define CMSDATA\n#define Y2018#define ULSAMPLE">../IsData.h
+echo -e "#define CMSDATA\n#define Y2018\n#define ULSAMPLE">../IsData.h
 FILES=../files/data/2018/UL/*.txt
 for i in $FILES
 do
@@ -71,25 +71,25 @@ echo -e "#define CMSDATA\n#define Y2016">../IsData.h
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/SingleElectron.txt\",4)"
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/SingleMuon.txt\",4)"
 
-## UL2016
-echo -e "#define CMSDATA\n#define Y2016\n#define ULSAMPLE">../IsData.h
-root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/UL/ULSingleElectron.txt\",4)"
-root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/UL/ULSingleMuon.txt\",4)"
-
 ## 2017
 echo -e "#define CMSDATA\n#define Y2017">../IsData.h
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/SingleElectron.txt\",4)"
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/SingleMuon.txt\",2)"
 
-## UL2017
-echo -e "#define CMSDATA\n#define Y2017\n#define ULSAMPLE">../IsData.h
-root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/UL/SingleElectron.txt\",4)"
-root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/UL/SingleMuon.txt\",2)"
-
 ## 2018
 # We take all the events from SingleMuon and filter out duplicated events in EGamma
 echo -e "#define CMSDATA\n#define Y2018">../IsData.h
 root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2018/EGamma.txt\",2)"
+
+## UL2016
+echo -e "#define CMSDATA\n#define Y2016\n#define ULSAMPLE">../IsData.h
+root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/UL/ULSingleElectron.txt\",4)"
+root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2016/UL/ULSingleMuon.txt\",4)"
+
+## UL2017
+echo -e "#define CMSDATA\n#define Y2017\n#define ULSAMPLE">../IsData.h
+root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/UL/ULSingleElectron.txt\",4)"
+root -l -b -q "MakeUniqueEntryList.C(\"../files/data/2017/UL/ULSingleMuon.txt\",2)"
 
 ## UL2018
 # We take all the events from SingleMuon and filter out duplicated events in EGamma
