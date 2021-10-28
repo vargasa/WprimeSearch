@@ -18,7 +18,7 @@
 Events with at least one primary vertex passing an OR combination
 of the HLTs shown on table \ref{tab:HLTDatasets}, and containing at least three
 preselected leptons (number of muons plus number of electrons) are selected
-provided that its missing energy $E_T^{Miss}$ is greater than $40~GeV$.
+provided that its missing energy $E_T^{Miss}$ is greater than $40~\GeV$.
 Due to the presence of multiple leptonic flavors in the final state, each event
 is required to pass either the Muon or Electron triggers based on the high-Pt
 recommendations from the POG. The HLT efficiency was found to be higher
@@ -82,7 +82,7 @@ the cut-based tight ID.
 We reproduce the High Level Trigger transverse momentum requirements by
 applying a cut on the corresponding $p_T$ threshold on all
 preselected electrons:
-2016 ($27~GeV$), 2017 ($35~GeV$), and 2018 ($32~GeV$).
+2016 ($27~\GeV$), 2017 ($35~\GeV$), and 2018 ($32~\GeV$).
 
 \subsection{Muon Selection}
 
@@ -96,7 +96,7 @@ layer of the muon subsystem.
 
 Muons are required to be within the pseudorapidity range $\abs{\eta}<2.4$ and
 to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon
-is required to have a transverse momentum $P_t>52~GeV$ in line with
+is required to have a transverse momentum $P_t>52~\GeV$ in line with
 the trigger plateau.
 
 \begin{figure}[tph]
@@ -112,18 +112,35 @@ the trigger plateau.
 \end{figure}
 
 For events portraying a $Z\rightarrow\mu+\mu$ decay a stricter cut is applied on the
-leading muon $P_{t}>70~GeV$. The muon pair is required to be a composite of a
+leading muon $P_{t}>70~\GeV$. The muon pair is required to be a composite of a
 cut-based global highPt ID muon and either a tracker or global highPt ID muon
 that is simultaneously a particle-flow candidate. This combination of highPt
 muons shows the highest efficiency, see Figure \ref{fig:MuonIDEfficiency}.
 %%% Add reference to B2G-19-006 %%%
 
-Events with a pair of muons with an impact parameter $ip3d>0.01~cm$ are
+Events with a pair of muons with an impact parameter $\mathrm{ip3d}>0.01~\mathrm{cm}$ are
 discarded in order to increase background rejection.
 
 
 
 \subsection{Lepton Misidentification}
+
+
+\begin{figure}[tph]
+  \centering
+  \subfigure[Lepton origin classification prior to constraining the impact parameter]
+            {\includegraphics[width=.8\textwidth]{fig/Run2/NoIp3DCut_HFakeString_SR1_A_RuRun2_M600.pdf}}
+  \vfil
+  \subfigure[Lepton origin classification after constraining the impact parameter $\mathrm{ip3D}<0.01~\mathrm{cm}$]
+            {\includegraphics[width=.8\textwidth]{fig/Run2/Rebining_HFakeString_SR1_A_RuRun2_M600.pdf}}
+  \caption{Lepton origin classification according to simulation prior and after applying
+    an impact parameter requirement $\mathrm{ip3D}<0.01~\mathrm{cm}$. Each lepton is considered individually
+    when filling the histogram. The main contribution to non-prompt leptons come
+    from Muons in Drell-Yan and $t\bar{t}$ events.
+  }
+  \label{fig:HFakeString}
+\end{figure}
+
 
 \begin{figure}[tph]
   \centering
@@ -141,48 +158,33 @@ Misreconstructed leptons are also commonly refered as fake leptons. It
 is assumed that if the number of MC generated electrons (muons) match
 the number of reconstructed electrons (muons) there are no misreconstructed
 objects. A fake lepton is a lepton that is non-prompt that didn't arise from
-a $\tau$ lepton or from a heavy flavour decay (HFD). Figure %%Missing Figure %%%
+a $\tau$ lepton or from a heavy flavour decay (HFD). Figure \ref{fig:HFakeString}
 shows how the Drell-Yan and $t\bar{t}$ processes are suceptible to present
 reconstructed non-prompt muons. To account for this, we impose a cut on the
-3D impact parameter $ip3D<0.01~cm$, figure %%Missing Figure %%%
+3D impact parameter $\mathrm{ip3D}<0.01~\mathrm{cm}$, figure \ref{fig:HFakeString}
 shows the effect of the cut on reducing the number of non-prompt muons.
 The Punzi significance of the impact parameter requirement as a function
 of the WZ resonance mass is shown in figure \ref{fig:Punzi_Ip3DCut}. %%% expand %%%
 
-
-\begin{figure}[tph]
-  \centering
-  \subfigure[Lepton origin classification prior to constraining the impact parameter]
-            {\includegraphics[width=.8\textwidth]{fig/Run2/NoIp3DCut_HFakeString_SR1_A_RuRun2_M600.pdf}}
-  \vfil
-  \subfigure[Lepton origin classification after constraining the impact parameter $ip3D<0.01~cm$]
-            {\includegraphics[width=.8\textwidth]{fig/Run2/Rebining_HFakeString_SR1_A_RuRun2_M600.pdf}}
-  \caption{Lepton origin classification according to simulation prior and after applying
-    an impact parameter requirement $ip3D<0.01~cm$. Each lepton is considered individually
-    when filling the histogram. The main contribution to non-prompt leptons come
-    from Muons in Drell-Yan and $t\bar{t}$ events.
-  }
-  \label{fig:HFakeString}
-\end{figure}
 
 
 \subsection{Missing Transverse Energy}
 
 The missing transverse energy $E_T$ is reconstructed with the particle flow
 algorithm ~\cite{particleflow} and events are required to have at least a
-missing transverse energy of $E_T^{miss}=40~GeV$.
+missing transverse energy of $E_T^{miss}=40~\GeV$.
 
 \subsection{Z Candidate}
 
 Two same flavored, opposite charged leptons are required to reconstruct a Z
 candidate. If more than one pair is found, the one with reconstructed mass
-closer to the nominal mass $M_z=91.1876~GeV$ is chosen. The pair's mass
-is required to fall in the Z mass window $70~GeV < M_Z < 111~GeV$. In favor of an
+closer to the nominal mass $M_z=91.1876~\GeV$ is chosen. The pair's mass
+is required to fall in the Z mass window $70~\GeV < M_Z < 111~\GeV$. In favor of an
 increase in the signal efficiency the opposite charged requirement is dropped
 for the $eee\nu$ category.
 
 If the Z candidate is formed from a muon pair with a leading (subleading) muon with
-a transverse momentum of at least $P_t=70 GeV$ ($P_t=10GeV$). One of the
+a transverse momentum of at least $P_t=70 \GeV$ ($P_t=10\GeV$). One of the
 muons is required to pass two additional requirements: being a global high-Pt muon and a
 particle-flow candidate. In the case of electrons, the requirement is to pass the
 selection criteria of the cut-based \emph{loose} ID and a transverse momentum of
@@ -196,14 +198,14 @@ plane for the two leptons product of the decay of the Z is less than $1.5$.
 The $W$ candidate is reconstructed from the remaining lepton and the missing energy
 of the event $E_T^{miss}$. The remaining lepton is required to be either a cut based \emph{tight}
 ID electron or a global High-Pt muon with a transverse momentum
-of at least $Pt>52~GeV$.
+of at least $Pt>52~\GeV$.
 
 The neutrino from the $W \rightarrow l\nu$ decay escapes undetected,
 and therefore the following assumptions are made in order to perform a kinematic
 reconstruction of the $W$ candidate: there are no additional sources of missing
 energy, and consequently $E_{Pt}^{miss}$ is considered the transverse momentum
 corresponding to the undetected neutrino. The longitudinal momentum $P_z$ can be
-recovered by imposing the $M_W=80.379~GeV $ nominal mass and assuming
+recovered by imposing the $M_W=80.379~\GeV $ nominal mass and assuming
 a massless neutrino $M_\nu = 0.$
 
 As $\eta$ is unknown for the missing transverse energy, the neutrino 4-vector is
@@ -223,7 +225,7 @@ longitudinal component of the momentum would remain undefined, in these cases
 we set the transverse mass equal to the nominal value $M_{t}^{W}=M_W$.
 
 The less energetic of the solutions gives the correct value ~70\% of the time
-according to simulation [AN].
+according to simulation \ref{wprime8TeV}.
 When no real solutions are available ($W_{mt}$ > $Wm$), the invariant
 mass is set to the reconstructed transverse mass and we are left with two real
 identical solutions.
@@ -231,8 +233,8 @@ identical solutions.
 \subsection{WZ Candidate}
 
 The $W^{\prime}$ is reconstructed from the $W$ and $Z$ candidates.
-Events are rejected if the sum of the leptonic masses are less than $120~GeV$ and
-if the sum of the transverse momentum $L_{t}<110~GeV$, where $L_{t}$ is defined
+Events are rejected if the sum of the leptonic masses are less than $120~\GeV$ and
+if the sum of the transverse momentum $L_{t}<110~\GeV$, where $L_{t}$ is defined
 as:
 
 \[
