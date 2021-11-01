@@ -1,4 +1,4 @@
-\section{Corrections on MC}
+\section{Corrections on MC} \label{CorrectionsOnMC}
 
 \subsection{Luminosity Scale factors}
 
@@ -16,6 +16,21 @@ Where $L_{\rm data}$ is the luminosity per year, see table \ref{tab:LuminosityPe
 $n_{MC}$ the number of generated MC events as provided by the sum of weighted events
 from the generator (\verb|genWeight| branch on \verb|NanoAOD|), and $\sigma_{\rm MC}$
 is the cross section of the MC samples as provided by \verb|XSecAnalyzer|.
+
+\subsection{K-Factor}
+
+\begin{figure}[tph]
+  \centering
+  \includegraphics[width=0.6\textwidth]{fig/ScaleFactors/QCD_EWK_DYKFactors.pdf}
+  \caption{QCD and Electroweak k-Factors as a function of the Z boson's transverse
+   momentum
+  }
+  \label{fig:kFactors}
+\end{figure}
+
+Next-to-leading order QCD and Electroweak (EWK) corrections to the Drell-Yan
+process are applied as a function of the reconstructed Z boson.
+
 
 \subsection{Pileup Reweighting}
 

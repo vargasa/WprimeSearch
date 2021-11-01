@@ -2,7 +2,7 @@
 
 The datasets used for the analysis presented in this note were collected using
 the CMS detector during the period 2016-2018. Data was recorded at the
-center-of-mass energy $\sqrt{s}=13~TeV$ and a total of $137.4~fb^{-1}$ was collected
+center-of-mass energy $\sqrt{s}=13~\TeV$ and a total of $137.4~\fbinv$ was collected
 and reconstructed with the 10.2.18 version of the CMS software. The standard
 CMS selection of good runs and luminosity sections was applied
 (see Table \ref{tab:GoldenJson}).
@@ -25,7 +25,7 @@ Year & Dataset & HLT                \\ \hline
      & SinglePhoton   & HLT\_Photon200            \\ \hline
 2018 & SingleMuon & HLT\_Mu50     \\
      &            & HLT\_OldMu100 \\
-     &            & HLT\_TkMu100  \\ \hline
+     &            & HLT\_TkMu100  \\
      & EGamma     & HLT\_Ele32\_WPTight\_Gsf \\
      &            & HLT\_Photon200           \\ \hline
 \end{tabular}
@@ -33,11 +33,12 @@ Year & Dataset & HLT                \\ \hline
 \end{table}
 
 The analysis makes use of datasets which combine several High Level Trigger
-(HLT) paths (Table \ref{tab:HLTDatasets}). The datasets used are shown in Table \ref{tab:Datasets}, each
+(HLT) paths (Table \ref{tab:HLTDatasets}). The complete list of datasets
+used are shown in Table \ref{tab:Datasets}, each
 dataset contains in the order of hundreds of millions events. As an event
 may trigger different HLTs it may be stored in multiple datasets simultaneously.
 In order to prevent double counting an index list is built containing unique
-references to events based on their run and event number. After final selection
+references to events based on their run and event number. After the final selection
 no overlap is found between channels.
 
 \begin{table}[h]

@@ -21,7 +21,7 @@ preselected leptons (number of muons plus number of electrons) are selected
 provided that its missing energy $E_T^{Miss}$ is greater than $40~\GeV$.
 Due to the presence of multiple leptonic flavors in the final state, each event
 is required to pass either the Muon or Electron triggers based on the high-Pt
-recommendations from the POG. The HLT efficiency was found to be higher
+recommendations from the POG ~\cite{MuonHLT,ElectronHLT}. The HLT efficiency was found to be higher
 than 85\% as shown in Figure \ref{fig:hltSignalEfficiency}.
 
 In addition, the following flags are required for the event:
@@ -69,18 +69,18 @@ barrel and the endcaps $1.4442<\abs{\eta}<1.5660$.
 \end{figure}
 
 Electron identification is based on a cut based ID as defined by the
-EGamma POG. Depending on the channel, this requirement
+EGamma POG ~\cite{EGammaPOG_el}. Depending on the channel, this requirement
 may ask for \emph{loose} or \emph{tight} electrons, the former with an
 average efficiency of approximately 95\% and 70\% for
 the latter ~\cite{EGammaPOG_el}: channels with a $Z\rightarrow e+e$
-decay ($eee\nu$ and $ee\mu\nu$) require two loose
+decay ($eee\nu$ and $ee\mu\nu$) require two \emph{loose}
 electrons due to its high efficiency, specially at high resonant mass where
 the electrons are expected to be highly collimated (see Figure \ref{fig:PunziElectronIDs}).
 The electron corresponding to the $W\rightarrow e\nu$ decay is required to pass
-the cut-based tight ID.
+the cut-based \emph{tight} ID.
 
 We reproduce the High Level Trigger transverse momentum requirements by
-applying a cut on the corresponding $p_T$ threshold on all
+applying a cut on the corresponding $P_T$ threshold on all
 preselected electrons:
 2016 ($27~\GeV$), 2017 ($35~\GeV$), and 2018 ($32~\GeV$).
 
@@ -89,15 +89,19 @@ preselected electrons:
 \verb|Muon| collection in \verb|NanoAOD|
 
 The muon objects in this analysis can be divided into two categories:
-Tracker and Global highPt muons ~\cite{MuonPOG}. Tracker highPt muons are
-reconstructed from hits in the tracker matched with hits in the first
-muon station, while global highPt muons leave trace beyond the first
-layer of the muon subsystem.
+Tracker and Global highPt muons, a detailed cut based description
+of these IDs is provided by the Muon POG ~\cite{MuonPOG}.
+Tracker highPt muons are reconstructed from hits in the tracker matched
+with hits in the first muon station, while global highPt muons leave hits in the
+tracker and multiple layers in the muon subsystem.
 
 Muons are required to be within the pseudorapidity range $\abs{\eta}<2.4$ and
-to have a minimum transverse momentum of $P_t=20$. Additionally the leading muon
+to have a minimum transverse momentum of $P_t=20~\GeV$. Additionally the leading muon
 is required to have a transverse momentum $P_t>52~\GeV$ in line with
-the trigger plateau.
+the trigger plateau. The Muon transverse momentum is measured by using
+the TuneP algorithm, which chooses the best muon reconstruction
+between tracker-track, tracker-plus-first-muon-station, picky, and
+dynamic truncation ~\cite{MuonHighPtAN}. 
 
 \begin{figure}[tph]
   \centering
@@ -114,17 +118,15 @@ the trigger plateau.
 For events portraying a $Z\rightarrow\mu+\mu$ decay a stricter cut is applied on the
 leading muon $P_{t}>70~\GeV$. The muon pair is required to be a composite of a
 cut-based global highPt ID muon and either a tracker or global highPt ID muon
-that is simultaneously a particle-flow candidate. This combination of highPt
-muons shows the highest efficiency, see Figure \ref{fig:MuonIDEfficiency}.
-%%% Add reference to B2G-19-006 %%%
+that is simultaneously a particle-flow candidate, following recommendations from
+a previous B2G analysis with a boosted Z topology ~\cite{b2g-19-006}.
+This combination of highPt muons shows the second highest efficiency, see
+Figure \ref{fig:MuonIDEfficiency}.
 
 Events with a pair of muons with an impact parameter $\mathrm{ip3d}>0.01~\mathrm{cm}$ are
-discarded in order to increase background rejection.
+discarded in order to increase background rejection, see section \ref{LeptonMisidentification}.
 
-
-
-\subsection{Lepton Misidentification}
-
+\subsection{Lepton Misidentification} \label{LeptonMisidentification}
 
 \begin{figure}[tph]
   \centering
@@ -226,7 +228,7 @@ we set the transverse mass equal to the nominal value $M_{t}^{W}=M_W$.
 
 The less energetic of the solutions gives the correct value ~70\% of the time
 according to simulation \cite{wprime8TeV}.
-When no real solutions are available ($W_{mt}$ > $Wm$), the invariant
+When no real solutions are available ($W_{mt} > Wm$), the invariant
 mass is set to the reconstructed transverse mass and we are left with two real
 identical solutions.
 
