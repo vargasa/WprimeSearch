@@ -1775,7 +1775,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
-  std::vector<int> pyear = { 2016/*, 2017, 2018 */};
+  std::vector<int> pyear = { 2016, 2017, 2018 };
   std::vector<std::string> chs = { "A","B","C","D" };
   std::vector<std::string> hints = {
     // "HElPt","HMuPt",
@@ -1796,9 +1796,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     //"HIP3Dl1","HIP3Dl2","HIP3Dl3",
     // "HRelIsol1","HRelIsol2","HRelIsol3",
     //"HDzl1","HDzl2","HDzl3",
-    //"HEtal1","HEtal2",
-    //"HEtal3",
-    //"HPhil1","HPhil2","HPhil3",
+    "HEtal1","HEtal2","HEtal3",
+    "HPhil1","HPhil2","HPhil3",
     // "HDistl1l2"
     //"HIP3Dl1","HIP3Dl2","HIP3Dl3",
     //"HFakeString",
@@ -1806,8 +1805,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     // "HRelIsol1",
     // "HRelIsol2",
     // "HRelIsol3",
-    //"HPtl1","HPtl2","HPtl3",
-    //"HMetPt",
+    "HPtl1","HPtl2","HPtl3",
+    "HMetPt",
     "HMassZ",
     "HMassWZ",
     //"HPtl1Lt","HPtl2Lt","HPtl3Lt","HMetPtLt","HCosl3Met"
@@ -1829,32 +1828,32 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
 
   //// 4 Channels in same plot
-  for(auto h : hints){
-    for(auto yr: pyear){
-      std::vector<std::string> hNames;
-      for(auto ch: chs){
-        hNames.emplace_back(Form("%d/%s_CR2_%s",yr,h.c_str(),ch.c_str()));
-         if(hNames.size() == 4){
-           canvasStacked(600,hNames,false);
-           hNames.clear() ;
-         }
-       }
-     }
-   }
+  // for(auto h : hints){
+  //   for(auto yr: pyear){
+  //     std::vector<std::string> hNames;
+  //     for(auto ch: chs){
+  //       hNames.emplace_back(Form("%d/%s_CR2_%s",yr,h.c_str(),ch.c_str()));
+  //        if(hNames.size() == 4){
+  //          canvasStacked(600,hNames,true);
+  //          hNames.clear() ;
+  //        }
+  //      }
+  //    }
+  //  }
 
   //plotPunziSignificance(2016);
 
   //Run2 Plots
-  // for(auto h : hints){
-  //   std::vector<std::string> hNames;
-  //   for(auto ch: chs){
-  //     hNames.emplace_back(Form("0000/%s_CR1_%s",h.c_str(),ch.c_str())); //0000 -> Run2
-  //     if(hNames.size() == 4){
-  //       canvasStacked(600,hNames,true);
-  //       hNames.clear() ;
-  //     }
-  //   }
-  // }
+  for(auto h : hints){
+    std::vector<std::string> hNames;
+    for(auto ch: chs){
+      hNames.emplace_back(Form("0000/%s_CR2_%s",h.c_str(),ch.c_str())); //0000 -> Run2
+      if(hNames.size() == 4){
+        canvasStacked(600,hNames,true);
+        hNames.clear() ;
+      }
+    }
+  }
 
   // std::vector<std::string> hNames_1 = {
   //   "2016/HPtZMWZ_SR1_A+HPtZMWZ_SR1_A","2016/HPtZMWZ_SR1_B+HPtZMWZ_SR1_B",
