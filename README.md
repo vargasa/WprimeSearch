@@ -270,6 +270,23 @@ echo -e "#define Y2018\n#define CMSDATA" > IsData.h
 root -l -b -q "Selector.C(\"files/data/2018/SingleMuon.txt+files/data/2018/EGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
 
 ```
+#### Ultra-Legacy Samples
+
+```bash
+# 2016
+cd proof/
+echo -e "#define Y2016\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
+root -l -b -q "Selector.C(\"files/data/2016/UL/ULSinglePhoton.txt+files/data/2016/UL/ULSingleElectron.txt+files/data/2016/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")"; # 8 Workers
+
+# 2017
+echo -e "#define Y2017\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
+root -l -b -q "Selector.C(\"files/data/2017/UL/ULSinglePhoton.txt+files/data/2017/UL/ULSingleElectron.txt+files/data/2017/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
+
+# 2018
+echo -e "#define Y2018\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
+root -l -b -q "Selector.C(\"files/data/2018/UL/ULSingleMuon.txt+files/data/2018/UL/ULEGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
+
+```
 
 This will create `WprimeHistos.root` file which will contain all the histograms
 created on `PreSelector.C` classified by the sample name as a root directory.
