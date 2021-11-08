@@ -387,9 +387,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HMassW,"HMassW",MassBins,MinWMass,MaxWMass);
 
-  const Float_t HMaxZMass = 120.;
-  const Float_t HMinZMass = 60.;
-  const Int_t ZMassBins = 30;
+  const Float_t HMaxZMass = 200.;
+  const Float_t HMinZMass = 0.;
+  const Int_t ZMassBins = 100;
   InitHVec<TH1F>(HMassZ,"HMassZ",ZMassBins,HMinZMass,HMaxZMass);
 
   const Float_t MaxTWMass = 250.;
