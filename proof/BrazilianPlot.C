@@ -88,27 +88,27 @@
     std::cout << Form("M: %d\n", m);
 
     fReader.Next(); // 0 2.5%
-    yYellowLow[counter] = (*limit) * (modelA[counter].second)  ;
+    yYellowLow[counter] = (*limit) * (modelA[counter].second);
     std::cout << "YellowLow: " << yYellowLow[counter] << std::endl;
 
     fReader.Next(); // 1 16.0%
-    yGreenLow[counter] = (*limit) * (modelA[counter].second);
+    yGreenLow[counter] = (*limit) * modelA[counter].second;
     std::cout << "GreenLow: " << yGreenLow[counter] << std::endl;
 
     fReader.Next(); // 2 50.0% Expected
-    yCentral[counter] = (*limit) * (modelA[counter].second);
+    yCentral[counter] = (*limit) * modelA[counter].second;
     std::cout << "Central: " << yCentral[counter] << std::endl;
 
     fReader.Next(); // 3 84.0%
-    yGreenHigh[counter] = (*limit) * (modelA[counter].second);
+    yGreenHigh[counter] = (*limit) * modelA[counter].second;
     std::cout << "GreenHigh: " << yGreenHigh[counter] << std::endl;
 
     fReader.Next(); // 4 97.5%
-    yYellowHigh[counter] = (*limit) * (modelA[counter].second);
+    yYellowHigh[counter] = (*limit) * modelA[counter].second;
     std::cout << "YellowHigh: " << yYellowHigh[counter]  << std::endl;
 
     fReader.Next(); // 5 Observed
-    gObs->SetPoint(counter, m, (*limit) * (modelA[counter].second));
+    gObs->SetPoint(counter, m, (*limit) * modelA[counter].second);
     ++counter;
     std::cout << "\n\n\n" ;
   }
@@ -133,7 +133,8 @@
   gCentral->SetLineColor(kBlack);
   gCentral->SetLineStyle(7);
 
-  auto legend = new TLegend(0.6,0.6,0.9,0.88);
+  auto legend = new TLegend(0.6,0.6,0.89,0.88);
+  //auto legend = new TLegend(0.6,0.15,0.9,0.38);
   legend->SetBorderSize(0);
   legend->AddEntry(gCentral,"Expected 95% upper limit");
   legend->AddEntry(gGreen, "Expected Limit (#pm1#sigma)");
@@ -144,6 +145,7 @@
   TCanvas* c1 = new TCanvas("c1","Brazilian Band Plot");
   auto mg  = new TMultiGraph();
   mg->SetTitle(Form("95%% CL Upper Limits [Run%d]  L = %.2f fb^{-1}; m_{WZ} (GeV);#sigma(W')#timesBr(W'#rightarrowWZ)(pb))",year,luminosity[year]));
+  //mg->SetTitle(Form("95%% CL Upper Limits [Run%d]  L = %.2f fb^{-1}; m_{WZ} (GeV);#sigma_{95%%CL}/#sigma_{Signal}",year,luminosity[year]));
   c1->SetLogy();
   mg->Add(gYellow,"A3");
   mg->Add(gGreen,"A3");
@@ -161,6 +163,6 @@
 
   //gObs->Draw("SAME PC");
 
-  c1->Print(Form("ExclusionLimits_%d.png",year));
+  c1->Print(Form("ExclusionLimits_%d.pdf",year));
 
 }

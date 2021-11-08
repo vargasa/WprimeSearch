@@ -1,3 +1,6 @@
 [submodule "utils"]
 	path = doc/utils
 	url = ssh://git@gitlab.cern.ch:7999/tdr/utils.git
+[submodule "doc/CUAThesisTemplate"]
+	path = doc/CUAThesisTemplate
+	url = git@github.com:vargasa/CUAThesisTemplate.git

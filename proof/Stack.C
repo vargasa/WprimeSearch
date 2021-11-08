@@ -38,28 +38,111 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     {2018, "SingleMuonEGamma"}
   };
 
+  // std::unordered_map<int, std::string> DataSampleNames = {
+  //   {2016, "ULSinglePhotonULSingleElectronULSingleMuon"},
+  //   {2017, "SinglePhotonSingleElectronSingleMuon"},
+  //   {2018, "SingleMuonEGamma"}
+  // };
+
+
   // ShortName, DasName, kColor, Style, XSection
   std::unordered_map<int, std::vector<BackgroundInfo>> BgNamesUL =
     {
       {
         2016,
         {
-
-          BackgroundInfo{"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8",kOrange+7,6.637e+03},
-          BackgroundInfo{"WZ","WZ_TuneCP5_13TeV-pythia8",kOrange,2.750e+01},
-          BackgroundInfo{"WWZ","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",15,1.707e-01},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
+          BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,1.381e+01},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.592e+02},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.148e+01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.399e+02},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.401e+02},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,3.839e+01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.217e+00},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.267e+00},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.682e-01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.324e-01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.974e-03},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.161e-01},
+          BackgroundInfo{"TTV","TTZToLL*",kCyan+1,}, /*XSecAnayzer 0.*/
+          BackgroundInfo{"TTV","ttZJets*",kCyan+1,}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.476e-02},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,1.619e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,1.609e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,3.292e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,1.626e+00},
           BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.251e+01},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.245e+01},
           BackgroundInfo{"ST","ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,7.174e+01},
           BackgroundInfo{"ST","ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,1.197e+02},
-          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue+3,7.592e+02},
-          BackgroundInfo{"TT","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kBlue+3,6.871e+02},
         }
       },
       {
         2017,
         {
-          BackgroundInfo{"WZ","WZ_TuneCP5_13TeV-pythia8",kOrange,2.750e+01},
-          BackgroundInfo{"WWZ","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",15,1.707e-01},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
+          BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,1.381e+01},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.546e+02},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.557e+01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.393e+02},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,3.836e+01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.222e+00},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.267e+00},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.692e-01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.330e-01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.975e-03},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.162e-01},
+          // BackgroundInfo{"TTV","TTZToLL*",kCyan+1,},
+          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.912e-01},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.476e-02},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,3.292e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,1.608e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,1.626e+00},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
+          BackgroundInfo{"ST","ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5CR2_13TeV-powheg-madspin-pythia8",kGreen+3,6.793e+01},
+          // BackgroundInfo{"ST","ST_t-channel_top",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.245e+01},
+        },
+      },
+      {
+        2018,
+        {
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
+          BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,1.381e+01},
+          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.560e+02},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.557e+01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.398e+02},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.405e+02},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,3.839e+01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.213e+00},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.265e+00},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.683e-01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.328e-01},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.987e-03},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.166e-01},
+          //BackgroundInfo{"TTV","TTZToLL_M-1to10*",kCyan+1,},
+          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.901e-01},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.476e-02},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,3.292e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,1.619e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,1.608e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,1.626e+00},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.251e+01},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.245e+01},
         }
       }
     };
@@ -70,174 +153,95 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2016,
         {
-          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_13TeV-powheg-pythia8",
-                         kOrange,6.217e+01}, /*XSecAnalyzer 0.*/
-          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
-                         kBlue,1.256},
-          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kBlue-2,5.675e1},
-          BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-                         kRed+3,1.24e2},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.475e2},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,4.104e1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,5.676},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.36},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,6.218e-1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.512e-1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,3.659e-3},
-          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8",
-                         kCyan+1,2.007e-1},
-          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",
-                         kCyan+1,0.283}, /*XSecAnayzer 0.*/
-          BackgroundInfo{"TTV","ttZJets_13TeV_madgraphMLM-pythia8",
-                         kCyan+1,6.559e-1},
-          BackgroundInfo{"VVV","WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-                         14,2.086e-1},
-          BackgroundInfo{"VVV","WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-                         14,1.651e-1},
-          BackgroundInfo{"VVV","WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-                         14,5.565e-2},
-          BackgroundInfo{"VVV","ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",
-                         14,1.398e-2},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8",
-                         43,2.703e-3}, /*AN2019_252_v1*/ //-> Integral is 0
-          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8",
-                         43,2.703e-3}, /*AN2019_252_v1*/ //-> Integral is 0
-          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8",
-                         43,5.423e-3}, /*AN2019_252_v1*/ //-> Integral is 0
-          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8",
-                         43,2.703e-3}, /*AN2019_252_v1*/
-          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1",
-                         kGreen+3,3.365}, //-> Integral is 0
-          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1",
-                         kGreen+3,3.806e1},
-          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1",
-                         kGreen+3,3.809e1},
-          BackgroundInfo{"ST","ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
-                         kGreen+3,80.95}, /*XSecAnalyser 0.*/ //-> Integral is 0
-          //BackgroundInfo{"ST","ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",
-          //               kGreen+3,136.02}, /*XSecAnalyzer 0.*/ //-> Integral is 0
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_13TeV-powheg-pythia8",kOrange,6.217e+01}, /*XSecAnalyzer 0.*/
+          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",kBlue,1.256},
+          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kBlue-2,5.675e1},
+          BackgroundInfo{"Z#gamma","ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",kRed+3,1.24e2},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,1.475e2},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,4.104e1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,5.676},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,1.36},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,6.218e-1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,1.512e-1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kOrange+7,3.659e-3},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.007e-1},
+          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCUETP8M1_13TeV-madgraphMLM-pythia8",kCyan+1,0.283}, /*XSecAnayzer 0.*/
+          BackgroundInfo{"TTV","ttZJets_13TeV_madgraphMLM-pythia8",kCyan+1,6.559e-1},
+          BackgroundInfo{"VVV","WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8",14,2.086e-1},
+          BackgroundInfo{"VVV","WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",14,1.651e-1},
+          BackgroundInfo{"VVV","WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",14,5.565e-2},
+          BackgroundInfo{"VVV","ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8",14,1.398e-2},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8",43,2.703e-3}, /*AN2019_252_v1*/ //-> Integral is 0
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8",43,2.703e-3}, /*AN2019_252_v1*/ //-> Integral is 0
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8",43,5.423e-3}, /*AN2019_252_v1*/ //-> Integral is 0
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8",43,2.703e-3}, /*AN2019_252_v1*/
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1",kGreen+3,3.365}, //-> Integral is 0
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1",kGreen+3,3.806e1},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1",kGreen+3,3.809e1},
+          BackgroundInfo{"ST","ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",kGreen+3,80.95}, /*XSecAnalyser 0.*/ //-> Integral is 0
+          BackgroundInfo{"ST","ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1",kGreen+3,136.02}, /*XSecAnalyzer 0.*/ //-> Integral is 0
         }
       },
       {
         2017,
         {
-          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
-                         kOrange, 6.217e+01},
-          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",
-                         kBlue,1.325},
-          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kBlue-2,5.420e+1},
-          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-                         kRed+3,5.547e1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.61e2},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,4.858e1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,6.982},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.747},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,8.052e-1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.927e-1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,3.478e-3},
-          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",
-                         kCyan+1,5.324e-2},
-          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",
-                         kCyan+1,5.420e-1},
-          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-                         kCyan+1,2.144e-1},
-          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,2.086e-1},
-          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,1.651e-1},
-          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,5.565e-2},
-          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,1.398e-2},
-          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,5.423e-3},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,2.703e-3},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,2.703e-3},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,5.423e-3},
-          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",
-                         kGreen+3,3.740e+0},
-          BackgroundInfo{"ST","ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8",
-                         kGreen+3,6.791e+1},
-          BackgroundInfo{"ST","ST_t-channel_top_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8",
-                         kGreen+3,1.133e+2},
-          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-                         kGreen+3,3.497e+1},
-          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-                         kGreen+3,3.491e+1},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",kOrange, 6.217e+01},
+          BackgroundInfo{"ZZ","ZZTo4L_13TeV_powheg_pythia8",kBlue,1.325},
+          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",kBlue-2,5.420e+1},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.547e1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_13TeV-madgraphMLM-pythia8",kOrange+7,1.61e2},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",kOrange+7,4.858e1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",kOrange+7,6.982},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",kOrange+7,1.747},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8",kOrange+7,8.052e-1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8",kOrange+7,1.927e-1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8",kOrange+7,3.478e-3},
+          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,5.324e-2},
+          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.420e-1},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.144e-1},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.086e-1},
+          BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.651e-1},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.565e-2},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.398e-2},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_TuneCP5_MCFM701_pythia8",43,5.423e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_TuneCP5_MCFM701_pythia8",43,2.703e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_TuneCP5_MCFM701_pythia8",43,2.703e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_TuneCP5_MCFM701_pythia8",43,5.423e-3},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.740e+0},
+          BackgroundInfo{"ST","ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8",kGreen+3,6.791e+1},
+          BackgroundInfo{"ST","ST_t-channel_top_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8",kGreen+3,1.133e+2},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.497e+1},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.491e+1},
         }
       },
       {
         2018,
         {
-          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
-                         kOrange,6.217e+01},
-          BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-                         kBlue,1.373},
-          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",
-                         kBlue-2,5.434e+1},
-          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-                         kRed+3,5.548e1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.608e2},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,4.864e1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,6.982},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.756},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,8.096e-1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,1.931e-1},
-          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",
-                         kOrange+7,3.513e-3},
-          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-                         kCyan+1,2.181e-1},
-          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",
-                         kCyan+1,5.324e-2},
-          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",
-                         kCyan+1,5.924e-1},
-          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,2.154e-1},
-          BackgroundInfo{"VVV","WWZ_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,1.676e-1},
-          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,5.701e-2},
-          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",
-                         14,1.473e-2},
-          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,5.423e-3},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,2.703e-3},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,2.703e-3},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_TuneCP5_MCFM701_pythia8",
-                         43,2.703e-3},
-          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",
-                         kGreen+3,3.740e+0},
-          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-                         kGreen+3,3.497e+1},
-          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-                         kGreen+3,3.491e+1},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",kOrange,6.217e+01},
+          BackgroundInfo{"ZZ","ZZTo4L_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue,1.373},
+          BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",kBlue-2,5.434e+1},
+          BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.548e1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.608e2},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,4.864e1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,6.982},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.756},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,8.096e-1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.931e-1},
+          BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,3.513e-3},
+          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.181e-1},
+          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,5.324e-2},
+          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.924e-1},
+          BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.154e-1},
+          BackgroundInfo{"VVV","WWZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.676e-1},
+          BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.701e-2},
+          BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.473e-2},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_13TeV_TuneCP5_MCFM701_pythia8",43,5.423e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_13TeV_TuneCP5_MCFM701_pythia8",43,2.703e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_13TeV_TuneCP5_MCFM701_pythia8",43,2.703e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_13TeV_TuneCP5_MCFM701_pythia8",43,2.703e-3},
+          BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.740e+0},
+          BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.497e+1},
+          BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.491e+1},
 
         }
       }
@@ -715,12 +719,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
   auto fixYRange = [&](THStack* hss, Double_t maxY = -1.){
-    const Float_t LegendSpace = 10.; // Log Scale ;/
+    const Float_t LegendSpace = 1.8; // Log Scale ;/
     if ( maxY<0 ) {
       TH1 *last = (TH1*)hss->GetStack()->Last();
       maxY = getMaxY(last);
     }
     hss->SetMaximum(maxY * LegendSpace);
+    std::cout << hss->GetHistogram()->GetName() << "\n";
+    // hss->SetMaximum(3500.);
+    // if(std::string(hss->GetName()).find("_A") != std::string::npos){
+    //   hss->SetMaximum(800.);
+    // } else if(std::string(hss->GetName()).find("_B") != std::string::npos) {
+    //   hss->SetMaximum(2000.);
+    // } else if(std::string(hss->GetName()).find("_C") != std::string::npos) {
+    //   hss->SetMaximum(1800.);
+    // } else if(std::string(hss->GetName()).find("_D") != std::string::npos) {
+    //   hss->SetMaximum(3800.);
+    // }
   };
 
   auto sortStack = [](THStack* hss){
@@ -756,10 +771,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       auto hcdata = static_cast<TH1*>(hhdata->Clone());
       auto hcmc = static_cast<TH1*>(hss->GetStack()->Last());
       auto hratio = new TGraphAsymmErrors(hcdata,hcmc,"pois");
-      for(uint i = 0; i < hratio->GetN(); i++){
-        hratio->SetPointEXhigh(i,0);
-        hratio->SetPointEXlow(i,0);
-      }
+      // for(uint i = 0; i < hratio->GetN(); i++){
+      //   hratio->SetPointEXhigh(i,0);
+      //   hratio->SetPointEXlow(i,0);
+      // }
       hratio->SetMarkerColor(kBlack);
       hratio->SetMarkerStyle(20);
       hratio->SetMarkerSize(.5);
@@ -1265,9 +1280,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
-  for(auto n: SignalPos){
-    printDataCard(2016,n.first);
-  }
+  // for (auto n: SignalPos) {
+  //   printDataCard(2017,n.first);
+  // }
 
 
   std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [&](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
@@ -1595,7 +1610,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->Draw();
       mainPad->SetLeftMargin(leftMargin);
       mainPad->SetRightMargin(rightMargin);
-      mainPad->SetLogy();
+      //mainPad->SetLogy();
       mainPad->SetTickx();
       mainPad->SetTicky();
 
@@ -1691,6 +1706,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         labelIdx.erase(labelIdx.find("+",8));
       }
       hs->SetTitle(Labels[labelIdx].c_str());
+
+      std::cout << "TITLE::::::::\\n\n\n\n\n\n" << labelIdx.c_str() << "\n\n\n\n\n";
+
       if (hName.find("CR1_") != std::string::npos) {
         hs->SetTitle((Labels[labelIdx].c_str() + std::string(" CR")).c_str());
       }
@@ -1701,9 +1719,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       hs->Draw("HIST");
       hsig->Draw("HIST SAME");
-      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.25)+1);
-      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.25)-1);
-      hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
+      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.5)+1);
+      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.5)-1);
+      //hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
       fixYRange(hs,getMaxY(last));
 
       if (includeData) {
@@ -1737,9 +1755,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         auto hcdata = getRatio(hdata,hs);
         subPad->cd();
         subPad->SetGrid();
-        hcdata->Draw("AP");
+        hcdata->Draw("ap");
+        hcdata->GetXaxis()->SetRangeUser(hs->GetHistogram()->GetXaxis()->GetXmin(),                hs->GetHistogram()->GetXaxis()->GetXmax());
+	hcdata->GetXaxis()->SetNdivisions(hs->GetHistogram()->GetXaxis()->GetNdivisions());
         subPad->SetFrameLineWidth(1);
-        hcdata->GetXaxis()->SetRangeUser(minx,maxx);
+
       }
       ++j;
 
@@ -1762,56 +1782,86 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     // "HElEta","HMuEta",
     // "HElPhi","HMuPhi",
     // "HPtZMWZ","HPtWMWZ",
-    // "HDistZl3","HDistZW",
-    // "HDistl1l2","HDistl1l2","HDistl2l3","HDistl1l3","HDistZW",
-    // "HDxyl1","HDxyl2","HDxyl3",
+    //"HDistZl3",
+    //"HDistZW",
+    // "HDistl1l2",
+    // "HDistl2l3",
+    // "HDistl1l3",
+    //"HDxyl1","HDxyl2","HDxyl3",
+    // "HPtZMWZ",
     // "HPtWMWZ",
-    // "HLt",
-    // "HIP3Dl1","HIP3Dl2","HIP3Dl3",
+    //"HMassTW",
+    //,"HWZDist"
+    //"HLt",
+    //"HIP3Dl1","HIP3Dl2","HIP3Dl3",
     // "HRelIsol1","HRelIsol2","HRelIsol3",
-    // "HDzl1","HDzl2","HDzl3",
-    // "HEtal1","HEtal2",
-    // "HEtal3","HPhil1",
-    // "HPhil2","HPhil3",
+    //"HDzl1","HDzl2","HDzl3",
+    "HEtal1","HEtal2","HEtal3",
+    "HPhil1","HPhil2","HPhil3",
     // "HDistl1l2"
-    // "HIP3Dl1","HIP3Dl2","HIP3Dl3",
-    // "HFakeString",
+    //"HIP3Dl1","HIP3Dl2","HIP3Dl3",
+    //"HFakeString",
     // "HPileup",
     // "HRelIsol1",
     // "HRelIsol2",
     // "HRelIsol3",
-    //"HPtl1","HPtl2","HPtl3",
-    //"HMetPt",
-    //"HMassZ",
-    //"HMassWZ",
-    "HPtl1Lt","HPtl2Lt","HPtl3Lt","HMetPtLt","HCosl3Met"
+    "HPtl1","HPtl2","HPtl3",
+    "HMetPt",
+    "HMassZ",
+    "HMassWZ",
+    //"HPtl1Lt","HPtl2Lt","HPtl3Lt","HMetPtLt","HCosl3Met"
   };
 
-  for(auto h : hints){
-     for(auto ch: chs){
-       std::vector<std::string> hNames;
-       for(auto yr: pyear){
-         hNames.emplace_back(Form("%d/%s_SR1_%s",yr,h.c_str(),ch.c_str()));
-         if(hNames.size() == 3){
-           canvasStacked(/*s.first*/600,hNames,false);
-           hNames.clear() ;
-         }
-       }
-     }
-   }
+  // // Difference in channels per year
+  // for(auto h : hints){
+  //   for(auto ch: chs){
+  //     std::vector<std::string> hNames;
+  //   for(auto yr: pyear){
+  //       hNames.emplace_back(Form("%d/%s_SR1_%s",yr,h.c_str(),ch.c_str()));
+  //        if(hNames.size() == 3){
+  //          canvasStacked(/*s.first*/600,hNames,false);
+  //          hNames.clear() ;
+  //        }
+  //      }
+  //    }
+  //  }
 
-  // Run2 Plots
+
+  //// 4 Channels in same plot
+  // for(auto h : hints){
+  //   for(auto yr: pyear){
+  //     std::vector<std::string> hNames;
+  //     for(auto ch: chs){
+  //       hNames.emplace_back(Form("%d/%s_CR2_%s",yr,h.c_str(),ch.c_str()));
+  //        if(hNames.size() == 4){
+  //          canvasStacked(600,hNames,true);
+  //          hNames.clear() ;
+  //        }
+  //      }
+  //    }
+  //  }
+
+  //plotPunziSignificance(2016);
+
+  //Run2 Plots
   for(auto h : hints){
     std::vector<std::string> hNames;
     for(auto ch: chs){
-      hNames.emplace_back(Form("0000/%s_CR1_%s",h.c_str(),ch.c_str())); //0000 -> Run2
-      std::cout << Form("0000/%s_CR1_%s\n\n",h.c_str(),ch.c_str()) ;
+      hNames.emplace_back(Form("0000/%s_CR2_%s",h.c_str(),ch.c_str())); //0000 -> Run2
       if(hNames.size() == 4){
         canvasStacked(600,hNames,true);
         hNames.clear() ;
       }
     }
   }
+
+  // std::vector<std::string> hNames_1 = {
+  //   "2016/HPtZMWZ_SR1_A+HPtZMWZ_SR1_A","2016/HPtZMWZ_SR1_B+HPtZMWZ_SR1_B",
+  //   "2016/HPtZMWZ_SR1_C+HPtZMWZ_SR1_C","2016/HPtZMWZ_SR1_D+HPtZMWZ_SR1_D"
+  // };
+
+  // canvasStacked(1200,hNames_1,true);
+
 
   //plotHLTSelectionRatio(2016);
   //plotSelectionRatio(2016);
