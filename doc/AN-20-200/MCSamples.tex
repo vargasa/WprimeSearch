@@ -6,8 +6,8 @@ and \verb|Autumn18| campaigns.
 
 \subsection {Signal Samples}
 
-Signal events for electrically charged diboson resonances in the $600~GeV$
-to $4.5~TeV$ mass range under the theoretical assumptions of the HVT model ~\cite{hvt2014}
+Signal events for electrically charged diboson resonances in the $600~\mathrm{GeV}$
+to $4.5~\mathrm{TeV}$ mass range under the theoretical assumptions of the HVT model ~\cite{hvt2014}
 have been generated using MC simulations with \verb|MadGraph5_aMC@NL| ~\cite{madgraph}
 interfaced with Pythia 8 ~\cite{pythia} for showering and hadronization, and a
 full detector response simulated with the \verb|Geant4| toolkit ~\cite{geant4}.
@@ -15,8 +15,7 @@ Physics objects are then reconstructed using the Particle-flow
 algorithm ~\cite{particleflow}.
 
 A complete list of the centrally generated signal samples used is shown in
-table \ref{tab:SignalList}
-
+Table \ref{tab:SignalList}.
 
 \begin{sidewaystable}[htb]
 \begin{center}
@@ -76,8 +75,9 @@ Year & Sample & XSec Model A [pb] & XSec Model B [pb]\\ \hline
 
 \subsection{Background Samples}
 
-Background processes have been generated using MadGraph, Pythia and Powheg
-generators. These backgrounds include irreducible processes which produce the
+Background processes have been generated using
+MadGraph ~\cite{madgraph}, Pythia ~\cite{pythia} and Powheg ~\cite{powhegbox}.
+These backgrounds include irreducible processes which produce the
 same final state as the signal and also reducible processes which produce
 different physics, but lead to similar signatures in the detector. The backgrounds
 are dominated by the production of electroweak heavy vector boson pairs (WZ), but
@@ -87,7 +87,7 @@ $Z\gamma$, are included as they may contain mis-identified lepton candidates
 coming from jets or photons.
 
 The full list of background samples, including their dataset name and cross
-section, are presented in tables \ref{tab:BkgList2016} (2016),
+section, are presented in Tables \ref{tab:BkgList2016} (2016),
 \ref{tab:BkgList2017}(2017), \ref{tab:BkgList2018} (2018).
 
 \begin{sidewaystable}[htb]
@@ -244,261 +244,3 @@ Background  & Sample & XSec [pb] \\ \hline
 \end{center}
 \end{sidewaystable}
 
-\begin{figure}[tph]
-  \centering
-        \subfigure[2016]{\includegraphics[width=.5\textwidth]{fig/2016_SignalTriggerEfficiency.pdf}}
-        \subfigure[2017]{\includegraphics[width=.5\textwidth]{fig/2017_SignalTriggerEfficiency.pdf}}
-        \vfil
-        \subfigure[2018]{\includegraphics[width=.5\textwidth]{fig/2018_SignalTriggerEfficiency.pdf}}
-  \caption{Signal efficiency for individual and combined High Level Triggers for Run II}
-  \label{fig:hltSignalEfficiency}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HDistl1l2_CR1_A+HDisM600.pdf}
-  \caption{Definition of the signal and control regions. All the channels
-    show how the region $dr_{l_{1}l_{2}} > 1.5$ is signal-depleted. A $600 GeV$
-    mass resonance is used for illustration purposes. The larger the resonance
-    mass, the narrower the signal distribution gets and it is shifted towards
-    the lower $dR$ region as the leptons product of the $Z$ decay get closer
-    forming a boosted topology.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:ControlRegionDefinition}
-\end{figure}
-
-In order to analyse the simulation quality, the data/MC ratio is studied on
-a signal-depleted control region. As Figure \ref{fig:ControlRegionDefinition}
-shows, the distance in the $\eta-\phi$ plane between the products
-of the Z boson decay $Z(\rightarrow l_{1}+l_{2})$ allow a distinct separation between a signal-enriched
-region ($dr_{l_{1}l_{2}} <= 1.5$) and a signal depleted region
-($dr_{l_{1}l_{2}} > 1.5$). The signal-delepted region is dominated mainly by
-the SM WZ production process.
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HPtl1_CR1_A_Run2_HPtRun2_M600.pdf}
-  \caption{Leading lepton transverse momentum distributions for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HPtl1}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HEtal1_CR1_A_Run2_HERun2_M600.pdf}
-  \caption{Leading lepton $\eta$ distributions for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HEtal1}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HPhil1_CR1_A_Run2_HPRun2_M600.pdf}
-  \caption{Leading lepton $phi$ distributions for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HPhil1}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassZ_CR1_A_Run2_HMRun2_M600.pdf}
-  \caption{$M_{Z}$ distributions of $Z\rightarrow\ell\ell$ candidates for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HMassZ}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/Rebining_HMassWZ_CR1_A_Run2_HRun2_M600.pdf}
-  \caption{The $WZ$ invariant mass after the $WZ$ candidate selection for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HMassWZ}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \includegraphics[width=\textwidth]{fig/Run2/KFactorIncluded_HMassTW_CR1_A_Run2_HRun2_M600.pdf}
-  \caption{The transverse mass distribution for the $W$ candidate for each final
-    signature as seen in the $dr_{l_{1}l_{2}} > 1.5$ control region.
-    Top left: $Z(\rightarrow e+e)W(\rightarrow e+\nu)$
-    Top right: $Z(\rightarrow e+e)W(\rightarrow \mu+\nu)$
-    Bottom left: $Z(\rightarrow \mu+\mu)W(\rightarrow e+\nu)$
-    Bottom right: $Z(\rightarrow \mu+\mu)W(\rightarrow \mu+\nu)$}
-  \label{fig:CR1_Run2_HMassTW}
-\end{figure}
-
-The $\eta$, $\phi$, $P_{T}$ distributions for the leading lepton en each category
-are shown in figures \ref{fig:CR1_Run2_HEtal1}, \ref{fig:CR1_Run2_HPhil1}, and
-\ref{fig:CR1_Run2_HPtl1}, as well as composite distributions like the mass of the
-reconstructed Z candidate (Figure \ref{fig:CR1_Run2_HMassZ}), the $W$ boson transverse mass
-(Figure \ref{fig:CR1_Run2_HMassTW}) and the discriminant variable: the mass for the
-reconstructed diboson system (Figure \ref{fig:CR1_Run2_HMassWZ}) show a good data/MC
-agreement in the control region.
-
-
-\section{Corrections on MC}
-
-\subsection{Luminosity Scale factors}
-
-\begin{table}
-  \caption{Run 2 Luminosity}
- \begin{center}
- \begin{tabular}{cc}\hline\hline
- Year & Luminosity [$fb^{-1}$] \\ \hline\hline
- 2016 & 35.92  \\
- 2017 & 41.43 \\
- 2018 & 59.74 \\
- \end{tabular}
- \end{center}
- \label{tab:LuminosityPerYear}
-\end{table}
-
-The number of generated MC events listed on tables \ref{tab:BkgList2016}, \ref{tab:BkgList2017},
-and \ref{tab:BkgList2018} are arbitrary. In order to compare it with data, the
-former has to be rescaled to account for the amount of data collected each year
-during the data taking period. The luminosity scale factor is computed as follows:
-
-\begin{equation}
-  L_{sf}=\frac{L_{\rm data}}{L_{\rm MC}} = \frac{L_{\rm data}\times\sigma_{\rm MC}}{n_{\rm MC}},
-\label{eq:lumiSF}
-\end{equation}
-
-Where $L_{\rm data}$ is the luminosity per year, see table \ref{tab:LuminosityPerYear},
-$n_{MC}$ the number of generated MC events as provided by the sum of weighted events
-from the generator (\verb|genWeight| branch on \verb|NanoAOD|), and $\sigma_{\rm MC}$
-is the cross section of the MC samples as provided by \verb|XSecAnalyzer|.
-
-\subsection{Pileup Reweighting}
-
-\begin{figure}[tph]
-  \centering
-        \subfigure[Standard model WZ production normalized pileup distributions for Run 2 years]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/MC_Pileup_Linear.pdf}}
-        \subfigure[Pileup profile from Run 2 Data, Linear Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_Linear.pdf}}
-        \vfil
-        \subfigure[Pileup profile from Run 2 Data, Logarithmic Scale]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/GoldenPileup_LogScale.pdf}}
-        \subfigure[Pileup weight profiles for different background samples]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/PileupWeight_LogScale.pdf}}
-  \caption{Pileup profile distributions for MC and Data}
-  \label{fig:RunII_PileupProfiles}
-\end{figure}
-
-The number of reconstructed primary vertices in each collision during a period
-of time generates a distribution commonly referred as pileup. Montecarlo simulations
-are produced with an estimated pileup profile and a correction is needed
-in order to match the distributions obtained in the collected data. 
-MC Samples are reweighted with $69.2~mb$ as MinBias cross section.
-Figure \ref{fig:RunII_PileupProfiles} shows the differences between the
-pileup distributions for run 2 data and montecarlo
-simulations for the predominant background process (standard model
-WZ production). These differences are then
-corrected by computing a pileup weight bin by bin that matches the normalized
-distribution from montecarlo with the normalized distribution from data.
-The normalization of each distribution is eachieved by scaling it by a factor
-equivalent to the the inverse of its integral. Each MC event is then reweighted
-with the appropiate factor based on the number of reconstructed primary vertices. 
-
-\subsection{Lepton scale factors}
-
-\begin{figure}[tph]
-  \centering
-  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_LooseID.pdf}}
-  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Electron_TightID.pdf}}
-  \vfil
-  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_GlobalHighPtID.pdf}}
-  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2016Muon_TrkHighPtID.pdf}}
-  \caption{Lepton ID Scale Factors 2016}
-  \label{fig:leptonidsf_2016}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_LooseID.pdf}}
-  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Electron_TightID.pdf}}
-  \vfil
-  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_GlobalHighPtID.pdf}}
-  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2017Muon_TrkHighPtID.pdf}}
-  \caption{Lepton ID Scale Factors 2017}
-  \label{fig:leptonidsf_2017}
-\end{figure}
-
-\begin{figure}[tph]
-  \centering
-  \subfigure[Electron Loose ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_LooseID.pdf}}
-  \subfigure[Electron Tight ID]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Electron_TightID.pdf}}
-  \vfil
-  \subfigure[Muon GlobalHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_GlobalHighPtID.pdf}}
-  \subfigure[Muon TrkHighPtId]{\includegraphics[width=.5\textwidth]{fig/ScaleFactors/2018Muon_TrkHighPtID.pdf}}
-  \caption{Lepton ID Scale Factors 2018}
-  \label{fig:leptonidsf_2018}
-\end{figure}
-
-Trigger and lepton identification efficiencies are different between data
-and montecarlo. Scale factors are provided centrally by the Muon and EGamma POG
-and show an $\eta-P_{t}$ dependence, see Figures \ref{fig:leptonidsf_2016},
-\ref{fig:leptonidsf_2017}, and \ref{fig:leptonidsf_2018}. Trigger and
-identification systematics are evaluated by moving up and down the scale factors
-by their uncertainties. These uncertainties are considered flat, independent
-of the resonance mass, and uncorrelated in terms of lepton flavour.
-
-\begin{table}
-  \caption{Background Yields per
-    channel on Control Region}
- \begin{center}
- \begin{tabular}{cccccc}\hline\hline
-Sample & $eee\nu$ & $ee\mu\nu$ & $\mu\mu e\nu$ & $\mu\mu\mu\nu$ & Total \\
-DY & 15.87 & 53.38 & 2.09 & 65.86 & 137.19 \\
-ST & 3.14 & 7.46 & 17.89 & 25.60 & 54.09 \\
-TTV & 11.23 & 16.91 & 18.10 & 22.27 & 68.51 \\
-VVV & 4.29 & 5.67 & 5.66 & 5.85 & 21.46 \\
-WZ & 337.97 & 443.60 & 395.82 & 380.23 & 1,557.63 \\
-$Z\gamma$ & 43.00 & 1.94 & 9.89 & 2.09 & 56.91 \\
-ZZ & 38.58 & 65.07 & 22.31 & 25.54 & 151.50 \\
-gg & 4.84 & 8.53 & 2.74 & 2.59 & 18.70 \\ \hline
-Total Background & 458.91 & 602.57 & 474.50 & 530.03 & 2,066.01 \\ \hline
-Total Data & 442.00 & 601.00 & 542.00 & 718.00 & 2,303.00 \\ \hline
- \end{tabular}
- \end{center}
- \label{tab:BackgroundYieldsCR}
-\end{table}
-
-\begin{table}
-  \caption{Background Yields per
-    channel on Signal Region}
- \begin{center}
- \begin{tabular}{cccccc}\hline\hline
-Sample & $eee\nu$ & $ee\mu\nu$ & $\mu\mu e\nu$ & $\mu\mu\mu\nu$ & Total \\
-DY & 9.88 & 225.94 & 225.94 & 232.50 & 694.26 \\
-ST & 0.84 & 6.23 & 6.23 & 19.66 & 32.96 \\
-TTV & 10.64 & 47.18 & 47.18 & 59.60 & 164.60 \\
-VVV & 4.30 & 12.34 & 12.34 & 16.29 & 45.27 \\
-WZ & 183.82 & 571.75 & 571.75 & 643.67 & 1,970.99 \\
-$Z\gamma$ & 17.71 & 10.01 & 10.01 & 7.41 & 45.13 \\
-ZZ & 18.74 & 47.29 & 47.29 & 30.69 & 144.01 \\
-gg & 2.12 & 6.36 & 6.36 & 2.16 & 16.99 \\ \hline
-Total Background & 248.04 & 927.11 & 927.11 & 1,011.96 & 3,114.22 \\ \hline
- \end{tabular}
- \end{center}
- \label{tab:BackgroundYieldsSR}
-\end{table}

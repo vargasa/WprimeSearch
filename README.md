@@ -215,7 +215,6 @@ do
 done
 
 #### UL Samples
-
 echo -e "#define Y2016\n#define ULSAMPLE" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2016/UL/*.txt #Loop over set of the list files
 for i in $FILES

@@ -9,15 +9,20 @@
 
 The \verb|RooStats| package is used to determine the 95\% confidence-level limit
 on the signal contribution in the data. The \verb|AsymptoticLimits| method is
-used with the CMS \verb|combine| tool to compute 95\% C.L upper-limits on the
+used with the CMS \verb|combine| tool to combine the four channels analyzed.
+For each resonant mass, we provide the tool with the histogram of expected number
+of signal and background events in the mass range of $600~\GeV$ and $4.0~\TeV$.
+We produce datacards for each histogram to compute 95\% C.L upper-limits on the
 production cross section times the branching ratio with one and two standard
 deviation bands given by the frequentist calculation as recommended by the
 Higgs Group.
 
 Systematic uncertainties are considered nuisance parameters.
 
+The \verb|combine| tool provides the central value of the signal strenght
+and the $\pm1\sigma$ and $\pm2\sigma$ confidence intervals.
 The expected upper limit on the resonance cross section times and its relative
-68\% and 95\% uncertainty bands, are shown as a function of the resonant mass
+68\% and 95\% uncertainty bands, are reported as a function of the resonant mass
 in figure \ref{fig:BrazilianPlot}
 
 
