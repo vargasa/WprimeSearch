@@ -29,10 +29,12 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
     TFile* outFile = TFile::Open(fileNameOut.c_str(),"READ");
     if (outFile != NULL){
       Bool_t skip = outFile->cd(Form("%d/%s", Year, sample.c_str()));
+      Int_t nHistos = gDirectory->GetNkeys();
+      skip = skip and (nHistos > 1);
       outFile->Close();
       if (skip) {
-	std::clog << Form("Sample found in output file, skipping : %s \n",sample.c_str()) ;
-	return 0;
+        std::clog << Form("Sample found in output file [%d], skipping : %s \n", nHistos, sample.c_str()) ;
+        return 0;
       }
     }
     std::ifstream infile(file);
