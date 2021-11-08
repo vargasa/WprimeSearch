@@ -47,7 +47,11 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
   TTreeReaderValue<Bool_t> Flag_BadChargedCandidateFilter = {fReader, MakeBranchList("Flag_BadChargedCandidateFilter")};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
-  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilterV2 = {fReader, MakeBranchList("Flag_ecalBadCalibFilterV2")};
+#if defined(ULSAMPLE)
+  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilter = {fReader, MakeBranchList("Flag_ecalBadCalibFilter")};
+#else
+  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilter = {fReader, MakeBranchList("Flag_ecalBadCalibFilterV2")};
+#endif
 #elif defined(Y2018)
   // 2018 HLTs && Flags
   TTreeReaderValue<Bool_t> HLT_Ele32_WPTight_Gsf = {fReader, MakeBranchList("HLT_Ele32_WPTight_Gsf")};
@@ -63,7 +67,11 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
   TTreeReaderValue<Bool_t> Flag_BadChargedCandidateFilter = {fReader, MakeBranchList("Flag_BadChargedCandidateFilter")};
   TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
-  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilterV2 = {fReader, MakeBranchList("Flag_ecalBadCalibFilterV2")};
+#if defined(ULSAMPLE)
+  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilter = {fReader, MakeBranchList("Flag_ecalBadCalibFilter")};
+#else
+  TTreeReaderValue<Bool_t> Flag_ecalBadCalibFilter = {fReader, MakeBranchList("Flag_ecalBadCalibFilterV2")};
+#endif
 #endif
 
   TTreeReaderValue<Int_t> PV_npvsGood = {fReader, MakeBranchList("PV_npvsGood")}; // total number of reconstructed primary vertices
@@ -208,7 +216,7 @@ Bool_t EventSelection::ReadEntry(const Long64_t& entry){
   Flags = *Flag_goodVertices and *Flag_globalSuperTightHalo2016Filter
     and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
     and *Flag_EcalDeadCellTriggerPrimitiveFilter
-    and *Flag_BadPFMuonFilter and *Flag_ecalBadCalibFilterV2
+    and *Flag_BadPFMuonFilter and *Flag_ecalBadCalibFilter
     and *PV_npvsGood > 0;
 #elif defined(Y2018)
   ElectronHLTs = *HLT_Ele32_WPTight_Gsf or *HLT_Photon200;
@@ -216,7 +224,7 @@ Bool_t EventSelection::ReadEntry(const Long64_t& entry){
   Flags = *Flag_goodVertices and *Flag_globalSuperTightHalo2016Filter
     and *Flag_HBHENoiseFilter and *Flag_HBHENoiseIsoFilter
     and *Flag_EcalDeadCellTriggerPrimitiveFilter and *Flag_BadPFMuonFilter
-    and *Flag_ecalBadCalibFilterV2
+    and *Flag_ecalBadCalibFilter
     and *PV_npvsGood > 0;
 #endif
 
