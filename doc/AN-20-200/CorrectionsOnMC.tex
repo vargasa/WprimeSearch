@@ -156,9 +156,10 @@ and montecarlo. Scale factors are provided centrally by the Muon and EGamma POG
 and show an $\eta-P_{t}$ dependence, see Figures \ref{fig:leptonidsf_2016},
 \ref{fig:leptonidsf_2017}, and \ref{fig:leptonidsf_2018}.
 
-The lepton identification scale factor is applied to the event
+The lepton identification scale factors are applied to the event
 as a result of the product of each individual scale factor for each lepton in
 the channel based on its transverse momentum $P_{t}$ and pseudorapidity $\eta$.
+On the other hand,
 The HLT scale factor is applied based on the $P_{t}$ and $\eta$ of the leading
 lepton: events corresponding to channels that include muons and electrons
 will contain the product of the muon and electron HLT scale factor while events
@@ -168,4 +169,25 @@ Trigger and identification systematics are evaluated by moving up
 and down the scale factors by their uncertainties. These uncertainties
 are considered flat, independent of the resonance mass, and uncorrelated
 in terms of lepton flavour.
+
+\begin{figure}[tph]
+  \centering
+  \subfigure[
+    Invariant mmass distribution for the WZ candidates without applying MC Corrections:
+    HLT, Lepton Identification, and QCD and EWK K-Factors.
+  ]{\includegraphics[width=.8\textwidth]{fig/ScaleFactors/CR2_HMassWZ_CR1_A_Run2_HRun2_M600_NoSF.pdf}}
+  \vfil
+  \subfigure[
+    Invariant mmass distribution for the WZ candidates applying HLT, Lepton identification scale
+    factors and QCD and EWK K-Factors.
+  ]{\includegraphics[width=.8\textwidth]{fig/ScaleFactors/CR2_HMassWZ_CR1_A_Run2_HRun2_M600_Central.pdf}}
+  \caption{Differences between the distributions with and without accounting for MC/Data afficiencies and
+  corrections}
+  \label{fig:ClosureTest}
+\end{figure}
+
+Figure \ref{fig:ClosureTest} shows the Invariant mass distribution
+for the WZ candidate prior and after applying the MC corrections
+described in previous subsections. The figure shows how the corrections improve
+the Data/MC ratio.
 
