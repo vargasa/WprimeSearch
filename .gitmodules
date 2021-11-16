@@ -4,3 +4,6 @@
 [submodule "doc/CUAThesisTemplate"]
 	path = doc/CUAThesisTemplate
 	url = git@github.com:vargasa/CUAThesisTemplate.git
+[submodule "doc/AN-20-200"]
+	path = doc/AN-20-200
+	url = ssh://git@gitlab.cern.ch:7999/tdr/notes/AN-20-200.git
