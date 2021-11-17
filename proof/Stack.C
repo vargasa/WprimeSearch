@@ -32,21 +32,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     Float_t xsec;
   };
 
-  std::unordered_map<int, std::string> DataSampleNames = {
+  std::unordered_map<int, std::string> DataSampleNamesLegacy = { //Legacy
     {2016, "SinglePhotonSingleElectronSingleMuon"},
     {2017, "SinglePhotonSingleElectronSingleMuon"},
     {2018, "SingleMuonEGamma"}
   };
 
-  // std::unordered_map<int, std::string> DataSampleNames = {
-  //   {2016, "ULSinglePhotonULSingleElectronULSingleMuon"},
-  //   {2017, "SinglePhotonSingleElectronSingleMuon"},
-  //   {2018, "SingleMuonEGamma"}
-  // };
+  std::unordered_map<int, std::string> DataSampleNames = { //UltraLegacy
+    {2016, "ULSinglePhotonULSingleElectronULSingleMuon"},
+    {2017, "ULSinglePhotonULSingleElectronULSingleMuon"},
+    {2018, "ULSingleMuonULEGamma"}
+  };
 
 
   // ShortName, DasName, kColor, Style, XSection
-  std::unordered_map<int, std::vector<BackgroundInfo>> BgNamesUL =
+  std::unordered_map<int, std::vector<BackgroundInfo>> BgNames = //UltraLegacy
     {
       {
         2016,
@@ -64,16 +64,16 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.324e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.974e-03},
           BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.161e-01},
-          BackgroundInfo{"TTV","TTZToLL*",kCyan+1,}, /*XSecAnayzer 0.*/
-          BackgroundInfo{"TTV","ttZJets*",kCyan+1,}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
+          //BackgroundInfo{"TTV","TTZToLL*",kCyan+1,}, /*XSecAnayzer 0.*/
+          //BackgroundInfo{"TTV","ttZJets*",kCyan+1,}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
           BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
           BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.476e-02},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,1.619e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,1.609e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,3.292e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,1.626e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,5.4e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
           BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
           BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.251e+01},
           BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.245e+01},
@@ -103,10 +103,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
           BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
           BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.476e-02},
-          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,3.292e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,1.608e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,1.626e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,5.4e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
           BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
           BackgroundInfo{"ST","ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5CR2_13TeV-powheg-madspin-pythia8",kGreen+3,6.793e+01},
           // BackgroundInfo{"ST","ST_t-channel_top",kGreen+3,},
@@ -136,10 +136,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
           BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
           BackgroundInfo{"VVV","ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,1.476e-02},
-          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,3.292e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,1.619e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,1.608e+00},
-          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,1.626e+00},
+          BackgroundInfo{"gg","GluGluToContinToZZTo2e2mu_TuneCP5_13TeV-mcfm701-pythia8",43,5.4e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4e_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
+          BackgroundInfo{"gg","GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",43,2.7e-3},
           BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.549e+00},
           BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.251e+01},
           BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.245e+01},
@@ -148,7 +148,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     };
 
   // ShortName, DasName, kColor, Style, XSection
-  std::unordered_map<int, std::vector<BackgroundInfo>> BgNames =
+  std::unordered_map<int, std::vector<BackgroundInfo>> BgNamesLegacy = //Legacy
     {
       {
         2016,
@@ -269,7 +269,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     {4000,11},
   };
 
-  std::unordered_map<int, std::vector<SignalInfo>> SignalSamplesUL = {
+  std::unordered_map<int, std::vector<SignalInfo>> SignalSamples = { //UltraLegacy
     {
       2016,
       {
@@ -327,7 +327,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  std::unordered_map<int, std::vector<SignalInfo>> SignalSamples = {
+  std::unordered_map<int, std::vector<SignalInfo>> SignalSamplesLegacy = { //Legacy
     {
       2016,
       {
@@ -1847,7 +1847,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   for(auto h : hints){
     std::vector<std::string> hNames;
     for(auto ch: chs){
-      hNames.emplace_back(Form("0000/%s_CR2_%s",h.c_str(),ch.c_str())); //0000 -> Run2
+      hNames.emplace_back(Form("0000/%s_CR1_%s",h.c_str(),ch.c_str())); //0000 -> Run2
       if(hNames.size() == 4){
         canvasStacked(600,hNames,true);
         hNames.clear() ;
