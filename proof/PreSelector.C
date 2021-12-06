@@ -341,7 +341,10 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HWZDist,"HWZDist",DistBins,0.,MaxDist);
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
+  InitHVec<TH1F>(HZPt,"HZPt",60,0.,1e3);
+  InitHVec<TH1F>(HWPt,"HWPt",60,0.,1e3);
   InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
+
 
   InitHVec<TH1F>(HDxyl1,"HDxyl1",1500,-0.25,0.25);
   InitHVec<TH1F>(HDxyl2,"HDxyl2",1500,-0.25,0.25);
@@ -1264,6 +1267,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HPtl2,nh,lep2.Pt());
   FillH1(HPtl3,nh,lep3.Pt());
   FillH1(HMetPt,nh,*MET_pt);
+  FillH1(HZPt,nh,zb.Pt());
+  FillH1(HWPt,nh,wb.Pt());
   FillH1(HWZPt,nh,(wb+zb).Pt());
   FillH1(HLt,nh,lt);
 
