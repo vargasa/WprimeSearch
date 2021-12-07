@@ -17,10 +17,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   TFile* fOutput = TFile::Open(Form("WprimeStack_%s.root",fileLabel.c_str()),"RECREATE");
 
   std::unordered_map<int, float> luminosity = {
-    {2016, 35.92},
-    {2017, 41.43},
+    // Run2 Luminosity
+    // https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec
+    {2016, 36.33},
+    {2017, 41.53},
     {2018, 59.74},
-    {0, 137.09}  /*Run2 Luminosity: 137.4 fb^-1 ?*/
+    {0, 137.60}
   };
 
 
@@ -64,7 +66,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.324e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.974e-03},
           BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.161e-01},
-          //BackgroundInfo{"TTV","TTZToLL*",kCyan+1,}, /*XSecAnayzer 0.*/
+          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1, 6.871e+02},
           //BackgroundInfo{"TTV","ttZJets*",kCyan+1,}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
@@ -97,7 +99,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.330e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.975e-03},
           BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.162e-01},
-          // BackgroundInfo{"TTV","TTZToLL*",kCyan+1,},
+          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,6.871e+02},
           BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.912e-01},
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
@@ -130,7 +132,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.328e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.987e-03},
           BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.166e-01},
-          //BackgroundInfo{"TTV","TTZToLL_M-1to10*",kCyan+1,},
+          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,6.871e+02},
           BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.901e-01},
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
