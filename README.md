@@ -193,47 +193,47 @@ Which takes as input `WprimeHistos.root` and `PileupHistogram-goldenJSON-13tev-2
 cd proof/
 # Copy paste formulas:
 
-echo "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2016/*.txt #Loop over set of the list files
 for i in $FILES
 do
+ echo "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
  root -l -b -q "Selector.C(\"$i\", 4)";
 done
 
-echo "#define Y2017" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2017/*.txt #Loop over set of the list files
 for i in $FILES
 do
+ echo "#define Y2017" > IsData.h # Make sure CMSDATA is undefined
  root -l -b -q "Selector.C(\"$i\", 4)";
 done
 
-echo "#define Y2018" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2018/*.txt #Loop over set of the list files
 for i in $FILES
 do
+ echo "#define Y2018" > IsData.h # Make sure CMSDATA is undefined
  root -l -b -q "Selector.C(\"$i\", 4)";
 done
 
 #### UL Samples
 
-echo -e "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2016/UL/*.txt #Loop over set of the list files
 for i in $FILES
 do
+ echo -e "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
  root -l -b -q "Selector.C(\"$i\", 4)";
 done
 
-echo -e "#define Y2017\n#define ULSAMPLE" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2017/UL/*.txt #Loop over set of the list files
 for i in $FILES
 do
+ echo -e "#define Y2017\n#define ULSAMPLE" > IsData.h # Make sure CMSDATA is undefined
  root -l -b -q "Selector.C(\"$i\", 4)";
 done
 
-echo -e "#define Y2018\n#define ULSAMPLE" > IsData.h # Make sure CMSDATA is undefined
 FILES=files/mc/2018/UL/*.txt #Loop over set of the list files
 for i in $FILES
 do
+ echo -e "#define Y2018\n#define ULSAMPLE" > IsData.h # Make sure CMSDATA is undefined
  root -l -b -q "Selector.C(\"$i\", 4)";
 done
 

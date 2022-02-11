@@ -347,6 +347,8 @@ class PreSelector : public EventSelection {
                                                     const Float_t& Wmt);
   ROOT::Math::PxPyPzMVector Get4V(const Float_t& Pz);
 
+  Int_t nbTag();
+
   ClassDef(PreSelector,0);
 };
 

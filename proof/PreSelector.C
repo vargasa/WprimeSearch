@@ -25,6 +25,23 @@ PreSelector::PreSelector(TTree *)
 
 }
 
+Int_t PreSelector::nbTag(){
+#if defined(Y2016)
+  const float medium = 0.3093;
+#elif defined(Y2017)
+  const float medium = 0.3033;
+#elif defined(Y2018)
+  const float medium = 0.2770;
+#endif
+  Int_t nbtag = 0;
+  for(uint i = 0; i < *nJet; ++i){
+    if( Jet_btagDeepFlavB[i] > medium){
+      ++nbtag;
+    }
+  }
+  return nbtag;
+}
+
 #ifndef CMSDATA
 Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
                                      const Int_t& option) const {
@@ -1882,8 +1899,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
       FillRegion(8,Els,Mus); // 8 -> CR1 Slot
     }
   } else {
-    HCutFlow->FillS("CR2");
-    FillRegion(16,Els,Mus);
+    if ( nbTag() > 0 ) {
+      HCutFlow->FillS("CR2");
+      FillRegion(16,Els,Mus);
+    }
   }
 
 
