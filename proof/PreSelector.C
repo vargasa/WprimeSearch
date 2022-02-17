@@ -607,8 +607,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const char* ElSFLoose = "SFElectronLooseID";
   const char* ElSFTight = "SFElectronTightID";
 
-#if defined(Y2016)
-#if defined(ULSAMPLE)
+#if defined(Y2016) && defined(ULSAMPLE)
 
   std::string fullPath = std::string((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
   if (fullPath.find("preVFP") != std::string::npos) {
@@ -618,7 +617,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
     ElSFLoose = "SFElectronLooseIDpostVFP";
     ElSFTight = "SFElectronTightIDpostVFP";
   }
-#endif
+
 #endif
 
   SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject(ElSFLoose));
@@ -639,21 +638,22 @@ void PreSelector::SlaveBegin(TTree *tree) {
 #endif
 
 #if defined(Y2016) && !defined(CMSDATA)
+  std::cout << "Y2016\n";
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
   SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
-#endif
-#if defined(Y2017) && !defined(CMSDATA)
+#elif defined(Y2017) && !defined(CMSDATA)
+  std::cout << "Y2017\n";
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
-#endif
-#if defined(Y2018) && !defined(CMSDATA)
+#elif defined(Y2018) && !defined(CMSDATA)
+  std::cout << "Y2018\n";
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
@@ -1899,7 +1899,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
       FillRegion(8,Els,Mus); // 8 -> CR1 Slot
     }
   } else {
-    if ( nbTag() > 0 ) {
+    if ( nbTag() >= 2 ) { // 2 b-quarks top/antitop
       HCutFlow->FillS("CR2");
       FillRegion(16,Els,Mus);
     }
