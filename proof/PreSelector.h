@@ -20,7 +20,6 @@
 #include "TEntryList.h"
 #include "EntryListMaker/EventSelection.h"
 #include "TGraphAsymmErrors.h"
-#include "IsData.h"
 #include <unordered_map>
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
