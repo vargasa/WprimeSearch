@@ -216,25 +216,28 @@ done
 
 #### UL Samples
 
-FILES=files/mc/2016/UL/*.txt #Loop over set of the list files
-for i in $FILES
-do
- echo -e "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
- root -l -b -q "Selector.C(\"$i\", 4)";
+## 2016
+GLOBIGNORE="*"
+YEAR=2016
+groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
+for str in ${groups[@]}; do
+  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; for i in $FILES;do echo -e "#define '$YEAR'\n#define ULSAMPLE" > IsData.h;root -l -b -q "Selector.C(\"$i\", 4)"; done'
 done
 
-FILES=files/mc/2017/UL/*.txt #Loop over set of the list files
-for i in $FILES
-do
- echo -e "#define Y2017\n#define ULSAMPLE" > IsData.h # Make sure CMSDATA is undefined
- root -l -b -q "Selector.C(\"$i\", 4)";
+## 2017
+GLOBIGNORE="*"
+YEAR=2017
+groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
+for str in ${groups[@]}; do
+  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; for i in $FILES;do echo -e "#define '$YEAR'\n#define ULSAMPLE" > IsData.h;root -l -b -q "Selector.C(\"$i\", 4)"; done'
 done
 
-FILES=files/mc/2018/UL/*.txt #Loop over set of the list files
-for i in $FILES
-do
- echo -e "#define Y2018\n#define ULSAMPLE" > IsData.h # Make sure CMSDATA is undefined
- root -l -b -q "Selector.C(\"$i\", 4)";
+## 2018
+GLOBIGNORE="*"
+YEAR=2018
+groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
+for str in ${groups[@]}; do
+  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; for i in $FILES;do echo -e "#define '$YEAR'\n#define ULSAMPLE" > IsData.h;root -l -b -q "Selector.C(\"$i\", 4)"; done'
 done
 
 ```
