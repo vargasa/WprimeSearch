@@ -221,7 +221,11 @@ GLOBIGNORE="*"
 YEAR=2016
 groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
 for str in ${groups[@]}; do
-  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; for i in $FILES;do echo -e "#define '$YEAR'\n#define ULSAMPLE" > IsData.h;root -l -b -q "Selector.C(\"$i\", 4)"; done'
+  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; \
+                   for i in $FILES; do \
+                     echo -e "#define Y'$YEAR'\n#define ULSAMPLE" > IsData.h; \
+                     root -l -b -q "Selector.C(\"$i\", 4)"; \
+                    done'
 done
 
 ## 2017
@@ -229,7 +233,11 @@ GLOBIGNORE="*"
 YEAR=2017
 groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
 for str in ${groups[@]}; do
-  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; for i in $FILES;do echo -e "#define '$YEAR'\n#define ULSAMPLE" > IsData.h;root -l -b -q "Selector.C(\"$i\", 4)"; done'
+  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; \
+                   for i in $FILES; do \
+                     echo -e "#define Y'$YEAR'\n#define ULSAMPLE" > IsData.h; \
+                     root -l -b -q "Selector.C(\"$i\", 4)"; \
+                    done'
 done
 
 ## 2018
@@ -237,7 +245,11 @@ GLOBIGNORE="*"
 YEAR=2018
 groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
 for str in ${groups[@]}; do
-  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; for i in $FILES;do echo -e "#define '$YEAR'\n#define ULSAMPLE" > IsData.h;root -l -b -q "Selector.C(\"$i\", 4)"; done'
+  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; \
+                   for i in $FILES; do \
+                     echo -e "#define Y'$YEAR'\n#define ULSAMPLE" > IsData.h; \
+                     root -l -b -q "Selector.C(\"$i\", 4)"; \
+                    done'
 done
 
 ```
