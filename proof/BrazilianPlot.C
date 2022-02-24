@@ -7,10 +7,10 @@
   const uint n = 12;
 
   std::unordered_map<int, float> luminosity = {
-    {2016, 35.92},
-    {2017, 41.43},
+    {2016, 36.33},
+    {2017, 41.53},
     {2018, 59.74},
-    {0, 137.09}
+    {0, 137.60}
   };
 
   std::vector<std::pair<int,double>> modelA = {
