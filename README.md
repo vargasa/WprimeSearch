@@ -495,8 +495,9 @@ xrdcp -v root://cmsxrootd.fnal.gov//store/data/Run2018D/SingleMuon/MINIAOD/12Nov
 
 ### References:
 
-* [Muon POG Momentum Resolution update Jul/26th/2021](https://indico.cern.ch/event/1061707/contributions/4464423/attachments/2287342/3887855/MomentumResolution%20Update.pdf)
+* [Analysis update B2G Diboson meeting Feb/11th/2022](https://indico.cern.ch/event/1127839/contributions/4733861/attachments/2389961/4085434/WprimeUpdate%20Feb%2011th.pdf)
 * [Analysis update B2G Diboson meeting Sep/24th/2021](https://indico.cern.ch/event/1079124/contributions/4539114/attachments/2315745/3942026/WprimeUpdate%20Sept%2024th.pdf)
+* [Muon POG Momentum Resolution update Jul/26th/2021](https://indico.cern.ch/event/1061707/contributions/4464423/attachments/2287342/3887855/MomentumResolution%20Update.pdf)
 * [Analysis update B2G Diboson meeting Jun/18th/2021](https://indico.cern.ch/event/1049401/contributions/4409124/attachments/2267179/3849537/Wprime%20Update%20June%202021.pdf)
 * [Analysis update B2G Diboson meeting Apr/12th/2021](https://indico.cern.ch/event/1017483/contributions/4304551/attachments/2224394/3767255/Wprime%20Update%20April%202021.pdf)
 * [Analysis update B2G Diboson meeting Jan/15th/2021](https://indico.cern.ch/event/993670/contributions/4181199/attachments/2172439/3667916/Wprime%20DIB%20Jan%202021%20%281%29.pdf)

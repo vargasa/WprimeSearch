@@ -20,7 +20,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   istringstream f(files);
   std::string file;
   std::string sample;
-  std::string fileNameOut = "WprimeHistos_bTagCR2_v2.root";
+  std::string fileNameOut = "WprimeHistos_UL.root";
 
   while(std::getline(f,file,'+')){
     sample += file.substr(file.rfind("/")+1);
@@ -95,10 +95,16 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFMuonTriggerGH = static_cast<TH2F*>(f2->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio"));
   SFMuonTriggerGH->SetName("SFMuonTriggerGH");
   SFDb->Add(SFMuonTriggerGH);
-  auto *f3a = TFile::Open("files/mc/2016/sf/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","READ");
+#ifdef ULSAMPLE
+  auto *f3a = TFile::Open("files/mc/2016/sf/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","READ");
   auto SFMuonHighPtID = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonHighPtID->SetName("SFMuonHighPtID");
+  SFMuonHighPtID->SetName("SFMuonHighPtIDpreVFP");
   SFDb->Add(SFMuonHighPtID);
+  auto *f3b = TFile::Open("files/mc/2016/sf/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","READ");
+  auto SFMUonHighPtIDv2 = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
+  SFMUonHighPtIDv2->SetName("SFMuonHighPtIDpostVFP");
+  SFDb->Add(SFMUonHighPtIDv2);
+#endif
   auto SFMuonTrkHighPtID = static_cast<TH2F*>(f3a->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
   SFDb->Add(SFMuonTrkHighPtID);
@@ -131,13 +137,15 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_PtEtaBins/abseta_pt_ratio"));
   SFMuonTrigger->SetName("SFMuonTrigger");
   SFDb->Add(SFMuonTrigger);
-  TFile *f3 = TFile::Open("files/mc/2017/sf/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","READ");
+#if defined(ULSAMPLE)
+  TFile *f3 = TFile::Open("files/mc/2017/UL/sf/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","READ");
   auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtID");
   SFDb->Add(SFMuonHighPtID);
   auto SFMuonTrkHighPtID = static_cast<TH2D*>(f3->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
   SFDb->Add(SFMuonTrkHighPtID);
+#endif
   TFile *f5 = TFile::Open("files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
   auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
   SFElectronTrigger1->SetName("SFElectronTrigger1");
@@ -167,13 +175,15 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/abseta_pt_ratio"));
   SFMuonTrigger->SetName("SFMuonTrigger");
   SFDb->Add(SFMuonTrigger);
-  TFile *f3 = TFile::Open("files/mc/2018/sf/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root","READ");
+#ifdef ULSAMPLE
+  TFile *f3 = TFile::Open("/uscms/home/avargash/nobackup/WprimeSearch/proof/files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root,"READ");
   auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtID");
   SFDb->Add(SFMuonHighPtID);
   auto SFMuonTrkHighPtID =  static_cast<TH2D*>(f3->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
   SFDb->Add(SFMuonTrkHighPtID);
+#endif
   TFile *f5 = TFile::Open("files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
   auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
   SFElectronTrigger1->SetName("SFElectronTrigger1");

@@ -589,6 +589,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #ifndef CMSDATA
 
+  std::string fullPath = std::string((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+
   if (fInput->FindObject("SampleName")) {
     // Lesson: TString can't be in TCollection
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
@@ -601,15 +603,26 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   assert(SFDb);
 
-  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtID"));
-  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
+  const char* MuSFHightPt = "SFMuonHighPtID";
+  const char* MuSFTrkHighPt = "SFMuonTrkHighPtId";
+
+#if defined(Y2016) and defined(ULSAMPLE)
+  if (fullPath.find("preVFP") != std::string::npos) {
+    MuSFHighPt = "SFMuonHighPtIDpreVFP";
+    MuSFTrkHighPt = "SFMuonTrkHighPtIDpreVFP";
+  } else {
+    MuSFHighPt = "SFMuonHighPtIDpostVFP";
+    MuSFTrkHighPt = "SFMuonTrkHighPtIDpostVFP";
+  }
+#endif
+
+  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFHighPt));
+  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuTrkHighPt));
 
   const char* ElSFLoose = "SFElectronLooseID";
   const char* ElSFTight = "SFElectronTightID";
 
 #if defined(Y2016) && defined(ULSAMPLE)
-
-  std::string fullPath = std::string((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
   if (fullPath.find("preVFP") != std::string::npos) {
     ElSFLoose = "SFElectronLooseIDpreVFP";
     ElSFTight = "SFElectronTightIDpreVFP";
@@ -637,8 +650,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #endif
 
-#if defined(Y2016) && !defined(CMSDATA)
-  std::cout << "Y2016\n";
+#if defined(Y2016) && !defined(CMSDATA) 
+
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
