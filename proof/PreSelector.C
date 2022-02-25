@@ -200,20 +200,7 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
   Double_t sf = -1;
 
 #if defined(Y2016)
-  /*
-
-    B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
-    G->H : 7.576 + 8.651                         //fb-1
-    From AN_2019_245_v12
-  */
-  const Double_t LumiBF = 19.689;
-  const Double_t LumiGH = 16.227;
-
-  Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
-  Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
-
-  sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
-
+  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
 #elif defined(Y2017) || defined(Y2018)
   sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
 #endif
@@ -612,8 +599,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   assert(SFDb);
 
-  const char* MuSFHightPt = "SFMuonHighPtID";
-  const char* MuSFTrkHighPt = "SFMuonTrkHighPtId";
+  std::string MuSFHighPt = "SFMuonHighPtID";
+  std::string MuSFTrkHighPt = "SFMuonTrkHighPtId";
 
 #if defined(Y2016) and defined(ULSAMPLE)
   if (fullPath.find("preVFP") != std::string::npos) {
@@ -625,8 +612,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   }
 #endif
 
-  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFHighPt));
-  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuTrkHighPt));
+  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFHighPt.c_str()));
+  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFTrkHighPt.c_str()));
 
   const char* ElSFLoose = "SFElectronLooseID";
   const char* ElSFTight = "SFElectronTightID";
@@ -663,8 +650,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-  SFMuonTriggerBF = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
-  SFMuonTriggerGH = static_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
+  SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
   SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
 #elif defined(Y2017) && !defined(CMSDATA)

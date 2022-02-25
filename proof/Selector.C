@@ -20,7 +20,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   istringstream f(files);
   std::string file;
   std::string sample;
-  std::string fileNameOut = "WprimeHistos_UL.root";
+  std::string fileNameOut = "WprimeHistos_ULSFs.root";
 
   while(std::getline(f,file,'+')){
     sample += file.substr(file.rfind("/")+1);
@@ -87,15 +87,11 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFDYKFactorEWK = static_cast<TH1F*>(f0->Get("kfactor_monojet_ewk"));
   SFDYKFactorEWK->SetName("SFDYKFactorEWK");
   SFDb->Add(SFDYKFactorEWK);
-  TFile *f1 = TFile::Open("files/mc/2016/sf/EfficienciesAndSF_RunBtoF.root","READ");
-  auto SFMuonTriggerBF = static_cast<TH2F*>(f1->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio"));
-  SFMuonTriggerBF->SetName("SFMuonTriggerBF");
-  SFDb->Add(SFMuonTriggerBF);
-  TFile *f2 = TFile::Open("files/mc/2016/sf/EfficienciesAndSF_Period4.root","READ");
-  auto SFMuonTriggerGH = static_cast<TH2F*>(f2->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio"));
-  SFMuonTriggerGH->SetName("SFMuonTriggerGH");
-  SFDb->Add(SFMuonTriggerGH);
 #ifdef ULSAMPLE
+  TFile *f1 = TFile::Open("files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","READ");
+  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("SF_2016_var"));
+  SFMuonTrigger->SetName("SFMuonTrigger");
+  SFDb->Add(SFMuonTrigger);
   auto *f3a = TFile::Open("files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","READ");
   auto SFMuonHighPtID = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtIDpreVFP");
@@ -136,11 +132,11 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFDYKFactorEWK = static_cast<TH1F*>(f0a->Get("kfactor_monojet_ewk"));
   SFDYKFactorEWK->SetName("SFDYKFactorEWK");
   SFDb->Add(SFDYKFactorEWK);
-  TFile *f1 = TFile::Open("files/mc/2017/sf/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root","READ");
-  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_PtEtaBins/abseta_pt_ratio"));
+#if defined(ULSAMPLE)
+  TFile *f1 = TFile::Open("files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","READ");
+  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("SF_2017_var"));
   SFMuonTrigger->SetName("SFMuonTrigger");
   SFDb->Add(SFMuonTrigger);
-#if defined(ULSAMPLE)
   TFile *f3 = TFile::Open("files/mc/2017/UL/sf/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","READ");
   auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtID");
@@ -174,12 +170,12 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   auto SFDYKFactorEWK = static_cast<TH1F*>(f0a->Get("kfactor_monojet_ewk"));
   SFDYKFactorEWK->SetName("SFDYKFactorEWK");
   SFDb->Add(SFDYKFactorEWK);
-  TFile *f1 = TFile::Open("files/mc/2018/sf/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root","READ");
-  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/abseta_pt_ratio"));
+#ifdef ULSAMPLE
+  TFile *f1 = TFile::Open("files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","READ");
+  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("SF_2018_var"));
   SFMuonTrigger->SetName("SFMuonTrigger");
   SFDb->Add(SFMuonTrigger);
-#ifdef ULSAMPLE
-  TFile *f3 = TFile::Open("/uscms/home/avargash/nobackup/WprimeSearch/proof/files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root,"READ");
+  TFile *f3 = TFile::Open("files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root,"READ");
   auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtID");
   SFDb->Add(SFMuonHighPtID);

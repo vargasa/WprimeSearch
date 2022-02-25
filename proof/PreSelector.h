@@ -322,12 +322,7 @@ class PreSelector : public EventSelection {
   TH1F* SFDYKFactorEWK;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
-#ifdef Y2016
-  TH2F* SFMuonTriggerBF;
-  TH2F* SFMuonTriggerGH;
-#elif defined(Y2017) || defined(Y2018)
   TH2F* SFMuonTrigger;
-#endif
 #endif
 
   Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);
