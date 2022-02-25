@@ -276,6 +276,15 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
   idst.emplace_back("CR2_C_Central");
   idst.emplace_back("CR2_D_Central");
 
+  idst.emplace_back("CR3_A");
+  idst.emplace_back("CR3_B");
+  idst.emplace_back("CR3_C");
+  idst.emplace_back("CR3_D");
+
+  idst.emplace_back("CR3_A_Central");
+  idst.emplace_back("CR3_B_Central");
+  idst.emplace_back("CR3_C_Central");
+  idst.emplace_back("CR3_D_Central");
 
   for(const auto id: idst){
     vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
@@ -1912,14 +1921,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
       FillRegion(8,Els,Mus); // 8 -> CR1 Slot
     }
   } else {
-    if ( nbTag() >= 2 ) { // 2 b-quarks top/antitop
-      HCutFlow->FillS("CR2");
-      FillRegion(16,Els,Mus);
+    HCutFlow->FillS("CR2");
+    FillRegion(16,Els,Mus);
+    if(nbTag()>=2){
+      HCutFlow->FillS("CR3");
+      FillRegion(24,Els,Mus);
     }
   }
-
-
-
 
   return kTRUE;
 }
