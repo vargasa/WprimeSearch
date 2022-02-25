@@ -200,9 +200,9 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
   Double_t sf = -1;
 
 #if defined(Y2016)
-  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
+  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
 #elif defined(Y2017) || defined(Y2018)
-  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
+  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
 #endif
   assert(sf>0);
 
