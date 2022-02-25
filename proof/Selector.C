@@ -96,18 +96,21 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   SFMuonTriggerGH->SetName("SFMuonTriggerGH");
   SFDb->Add(SFMuonTriggerGH);
 #ifdef ULSAMPLE
-  auto *f3a = TFile::Open("files/mc/2016/sf/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","READ");
+  auto *f3a = TFile::Open("files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","READ");
   auto SFMuonHighPtID = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMuonHighPtID->SetName("SFMuonHighPtIDpreVFP");
   SFDb->Add(SFMuonHighPtID);
-  auto *f3b = TFile::Open("files/mc/2016/sf/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","READ");
+  auto *f3b = TFile::Open("files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","READ");
   auto SFMUonHighPtIDv2 = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
   SFMUonHighPtIDv2->SetName("SFMuonHighPtIDpostVFP");
   SFDb->Add(SFMUonHighPtIDv2);
-#endif
   auto SFMuonTrkHighPtID = static_cast<TH2F*>(f3a->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
+  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtIDpreVFP");
   SFDb->Add(SFMuonTrkHighPtID);
+  auto SFMuonTrkHighPtIDv2 = static_cast<TH2F*>(f3b->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
+  SFMuonTrkHighPtIDv2->SetName("SFMuonTrkHighPtIDpostVFP");
+  SFDb->Add(SFMuonTrkHighPtIDv2);
+#endif
   TFile *f5 = TFile::Open("files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","READ");
   auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
   SFElectronTrigger1->SetName("SFElectronTrigger1");
