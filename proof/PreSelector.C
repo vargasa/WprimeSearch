@@ -200,9 +200,21 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
   Double_t sf = -1;
 
 #if defined(Y2016)
-  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
+  /*
+    B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
+    G->H : 7.576 + 8.651                         //fb-1
+    From AN_2019_245_v12
+  */
+  const Double_t LumiBF = 19.689;
+  const Double_t LumiGH = 16.227;
+
+  Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
+  Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
+
+  sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
+
 #elif defined(Y2017) || defined(Y2018)
-  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
+  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
 #endif
   assert(sf>0);
 
