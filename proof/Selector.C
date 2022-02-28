@@ -4,6 +4,16 @@
 #include <string>
 #include <fstream>
 
+template<class T>
+void AddSFHisto(std::string& newLabel,
+                std::string& filename, std::string& histoname,
+                TList* SFDb){
+  TFile* f = TFile::Open(filename.c_str());
+  T* h = static_cast<T*>(f->Get(histoname.c_str()));
+  h->SetName(newLabel.c_str());
+  SFDb->Add(h);
+}
+
 Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile = ""){
 
   int Year;
@@ -79,134 +89,80 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   TList *SFDb = new TList();
   SFDb->SetName("SFDb");
 
-#ifdef Y2016
-  TFile *f0 = TFile::Open("files/mc/2016/sf/merged_kfactors_zjets.root","READ");
-  auto SFDYKFactorQCD = static_cast<TH1F*>(f0->Get("kfactor_monojet_qcd"));
-  SFDYKFactorQCD->SetName("SFDYKFactorQCD");
-  SFDb->Add(SFDYKFactorQCD);
-  auto SFDYKFactorEWK = static_cast<TH1F*>(f0->Get("kfactor_monojet_ewk"));
-  SFDYKFactorEWK->SetName("SFDYKFactorEWK");
-  SFDb->Add(SFDYKFactorEWK);
-#ifdef ULSAMPLE
-  TFile *f1 = TFile::Open("files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","READ");
-  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("SF_2016_var"));
-  SFMuonTrigger->SetName("SFMuonTrigger");
-  SFDb->Add(SFMuonTrigger);
-  auto *f3a = TFile::Open("files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","READ");
-  auto SFMuonHighPtID = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonHighPtID->SetName("SFMuonHighPtIDpreVFP");
-  SFDb->Add(SFMuonHighPtID);
-  auto *f3b = TFile::Open("files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","READ");
-  auto SFMUonHighPtIDv2 = static_cast<TH2F*>(f3a->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMUonHighPtIDv2->SetName("SFMuonHighPtIDpostVFP");
-  SFDb->Add(SFMUonHighPtIDv2);
-  auto SFMuonTrkHighPtID = static_cast<TH2F*>(f3a->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtIDpreVFP");
-  SFDb->Add(SFMuonTrkHighPtID);
-  auto SFMuonTrkHighPtIDv2 = static_cast<TH2F*>(f3b->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonTrkHighPtIDv2->SetName("SFMuonTrkHighPtIDpostVFP");
-  SFDb->Add(SFMuonTrkHighPtIDv2);
-#endif
-  TFile *f5 = TFile::Open("files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","READ");
-  auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
-  SFElectronTrigger1->SetName("SFElectronTrigger1");
-  SFDb->Add(SFElectronTrigger1);
-  TFile *f6 = TFile::Open("files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root","READ");
-  auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
-  SFElectronTrigger2->SetName("SFElectronTrigger2");
-  SFDb->Add(SFElectronTrigger2);
-  TFile *f7a = TFile::Open("files/mc/2016/sf/2016LegacyReReco_ElectronLoose.root","READ");
-  auto SFElectronLooseID = static_cast<TH2F*>(f7a->Get("EGamma_SF2D"));
-  SFElectronLooseID->SetName("SFElectronLooseID");
-  SFDb->Add(SFElectronLooseID);
-  TFile *f7b = TFile::Open("files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root","READ");
-  auto SFElectronTightID = static_cast<TH2F*>(f7b->Get("EGamma_SF2D"));
-  SFElectronTightID->SetName("SFElectronTightID");
-  SFDb->Add(SFElectronTightID);
-#elif defined(Y2017)
-  TFile *f0 = TFile::Open("files/mc/2017/sf/SF_QCD_NLO_DYJetsToLL.root","READ");
-  auto SFDYKFactorQCD = static_cast<TH1F*>(f0->Get("kfac_dy_filter"));
-  SFDYKFactorQCD->SetName("SFDYKFactorQCD");
-  SFDb->Add(SFDYKFactorQCD);
-  TFile *f0a = TFile::Open("files/mc/2016/sf/merged_kfactors_zjets.root","READ");
-  auto SFDYKFactorEWK = static_cast<TH1F*>(f0a->Get("kfactor_monojet_ewk"));
-  SFDYKFactorEWK->SetName("SFDYKFactorEWK");
-  SFDb->Add(SFDYKFactorEWK);
-#if defined(ULSAMPLE)
-  TFile *f1 = TFile::Open("files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","READ");
-  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("SF_2017_var"));
-  SFMuonTrigger->SetName("SFMuonTrigger");
-  SFDb->Add(SFMuonTrigger);
-  TFile *f3 = TFile::Open("files/mc/2017/UL/sf/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","READ");
-  auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonHighPtID->SetName("SFMuonHighPtID");
-  SFDb->Add(SFMuonHighPtID);
-  auto SFMuonTrkHighPtID = static_cast<TH2D*>(f3->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
-  SFDb->Add(SFMuonTrkHighPtID);
-#endif
-  TFile *f5 = TFile::Open("files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
-  auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
-  SFElectronTrigger1->SetName("SFElectronTrigger1");
-  SFDb->Add(SFElectronTrigger1);
-  TFile *f6 = TFile::Open("files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","READ");
-  auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
-  SFElectronTrigger2->SetName("SFElectronTrigger2");
-  SFDb->Add(SFElectronTrigger2);
-  TFile *f2 = TFile::Open("files/mc/2017/sf/2017_ElectronLoose.root","READ");
-  auto SFElectronLooseID = static_cast<TH2F*>(f2->Get("EGamma_SF2D"));
-  SFElectronLooseID->SetName("SFElectronLooseID");
-  SFDb->Add(SFElectronLooseID);
-  TFile *f2b = TFile::Open("files/mc/2017/sf/2017_ElectronTight.root","READ");
-  auto SFElectronTightID = static_cast<TH2F*>(f2b->Get("EGamma_SF2D"));
-  SFElectronTightID->SetName("SFElectronTightID");
-  SFDb->Add(SFElectronTightID);
-#elif defined(Y2018)
-  TFile *f0 = TFile::Open("files/mc/2017/sf/SF_QCD_NLO_DYJetsToLL.root","READ");
-  auto SFDYKFactorQCD = static_cast<TH1F*>(f0->Get("kfac_dy_filter"));
-  SFDYKFactorQCD->SetName("SFDYKFactorQCD");
-  SFDb->Add(SFDYKFactorQCD);
-  TFile *f0a = TFile::Open("files/mc/2016/sf/merged_kfactors_zjets.root","READ");
-  auto SFDYKFactorEWK = static_cast<TH1F*>(f0a->Get("kfactor_monojet_ewk"));
-  SFDYKFactorEWK->SetName("SFDYKFactorEWK");
-  SFDb->Add(SFDYKFactorEWK);
-#ifdef ULSAMPLE
-  TFile *f1 = TFile::Open("files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","READ");
-  auto SFMuonTrigger = static_cast<TH2F*>(f1->Get("SF_2018_var"));
-  SFMuonTrigger->SetName("SFMuonTrigger");
-  SFDb->Add(SFMuonTrigger);
-  TFile *f3 = TFile::Open("files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root,"READ");
-  auto SFMuonHighPtID = static_cast<TH2D*>(f3->Get("NUM_HighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonHighPtID->SetName("SFMuonHighPtID");
-  SFDb->Add(SFMuonHighPtID);
-  auto SFMuonTrkHighPtID =  static_cast<TH2D*>(f3->Get("NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt"));
-  SFMuonTrkHighPtID->SetName("SFMuonTrkHighPtID");
-  SFDb->Add(SFMuonTrkHighPtID);
-#endif
-  TFile *f5 = TFile::Open("files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","READ");
-  auto SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(f5->Get("ScaleFactors"));
-  SFElectronTrigger1->SetName("SFElectronTrigger1");
-  SFDb->Add(SFElectronTrigger1);
-  TFile *f6 = TFile::Open("files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","READ");
-  auto SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(f6->Get("ScaleFactors"));
-  SFElectronTrigger2->SetName("SFElectronTrigger2");
-  SFDb->Add(SFElectronTrigger2);
-  TFile *f7a = TFile::Open("files/mc/2018/sf/2018_ElectronLoose.root","READ");
-  auto SFElectronLooseID = static_cast<TH2F*>(f7a->Get("EGamma_SF2D"));
-  SFElectronLooseID->SetName("SFElectronLooseID");
-  SFDb->Add(SFElectronLooseID);
-  TFile *f7b = TFile::Open("files/mc/2018/sf/2018_ElectronTight.root","READ");
-  auto SFElectronTightID = static_cast<TH2F*>(f7b->Get("EGamma_SF2D"));
-  SFElectronTightID->SetName("SFElectronTightID");
-  SFDb->Add(SFElectronTightID);
+  // Year, SFKind, File, HistogramName
 
+  if (Year == 2016){
+#ifndef ULSAMPLE
+    AddSFHisto<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd");
+    AddSFHisto<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk");
+    AddSFHisto<TH2F>("SFMuonTriggerBF","files/mc/2016/sf/EfficienciesAndSF_RunBtoF.root","Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio");
+    AddSFHisto<TH2F>("SFMuonTriggerGH","files/mc/2016/sf/EfficienciesAndSF_Period4.root","Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio");
+    AnddSFHisto<TH2F>("SFMuonHighPtIDBF","files/mc/2016/sf/RunBCDEF_SF_ID.root","NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt");
+    AnddSFHisto<TH2F>("SFMuonHighPtIDGH","files/mc/2016/sf/RunGH_SF_ID.root","NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt");
+    // SFMuonTrkHighPt ?
+    AddSFHisto<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","ScaleFactors");
+    AddSFHisto<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root","ScaleFactors");
+    AddSFHisto<TH2F>("SFElectronLooseID","files/mc/2016/sf/2016LegacyReReco_ElectronLoose.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronTightID","files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root","EGamma_SF2D");
+#elif defined(ULSAMPLE)
+    AddSFHisto<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd");
+    AddSFHisto<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk");
+    AddSFHisto<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2016_var");
+    AddSFHisto<TH2F>("SFMuonHighPtIDpreVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TH2F>("SFMuonHighPtIDpostVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TH2F>("SFMuonTrackerHighPtIDpreVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TH2F>("SFMuonTrackerHighPtIDpostVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt");
+    // AddSFHisto<>(SFElectronTrigger,"","");
+    AddSFHisto<TH2F>("SFElectronLooseIDpreVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Loose_preVFP_EGM2D.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronLooseIDpostVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Loose_postVFP_EGM2D.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronTightIDpreVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Tight_preVFP_EGM2D.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronTightIDpostVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Tight_postVFP_EGM2D.root","EGamma_SF2D");
 #endif
-  TFile *f7 = TFile::Open("PileupWeights.root","READ");
-  auto SFPileup = static_cast<TList*>(f7->Get("PileupSFList"));
-  SFPileup->SetName("PileupSFList");
-  SFDb->Add(SFPileup);
-  fProof->AddInputData(SFDb);
+  } else if (Year == 2017) {
+#ifndef ULSAMPLE
+    AddSFHisto<TH1F>("SFDYKFactorQCD","files/mc/2017/sf/SF_QCD_NLO_DYJetsToLL.root","kfac_dy_filter");
+    AddSFHisto<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk");
+    AddSFHisto<TH2F>("SFMuonTrigger","files/mc/2017/sf/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root","Mu50_PtEtaBins/abseta_pt_ratio");
+    AddSFHisto<TH2F>("SFMuonHighPt","files/mc/2017/sf/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TH2F>("SFMuonTrkHighPtID","files/mc/2017/sf/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","ScaleFactors","SFElectronTrigger1");
+    AddSFHisto<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","ScaleFactors","SFElectronTrigger2");
+    AddSFHisto<TH2F>("SFElectronLooseID","files/mc/2017/sf/2017_ElectronLoose.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronTightID","files/mc/2017/sf/2017_ElectronTight.root","EGamma_SF2D");
+#elif defined(ULSAMPLE)
+    AddSFHisto<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd");
+    AddSFHisto<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk");
+    AddSFHisto<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2017_var");
+    AddSFHisto<TH2D>("SFMuonHighPt","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TH2D>("SFMuonTrackerHighPtID","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt");
+    // AddSFHisto<>(SFElectronTrigger,"","");
+    AddSFHisto<TH2F>("SFElectronLooseID","files/mc/2017/UL/sf/egammaEffi.txt_EGM2D_Loose_UL17.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronTightID","files/mc/2017/UL/sf/egammaEffi.txt_EGM2D_Tight_UL17.root","EGamma_SF2D");
 #endif
+  } else if (Year == 2018) {
+#ifndef ULSAMPLE
+    AddSFHisto<TH1F>("SFDYKFactorQCD","files/mc/2017/sf/SF_QCD_NLO_DYJetsToLL.root","kfac_dy_filter");
+    AddSFHisto<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk");
+    AddSFHisto<TH2F>("SFMuonTrigger","files/mc/2018/sf/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root","Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/abseta_pt_ratio");
+    AddSFHisto<TH2D>("SFMuonHighPt","files/mc/2018/sf/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TH2D>("SFMuonTrkHighPtID","files/mc/2018/sf/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","ScaleFactors");
+    AddSFHisto<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","ScaleFactors");
+    AddSFHisto<TH2F>("SFElectronLooseID","files/mc/2018/sf/2018_ElectronLoose.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronTightID","files/mc/2018/sf/2018_ElectronTight.root","EGamma_SF2D");
+#elif defined(ULSAMPLE)
+    AddSFHisto<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd");
+    AddSFHisto<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk");
+    AddSFHisto<>(SFMuonTrigger,"files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2018_var");
+    AddSFHisto<>(SFMuonHighPt,"files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt");
+    AddSFHisto<>(SFMuonTrackerHighPtID,"files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt");
+    // AddSFHisto<>(SFElectronTrigger,"","");
+    AddSFHisto<TH2F>("SFElectronLooseID","files/mc/2018/UL/sf/egammaEffi.txt_Ele_Loose_EGM2D.root","EGamma_SF2D");
+    AddSFHisto<TH2F>("SFElectronTightID","files/mc/2018/UL/sf/egammaEffi.txt_Ele_Tight_EGM2D.root","EGamma_SF2D");
+#endif
+  };
+
+  AddSFHisto<TH1F>("SFPileup","PileupWeights.root","PileupSFList");
 
   fChain->SetProof();
   fChain->Process("PreSelector.C+g");
