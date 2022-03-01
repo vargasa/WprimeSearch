@@ -45,189 +45,6 @@ Int_t PreSelector::nbTag(){
   return nbtag;
 }
 
-#ifndef CMSDATA
-Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
-                                     const Int_t& option) const {
-
-  assert(g!=NULL);
-
-  Double_t sf = -1.;
-  Double_t* sfp;
-
-  Int_t i = 0;
-  while(i < g->GetN()){
-    sfp = (g->GetY()+i);
-    /* Test right bin limit*/
-    if( eta < (*(g->GetX()+i) + g->GetErrorX(i))) break;
-    i++;
-  }
-
-  if( i == g->GetN() ) i = (g->GetN()-1);
-
-  sf = sfp? *sfp: -1.;
-
-  switch(option){
-  case -1:
-    sf -= g->GetErrorYlow(i);
-    break;
-  case 1:
-    sf += g->GetErrorYhigh(i);
-    break;
-  case 0:
-    break;
-  }
-
-  assert(sf>0.);
-
-  return sf;
-}
-#endif
-#ifndef CMSDATA
-Double_t PreSelector::GetZPtFromGen() const{
-
-  const int zid = 23;
-  double zptMax = 0.;
-  const int maxNFlags = 14;
-  const int fromHardProcess = 8;
-  const int isFirstCopy = 12;
-
-  auto checkFlags = [&](const int& idx) {
-    std::bitset<maxNFlags> flags(GenPart_statusFlags[idx]);
-    return ( flags[fromHardProcess] and flags[isFirstCopy] );
-  };
-
-  for(uint i = 0; i < GenPart_pdgId.GetSize(); ++i){
-    if( abs(GenPart_pdgId[i]) == zid and GenPart_pt[i] > zptMax
-        and checkFlags(i) ){
-      zptMax = GenPart_pt[i];
-    }
-  }
-
-  return zptMax;
-}
-#endif
-#ifndef CMSDATA
-Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
-                                    const Int_t& option) const {
-  assert(h!= NULL);
-  assert(x < h->GetXaxis()->GetXmax() && x > h->GetXaxis()->GetXmin());
-  if(y > h->GetYaxis()->GetXmax())
-    return GetSFFromHisto(h,x,h->GetYaxis()->GetXmax() - 1e-3,option);
-  Int_t nbin = h->FindBin(x,y);
-  Double_t sf = h->GetBinContent(nbin);
-  switch(option){
-  case -1:
-    sf -= h->GetBinErrorLow(nbin);
-    break;
-  case 1:
-    sf += h->GetBinErrorUp(nbin);
-    break;
-  case 0:
-    break;
-  }
-
-  assert(sf>=0.);
-
-  return sf;
-}
-#endif
-#ifndef CMSDATA
-Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
-  if(!h) return 1.;
-  assert(copysign(1.,h->GetBinContent(h->FindBin(npv))) > 0);
-  return h->GetBinContent(h->FindBin(npv));
-}
-#endif
-#ifndef CMSDATA
-Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
-                                   const Int_t& option) const{
-
-  assert(abs(eta)<2.5);
-
-  Double_t sf = -1;
-
-  if (Year == 2016 and !IsUL) {
-    /* 2 bins in pt */
-    if( pt < 175.){
-      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
-    } else {
-      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
-    }
-  } else if (Year == 2017 or Year == 2018) {
-    /* 2 bins in Pt */
-    if (pt < 200.){
-      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
-    } else {
-      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
-    }
-  }
-
-  assert(sf>0);
-
-  return sf;
-
-}
-#endif
-#ifndef CMSDATA
-Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const{
-  assert(ApplyKFactors and h);
-  double sf = 1.;
-
-  if( ZGenPt < KSFMinPt or ZGenPt > KSFMaxPt)
-    return sf;
-
-  const int nbin = h->FindBin(ZGenPt);
-
-  sf *= h->GetBinContent(nbin);
-
-  switch(option){
-  case -1:
-    sf -= h->GetBinErrorLow(nbin);
-    break;
-  case 1:
-    sf += h->GetBinErrorUp(nbin);
-    break;
-  case 0:
-    break;
-  }
-
-  return sf;
-}
-#endif
-#ifndef CMSDATA
-Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
-                               const Int_t& option) const{
-  /* Option 0: Central Value, -1: Low, +1: up */
-
-  assert(abs(eta)<2.4);
-
-  Double_t sf = -1;
-
-  if (Year == 2016 and !IsUL) {
-    /*
-      B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
-      G->H : 7.576 + 8.651                         //fb-1
-      From AN_2019_245_v12
-    */
-    const Double_t LumiBF = 19.689;
-    const Double_t LumiGH = 16.227;
-
-    Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
-    Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
-
-    sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
-
-  } else if ( Year == 2017 or Year == 2018) {
-    sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
-  }
-
-  assert(sf>0);
-
-  return sf;
-
-}
-#endif
-
 void PreSelector::Begin(TTree *tree) {
 
   if (fInput->FindObject("SampleName")) {
@@ -945,27 +762,6 @@ ZPairInfo PreSelector::FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
 
 }
 
-#ifndef CMSDATA
-std::pair<Int_t,Int_t> PreSelector::GetMother(std::pair<Int_t,Int_t> Daughter) const{
-  return PreSelector::GetMother(Daughter.first,Daughter.second);
-}
-#endif
-#ifndef CMSDATA
-std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\Mu or e*/) const{
-
-  if(GenPartIdx == -1 ) return std::make_pair(GenPartIdx,9999);
-
-  std::pair<Int_t,Int_t> Mother;
-  Mother.first = GenPart_genPartIdxMother[GenPartIdx];
-  Mother.second = GenPart_pdgId[Mother.first];
-
-  if(abs(Mother.second) == abs(PdgId)){
-    Mother = PreSelector::GetMother(Mother);
-  }
-
-  return Mother;
-}
-#endif
 
 std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,
                                                                const Float_t& Wmt){
@@ -1061,215 +857,6 @@ void PreSelector::FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t
   h1[nh+kCentral]->Fill(binContent,wcentral);
 #endif
 }
-#ifndef CMSDATA
-void PreSelector::DefineSFs(){
-
-  wcentral = -1.;
-
-  auto applyIDSF = [&](TH1* h, const double& x, const double &y) {
-    wcentral *= GetSFFromHisto(h,x,y,0);
-  };
-
-  if(IsA_){
-
-    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
-
-    WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
-    WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
-
-    WElIDUp =  GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),1);
-    WElIDUp *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),1);
-    WElIDUp *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
-
-    WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
-    WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
-    WElIDDown *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
-
-  } else if (IsB) {
-
-    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
-    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
-
-    WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
-    WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
-    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
-    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
-
-    WElIDUp = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),1);
-    WElIDUp *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),1);
-
-    WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
-    WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
-
-    if ( Muon_highPtId[l3] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    } else { // TrkHighPtId
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    }
-
-  } else if (IsC) {
-
-    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
-    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
-
-    WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
-    WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
-    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
-    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
-
-    if ( Muon_highPtId[l1] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    }
-
-    if ( Muon_highPtId[l2] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    }
-
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
-    WElIDUp   = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
-    WElIDDown = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
-
-  } else if (IsD) {
-
-    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
-    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
-
-    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
-    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
-
-    if ( Muon_highPtId[l1] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    }
-
-    if ( Muon_highPtId[l2] == 2 ) {
-      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    } else {
-      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    }
-
-    if ( Muon_highPtId[l3] == 2 ) {
-      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    } else {
-      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    }
-
-  } else {
-    assert (false);
-  }
-
-  Double_t ksf = 1.;
-
-  if (ApplyKFactors) {
-    Double_t zpt = GetZPtFromGen();
-    if(zpt > 0.){
-      ksf  = GetKFactor(SFDYKFactorEWK,zpt,0);
-      ksf *= GetKFactor(SFDYKFactorQCD,zpt,0);
-      WKEWKUp = GetKFactor(SFDYKFactorEWK,zpt,1);
-      WKEWKDown = GetKFactor(SFDYKFactorEWK,zpt,-1);
-      WKQCDUp = GetKFactor(SFDYKFactorQCD,zpt,1);
-      WKQCDDown = GetKFactor(SFDYKFactorQCD,zpt,-1);
-    }
-    wcentral *= ksf;
-  }
-
-  wcentral *= *genWeight;
-  WElTrigUp *= *genWeight;
-  WElTrigDown *= *genWeight;
-  WMuTrigUp *= *genWeight;
-  WMuTrigDown *= *genWeight;
-  WElIDUp *= *genWeight;
-  WElIDDown *= *genWeight;
-  WMuIDUp *= *genWeight;
-  WMuIDDown *= *genWeight;
-
-}
-#endif
-#ifndef CMSDATA
-std::string PreSelector::GetFakeString(const int& genPartIdx,
-                                       const int& pdgId, const int& idn) const{
-
-  std::function<Bool_t(const int&)> isPrompt = [&] (const int& gpidx) {
-    const int maxNFlags = 14;
-    const int isPromptFlag = 0;
-    std::bitset<maxNFlags> flags(GenPart_statusFlags[gpidx]);
-    return flags[isPromptFlag];
-  };
-
-  std::function<std::string(void)> idnToString = [&] () {
-    if(pdgId == ElPdgId){
-      if ( idn == 2) return "Loose";
-      if ( idn == 3) return "Medium";
-      if ( idn == 4) return "Tight";
-    } else if (pdgId == MuPdgId) {
-      if ( idn == 1) return "Tracker";
-      if ( idn == 2) return "Global";
-    }
-    return "ERROR";
-  };
-
-  Int_t pdgIdMother = GetMother(genPartIdx,pdgId).second;
-  std::string fakeContent = "";
-
-  if(abs(pdgId) == ElPdgId){
-    fakeContent += std::string("El.");
-  } else {
-    fakeContent += std::string("Mu.");
-  }
-
-  std::vector accept = { pdgId /*e or Mu*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
-
-  if (isPrompt(genPartIdx)) {
-    fakeContent += std::string("Prompt.") + idnToString();
-  } else {
-    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()) {
-      fakeContent += std::string("HFD.") + idnToString(); // Heavy Flavor Decay
-      return fakeContent;
-    }
-    fakeContent += std::string("NonPrompt.") + idnToString();
-  }
-  return fakeContent;
-}
-
-#endif
-
 
 void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
 
@@ -1998,3 +1585,412 @@ void PreSelector::Terminate() {
   fOut->Close();
 
 }
+
+///////////////////////////////////////////////////////////
+//////////////////// ONLY MC Methods //////////////////////
+///////////////////////////////////////////////////////////
+
+#ifndef CMSDATA
+
+///////////////////////////////////////////////////////////
+std::string PreSelector::GetFakeString(const int& genPartIdx,
+                                       const int& pdgId, const int& idn) const{
+
+  std::function<Bool_t(const int&)> isPrompt = [&] (const int& gpidx) {
+    const int maxNFlags = 14;
+    const int isPromptFlag = 0;
+    std::bitset<maxNFlags> flags(GenPart_statusFlags[gpidx]);
+    return flags[isPromptFlag];
+  };
+
+  std::function<std::string(void)> idnToString = [&] () {
+    if(pdgId == ElPdgId){
+      if ( idn == 2) return "Loose";
+      if ( idn == 3) return "Medium";
+      if ( idn == 4) return "Tight";
+    } else if (pdgId == MuPdgId) {
+      if ( idn == 1) return "Tracker";
+      if ( idn == 2) return "Global";
+    }
+    return "ERROR";
+  };
+
+  Int_t pdgIdMother = GetMother(genPartIdx,pdgId).second;
+  std::string fakeContent = "";
+
+  if(abs(pdgId) == ElPdgId){
+    fakeContent += std::string("El.");
+  } else {
+    fakeContent += std::string("Mu.");
+  }
+
+  std::vector accept = { pdgId /*e or Mu*/, 15 /*tau*/, 4 /*c*/, 5 /*b*/ };
+
+  if (isPrompt(genPartIdx)) {
+    fakeContent += std::string("Prompt.") + idnToString();
+  } else {
+    if (std::find(accept.begin(),accept.end(),abs(pdgIdMother)) != accept.end()) {
+      fakeContent += std::string("HFD.") + idnToString(); // Heavy Flavor Decay
+      return fakeContent;
+    }
+    fakeContent += std::string("NonPrompt.") + idnToString();
+  }
+  return fakeContent;
+}
+///////////////////////////////////////////////////////////
+Double_t PreSelector::GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta,
+                                     const Int_t& option) const {
+
+  assert(g!=NULL);
+
+  Double_t sf = -1.;
+  Double_t* sfp;
+
+  Int_t i = 0;
+  while(i < g->GetN()){
+    sfp = (g->GetY()+i);
+    /* Test right bin limit*/
+    if( eta < (*(g->GetX()+i) + g->GetErrorX(i))) break;
+    i++;
+  }
+
+  if( i == g->GetN() ) i = (g->GetN()-1);
+
+  sf = sfp? *sfp: -1.;
+
+  switch(option){
+  case -1:
+    sf -= g->GetErrorYlow(i);
+    break;
+  case 1:
+    sf += g->GetErrorYhigh(i);
+    break;
+  case 0:
+    break;
+  }
+
+  assert(sf>0.);
+
+  return sf;
+}
+///////////////////////////////////////////////////////////
+Double_t PreSelector::GetZPtFromGen() const{
+
+  const int zid = 23;
+  double zptMax = 0.;
+  const int maxNFlags = 14;
+  const int fromHardProcess = 8;
+  const int isFirstCopy = 12;
+
+  auto checkFlags = [&](const int& idx) {
+    std::bitset<maxNFlags> flags(GenPart_statusFlags[idx]);
+    return ( flags[fromHardProcess] and flags[isFirstCopy] );
+  };
+
+  for(uint i = 0; i < GenPart_pdgId.GetSize(); ++i){
+    if( abs(GenPart_pdgId[i]) == zid and GenPart_pt[i] > zptMax
+        and checkFlags(i) ){
+      zptMax = GenPart_pt[i];
+    }
+  }
+
+  return zptMax;
+}
+///////////////////////////////////////////////////////////
+Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
+                                    const Int_t& option) const {
+  assert(h!= NULL);
+  assert(x < h->GetXaxis()->GetXmax() && x > h->GetXaxis()->GetXmin());
+  if(y > h->GetYaxis()->GetXmax())
+    return GetSFFromHisto(h,x,h->GetYaxis()->GetXmax() - 1e-3,option);
+  Int_t nbin = h->FindBin(x,y);
+  Double_t sf = h->GetBinContent(nbin);
+  switch(option){
+  case -1:
+    sf -= h->GetBinErrorLow(nbin);
+    break;
+  case 1:
+    sf += h->GetBinErrorUp(nbin);
+    break;
+  case 0:
+    break;
+  }
+
+  assert(sf>=0.);
+
+  return sf;
+}
+///////////////////////////////////////////////////////////
+Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
+  if(!h) return 1.;
+  assert(copysign(1.,h->GetBinContent(h->FindBin(npv))) > 0);
+  return h->GetBinContent(h->FindBin(npv));
+}
+///////////////////////////////////////////////////////////
+Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
+                                   const Int_t& option) const{
+
+  assert(abs(eta)<2.5);
+
+  Double_t sf = -1;
+
+  if (Year == 2016 and !IsUL) {
+    /* 2 bins in pt */
+    if( pt < 175.){
+      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+    } else {
+      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
+    }
+  } else if (Year == 2017 or Year == 2018) {
+    /* 2 bins in Pt */
+    if (pt < 200.){
+      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+    } else {
+      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
+    }
+  }
+
+  assert(sf>0);
+
+  return sf;
+
+}
+///////////////////////////////////////////////////////////
+Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const{
+  assert(ApplyKFactors and h);
+  double sf = 1.;
+
+  if( ZGenPt < KSFMinPt or ZGenPt > KSFMaxPt)
+    return sf;
+
+  const int nbin = h->FindBin(ZGenPt);
+
+  sf *= h->GetBinContent(nbin);
+
+  switch(option){
+  case -1:
+    sf -= h->GetBinErrorLow(nbin);
+    break;
+  case 1:
+    sf += h->GetBinErrorUp(nbin);
+    break;
+  case 0:
+    break;
+  }
+
+  return sf;
+}
+///////////////////////////////////////////////////////////
+Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
+                               const Int_t& option) const{
+  /* Option 0: Central Value, -1: Low, +1: up */
+
+  assert(abs(eta)<2.4);
+
+  Double_t sf = -1;
+
+  if (Year == 2016 and !IsUL) {
+    /*
+      B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
+      G->H : 7.576 + 8.651                         //fb-1
+      From AN_2019_245_v12
+    */
+    const Double_t LumiBF = 19.689;
+    const Double_t LumiGH = 16.227;
+
+    Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
+    Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
+
+    sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
+
+  } else if ( Year == 2017 or Year == 2018) {
+    sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
+  }
+
+  assert(sf>0);
+
+  return sf;
+
+}
+///////////////////////////////////////////////////////////
+std::pair<Int_t,Int_t> PreSelector::GetMother(std::pair<Int_t,Int_t> Daughter) const{
+  return PreSelector::GetMother(Daughter.first,Daughter.second);
+}
+///////////////////////////////////////////////////////////
+std::pair<Int_t,Int_t> PreSelector::GetMother(Int_t GenPartIdx, Int_t PdgId /*\Mu or e*/) const{
+
+  if(GenPartIdx == -1 ) return std::make_pair(GenPartIdx,9999);
+
+  std::pair<Int_t,Int_t> Mother;
+  Mother.first = GenPart_genPartIdxMother[GenPartIdx];
+  Mother.second = GenPart_pdgId[Mother.first];
+
+  if(abs(Mother.second) == abs(PdgId)){
+    Mother = PreSelector::GetMother(Mother);
+  }
+
+  return Mother;
+}
+///////////////////////////////////////////////////////////
+void PreSelector::DefineSFs(){
+
+  wcentral = -1.;
+
+  auto applyIDSF = [&](TH1* h, const double& x, const double &y) {
+    wcentral *= GetSFFromHisto(h,x,y,0);
+  };
+
+  if(IsA_){
+
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
+    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
+    wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+
+    WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
+    WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
+
+    WElIDUp =  GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),1);
+    WElIDUp *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),1);
+    WElIDUp *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
+
+    WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
+    WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
+    WElIDDown *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
+
+  } else if (IsB) {
+
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
+    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
+    wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
+
+    WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
+    WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
+    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
+
+    WElIDUp = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),1);
+    WElIDUp *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),1);
+
+    WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
+    WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
+
+    if ( Muon_highPtId[l3] == 2 ) {
+      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
+      WMuIDUp = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
+      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
+    } else { // TrkHighPtId
+      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
+      WMuIDUp = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
+      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
+    }
+
+  } else if (IsC) {
+
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
+    wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
+
+    WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
+    WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
+    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
+
+    if ( Muon_highPtId[l1] == 2 ) {
+      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
+      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
+      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
+    } else {
+      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
+      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
+      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
+    }
+
+    if ( Muon_highPtId[l2] == 2 ) {
+      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
+      WMuIDUp  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
+      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
+    } else {
+      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
+      WMuIDUp *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
+      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
+    }
+
+    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+    WElIDUp   = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
+    WElIDDown = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
+
+  } else if (IsD) {
+
+    wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
+    wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
+
+    WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
+    WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
+
+    if ( Muon_highPtId[l1] == 2 ) {
+      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
+      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
+      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
+    } else {
+      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
+      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
+      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
+    }
+
+    if ( Muon_highPtId[l2] == 2 ) {
+      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
+      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
+      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
+    } else {
+      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
+      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
+      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
+    }
+
+    if ( Muon_highPtId[l3] == 2 ) {
+      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
+      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
+      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
+    } else {
+      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
+      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
+      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
+    }
+
+  } else {
+    assert (false);
+  }
+
+  Double_t ksf = 1.;
+
+  if (ApplyKFactors) {
+    Double_t zpt = GetZPtFromGen();
+    if(zpt > 0.){
+      ksf  = GetKFactor(SFDYKFactorEWK,zpt,0);
+      ksf *= GetKFactor(SFDYKFactorQCD,zpt,0);
+      WKEWKUp = GetKFactor(SFDYKFactorEWK,zpt,1);
+      WKEWKDown = GetKFactor(SFDYKFactorEWK,zpt,-1);
+      WKQCDUp = GetKFactor(SFDYKFactorQCD,zpt,1);
+      WKQCDDown = GetKFactor(SFDYKFactorQCD,zpt,-1);
+    }
+    wcentral *= ksf;
+  }
+
+  wcentral *= *genWeight;
+  WElTrigUp *= *genWeight;
+  WElTrigDown *= *genWeight;
+  WMuTrigUp *= *genWeight;
+  WMuTrigDown *= *genWeight;
+  WElIDUp *= *genWeight;
+  WElIDDown *= *genWeight;
+  WMuIDUp *= *genWeight;
+  WMuIDDown *= *genWeight;
+
+}
+///////////////////////////////////////////////////////////
+#endif /////////////// Only MC Methods ////////////////////
+///////////////////////////////////////////////////////////
