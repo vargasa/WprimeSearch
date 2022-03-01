@@ -187,9 +187,9 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
     fProof->AddInputData(SFDb);
   }
 
-  // fChain->SetProof();
-  // fChain->Process("PreSelector.C+g");
-  // fProof->Print("a");
+  fChain->SetProof();
+  fChain->Process("PreSelector.C+g");
+  fProof->Print("a");
 
   return 0;
 }

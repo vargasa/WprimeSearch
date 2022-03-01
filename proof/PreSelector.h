@@ -322,8 +322,11 @@ class PreSelector : public EventSelection {
   TH1F* SFDYKFactorEWK;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
+  TH2F* SFMuonTriggerBF; //Only 2016
+  TH2F* SFMuonTriggerGH; //Only 2016
   TH2F* SFMuonTrigger;
 #endif
+
 
   Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);
   Bool_t PairMuDefineW(const Electrons& Els, const Muons& Mus);
@@ -342,6 +345,10 @@ class PreSelector : public EventSelection {
   ROOT::Math::PxPyPzMVector Get4V(const Float_t& Pz);
 
   Int_t nbTag();
+
+  Int_t Year;
+  Bool_t IsUL;
+  Bool_t IsData;
 
   ClassDef(PreSelector,0);
 };

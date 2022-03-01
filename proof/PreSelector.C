@@ -26,13 +26,16 @@ PreSelector::PreSelector(TTree *)
 }
 
 Int_t PreSelector::nbTag(){
-#if defined(Y2016)
-  const float medium = 0.3093;
-#elif defined(Y2017)
-  const float medium = 0.3033;
-#elif defined(Y2018)
-  const float medium = 0.2770;
-#endif
+
+  float medium;
+  if (Year == 2016) {
+    medium = 0.3093;
+  } else if (Year == 2017) {
+    medium = 0.3033;
+  } else if (Year == 2018) {
+    medium = 0.2770;
+  }
+
   Int_t nbtag = 0;
   for(uint i = 0; i < *nJet; ++i){
     if( Jet_btagDeepFlavB[i] > medium){
@@ -143,21 +146,22 @@ Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-#if defined(Y2016)
-  /* 2 bins in pt */
-  if( pt < 175.){
-    sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
-  } else {
-    sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
+  if (Year == 2016 and !IsUL) {
+    /* 2 bins in pt */
+    if( pt < 175.){
+      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+    } else {
+      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
+    }
+  } else if (Year == 2017 or Year == 2018) {
+    /* 2 bins in Pt */
+    if (pt < 200.){
+      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+    } else {
+      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
+    }
   }
-#elif defined(Y2017) || defined(Y2018)
-  /* 2 bins in Pt */
-  if (pt < 200.){
-    sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
-  } else {
-    sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
-  }
-#endif
+
   assert(sf>0);
 
   return sf;
@@ -199,23 +203,24 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-#if defined(Y2016)
-  /*
-    B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
-    G->H : 7.576 + 8.651                         //fb-1
-    From AN_2019_245_v12
-  */
-  const Double_t LumiBF = 19.689;
-  const Double_t LumiGH = 16.227;
+  if (Year == 2016 and !IsUL) {
+    /*
+      B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
+      G->H : 7.576 + 8.651                         //fb-1
+      From AN_2019_245_v12
+    */
+    const Double_t LumiBF = 19.689;
+    const Double_t LumiGH = 16.227;
 
-  Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
-  Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
+    Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
+    Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
 
-  sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
+    sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
 
-#elif defined(Y2017) || defined(Y2018)
-  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
-#endif
+  } else if ( Year == 2017 or Year == 2018) {
+    sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
+  }
+
   assert(sf>0);
 
   return sf;
@@ -235,6 +240,31 @@ void PreSelector::Begin(TTree *tree) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("FileNameOut"));
     FileNameOut = p->GetTitle();
   }
+
+    if (fInput->FindObject("Year")) {
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("Year"));
+    Year = atoi(p->GetTitle());
+  }
+
+  if (fInput->FindObject("IsData")){
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("IsData"));
+    if(std::string(p->GetTitle()).find("true") != std::string::npos){
+      IsData = true;
+    } else {
+      IsData = false;
+    }
+  }
+
+  if (fInput->FindObject("IsUL")){
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("IsUL"));
+    if(std::string(p->GetTitle()).find("true") != std::string::npos){
+      IsUL = true;
+    } else {
+      IsUL = false;
+    }
+  }
+
+  std::clog << "Processing Year: [" << Year << "]\tIsData? " << IsData << "\tIsUL? " << IsUL << "\n";
 }
 
 template<typename T, typename... Args>
@@ -351,6 +381,31 @@ void PreSelector::SlaveBegin(TTree *tree) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("FileNameOut"));
     FileNameOut = p->GetTitle();
   }
+
+  if (fInput->FindObject("Year")) {
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("Year"));
+    Year = atoi(p->GetTitle());
+  }
+
+  if (fInput->FindObject("IsData")){
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("IsData"));
+    if(std::string(p->GetTitle()).find("true") != std::string::npos){
+      IsData = true;
+    } else {
+      IsData = false;
+    }
+  }
+
+  if (fInput->FindObject("IsUL")){
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("IsUL"));
+    if(std::string(p->GetTitle()).find("true") != std::string::npos){
+      IsUL = true;
+    } else {
+      IsUL = false;
+    }
+  }
+
+  std::clog << "Processing Year: [" << Year << "]\tIsData? " << IsData << "\tIsUL? " << IsUL << "\n";
 
   TH1::SetDefaultSumw2();
 
@@ -490,49 +545,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HPileup_,"HPileup",nPvsBins,minPvs,maxPvs);
 
-  const UInt_t BinsPdgId = 101;
-  const Float_t PdgIdMin = -50.5;
-  const Float_t PdgIdMax = 50.5;
 
-#ifndef CMSDATA
-  InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
-
-  std::vector<std::string> prefill = {
-    "El.Prompt.Loose","El.Prompt.Medium","El.Prompt.Tight",
-    "El.NonPrompt.Loose","El.NonPrompt.Medium","El.NonPrompt.Tight",
-    "El.HFD.Loose","El.HFD.Medium","El.HFD.Tight",
-    "Mu.Prompt.Tracker","Mu.Prompt.Global",
-    "Mu.NonPrompt.Tracker","Mu.NonPrompt.Global",
-    "Mu.HFD.Tracker","Mu.HFD.Global"
-  };
-  for(long unsigned int n = 0; n < HFakeString.size(); ++n){
-    for(auto& ss: prefill){
-      HFakeString[n]->Fill(ss.c_str(),1e-6);
-    }
-  }
-
-
-  InitHVec<TH1F>(HGenPartPdgIdl1,"HGenPartPdgIdl1",
-                 BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH1F>(HGenPartPdgIdl2,"HGenPartPdgIdl2",
-                 BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH1F>(HGenPartPdgIdl3,"HGenPartPdgIdl3",
-                 BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH2F>(HGenPartZ,"HGenPartZ",
-                 BinsPdgId,PdgIdMin,PdgIdMax,
-                 BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH2F>(HGenPartW,"HGenPartW",
-                 BinsPdgId,PdgIdMin,PdgIdMax,
-                 BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH2F>(HGenPartZWp,"HGenPartZWp",
-                 BinsPdgId,PdgIdMin,PdgIdMax,
-                 BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH2F>(HGenPartWWp,"HGenPartWWp",
-                 BinsPdgId,PdgIdMin,PdgIdMax,
-                 BinsPdgId,PdgIdMin,PdgIdMax);
-  InitHVec<TH2F>(HGenPartChgF,"HGenPartChgF",6,-2.,2.,BinsPdgId,PdgIdMin,PdgIdMax);
-
-#endif
   HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
   fOutput->Add(HCutFlow);
 
@@ -595,9 +608,57 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMuPhi,"HMuPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMetPhi,"HMetPhi",PhiBins,-1*MaxPhi,MaxPhi);
 
-#ifndef CMSDATA
+  const Double_t wzbins[31] = {
+    60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,
+    1190,1340,1500,2000,2500,3000,4000,5500,7500
+  };
 
-  std::string fullPath = std::string((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",30,wzbins);
+
+
+  if(IsData) return;
+
+  InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
+
+  std::vector<std::string> prefill = {
+    "El.Prompt.Loose","El.Prompt.Medium","El.Prompt.Tight",
+    "El.NonPrompt.Loose","El.NonPrompt.Medium","El.NonPrompt.Tight",
+    "El.HFD.Loose","El.HFD.Medium","El.HFD.Tight",
+    "Mu.Prompt.Tracker","Mu.Prompt.Global",
+    "Mu.NonPrompt.Tracker","Mu.NonPrompt.Global",
+    "Mu.HFD.Tracker","Mu.HFD.Global"
+  };
+
+  for(long unsigned int n = 0; n < HFakeString.size(); ++n){
+    for(auto& ss: prefill){
+      HFakeString[n]->Fill(ss.c_str(),1e-6);
+    }
+  }
+
+  const UInt_t BinsPdgId = 101;
+  const Float_t PdgIdMin = -50.5;
+  const Float_t PdgIdMax = 50.5;
+
+  InitHVec<TH1F>(HGenPartPdgIdl1,"HGenPartPdgIdl1",
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH1F>(HGenPartPdgIdl2,"HGenPartPdgIdl2",
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH1F>(HGenPartPdgIdl3,"HGenPartPdgIdl3",
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartZ,"HGenPartZ",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartW,"HGenPartW",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartZWp,"HGenPartZWp",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartWWp,"HGenPartWWp",
+                 BinsPdgId,PdgIdMin,PdgIdMax,
+                 BinsPdgId,PdgIdMin,PdgIdMax);
+  InitHVec<TH2F>(HGenPartChgF,"HGenPartChgF",6,-2.,2.,BinsPdgId,PdgIdMin,PdgIdMax);
+
 
   if (fInput->FindObject("SampleName")) {
     // Lesson: TString can't be in TCollection
@@ -614,15 +675,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   std::string MuSFHighPt = "SFMuonHighPtID";
   std::string MuSFTrkHighPt = "SFMuonTrkHighPtId";
 
-#if defined(Y2016) and defined(ULSAMPLE)
-  if (fullPath.find("preVFP") != std::string::npos) {
-    MuSFHighPt = "SFMuonHighPtIDpreVFP";
-    MuSFTrkHighPt = "SFMuonTrkHighPtIDpreVFP";
-  } else {
-    MuSFHighPt = "SFMuonHighPtIDpostVFP";
-    MuSFTrkHighPt = "SFMuonTrkHighPtIDpostVFP";
+  if (Year == 2016 and IsUL) {
+    if (fullPath.find("preVFP") != std::string::npos) {
+      MuSFHighPt = "SFMuonHighPtIDpreVFP";
+      MuSFTrkHighPt = "SFMuonTrkHighPtIDpreVFP";
+    } else {
+      MuSFHighPt = "SFMuonHighPtIDpostVFP";
+      MuSFTrkHighPt = "SFMuonTrkHighPtIDpostVFP";
+    }
   }
-#endif
 
   SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFHighPt.c_str()));
   SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFTrkHighPt.c_str()));
@@ -630,16 +691,15 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const char* ElSFLoose = "SFElectronLooseID";
   const char* ElSFTight = "SFElectronTightID";
 
-#if defined(Y2016) && defined(ULSAMPLE)
-  if (fullPath.find("preVFP") != std::string::npos) {
-    ElSFLoose = "SFElectronLooseIDpreVFP";
-    ElSFTight = "SFElectronTightIDpreVFP";
-  } else {
-    ElSFLoose = "SFElectronLooseIDpostVFP";
-    ElSFTight = "SFElectronTightIDpostVFP";
+  if (Year == 2016 and IsUL) {
+    if (fullPath.find("preVFP") != std::string::npos) {
+      ElSFLoose = "SFElectronLooseIDpreVFP";
+      ElSFTight = "SFElectronTightIDpreVFP";
+    } else {
+      ElSFLoose = "SFElectronLooseIDpostVFP";
+      ElSFTight = "SFElectronTightIDpostVFP";
+    }
   }
-
-#endif
 
   SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject(ElSFLoose));
   SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject(ElSFTight));
@@ -656,32 +716,26 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   }
 
-#endif
+  if (Year == 2016) {
+    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+    SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
+    SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
+  } else if (Year == 2017) {
+    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+    SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
+    SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
+  } else if (Year == 2018) {
+    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+    SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
+    SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2018",SampleName.Data())));
+  }
 
-#if defined(Y2016) && !defined(CMSDATA) 
-
-  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-  SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
-#elif defined(Y2017) && !defined(CMSDATA)
-  std::cout << "Y2017\n";
-  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-  SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
-#elif defined(Y2018) && !defined(CMSDATA)
-  std::cout << "Y2018\n";
-  SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-  SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-  SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2018",SampleName.Data())));
-#endif
-
-#if !defined(CMSDATA)
   assert(SFElectronTrigger1);
   assert(SFElectronTrigger2);
   assert(SFElectronLooseID);
@@ -693,14 +747,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
     std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
 
   InitHVec<TH1F>(HScaleFactors,"HScaleFactors",70,-1.,6.);
-#endif
-
-  const Double_t wzbins[31] = {
-    60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,
-    1190,1340,1500,2000,2500,3000,4000,5500,7500
-  };
-
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",30,wzbins);
 
 }
 
@@ -759,13 +805,15 @@ Int_t PreSelector::LeadingIdx(const Leptons& l) {
 std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MaxEta = 2.5;
 
-#if defined(Y2016)
-  const Float_t MinPt = 27.;
-#elif defined(Y2017)
-  const Float_t MinPt = 35.;
-#elif defined(Y2018)
-  const Float_t MinPt = 32.;
-#endif
+  Float_t MinPt;
+
+  if (Year==2016) {
+    MinPt = 27.;
+  } else if (Year==2017) {
+    MinPt = 35.;
+  } else if (Year==2018) {
+    MinPt = 32.;
+  }
 
   std::pair<double,double> etaGap = std::make_pair(1.4442,1.5660);
 
@@ -1514,13 +1562,15 @@ bool PreSelector::DefineW(const Leptons& l){
 
 Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
 
-#if defined(Y2016)
-  const Float_t MinPt = 27.;
-#elif defined(Y2017)
-  const Float_t MinPt = 35.;
-#elif defined(Y2018)
-  const Float_t MinPt = 32.;
-#endif
+  Float_t MinPt;
+
+  if (Year == 2016) {
+    MinPt = 27.;
+  } else if (Year == 2017) {
+    MinPt = 35.;
+  } else if (Year == 2018) {
+    MinPt = 32.;
+  }
 
   if (Electron_pt[p.first] < MinPt || Electron_pt[p.second] < MinPt) return kFALSE;
   return kTRUE;
@@ -1701,6 +1751,7 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
 
 Bool_t PreSelector::Process(Long64_t entry) {
 
+
   IsA_ = IsB = IsC = IsD = false;
   PairMu = PairEl = false;
   l1 = l2 = l3 = -1;
@@ -1710,6 +1761,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   ReadEntry(entry);
 
   HCutFlow->FillS("NoCuts");
+
 #ifndef CMSDATA
   HCutFlow->Fill("genWeight",*genWeight);
   HTruePileup->Fill(static_cast<Double_t>(*Pileup_nTrueInt),*genWeight);
@@ -1911,9 +1963,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
     if(ZDistCut){
       HCutFlow->FillS("SR1");
       FillRegion(0,Els,Mus); // 1st SR
-#ifdef CMSDATA
-      printEventInfo();
-#endif
     } else {
       HCutFlow->FillS("CR1");
       FillRegion(8,Els,Mus); // 8 -> CR1 Slot
@@ -1931,14 +1980,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
 }
 
 void PreSelector::Terminate() {
-
-#ifdef Y2016
-  const Int_t Year = 2016;
-#elif defined(Y2017)
-  const Int_t Year = 2017;
-#elif defined(Y2018)
-  const Int_t Year = 2018;
-#endif
 
   gStyle->SetOptStat(1111111);
 
