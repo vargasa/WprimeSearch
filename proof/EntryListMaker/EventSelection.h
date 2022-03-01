@@ -86,6 +86,15 @@ class EventSelection : public TSelector{
   Bool_t FailMuonHLTs{};
   Bool_t FailElectronHLTs{};
 
+#if !defined(CMSDATA)
+  // Just because we won't override Notify()
+  TList *SFDb;
+  TH2F* SFElectronLooseID;
+  TH2F* SFElectronTightID;
+  TH2F* SFMuonHighPtID;
+  TH2F* SFMuonTrkHighPtID;
+#endif
+
  public:
 
   EventSelection() {};
@@ -176,10 +185,43 @@ void EventSelection::Init(TTree *tree)
 }
 
 Bool_t EventSelection::Notify() {
-  std::clog << Form("Processing: %s\n",(fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+
+  std::string fullPath((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+
+  std::clog << Form("Processing: %s\n",fullPath.c_str());
 
 #if defined(Y2016)
   std::clog << Form("Branch being processed (HLT_TkMu50): %s\n", HLT_TkMu50.GetBranchName());
+#if defined(ULSAMPLE)
+  std::string ElSFLoose = "SFElectronLooseID";
+  std::string ElSFTight = "SFElectronTightID";
+
+  std::string MuSFHighPt = "SFMuonHighPtID";
+  std::string MuSFTrkHighPt = "SFMuonTrkHighPtId";
+
+  if (fullPath.find("preVFP") != std::string::npos) {
+    ElSFLoose = "SFElectronLooseIDpreVFP";
+    ElSFTight = "SFElectronTightIDpreVFP";
+    MuSFHighPt = "SFMuonHighPtIDpreVFP";
+    MuSFTrkHighPt = "SFMuonTrkHighPtIDpreVFP";
+    std::clog << "Notify: Setting preVFP Muon and Electron SFs\t";
+  } else {
+    ElSFLoose = "SFElectronLooseIDpostVFP";
+    ElSFTight = "SFElectronTightIDpostVFP";
+    MuSFHighPt = "SFMuonHighPtIDpostVFP";
+    MuSFTrkHighPt = "SFMuonTrkHighPtIDpostVFP";
+    std::clog << "Notify: Setting postVFP Muon and Electron SFs\t";
+  }
+
+  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFHighPt.c_str()));
+  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFTrkHighPt.c_str()));
+
+  SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject(ElSFLoose.c_str()));
+  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject(ElSFTight.c_str()));
+
+  std::clog << "[Ok]\n";
+
+#endif
 #elif defined(Y2017)
   std::clog << Form("Branch being processed (HLT_OldMu100): %s\n", HLT_OldMu100.GetBranchName());
   std::clog << Form("Branch being processed (HLT_TkMu100): %s\n", HLT_TkMu100.GetBranchName());

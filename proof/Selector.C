@@ -93,7 +93,7 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
     }
   };
 
-  AddSFHistoSFDb<TList>("SFPileup","PileupWeights.root","PileupSFList",SFDb);
+  AddSFHistoSFDb<TList>("PileupSFList","PileupWeights.root","PileupSFList",SFDb);
 
   return SFDb;
 }

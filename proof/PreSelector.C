@@ -489,37 +489,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   assert(SFDb);
 
+
   std::string MuSFHighPt = "SFMuonHighPtID";
   std::string MuSFTrkHighPt = "SFMuonTrkHighPtId";
 
-  if (Year == 2016 and IsUL) {
-    if (fullPath.find("preVFP") != std::string::npos) {
-      MuSFHighPt = "SFMuonHighPtIDpreVFP";
-      MuSFTrkHighPt = "SFMuonTrkHighPtIDpreVFP";
-    } else {
-      MuSFHighPt = "SFMuonHighPtIDpostVFP";
-      MuSFTrkHighPt = "SFMuonTrkHighPtIDpostVFP";
-    }
-  }
-
-  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFHighPt.c_str()));
-  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFTrkHighPt.c_str()));
-
-  const char* ElSFLoose = "SFElectronLooseID";
-  const char* ElSFTight = "SFElectronTightID";
-
-  if (Year == 2016 and IsUL) {
-    if (fullPath.find("preVFP") != std::string::npos) {
-      ElSFLoose = "SFElectronLooseIDpreVFP";
-      ElSFTight = "SFElectronTightIDpreVFP";
-    } else {
-      ElSFLoose = "SFElectronLooseIDpostVFP";
-      ElSFTight = "SFElectronTightIDpostVFP";
-    }
-  }
-
-  SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject(ElSFLoose));
-  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject(ElSFTight));
+  SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject(MuSFHighPt.c_str()));
+  SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject(MuSFTrkHighPt.c_str()));
 
   if(SampleName.Contains("DYJetsToLL")){
     ApplyKFactors = true;
@@ -533,33 +508,45 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   }
 
-  if (Year == 2016) {
-    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-    SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-    SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2016",SampleName.Data())));
-  } else if (Year == 2017) {
-    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-    SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-    SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2017",SampleName.Data())));
-  } else if (Year == 2018) {
-    SFElectronTrigger1 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-    SFElectronTrigger2 = static_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-    SFMuonTrigger = static_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-    auto l = static_cast<TList*>(SFDb->FindObject("PileupSFList"));
-    SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_2018",SampleName.Data())));
-  }
+#if defined(Y2016) && !defined(ULSAMPLE)
+  SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+  SFElectronTrigger2 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFMuonTriggerBF = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerBF"));
+  SFMuonTriggerGH = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerGH"));
+  SFMuonHighPtIDBF = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDBF"));
+  SFMuonHighPtIDGH = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDGH"));
+  SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
+  SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
+#endif
 
-  assert(SFElectronTrigger1);
-  assert(SFElectronTrigger2);
-  assert(SFElectronLooseID);
-  assert(SFElectronTightID);
-  assert(SFMuonHighPtID);
-  assert(SFMuonTrkHighPtID);
+#if defined(Y2016) and defined(ULSAMPLE)
+  SFMuonTrigger =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+  SFMuonHighPtIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpreVFP"));
+  SFMuonHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpostVFP"));
+  SFMuonTrackerHighPtIDpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrackerHighPtIDpreVFP"));
+  SFMuonTrackerHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrackerHighPtIDpostVFP"));
+  SFElectronLooseIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpreVFP"));
+  SFElectronLooseIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpostVFP"));
+  SFElectronTightIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpreVFP"));
+  SFElectronTightIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpostVFP"));
+#endif
 
+#if defined(Y2017) || defined(Y2018)
+  SFMuonTrigger = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+  SFMuonHighPt = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
+  SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
+#ifndef ULSAMPLE
+  SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+  SFElectronTrigger2 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+#endif
+  SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
+  SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
+#endif
+
+  auto l = dynamic_cast<TList*>(SFDb->FindObject("PileupSFList"));
+  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_%d",SampleName.Data(),Year)));
+
+  std::clog << SFPileup << "\n";
   if(!SFPileup)
     std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
 
