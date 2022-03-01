@@ -310,23 +310,33 @@ class PreSelector : public EventSelection {
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
   void DefineSFs();
 
-  TList *SFDb;
   Bool_t ApplyKFactors{};
   Double_t KSFMinPt;
   Double_t KSFMaxPt;
-  TH2F* SFElectronLooseID;
-  TH2F* SFElectronTightID;
-  TH2F* SFMuonHighPtID;
-  TH2F* SFMuonTrkHighPtID;
   TH1F* SFDYKFactorQCD;
   TH1F* SFDYKFactorEWK;
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
-  TH2F* SFMuonTriggerBF; //Only 2016
-  TH2F* SFMuonTriggerGH; //Only 2016
   TH2F* SFMuonTrigger;
+  TH2F* SFElectronLooseID;
+  TH2F* SFElectronTightID;
+#if defined(Y2016) && !defined(ULSAMPLE)
+  TH2D* SFMuonHighPtIDBF;
+  TH2D* SFMuonHighPtIDGH;
+  TH2F* SFMuonTriggerBF;
+  TH2F* SFMuonTriggerGH;
 #endif
-
+#if defined(Y2016) && defined(ULSAMPLE)
+  TH2F* SFMuonHighPtIDpreVFP;
+  TH2F* SFMuonHighPtIDpostVFP;
+  TH2F* SFMuonTrackerHighPtIDpreVFP;
+  TH2F* SFMuonTrackerHighPtIDpostVFP;
+  TH2F* SFElectronLooseIDpreVFP;
+  TH2F* SFElectronLooseIDpostVFP;
+  TH2F* SFElectronTightIDpreVFP;
+  TH2F* SFElectronTightIDpostVFP;
+#endif
+#endif
 
   Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);
   Bool_t PairMuDefineW(const Electrons& Els, const Muons& Mus);
