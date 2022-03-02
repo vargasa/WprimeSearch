@@ -489,13 +489,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   assert(SFDb);
 
-
-  std::string MuSFHighPt = "SFMuonHighPtID";
-  std::string MuSFTrkHighPt = "SFMuonTrkHighPtId";
-
-  SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject(MuSFHighPt.c_str()));
-  SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject(MuSFTrkHighPt.c_str()));
-
   if(SampleName.Contains("DYJetsToLL")){
     ApplyKFactors = true;
     SFDYKFactorQCD = static_cast<TH1F*>(SFDb->FindObject("SFDYKFactorQCD"));
@@ -1768,6 +1761,37 @@ Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, 
   return sf;
 }
 ///////////////////////////////////////////////////////////
+Double_t PreSelector::GetMuIDSF(UChar_t MuonID /* 2: highPt. 1: TrkHighPt*/,
+                                const Float_t& eta, const Float_t& pt,
+                                const Int_t& option) const{
+  /* Option 0: Central Value, -1: Low, +1: up */
+
+  assert(abs(eta)<2.4);
+
+  Double_t sf = -1;
+
+#if defined(Y2016) && !defined(ULSAMPLE)
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MuonLegacy2016
+  const Double_t LumiBF = 20.;
+  const Double_t LumiGH = 16.;
+  // TrkHighPt SF Not available for Legacy. Using 1.0 instead
+  Double_t SFBF = MuonID == 2? GetSFFromHisto(SFMuonHighPtIDBF,eta,pt,option) : 1.0;
+  Double_t SFGH = MuonID == 2? GetSFFromHisto(SFMuonHighPtIDGH,eta,pt,option) : 1.0;
+  sf = (LumiBF*SFBF+LumiGH*SFGH)/(LumiBF+LumiGH);
+#endif
+
+#if (defined(Y2016) && defined(ULSAMPLE)) || (defined(Y2017) || defined (Y2018))
+  sf = GetSFFromHisto(MuonID == 2? SFMuonHighPt:SFMuonTrkHighPtID,
+                      abs(eta),pt,option);
+#endif
+
+  assert(sf>0);
+
+  return sf;
+
+}
+
+///////////////////////////////////////////////////////////
 Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
                                const Int_t& option) const{
   /* Option 0: Central Value, -1: Low, +1: up */
@@ -1777,13 +1801,9 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
   Double_t sf = -1;
 
   if (Year == 2016 and !IsUL) {
-    /*
-      B->F : 5.746 + 2.573 + 4.242 + 4.025 + 3.104 //fb-1
-      G->H : 7.576 + 8.651                         //fb-1
-      From AN_2019_245_v12
-    */
-    const Double_t LumiBF = 19.689;
-    const Double_t LumiGH = 16.227;
+    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonLegacy2016
+    const Double_t LumiBF = 20.;
+    const Double_t LumiGH = 16.;
 
     Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
     Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
@@ -1865,15 +1885,9 @@ void PreSelector::DefineSFs(){
     WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
     WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
 
-    if ( Muon_highPtId[l3] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    } else { // TrkHighPtId
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    }
+    wcentral *= GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),0);
+    WMuIDUp = GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),1);
+    WMuIDDown = GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),-1);
 
   } else if (IsC) {
 
@@ -1886,25 +1900,13 @@ void PreSelector::DefineSFs(){
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
-    if ( Muon_highPtId[l1] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    }
+    wcentral *= GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),0);
+    WMuIDUp   = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),1);
+    WMuIDDown = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),-1);
 
-    if ( Muon_highPtId[l2] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    }
+    wcentral *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),0);
+    WMuIDUp  *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),1);
+    WMuIDDown *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),-1);
 
     wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
     WElIDUp   = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
@@ -1918,35 +1920,17 @@ void PreSelector::DefineSFs(){
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
-    if ( Muon_highPtId[l1] == 2 ) {
-      wcentral *= GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    } else {
-      wcentral *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),0);
-      WMuIDUp   = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),1);
-      WMuIDDown = GetSFFromHisto(SFMuonTrkHighPtID,abs(lep1.Eta()),lep1.Pt(),-1);
-    }
+    wcentral *= GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),0);
+    WMuIDUp   = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),1);
+    WMuIDDown = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),-1);
 
-    if ( Muon_highPtId[l2] == 2 ) {
-      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    } else {
-      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep2.Eta()),lep2.Pt(),-1);
-    }
+    wcentral  *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),0);
+    WMuIDUp   *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),1);
+    WMuIDDown *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),-1);
 
-    if ( Muon_highPtId[l3] == 2 ) {
-      wcentral  *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    } else {
-      wcentral  *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),0);
-      WMuIDUp   *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),1);
-      WMuIDDown *= GetSFFromHisto(SFMuonTrkHighPtID,abs(lep3.Eta()),lep3.Pt(),-1);
-    }
+    wcentral  *= GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),0);
+    WMuIDUp   *= GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),1);
+    WMuIDDown *= GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),-1);
 
   } else {
     assert (false);
