@@ -93,6 +93,26 @@ class EventSelection : public TSelector{
   TH2F* SFElectronTightID;
   TH2F* SFMuonHighPtID;
   TH2F* SFMuonTrkHighPtID;
+  TH2F* SFMuonTrigger;
+#if defined(Y2016) && !defined(ULSAMPLE)
+  TH2D* SFMuonHighPtIDBF;
+  TH2D* SFMuonHighPtIDGH;
+  TH2F* SFMuonTriggerBF;
+  TH2F* SFMuonTriggerGH;
+#endif
+#if defined(Y2016) && defined(ULSAMPLE)
+  TH2F* SFMuonHighPtIDpreVFP;
+  TH2F* SFMuonHighPtIDpostVFP;
+  TH2F* SFMuonTrkHighPtIDpreVFP;
+  TH2F* SFMuonTrkHighPtIDpostVFP;
+  TH2F* SFElectronLooseIDpreVFP;
+  TH2F* SFElectronLooseIDpostVFP;
+  TH2F* SFElectronTightIDpreVFP;
+  TH2F* SFElectronTightIDpostVFP;
+#endif
+
+
+  
 #endif
 
  public:
@@ -192,35 +212,21 @@ Bool_t EventSelection::Notify() {
 
 #if defined(Y2016)
   std::clog << Form("Branch being processed (HLT_TkMu50): %s\n", HLT_TkMu50.GetBranchName());
-#if defined(ULSAMPLE)
-  std::string ElSFLoose = "SFElectronLooseID";
-  std::string ElSFTight = "SFElectronTightID";
-
-  std::string MuSFHighPt = "SFMuonHighPtID";
-  std::string MuSFTrkHighPt = "SFMuonTrkHighPtId";
-
+#if !defined(CMSDATA) && defined(ULSAMPLE)
   if (fullPath.find("preVFP") != std::string::npos) {
-    ElSFLoose = "SFElectronLooseIDpreVFP";
-    ElSFTight = "SFElectronTightIDpreVFP";
-    MuSFHighPt = "SFMuonHighPtIDpreVFP";
-    MuSFTrkHighPt = "SFMuonTrkHighPtIDpreVFP";
+    SFElectronLooseID = SFElectronLooseIDpreVFP;
+    SFElectronTightID = SFElectronTightIDpreVFP;
+    SFMuonHighPtID = SFMuonHighPtIDpreVFP;
+    SFMuonTrkHighPtID = SFMuonTrkHighPtIDpreVFP;
     std::clog << "Notify: Setting preVFP Muon and Electron SFs\t";
   } else {
-    ElSFLoose = "SFElectronLooseIDpostVFP";
-    ElSFTight = "SFElectronTightIDpostVFP";
-    MuSFHighPt = "SFMuonHighPtIDpostVFP";
-    MuSFTrkHighPt = "SFMuonTrkHighPtIDpostVFP";
+    SFElectronLooseID = SFElectronLooseIDpostVFP;
+    SFElectronTightID = SFElectronTightIDpostVFP;
+    SFMuonHighPtID = SFMuonHighPtIDpostVFP;
+    SFMuonTrkHighPtID = SFMuonTrkHighPtIDpostVFP;
     std::clog << "Notify: Setting postVFP Muon and Electron SFs\t";
   }
-
-  SFMuonHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFHighPt.c_str()));
-  SFMuonTrkHighPtID = static_cast<TH2F*>(SFDb->FindObject(MuSFTrkHighPt.c_str()));
-
-  SFElectronLooseID = static_cast<TH2F*>(SFDb->FindObject(ElSFLoose.c_str()));
-  SFElectronTightID = static_cast<TH2F*>(SFDb->FindObject(ElSFTight.c_str()));
-
   std::clog << "[Ok]\n";
-
 #endif
 #elif defined(Y2017)
   std::clog << Form("Branch being processed (HLT_OldMu100): %s\n", HLT_OldMu100.GetBranchName());

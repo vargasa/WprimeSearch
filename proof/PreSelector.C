@@ -435,6 +435,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   if(IsData) return;
 
+#if !defined(CMSDATA)
+
   InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
 
   std::vector<std::string> prefill = {
@@ -516,8 +518,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonTrigger =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpreVFP"));
   SFMuonHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpostVFP"));
-  SFMuonTrackerHighPtIDpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrackerHighPtIDpreVFP"));
-  SFMuonTrackerHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrackerHighPtIDpostVFP"));
+  SFMuonTrkHighPtIDpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpreVFP"));
+  SFMuonTrkHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpostVFP"));
   SFElectronLooseIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpreVFP"));
   SFElectronLooseIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpostVFP"));
   SFElectronTightIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpreVFP"));
@@ -526,7 +528,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #if defined(Y2017) || defined(Y2018)
   SFMuonTrigger = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
-  SFMuonHighPt = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
+  SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
   SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
 #ifndef ULSAMPLE
   SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
@@ -545,6 +547,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HScaleFactors,"HScaleFactors",70,-1.,6.);
 
+#endif
 }
 
 void PreSelector::SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l){
@@ -1688,6 +1691,7 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
   switch(option){
   case -1:
     sf -= h->GetBinErrorLow(nbin);
+    if(sf<0.) sf = 1e-6;
     break;
   case 1:
     sf += h->GetBinErrorUp(nbin);
@@ -1714,21 +1718,32 @@ Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-  if (Year == 2016 and !IsUL) {
-    /* 2 bins in pt */
-    if( pt < 175.){
-      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
-    } else {
-      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
-    }
-  } else if (Year == 2017 or Year == 2018) {
-    /* 2 bins in Pt */
-    if (pt < 200.){
-      sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
-    } else {
-      sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
-    }
+#if defined(Y2016) && !defined(ULSAMPLE)
+  /* 2 bins in pt */
+  if( pt < 175.){
+    sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+  } else {
+    sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
   }
+#endif
+
+#if defined(Y2016) && defined(ULSAMPLE)
+  // Electron Trigger SF Missing for UL Samples
+  sf = 1.;
+#endif
+
+#if (defined(Y2017) || defined(Y2018)) && !defined(ULSAMPLE)
+  if (pt < 200.){
+    sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
+  } else {
+    sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
+  }
+#endif
+
+#if (defined(Y2017) || defined(Y2018)) && defined(ULSAMPLE)
+  // Electron Trigger SF Missing for UL Samples
+  sf = 1.;
+#endif
 
   assert(sf>0);
 
@@ -1781,10 +1796,9 @@ Double_t PreSelector::GetMuIDSF(UChar_t MuonID /* 2: highPt. 1: TrkHighPt*/,
 #endif
 
 #if (defined(Y2016) && defined(ULSAMPLE)) || (defined(Y2017) || defined (Y2018))
-  sf = GetSFFromHisto(MuonID == 2? SFMuonHighPt:SFMuonTrkHighPtID,
+  sf = GetSFFromHisto(MuonID == 2? SFMuonHighPtID:SFMuonTrkHighPtID,
                       abs(eta),pt,option);
 #endif
-
   assert(sf>0);
 
   return sf;
@@ -1800,19 +1814,22 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-  if (Year == 2016 and !IsUL) {
-    // https://twiki.cern.ch/twiki/bin/view/CMS/MuonLegacy2016
-    const Double_t LumiBF = 20.;
-    const Double_t LumiGH = 16.;
+#if defined(Y2016) && !defined(ULSAMPLE)
+  // https://twiki.cern.ch/twiki/bin/view/CMS/MuonLegacy2016
+  const Double_t LumiBF = 20.;
+  const Double_t LumiGH = 16.;
+  Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
+  Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
+  sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
+#endif
 
-    Double_t SFTriggerBF = GetSFFromHisto(SFMuonTriggerBF,abs(eta),pt,option);
-    Double_t SFTriggerGH = GetSFFromHisto(SFMuonTriggerGH,abs(eta),pt,option);
+#if (defined(Y2016) && defined(ULSAMPLE)) || ((defined(Y2017) || defined(Y2018)) && defined(ULSAMPLE))
+  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
+#endif
 
-    sf = (LumiBF*SFTriggerBF+LumiGH*SFTriggerGH)/(LumiBF+LumiGH);
-
-  } else if ( Year == 2017 or Year == 2018) {
-    sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
-  }
+#if (defined(Y2017) || defined (Y2018)) && !defined(ULSAMPLE)
+  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
+#endif
 
   assert(sf>0);
 
