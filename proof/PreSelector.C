@@ -1806,7 +1806,7 @@ Double_t PreSelector::GetMuIDSF(UChar_t MuonID /* 2: highPt. 1: TrkHighPt*/,
 }
 
 ///////////////////////////////////////////////////////////
-Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
+Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, Float_t pt,
                                const Int_t& option) const{
   /* Option 0: Central Value, -1: Low, +1: up */
 
@@ -1824,6 +1824,7 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, const Float_t& pt,
 #endif
 
 #if (defined(Y2016) && defined(ULSAMPLE)) || ((defined(Y2017) || defined(Y2018)) && defined(ULSAMPLE))
+  if (pt > 1e3) pt = 0.999e3;
   sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
 #endif
 
