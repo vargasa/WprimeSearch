@@ -3,7 +3,7 @@
 #include <array>
 #include <string>
 #include <fstream>
-
+#include <type_traits>
 
 template<class T>
 void AddSFHistoSFDb(std::string newLabel,
@@ -13,10 +13,13 @@ void AddSFHistoSFDb(std::string newLabel,
   T* h = dynamic_cast<T*>((f->Get(histoname.c_str()))->Clone());
   h->SetName(newLabel.c_str());
   std::clog << "\tAdding " << h->GetName() << " to SFDB: " << filename << ":" << histoname <<  ":" << h  <<" \n";
-  std::clog << "\t\tx=[" << h->GetXaxis()->GetXmin() << ":" << h->GetXaxis()->GetXmax() << "]"
-            << "\ty=[" << h->GetYaxis()->GetXmin() << ":" << h->GetYaxis()->GetXmax() << "]\n" ;
+  if constexpr (std::is_same_v<T,TH2D> or std::is_same_v<T,TH2F>)
+                 std::clog << "\t\tx=[" << h->GetXaxis()->GetXmin() << ":" << h->GetXaxis()->GetXmax() << "]"
+                           << "\ty=[" << h->GetYaxis()->GetXmin() << ":" << h->GetYaxis()->GetXmax() << "]\n" ;
   SFDb->Add(h);
 }
+
+
 
 TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
 
@@ -45,7 +48,9 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFMuonHighPtIDpostVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrkHighPtIDpreVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrkHighPtIDpostVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
-      // ElectronTriggerSF?
+      // ElectronTriggerSF Borrowed from Legacy
+      AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","ScaleFactors",SFDb);
+      AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseIDpreVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Loose_preVFP_EGM2D.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseIDpostVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Loose_postVFP_EGM2D.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronTightIDpreVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Tight_preVFP_EGM2D.root","EGamma_SF2D",SFDb);
@@ -68,7 +73,9 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2017_var",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonHighPt","files/mc/2017/UL/sf/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrkHighPtID","files/mc/2017/UL/sf/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
-      // ElectronTriggerSF?
+      // ElectronTriggerSF borrowed from Legacy
+      AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","ScaleFactors",SFDb);
+      AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseID","files/mc/2017/UL/sf/egammaEffi.txt_EGM2D_Loose_UL17.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2017/UL/sf/egammaEffi.txt_EGM2D_Tight_UL17.root","EGamma_SF2D",SFDb);
     }
