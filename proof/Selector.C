@@ -13,6 +13,8 @@ void AddSFHistoSFDb(std::string newLabel,
   T* h = dynamic_cast<T*>((f->Get(histoname.c_str()))->Clone());
   h->SetName(newLabel.c_str());
   std::clog << "\tAdding " << h->GetName() << " to SFDB: " << filename << ":" << histoname <<  ":" << h  <<" \n";
+  std::clog << "\t\tx=[" << h->GetXaxis()->GetXmin() << ":" << h->GetXaxis()->GetXmax() << "]"
+            << "\ty=[" << h->GetYaxis()->GetXmin() << ":" << h->GetYaxis()->GetXmax() << "]\n" ;
   SFDb->Add(h);
 }
 
