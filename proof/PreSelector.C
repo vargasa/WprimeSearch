@@ -1718,7 +1718,9 @@ Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
 
   Double_t sf = -1;
 
-#if defined(Y2016) && !defined(ULSAMPLE)
+#if defined(Y2016)
+  /* These are the default for Legacy */
+  /* UL SFs haven't been computed     */
   /* 2 bins in pt */
   if( pt < 175.){
     sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
@@ -1727,22 +1729,14 @@ Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
   }
 #endif
 
-#if defined(Y2016) && defined(ULSAMPLE)
-  // Electron Trigger SF Missing for UL Samples
-  sf = 1.;
-#endif
-
-#if (defined(Y2017) || defined(Y2018)) && !defined(ULSAMPLE)
+#if (defined(Y2017) || defined(Y2018))
+  /* These are the default for Legacy */
+  /* UL SFs haven't been computed     */
   if (pt < 200.){
     sf = GetSFFromGraph(SFElectronTrigger1,eta,option);
   } else {
     sf = GetSFFromGraph(SFElectronTrigger2,eta,option);
   }
-#endif
-
-#if (defined(Y2017) || defined(Y2018)) && defined(ULSAMPLE)
-  // Electron Trigger SF Missing for UL Samples
-  sf = 1.;
 #endif
 
   assert(sf>0);
