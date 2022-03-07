@@ -303,7 +303,7 @@ class PreSelector : public EventSelection {
   std::string GetFakeString(const int& genPartIdx, const int& pdgId, const int& idn) const;
   Double_t GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const;
   Double_t GetElTriggerSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
-  Double_t GetMuTriggerSF(const Float_t& eta,const Float_t& pt, const Int_t& option) const;
+  Double_t GetMuTriggerSF(const Float_t& eta, Float_t pt, const Int_t& option) const;
   Double_t GetMuIDSF(UChar_t MuonID /* 2: highPt. 1: TrkHighPt*/,const Float_t& eta, const Float_t& pt, const Int_t& option) const;
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;
   Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
