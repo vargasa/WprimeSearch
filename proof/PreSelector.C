@@ -520,6 +520,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpostVFP"));
   SFMuonTrkHighPtIDpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpreVFP"));
   SFMuonTrkHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpostVFP"));
+  SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
+  SFElectronTrigger2 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFElectronLooseIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpreVFP"));
   SFElectronLooseIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpostVFP"));
   SFElectronTightIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpreVFP"));
@@ -530,10 +532,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonTrigger = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
   SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
-#ifndef ULSAMPLE
   SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
-#endif
   SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
