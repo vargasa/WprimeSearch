@@ -181,6 +181,40 @@ wget -P proof/files/mc/2017/sf -c https://github.com/rishabhCMS/decaf/raw/master
 ```
 
 
+# Ultralegacy Scale Factors
+
+```bash
+mkdir -p proof/{files,mc,2016,UL,sf}
+mkdir -p proof/{files,mc,2017,UL,sf}
+mkdir -p proof/{files,mc,2018,UL,sf}
+
+## Pileup
+wget -P proof/ https://avargash.web.cern.ch/avargash/eos/www/analysisFiles/scaleFactors/PileupWeights_UL.root
+
+## KFactors
+wget -P proof/files/mc/2016/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/sf/merged_kfactors_zjets.root
+
+## UL 16
+wget -P proof/files/mc/2016/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root
+wget -P proof/files/mc/2016/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root
+wget -P proof/files/mc/2016/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root
+wget -P proof/files/mc/2016/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Loose_postVFP_EGM2D.root
+wget -P proof/files/mc/2016/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Loose_preVFP_EGM2D.root
+wget -P proof/files/mc/2016/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Tight_postVFP_EGM2D.root
+wget -P proof/files/mc/2016/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Tight_preVFP_EGM2D.root
+
+## UL 17
+wget -P proof/files/mc/2017/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
+wget -P proof/files/mc/2017/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/egammaEffi.txt_EGM2D_Loose_UL17.root
+wget -P proof/files/mc/2017/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/egammaEffi.txt_EGM2D_Tight_UL17.root
+
+## UL 18
+wget -P proof/files/mc/2018/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
+wget -P proof/files/mc/2018/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/egammaEffi.txt_Ele_Loose_EGM2D.root
+wget -P proof/files/mc/2018/UL/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/egammaEffi.txt_Ele_Tight_EGM2D.root
+```
+
+
 The pileup scalefactors `PileupWeights.root` is computed by using:
 
 ```bash

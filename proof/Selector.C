@@ -140,7 +140,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   istringstream f(files);
   std::string file;
   std::string sample;
-  std::string fileNameOut = "WprimeHistos_ULSFs.root";
+  std::string fileNameOut = "WprimeHistos_ULOldElSF.root";
 
   while(std::getline(f,file,'+')){
     sample += file.substr(file.rfind("/")+1);
@@ -159,11 +159,12 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
     }
     std::ifstream infile(file);
     std::string line;
+
     while(std::getline(infile, line)){
       if(line.empty() or line.find("#") == 0) continue;
       line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
       //line = Form("root://cms-xrd-global.cern.ch/%s",line.c_str());
-      std::cout << "Chaining " << line << std::endl;
+      std::cout << "Chaining [" << fChain->GetNtrees() << "]\t" << line << std::endl;
       fChain->AddFile(line.c_str());
     }
   }
