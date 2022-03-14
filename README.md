@@ -188,8 +188,11 @@ mkdir -p proof/{files,mc,2016,UL,sf}
 mkdir -p proof/{files,mc,2017,UL,sf}
 mkdir -p proof/{files,mc,2018,UL,sf}
 
+## Unique EntryList
+wget -P proof/EntryListMaker/ https://avargash.web.cern.ch/avargash/analysisFiles/EntryLists_Unique.root
+
 ## Pileup
-wget -P proof/ https://avargash.web.cern.ch/avargash/eos/www/analysisFiles/scaleFactors/PileupWeights_UL.root
+wget -P proof/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/PileupWeights_UL.root
 
 ## KFactors
 wget -P proof/files/mc/2016/sf/ https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/sf/merged_kfactors_zjets.root

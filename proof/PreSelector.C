@@ -144,7 +144,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 
     std::vector<std::string> rgs = { "SR1" };
     std::vector<std::string> chs = { "A","B","C","D" };
-    std::vector<std::string> sys = { "ElTrigger","MuTrigger","ElID","MuID" };
+    std::vector<std::string> sys = { "ElTrigger","MuTrigger","ElID","MuID","MetUncl" };
     std::vector<std::string> limit = { "Up","Down" };
 
     std::vector<std::string> syst;
@@ -388,6 +388,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HElPt,"HElPt",100,0.,MaxPt);
   InitHVec<TH1F>(HMuPt,"HMuPt",100,0.,MaxPt);
   InitHVec<TH1F>(HMetPt,"HMetPt",100,0.,MaxPt);
+  InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",100,0.,MaxPt);
+  InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",100,0.,MaxPt);
 
   const Float_t MaxEta = 3.;
   const Int_t EtaBins = 25;
@@ -424,6 +426,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HElPhi,"HElPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMuPhi,"HMuPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMetPhi,"HMetPhi",PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH1F>(HMetUnclUpPhi,"HMetUnclUpPhi",PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH1F>(HMetUnclDownPhi,"HMetUnclDownPhi",PhiBins,-1*MaxPhi,MaxPhi);
 
   const Double_t wzbins[31] = {
     60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,
@@ -746,77 +750,68 @@ ZPairInfo PreSelector::FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
 }
 
 
-std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,
-                                                               const Float_t& Wmt){
+Nu4VObj PreSelector::GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep){
 
-  std::vector<ROOT::Math::PxPyPzMVector> s;
+  Nu4VObj s;
   Float_t pz = (lep.Pz()/lep.Pt())*(*MET_pt);
-  s.emplace_back(Get4V(pz));
-  return s;
+  Float_t pz_up = (lep.Pz()/lep.Pt())*(MetUncl.PtUp);
+  Float_t pz_down = (lep.Pz()/lep.Pt())*(MetUncl.PtDown);
 
+  s.Met = Get4V(pz,*MET_pt,*MET_phi);
+  s.MetUnclUp = Get4V(pz_up,MetUncl.PtUp,MetUncl.PhiUp);
+  s.MetUnclDown = Get4V(pz_down,MetUncl.PtDown,MetUncl.PhiDown);
+  return s;
 }
 
-std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep,
-                                                            const Float_t& Wmt){
+Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
 
-  std::vector<ROOT::Math::PxPyPzMVector> s;
-  Float_t NuPz = 0.;
+  Nu4VObj s;
+  Float_t NuPz, NuPz_up, NuPz_down = 0.;
   const Float_t Mw = 80.379;
   Float_t a = 2.*lep.Pt()*(*MET_pt);
-  Float_t k = Mw*Mw - Wmt*Wmt;
+  Float_t k = Mw*Mw - wmt.Met*wmt.Met;
   Float_t b = (k + a);
   Float_t c = k*(k + 4.*lep.Pt()*(*MET_pt));
-  if (c<0) return GetNu4VFix(lep,Wmt);
+
+  Float_t a_up = 2.*lep.Pt()*(MetUncl.PtUp);
+  Float_t k_up = Mw*Mw - wmt.MetUnclUp*wmt.MetUnclUp;
+  Float_t b_up = (k_up + a_up);
+  Float_t c_up = k_up*(k_up + 4.*lep.Pt()*(MetUncl.PtUp));
+
+  Float_t a_down = 2.*lep.Pt()*(MetUncl.PtDown);
+  Float_t k_down = Mw*Mw - wmt.MetUnclDown*wmt.MetUnclDown;
+  Float_t b_down = (k_down + a_down);
+  Float_t c_down = k_down*(k_down + 4.*lep.Pt()*(MetUncl.PtDown));
+
+  if ( c < 0 or c_down < 0 or c_up < 0 ) return GetNu4VFix(lep);
+
   Float_t d = lep.P()*TMath::Sqrt(c);
-  NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt());
-  s.emplace_back(Get4V(NuPz));
-  NuPz = (lep.Pz()*b + d)/(2.*lep.Pt()*lep.Pt());
-  s.emplace_back(Get4V(NuPz));
-  return s;
 
-}
+  Float_t d_up = lep.P()*TMath::Sqrt(c_up);
+  Float_t d_down = lep.P()*TMath::Sqrt(c_down);
 
-ROOT::Math::PxPyPzMVector PreSelector::Get4V(const Float_t& Pz){
+  NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt()); // What About the Positive Solution?
+  NuPz_up = (lep.Pz()*b_up - d_up)/(2.*lep.Pt()*lep.Pt());
+  NuPz_down = (lep.Pz()*b_down - d_down)/(2.*lep.Pt()*lep.Pt());
 
-  const Float_t MNu = 0.;
-
-  return ROOT::Math::PxPyPzMVector((*MET_pt)*TMath::Cos(*MET_phi),
-                                   (*MET_pt)*TMath::Sin(*MET_phi),
-                                   Pz,MNu);
-
-}
-
-std::vector<ROOT::Math::PxPyPzMVector> PreSelector::GetNu4VAlt(ROOT::Math::PtEtaPhiMVector lep,
-                                                               Float_t Wmt){
-  const Float_t Mw = 80.379;
-  const Float_t MNu = 0.;
-
-  Float_t dphi = *MET_phi-lep.Phi();
-  Float_t a,b;
-
-  Float_t pz = 0.;
-
-  std::vector<ROOT::Math::PxPyPzMVector> s;
-
-  a = pow(Mw,2) + 2.*lep.Pt()*(*MET_pt)*TMath::Cos(dphi);
-  b = pow(a,2) - 4*pow(lep.Pt(),2)*pow((*MET_pt),2);
-
-  if (b < 0) return GetNu4VFix(lep, Wmt);
-
-  pz = lep.Pz()*a + lep.P()*TMath::Sqrt(b);
-  pz = pz/(2.*pow(lep.Pt(),2.));
-
-  s.emplace_back(PreSelector::Get4V(pz));
-
-  pz = lep.Pz()*a - lep.P()*TMath::Sqrt(b);
-  pz = pz/(2.*pow(lep.Pt(),2));
-
-  s.emplace_back(PreSelector::Get4V(pz));
-
+  s.Met = Get4V(NuPz,*MET_pt,*MET_phi);
+  s.MetUnclUp = Get4V(NuPz_up,MetUncl.PtUp,MetUncl.PhiUp);
+  s.MetUnclDown = Get4V(NuPz_down,MetUncl.PtDown,MetUncl.PhiDown);
 
   return s;
 
 }
+
+ROOT::Math::PxPyPzMVector PreSelector::Get4V(const Float_t& pz, const Float_t& pt, const Float_t phi){
+
+  const Float_t MNu = 0.;
+
+  return ROOT::Math::PxPyPzMVector((pt)*TMath::Cos(phi),
+                                   (pt)*TMath::Sin(phi),
+                                   pz,MNu);
+
+}
+
 
 
 Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
@@ -861,23 +856,23 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   Int_t nh = nch + crOffset;
 
   // dR Histos
-  Double_t wzdist = GetEtaPhiDistance(wb.Eta(),wb.Phi(),zb.Eta(),zb.Phi());
+  Double_t wzdist = GetEtaPhiDistance(wb.Met.Eta(),wb.Met.Phi(),zb.Eta(),zb.Phi());
   Double_t l1l2dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Double_t l1l3dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
   Double_t l2l3dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
 
   // 2DHistos
-  HWZPtDist[nh]->Fill((wb+zb).Pt(),wzdist);
+  HWZPtDist[nh]->Fill((wb.Met+zb).Pt(),wzdist);
   HPtEtal1[nh]->Fill(lep1.Pt(),lep1.Eta());
   HPtEtal2[nh]->Fill(lep2.Pt(),lep2.Eta());
   HPtEtal3[nh]->Fill(lep3.Pt(),lep3.Eta());
-  HMassZTW[nh]->Fill(zb.M(),wmt);
+  HMassZTW[nh]->Fill(zb.M(),wmt.Met);
   HDeltaRPtZ[nh]->Fill(l1l2dist,zb.Pt());
-  HPtWPtZ[nh]->Fill(wb.Pt(),zb.Pt());
-  HDeltaRMWZ[nh]->Fill(l1l2dist,(wb+zb).M());
-  HLtMWZ[nh]->Fill(lt,(wb+zb).M());
+  HPtWPtZ[nh]->Fill(wb.Met.Pt(),zb.Pt());
+  HDeltaRMWZ[nh]->Fill(l1l2dist,(wb.Met+zb).M());
+  HLtMWZ[nh]->Fill(lt,(wb.Met+zb).M());
   HNLep[nh]->Fill(GoodMuon.size(),GoodElectron.size());
-  HMassZWZ[nh]->Fill(PairZMass,(wb+zb).M());
+  HMassZWZ[nh]->Fill(PairZMass,(wb.Met+zb).M());
   HEtaPhil1[nh]->Fill(lep1.Eta(),lep1.Phi());
   HEtaPhil2[nh]->Fill(lep2.Eta(),lep2.Phi());
   HEtaPhil3[nh]->Fill(lep3.Eta(),lep3.Phi());
@@ -923,9 +918,13 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HPtl2,nh,lep2.Pt());
   FillH1(HPtl3,nh,lep3.Pt());
   FillH1(HMetPt,nh,*MET_pt);
+#ifndef CMSDATA
+  FillH1(HMetUnclUpPt,nh,MetUncl.PtUp);
+  FillH1(HMetUnclDownPt,nh,MetUncl.PtDown);
+#endif
   FillH1(HZPt,nh,zb.Pt());
-  FillH1(HWPt,nh,wb.Pt());
-  FillH1(HWZPt,nh,(wb+zb).Pt());
+  FillH1(HWPt,nh,wb.Met.Pt());
+  FillH1(HWZPt,nh,(wb.Met+zb).Pt());
   FillH1(HLt,nh,lt);
 
   FillH1(HPtl1Lt,nh,lep1.Pt()/lt);
@@ -942,13 +941,15 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HnJet,nh,(double)*nJet);
 
   // Mass Histos
-  double wzm = (wb+zb).M();
-  FillH1(HMassW,nh,wb.M());
+  double wzm_Met = (wb.Met+zb).M();
+  double wzm_MetUnclUp = (wb.MetUnclUp+zb).M();
+  double wzm_MetUnclDown = (wb.MetUnclDown+zb).M();
+  FillH1(HMassW,nh,wb.Met.M());
   FillH1(HMassZ,nh,PairZMass);
-  FillH1(HMassTW,nh,wmt);
-  FillH1(HMassWZ,nh,wzm);
-  FillH1(HPtZMWZ,nh,zb.Pt()/wzm);
-  FillH1(HPtWMWZ,nh,wb.Pt()/wzm);
+  FillH1(HMassTW,nh,wmt.Met);
+  FillH1(HMassWZ,nh,wzm_Met);
+  FillH1(HPtZMWZ,nh,zb.Pt()/wzm_Met);
+  FillH1(HPtWMWZ,nh,wb.Met.Pt()/wzm_Met);
 
   // HiggsCombine Syst Histos
   if(IsA_){
@@ -963,15 +964,17 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
     if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_A_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
-      HMassWZ[HIdx["SR1_A_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
-      HMassWZ[HIdx["SR1_A_ElID_Up"]]->Fill(wzm,WElIDUp);
-      HMassWZ[HIdx["SR1_A_ElID_Down"]]->Fill(wzm,WElIDDown);
+      HMassWZ[HIdx["SR1_A_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
+      HMassWZ[HIdx["SR1_A_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
+      HMassWZ[HIdx["SR1_A_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
+      HMassWZ[HIdx["SR1_A_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
+      HMassWZ[HIdx["SR1_A_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+      HMassWZ[HIdx["SR1_A_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_A_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_A_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_A_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_A_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_A_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+        HMassWZ[HIdx["SR1_A_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+        HMassWZ[HIdx["SR1_A_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+        HMassWZ[HIdx["SR1_A_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
@@ -991,19 +994,21 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep3.Phi());
 #ifndef CMSDATA
     if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_B_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
-      HMassWZ[HIdx["SR1_B_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
-      HMassWZ[HIdx["SR1_B_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
-      HMassWZ[HIdx["SR1_B_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
-      HMassWZ[HIdx["SR1_B_ElID_Up"]]->Fill(wzm,WElIDUp);
-      HMassWZ[HIdx["SR1_B_ElID_Down"]]->Fill(wzm,WElIDDown);
-      HMassWZ[HIdx["SR1_B_MuID_Up"]]->Fill(wzm,WMuIDUp);
-      HMassWZ[HIdx["SR1_B_MuID_Down"]]->Fill(wzm,WMuIDDown);
+      HMassWZ[HIdx["SR1_B_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
+      HMassWZ[HIdx["SR1_B_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
+      HMassWZ[HIdx["SR1_B_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
+      HMassWZ[HIdx["SR1_B_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
+      HMassWZ[HIdx["SR1_B_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
+      HMassWZ[HIdx["SR1_B_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
+      HMassWZ[HIdx["SR1_B_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
+      HMassWZ[HIdx["SR1_B_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
+      HMassWZ[HIdx["SR1_B_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+      HMassWZ[HIdx["SR1_B_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_B_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_B_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_B_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_B_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_B_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+        HMassWZ[HIdx["SR1_B_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+        HMassWZ[HIdx["SR1_B_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+        HMassWZ[HIdx["SR1_B_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
@@ -1023,19 +1028,21 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
     if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_C_ElTrigger_Up"]]->Fill(wzm,WElTrigUp);
-      HMassWZ[HIdx["SR1_C_ElTrigger_Down"]]->Fill(wzm,WElTrigDown);
-      HMassWZ[HIdx["SR1_C_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
-      HMassWZ[HIdx["SR1_C_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
-      HMassWZ[HIdx["SR1_C_ElID_Up"]]->Fill(wzm,WElIDUp);
-      HMassWZ[HIdx["SR1_C_ElID_Down"]]->Fill(wzm,WElIDDown);
-      HMassWZ[HIdx["SR1_C_MuID_Up"]]->Fill(wzm,WMuIDUp);
-      HMassWZ[HIdx["SR1_C_MuID_Down"]]->Fill(wzm,WMuIDDown);
+      HMassWZ[HIdx["SR1_C_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
+      HMassWZ[HIdx["SR1_C_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
+      HMassWZ[HIdx["SR1_C_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
+      HMassWZ[HIdx["SR1_C_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
+      HMassWZ[HIdx["SR1_C_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
+      HMassWZ[HIdx["SR1_C_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
+      HMassWZ[HIdx["SR1_C_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
+      HMassWZ[HIdx["SR1_C_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
+      HMassWZ[HIdx["SR1_C_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+      HMassWZ[HIdx["SR1_C_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_C_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_C_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_C_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_C_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_C_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+        HMassWZ[HIdx["SR1_C_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+        HMassWZ[HIdx["SR1_C_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+        HMassWZ[HIdx["SR1_C_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
@@ -1054,15 +1061,17 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep3.Phi());
 #ifndef CMSDATA
     if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_D_MuTrigger_Up"]]->Fill(wzm,WMuTrigUp);
-      HMassWZ[HIdx["SR1_D_MuTrigger_Down"]]->Fill(wzm,WMuTrigDown);
-      HMassWZ[HIdx["SR1_D_MuID_Up"]]->Fill(wzm,WMuIDUp);
-      HMassWZ[HIdx["SR1_D_MuID_Down"]]->Fill(wzm,WMuIDDown);
+      HMassWZ[HIdx["SR1_D_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
+      HMassWZ[HIdx["SR1_D_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
+      HMassWZ[HIdx["SR1_D_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
+      HMassWZ[HIdx["SR1_D_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
+      HMassWZ[HIdx["SR1_D_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+      HMassWZ[HIdx["SR1_D_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
       if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_D_KFactor_EWK_Up"]]->Fill(wzm,WKEWKUp);
-        HMassWZ[HIdx["SR1_D_KFactor_EWK_Down"]]->Fill(wzm,WKEWKDown);
-        HMassWZ[HIdx["SR1_D_KFactor_QCD_Up"]]->Fill(wzm,WKQCDUp);
-        HMassWZ[HIdx["SR1_D_KFactor_QCD_Down"]]->Fill(wzm,WKQCDDown);
+        HMassWZ[HIdx["SR1_D_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+        HMassWZ[HIdx["SR1_D_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+        HMassWZ[HIdx["SR1_D_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+        HMassWZ[HIdx["SR1_D_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
       }
     }
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
@@ -1077,13 +1086,15 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HDistl1l3,nh,l1l3dist);
   FillH1(HDistl2l3,nh,l2l3dist);
   FillH1(HDistZl3,nh,GetEtaPhiDistance(zb.Eta(),zb.Phi(),lep3.Eta(),lep3.Phi()));
-  FillH1(HDistZW,nh,GetEtaPhiDistance(zb.Eta(),zb.Phi(),wb.Eta(),wb.Phi()));
+  FillH1(HDistZW,nh,GetEtaPhiDistance(zb.Eta(),zb.Phi(),wb.Met.Eta(),wb.Met.Phi()));
 
   // Phi Histos
   FillH1(HPhil1,nh,lep1.Phi());
   FillH1(HPhil2,nh,lep2.Phi());
   FillH1(HPhil3,nh,lep3.Phi());
   FillH1(HMetPhi,nh,*MET_phi);
+  FillH1(HMetUnclUpPhi,nh,MetUncl.PhiUp);
+  FillH1(HMetUnclDownPhi,nh,MetUncl.PhiDown);
 
   // Dxyz RelIso
   FillH1(HDxyl1,nh,lz.dxy[l1]);
@@ -1122,9 +1133,15 @@ bool PreSelector::DefineW(const Leptons& l){
     HCutFlow->FillS("Distl1l2<1.");
     return false;
   }
-  wmt = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
-  nu = PreSelector::GetNu4V(lep3, wmt);
-  wb = (lep3 + nu[0]);
+
+  WmtObj wmt;
+  wmt.Met = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
+  wmt.MetUnclUp = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtUp, MetUncl.PhiUp);
+  wmt.MetUnclDown = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtDown, MetUncl.PtDown);
+  nu = PreSelector::GetNu4V(lep3);
+  wb.Met = (lep3 + nu.Met);
+  wb.MetUnclUp = (lep3 + nu.MetUnclUp);
+  wb.MetUnclDown = (lep3 + nu.MetUnclDown);
 
   return true;
 
@@ -1519,6 +1536,10 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
+#ifndef CMSDATA
+  MetUncl = GetMetUncl();
+#endif
+
   auto printEventInfo = [&](){
     std::cout <<
       Form("%d%d%d%d\tRun: %u\tEvent: %llu\tLumiblock: %u\tmll: %.4f\n",
@@ -1574,6 +1595,28 @@ void PreSelector::Terminate() {
 ///////////////////////////////////////////////////////////
 
 #ifndef CMSDATA
+///////////////////////////////////////////////////////////
+MetUnclObj PreSelector::GetMetUncl(){
+
+  Float_t metPx = (*MET_pt)*(cos(*MET_phi));
+  Float_t metPy = (*MET_pt)*(sin(*MET_phi));
+
+  Float_t metPxUp = metPx + *MET_MetUnclustEnUpDeltaX;
+  Float_t metPxDown = metPx - *MET_MetUnclustEnUpDeltaX;
+
+  Float_t metPyUp = metPy + *MET_MetUnclustEnUpDeltaY;
+  Float_t metPyDown = metPy - *MET_MetUnclustEnUpDeltaY;
+
+  struct MetUnclObj r = {
+    sqrt(pow(metPxUp,2.)+pow(metPyUp,2.)),
+    sqrt(pow(metPxDown,2.)+pow(metPyDown,2.)),
+    atan2(metPyUp,metPxUp),
+    atan2(metPyDown,metPxDown)
+  };
+
+  return r;
+
+}
 
 ///////////////////////////////////////////////////////////
 std::string PreSelector::GetFakeString(const int& genPartIdx,

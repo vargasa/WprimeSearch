@@ -36,6 +36,25 @@ struct ZPairInfo{
 
 };
 
+struct MetUnclObj {
+  Double_t PtUp;
+  Double_t PtDown;
+  Double_t PhiUp;
+  Double_t PhiDown;
+};
+
+struct Nu4VObj {
+  ROOT::Math::PxPyPzMVector Met;
+  ROOT::Math::PxPyPzMVector MetUnclUp;
+  ROOT::Math::PxPyPzMVector MetUnclDown;
+};
+
+struct WmtObj {
+  Float_t Met; // No Corrections Applied
+  Float_t MetUnclUp; //Unclustered Met Up
+  Float_t MetUnclDown; //Unclustered Met Down
+};
+
 class PreSelector : public EventSelection {
 
  private :
@@ -114,6 +133,8 @@ class PreSelector : public EventSelection {
   TTreeReaderArray<Int_t> GenPart_status = {fReader, "GenPart_status"};
   TTreeReaderArray<Int_t> GenPart_statusFlags = {fReader, "GenPart_statusFlags"};
   TTreeReaderValue<Float_t> Pileup_nTrueInt = {fReader, "Pileup_nTrueInt"};
+  TTreeReaderValue<Float_t> MET_MetUnclustEnUpDeltaX = {fReader,"MET_MetUnclustEnUpDeltaX"};
+  TTreeReaderValue<Float_t> MET_MetUnclustEnUpDeltaY = {fReader,"MET_MetUnclustEnUpDeltaY"};
 #endif
   // Neutrinos
   TTreeReaderValue<Float_t> MET_phi = {fReader, "MET_phi"};
@@ -209,6 +230,8 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HElPt;
   std::vector<TH1F*> HMuPt;
   std::vector<TH1F*> HMetPt;
+  std::vector<TH1F*> HMetUnclUpPt;
+  std::vector<TH1F*> HMetUnclDownPt;
 
   std::vector<TH1F*> HEtal1;
   std::vector<TH1F*> HEtal2;
@@ -226,6 +249,8 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HElPhi;
   std::vector<TH1F*> HMuPhi;
   std::vector<TH1F*> HMetPhi;
+  std::vector<TH1F*> HMetUnclUpPhi;
+  std::vector<TH1F*> HMetUnclDownPhi;
 
   std::vector<TH1F*> HZPt;
   std::vector<TH1F*> HWPt;
@@ -244,7 +269,7 @@ class PreSelector : public EventSelection {
   Int_t l1, l2, l3; // Lepton pair index and lead remaining
   Int_t leadMuIdx; // Leading is not 0th index
   Int_t leadElIdx;
-  Float_t wmt; // W Transverse mass;
+  WmtObj wmt;// W Transverse mass; 
   Float_t lt; // Sum of leptons Pt
 
   Bool_t IsA_{},IsB{},IsC{},IsD{};
@@ -253,8 +278,9 @@ class PreSelector : public EventSelection {
   std::vector<UInt_t> GoodMuon;
   std::vector<UInt_t> SameFlvWCand;
   Bool_t PairEl{}, PairMu{};
-  PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-  std::vector<ROOT::Math::PxPyPzMVector> nu;
+  PtEtaPhiMVector lep1, lep2, zb, lep3;
+  Nu4VObj wb; // Three Values for Met, MetUnclUp and MetUnclDown
+  Nu4VObj nu;
 
   Float_t PairZMass;
 
@@ -310,6 +336,10 @@ class PreSelector : public EventSelection {
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
   void DefineSFs();
 
+  MetUnclObj GetMetUncl();
+
+  MetUnclObj MetUncl;
+
   Bool_t ApplyKFactors{};
   Double_t KSFMinPt;
   Double_t KSFMaxPt;
@@ -331,11 +361,9 @@ class PreSelector : public EventSelection {
   ZPairInfo FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
                   const Leptons& l,
                   const std::vector<UInt_t>& GoodLepton) const;
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(const ROOT::Math::PtEtaPhiMVector&,const Float_t&);
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VAlt(ROOT::Math::PtEtaPhiMVector,Float_t); 
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,
-                                                    const Float_t& Wmt);
-  ROOT::Math::PxPyPzMVector Get4V(const Float_t& Pz);
+  Nu4VObj GetNu4V(const ROOT::Math::PtEtaPhiMVector&);
+  Nu4VObj GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep);
+  ROOT::Math::PxPyPzMVector Get4V(const Float_t& pz, const Float_t& pt, const Float_t phi);
 
   Int_t nbTag();
 
