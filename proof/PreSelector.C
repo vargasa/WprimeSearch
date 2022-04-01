@@ -388,8 +388,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HElPt,"HElPt",100,0.,MaxPt);
   InitHVec<TH1F>(HMuPt,"HMuPt",100,0.,MaxPt);
   InitHVec<TH1F>(HMetPt,"HMetPt",100,0.,MaxPt);
-  InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",100,0.,MaxPt);
-  InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",100,0.,MaxPt);
 
   const Float_t MaxEta = 3.;
   const Int_t EtaBins = 25;
@@ -426,20 +424,14 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HElPhi,"HElPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMuPhi,"HMuPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMetPhi,"HMetPhi",PhiBins,-1*MaxPhi,MaxPhi);
-  InitHVec<TH1F>(HMetUnclUpPhi,"HMetUnclUpPhi",PhiBins,-1*MaxPhi,MaxPhi);
-  InitHVec<TH1F>(HMetUnclDownPhi,"HMetUnclDownPhi",PhiBins,-1*MaxPhi,MaxPhi);
-
-  const Double_t wzbins[31] = {
-    60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,
-    1190,1340,1500,2000,2500,3000,4000,5500,7500
-  };
-
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",30,wzbins);
-
-
-  if(IsData) return;
 
 #if !defined(CMSDATA)
+
+  InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",100,0.,MaxPt);
+  InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",100,0.,MaxPt);
+
+  InitHVec<TH1F>(HMetUnclUpPhi,"HMetUnclUpPhi",PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH1F>(HMetUnclDownPhi,"HMetUnclDownPhi",PhiBins,-1*MaxPhi,MaxPhi);
 
   InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
 
@@ -552,6 +544,13 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HScaleFactors,"HScaleFactors",70,-1.,6.);
 
 #endif
+
+  const Double_t wzbins[31] = {
+    60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,
+    1190,1340,1500,2000,2500,3000,4000,5500,7500
+  };
+
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",30,wzbins);
 }
 
 void PreSelector::SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l){
