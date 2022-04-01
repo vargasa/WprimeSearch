@@ -1128,6 +1128,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string unc5     = "CMS_MuID\tshape\t";
     std::string unc6     = "CMS_KFactorQCD\tshape\t";
     std::string unc7     = "CMS_KFactorEWK\tshape\t";
+    std::string unc8     = "CMS_MetUncl\tshape\t";
 
 
     std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
@@ -1165,26 +1166,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       std::string folderName = Form("%d/%s",year,sampleName.c_str());
       std::string hname;
-      if(ch == "A"){
+      if(ch == "A" or ch == "B" or ch == "C"){
         for (auto s: systEl) {
           hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
         }
-      } else if (ch == "B" or ch == "C"){
-        for (auto s: systEl) {
-          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
-          saveUpDown(folderName,hname,s);
-        }
-        for (auto s: systMu) {
-          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
-          saveUpDown(folderName,hname,s);
-        }
-      } else if (ch == "D"){
+      } else if (ch == "D" or ch == "B" or ch == "C"){
         for (auto s: systMu) {
           hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
         }
       }
+
+      hname = Form("%s_%s_MetUncl",fromHisto,ch.c_str());
+      saveUpDown(folderName,hname,"MetUncl");
+
 
       if(folderName.find(DYSample.c_str()) != std::string::npos){
         for (auto s: systK) {
@@ -1219,6 +1215,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       unc5 += "--\t";
       unc6 += "--\t";
       unc7 += "--\t";
+      unc8 += "--\t";
 
       auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
                                     Form("%s_%s",fromHisto,ch.first.c_str()));
@@ -1243,24 +1240,28 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc3 += "-\t";
           unc4 += "1.0\t";
           unc5 += "-\t";
+          unc8 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "B") {
           unc2 += "1.0\t";
           unc3 += "1.0\t";
           unc4 += "1.0\t";
           unc5 += "1.0\t";
+          unc8 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "C") {
           unc2 += "1.0\t";
           unc3 += "1.0\t";
           unc4 += "1.0\t";
           unc5 += "1.0\t";
+          unc8 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "D") {
           unc2 += "-\t";
           unc3 += "1.0\t";
           unc4 += "-\t";
           unc5 += "1.0\t";
+          unc8 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         }
 
@@ -1291,6 +1292,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << unc5 << std::endl;
     dcFile << unc6 << std::endl;
     dcFile << unc7 << std::endl;
+    dcFile << unc8 << std::endl;
 
     fCombine->Close();
 
