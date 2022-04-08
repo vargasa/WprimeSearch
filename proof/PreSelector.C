@@ -347,9 +347,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
                       " -1: l<3 0:None 1: NoOverlap",6,-1,5);
   fOutput->Add(HOverlap);
 
-  const Int_t nPvsBins = 100;
+  const Int_t nPvsBins = 99;
   const Float_t minPvs = 0.;
-  const Float_t maxPvs = 100.;
+  const Float_t maxPvs = 99.;
 
   HPileup = new TH1D("HPileup","PV_npvs",
                      nPvsBins,minPvs,maxPvs);

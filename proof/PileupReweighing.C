@@ -4,7 +4,7 @@
 
 Int_t PileupReweighing(){
 
-  TFile *mcFile = TFile::Open("WprimeHistos_ULSFs.root","READ");
+  TFile *mcFile = TFile::Open("WprimeHistos_MetUncl.root","READ");
 
   std::multimap<int, std::vector<std::string>> BgNamesUL =
     {
@@ -331,7 +331,7 @@ Int_t PileupReweighing(){
         i != BgNamesUL.end(); ++i) {
     year = (*i).first;
 
-    TFile *dataFile = TFile::Open(Form("files/mc/%d/sf/PileupHistogram-goldenJSON-13tev-%d-69200ub.root",year,year));
+    TFile *dataFile = TFile::Open(Form("files/mc/%d/sf/PileupHistogram-goldenJSON-13tev-%d-69200ub-99bins.root",year,year));
 
     auto dataPileup = static_cast<TH1D*>(dataFile->Get("pileup"));
     TH1D* mcPileup;
