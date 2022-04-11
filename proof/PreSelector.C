@@ -418,6 +418,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HEtaPhil2,"HEtaPhil2",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH2F>(HEtaPhil3,"HEtaPhil3",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH2F>(HPtl1l2,"HPtl1l2",50,0,250,50,0,250);
+  InitHVec<TH2F>(HPtl1l3,"HPtl1l3",50,0,250,50,0,250);
   InitHVec<TH1F>(HPhil1,"HPhil1",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil2,"HPhil2",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HPhil3,"HPhil3",PhiBins,-1*MaxPhi,MaxPhi);
@@ -608,15 +609,7 @@ Int_t PreSelector::LeadingIdx(const Leptons& l) {
 std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MaxEta = 2.5;
 
-  Float_t MinPt;
-
-  if (Year==2016) {
-    MinPt = 27.;
-  } else if (Year==2017) {
-    MinPt = 35.;
-  } else if (Year==2018) {
-    MinPt = 32.;
-  }
+  Float_t MinPt = 50.;
 
   std::pair<double,double> etaGap = std::make_pair(1.4442,1.5660);
 
@@ -876,6 +869,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HEtaPhil2[nh]->Fill(lep2.Eta(),lep2.Phi());
   HEtaPhil3[nh]->Fill(lep3.Eta(),lep3.Phi());
   HPtl1l2[nh]->Fill(lep1.Pt(),lep2.Pt());
+  HPtl1l3[nh]->Fill(lep1.Pt(),lep3.Pt());
   HDxyl1l2[nh]->Fill(lz.dxy[l1],lz.dxy[l2]);
 
   if(IsA_ or IsB) { // PairEl
@@ -1148,17 +1142,10 @@ bool PreSelector::DefineW(const Leptons& l){
 
 Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
 
-  Float_t MinPt;
+  Float_t LeadingMinPt = 50.;
 
-  if (Year == 2016) {
-    MinPt = 27.;
-  } else if (Year == 2017) {
-    MinPt = 35.;
-  } else if (Year == 2018) {
-    MinPt = 32.;
-  }
-
-  if (Electron_pt[p.first] < MinPt || Electron_pt[p.second] < MinPt) return kFALSE;
+  if (Electron_pt[p.first] < LeadingMinPt)
+    return kFALSE;
   return kTRUE;
 }
 

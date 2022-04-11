@@ -194,6 +194,7 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HEtaPhil2;
   std::vector<TH2F*> HEtaPhil3;
   std::vector<TH2F*> HPtl1l2;
+  std::vector<TH2F*> HPtl1l3;
   std::vector<TH2F*> HZElId;
 
   //Angular

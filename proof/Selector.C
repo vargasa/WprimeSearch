@@ -140,7 +140,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   istringstream f(files);
   std::string file;
   std::string sample;
-  std::string fileNameOut = "WprimeHistos_MetUncl.root";
+  std::string fileNameOut = "WprimeHistos_NanoAODv9.root";
 
   while(std::getline(f,file,'+')){
     sample += file.substr(file.rfind("/")+1);
