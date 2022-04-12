@@ -1,2 +1,0 @@
-/store/mc/RunIISummer20UL17NanoAODv2/WprimeToWZToWlepZlep_narrow_M4500_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mc2017_realistic_v8-v1/00000/2307C1CD-ACBC-924F-8A44-DD615E2A88D0.root
-/store/mc/RunIISummer20UL17NanoAODv2/WprimeToWZToWlepZlep_narrow_M4500_TuneCP5_13TeV-madgraph-pythia8/NANOAODSIM/106X_mc2017_realistic_v8-v1/230000/D4A2A3A1-F984-684D-896A-5587B61E2547.root
