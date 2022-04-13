@@ -1099,7 +1099,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     };
 
     ofstream dcFile;
-    dcFile.open(Form("plots/%d/%d_%d_DataCard.txt", year, year, wpmass));
+    dcFile.open(Form("%d_%d_DataCard.txt",year, wpmass));
 
     std::unordered_map<Int_t, Float_t> lumiSyst = {
       { 2016, 0.025 }, /*AN2018_298_v14*/
@@ -1166,12 +1166,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       std::string folderName = Form("%d/%s",year,sampleName.c_str());
       std::string hname;
-      if(ch == "A" or ch == "B" or ch == "C"){
+      if(ch == "A") {
         for (auto s: systEl) {
           hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
         }
-      } else if (ch == "D" or ch == "B" or ch == "C"){
+      } else if (ch == "B" or ch == "C") {
+        for (auto s: systEl) {
+          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          saveUpDown(folderName,hname,s);
+        }
+        for (auto s: systMu) {
+          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+          saveUpDown(folderName,hname,s);
+        }
+      } else if (ch == "D") {
         for (auto s: systMu) {
           hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
           saveUpDown(folderName,hname,s);
@@ -1277,7 +1286,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     }
 
 
-    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t7\n";
+    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t8\n";
     dcFile << "------------\n";
     dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $CHANNEL/$PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
     dcFile << bin0 << std::endl;
@@ -1298,10 +1307,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
-  // for (auto n: SignalPos) {
-  //   printDataCard(2017,n.first);
-  // }
-
+  std::vector<int> yyyy = { 2016, 2017, 2018 };
+  for(auto y: yyyy) {
+    for (auto n: SignalPos) {
+      printDataCard(y,n.first);
+    }
+  }
+  throw;
 
   std::function<void(const int&, THStack* hs, TH1*)> printBgContrib = [&](const int& year, THStack* hsbg, TH1* hsig = nullptr) {
 

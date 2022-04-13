@@ -348,7 +348,7 @@ where all the stack plots are produced. Plots are also saved in `png` format in 
 sed -i 's/t#bar{t}/TT/' plots/*/*.txt
 sed -i 's/Z#gamma/ZG/' plots/*/*.txt
 
-scp *Datacards.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
+scp *DataCard.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
 scp CombineFile*.root avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
 
 cd /eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
