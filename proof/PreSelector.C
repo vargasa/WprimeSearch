@@ -1127,7 +1127,6 @@ bool PreSelector::DefineW(const Leptons& l){
     return false;
   }
 
-  WmtObj wmt;
   wmt.Met = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
   wmt.MetUnclUp = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtUp, MetUncl.PhiUp);
   wmt.MetUnclDown = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtDown, MetUncl.PtDown);
