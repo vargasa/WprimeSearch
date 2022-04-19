@@ -1917,7 +1917,9 @@ void PreSelector::DefineSFs(){
     wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
     wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
     wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+#if defined(Y2016) || defined(Y2017)
     wcentral *= *L1PreFiringWeight_Nom;
+#endif
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
@@ -1937,7 +1939,9 @@ void PreSelector::DefineSFs(){
     wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
     wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
+#if defined(Y2016) || defined(Y2017)
     wcentral *= *L1PreFiringWeight_Nom;
+#endif
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
@@ -1959,7 +1963,9 @@ void PreSelector::DefineSFs(){
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
     wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
+#if defined(Y2016) || defined(Y2017)
     wcentral *= *L1PreFiringWeight_Nom;
+#endif
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
