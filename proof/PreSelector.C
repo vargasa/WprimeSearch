@@ -611,7 +611,16 @@ Int_t PreSelector::LeadingIdx(const Leptons& l) {
 std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MaxEta = 2.5;
 
-  Float_t MinPt = 50.;
+  Float_t MinPt;
+  Float_t Delta = 5.f;
+
+#if defined(Y2016)
+  MinPt = 27. + Delta;
+#elif defined(Y2017)
+  MinPt = 35. + Delta;
+#elif defined(Y2018)
+  MinPt = 32. + Delta;
+#endif
 
   std::pair<double,double> etaGap = std::make_pair(1.4442,1.5660);
 
