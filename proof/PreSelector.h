@@ -135,6 +135,12 @@ class PreSelector : public EventSelection {
   TTreeReaderValue<Float_t> Pileup_nTrueInt = {fReader, "Pileup_nTrueInt"};
   TTreeReaderValue<Float_t> MET_MetUnclustEnUpDeltaX = {fReader,"MET_MetUnclustEnUpDeltaX"};
   TTreeReaderValue<Float_t> MET_MetUnclustEnUpDeltaY = {fReader,"MET_MetUnclustEnUpDeltaY"};
+
+#if defined(Y2016) || defined (Y2017)
+  TTreeReaderArray<Float_t> L1PreFiringWeight_Nom = {fReader, "L1PreFiringWeight_Nom"};
+  TTreeReaderArray<Float_t> L1PreFiringWeight_Up = {fReader, "L1PreFiringWeight_Up"};
+  TTreeReaderArray<Float_t> L1PreFiringWeight_Down = {fReader, "L1PreFiringWeight_Down"};
+#endif
 #endif
   // Neutrinos
   TTreeReaderValue<Float_t> MET_phi = {fReader, "MET_phi"};
