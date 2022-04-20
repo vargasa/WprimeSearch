@@ -97,6 +97,7 @@ class EventSelection : public TSelector{
   // Just because we won't override Notify()
   TList *SFDb;
   TH2F* SFElectronLooseID;
+  TH2F* SFElectronMediumID;
   TH2F* SFElectronTightID;
   TH2F* SFMuonHighPtID;
   TH2F* SFMuonTrkHighPtID;
@@ -115,6 +116,8 @@ class EventSelection : public TSelector{
   TH2F* SFMuonTrkHighPtIDpostVFP;
   TH2F* SFElectronLooseIDpreVFP;
   TH2F* SFElectronLooseIDpostVFP;
+  TH2F* SFElectronMediumIDpreVFP;
+  TH2F* SFElectronMediumIDpostVFP;
   TH2F* SFElectronTightIDpreVFP;
   TH2F* SFElectronTightIDpostVFP;
 #endif

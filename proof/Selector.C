@@ -39,6 +39,7 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2016/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseID","files/mc/2016/sf/2016LegacyReReco_ElectronLoose.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2016/sf/2016LegacyReReco_ElectronLoose.root","EGamma_SF2D",SFDb); //FixMe
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root","EGamma_SF2D",SFDb);
     } else {
       AddSFHistoSFDb<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd",SFDb);
@@ -49,14 +50,16 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFMuonTrkHighPtIDpreVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrkHighPtIDpostVFP","files/mc/2016/UL/sf/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
       // ElectronTriggerSF Borrowed from Legacy
-      AddSFHistoSFDb<TH2F>("SFElectronHLTLoosepreVFP","files/mc/2016/UL/egammaEffiHLT.txt_EGM2D_2016PreVFPLoose.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTLoosepostVFP","files/mc/2016/UL/egammaEffiHLT.txt_EGM2D_2016PostVFPLoose.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTMediumpreVFP","files/mc/2016/UL/egammaEffiHLT.txt_EGM2D_2016PreVFPMedium.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTMediumpostVFP","files/mc/2016/UL/egammaEffiHLT.txt_EGM2D_2016PostVFPMedium.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTTightpreVFP","files/mc/2016/UL/egammaEffiHLT.txt_EGM2D_2016PreVFPTight.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTTightpostVFP","files/mc/2016/UL/egammaEffiHLT.txt_EGM2D_2016PostVFPTight.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTLoosepreVFP","files/mc/2016/UL/sf/egammaEffiHLT.txt_EGM2D_2016PreVFPLoose.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTLoosepostVFP","files/mc/2016/UL/sf/egammaEffiHLT.txt_EGM2D_2016PostVFPLoose.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTMediumpreVFP","files/mc/2016/UL/sf/egammaEffiHLT.txt_EGM2D_2016PreVFPMedium.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTMediumpostVFP","files/mc/2016/UL/sf/egammaEffiHLT.txt_EGM2D_2016PostVFPMedium.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTTightpreVFP","files/mc/2016/UL/sf/egammaEffiHLT.txt_EGM2D_2016PreVFPTight.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTTightpostVFP","files/mc/2016/UL/sf/egammaEffiHLT.txt_EGM2D_2016PostVFPTight.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseIDpreVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Loose_preVFP_EGM2D.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseIDpostVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Loose_postVFP_EGM2D.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronMediumIDpreVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Medium_preVFP_EGM2D.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronMediumIDpostVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Medium_postVFP_EGM2D.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronTightIDpreVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Tight_preVFP_EGM2D.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronTightIDpostVFP","files/mc/2016/UL/sf/egammaEffi.txt_Ele_Tight_postVFP_EGM2D.root","EGamma_SF2D",SFDb);
     }
@@ -70,6 +73,7 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2017/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseID","files/mc/2017/sf/2017_ElectronLoose.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2017/sf/2017_ElectronLoose.root","EGamma_SF2D",SFDb); //FixMe
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2017/sf/2017_ElectronTight.root","EGamma_SF2D",SFDb);
     } else {
       AddSFHistoSFDb<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd",SFDb);
@@ -77,10 +81,11 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2017_var",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonHighPt","files/mc/2017/UL/sf/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrkHighPtID","files/mc/2017/UL/sf/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTLoose","files/mc/2017/UL/egammaEffiHLT.txt_EGM2D_2017Loose.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTMedium","files/mc/2017/UL/egammaEffiHLT.txt_EGM2D_2017Medium.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTTight","files/mc/2017/UL/egammaEffiHLT.txt_EGM2D_2017Tight.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTLoose","files/mc/2017/UL/sf/egammaEffiHLT.txt_EGM2D_2017Loose.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTMedium","files/mc/2017/UL/sf/egammaEffiHLT.txt_EGM2D_2017Medium.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTTight","files/mc/2017/UL/sf/egammaEffiHLT.txt_EGM2D_2017Tight.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseID","files/mc/2017/UL/sf/egammaEffi.txt_EGM2D_Loose_UL17.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2017/UL/sf/egammaEffi.txt_EGM2D_Medium_UL17.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2017/UL/sf/egammaEffi.txt_EGM2D_Tight_UL17.root","EGamma_SF2D",SFDb);
     }
   } else if (Year == 2018) {
@@ -93,6 +98,7 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger1","files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TGraphAsymmErrors>("SFElectronTrigger2","files/mc/2018/sf/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root","ScaleFactors",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseID","files/mc/2018/sf/2018_ElectronLoose.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2018/sf/2018_ElectronLoose.root","EGamma_SF2D",SFDb); //FixMe
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2018/sf/2018_ElectronTight.root","EGamma_SF2D",SFDb);
     } else {
       AddSFHistoSFDb<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd",SFDb);
@@ -100,10 +106,11 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2018_var",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonHighPt","files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root","NUM_HighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrkHighPtID","files/mc/2018/UL/sf/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root","NUM_TrkHighPtID_DEN_TrackerMuons_abseta_pt",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTLoose","files/mc/2018/UL/egammaEffiHLT.txt_EGM2D_2018Loose.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTMedium","files/mc/2018/UL/egammaEffiHLT.txt_EGM2D_2018Medium.root","EGamma_SF2D",SFDb);
-      AddSFHistoSFDb<TH2F>("SFElectronHLTTight","files/mc/2018/UL/egammaEffiHLT.txt_EGM2D_2018Tight.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTLoose","files/mc/2018/UL/sf/egammaEffiHLT.txt_EGM2D_2018Loose.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTMedium","files/mc/2018/UL/sf/egammaEffiHLT.txt_EGM2D_2018Medium.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronHLTTight","files/mc/2018/UL/sf/egammaEffiHLT.txt_EGM2D_2018Tight.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronLooseID","files/mc/2018/UL/sf/egammaEffi.txt_Ele_Loose_EGM2D.root","EGamma_SF2D",SFDb);
+      AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2018/UL/sf/egammaEffi.txt_Ele_Medium_EGM2D.root","EGamma_SF2D",SFDb);
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2018/UL/sf/egammaEffi.txt_Ele_Tight_EGM2D.root","EGamma_SF2D",SFDb);
     }
   };

@@ -510,6 +510,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonHighPtIDBF = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDBF"));
   SFMuonHighPtIDGH = dynamic_cast<TH2D*>(SFDb->FindObject("SFMuonHighPtIDGH"));
   SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
+  SFElectronMediumID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID")); // Find Legacy Medium
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
 
@@ -527,6 +528,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronHLTTightpostVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTightpostVFP"));
   SFElectronLooseIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpreVFP"));
   SFElectronLooseIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpostVFP"));
+  SFElectronMediumIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronMediumIDpreVFP"));
+  SFElectronMediumIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronMediumIDpostVFP"));
   SFElectronTightIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpreVFP"));
   SFElectronTightIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpostVFP"));
 #endif
@@ -538,6 +541,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
   SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
+  SFElectronMediumID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID")); // Find Legacy Medium
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
 
@@ -549,6 +553,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronHLTMedium =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMedium"));
   SFElectronHLTTight =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTight"));
   SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
+  SFElectronMediumID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronMediumID"));
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
 
@@ -662,8 +667,8 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
       GoodIndex.emplace_back(i);
   }
 
-  if(GoodIndex.size == 0) return GoodIndex;
-  if(GoodIndex.size > 1) SortByDescPt(GoodIndex,El);
+  if(GoodIndex.size() == 0) return GoodIndex;
+  if(GoodIndex.size() > 1) SortByDescPt(GoodIndex,El);
 
 #if defined(ULSAMPLE)
   const int id = El.cutBased[GoodIndex[0]];
@@ -680,6 +685,9 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   }
 #elif defined(Y2016)
   if (IsPreVFP){
+    SFElectronLooseID = SFElectronLooseIDpreVFP;
+    SFElectronMediumID = SFElectronMediumIDpreVFP;
+    SFElectronTightID = SFElectronTightIDpreVFP;
     if ( id == 2 ) {
       SFElectronHLT = SFElectronHLTpreVFPLoose;
     } else if (id == 3){
@@ -690,6 +698,9 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
       assert(true);
     }
   } else {
+    SFElectronLooseID = SFElectronLooseIDpostVFP;
+    SFElectronMediumID = SFElectronMediumIDpostVFP;
+    SFElectronTightID = SFElectronTightIDpostVFP;
     if ( id == 2 ) {
       SFElectronHLT = SFElectronHLTpostVFPLoose;
     } else if (id == 3){
@@ -1929,6 +1940,27 @@ Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, 
   return sf;
 }
 ///////////////////////////////////////////////////////////
+Double_t PreSelector::GetElIDSF(Int_t id /* 2: loose. 3: medium. 4: tight*/,
+                                const Float_t& eta, const Float_t& pt,
+                                const Int_t& option) const{
+  /* Option 0: Central Value, -1: Low, +1: up */
+  Double_t sf;
+
+  TH2F* h2source;
+
+  if(id == 2){
+    h2source = SFElectronLooseID;
+  } else if(id == 3){
+    h2source = SFElectronMediumID;
+  } else if(id == 4){
+    h2source = SFElectronTightID;
+  }
+
+  sf = GetSFFromHisto(h2source, eta,pt,option);
+  return sf;
+}
+
+///////////////////////////////////////////////////////////
 Double_t PreSelector::GetMuIDSF(UChar_t MuonID /* 2: highPt. 1: TrkHighPt*/,
                                 const Float_t& eta, const Float_t& pt,
                                 const Int_t& option) const{
@@ -2022,9 +2054,9 @@ void PreSelector::DefineSFs(){
 
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
+    wcentral *= GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
+    wcentral *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
 #if defined(Y2016) || defined(Y2017)
     wcentral *= *L1PreFiringWeight_Nom;
 #endif
@@ -2032,21 +2064,21 @@ void PreSelector::DefineSFs(){
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
 
-    WElIDUp =  GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),1);
-    WElIDUp *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),1);
-    WElIDUp *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
+    WElIDUp =  GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
+    WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
+    WElIDUp *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),1);
 
-    WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
-    WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
-    WElIDDown *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
+    WElIDDown = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),-1);
+    WElIDDown *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),-1);
+    WElIDDown *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),-1);
 
   } else if (IsB) {
 
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),0);
-    wcentral *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),0);
+    wcentral *= GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
 #if defined(Y2016) || defined(Y2017)
     wcentral *= *L1PreFiringWeight_Nom;
 #endif
@@ -2056,11 +2088,11 @@ void PreSelector::DefineSFs(){
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
-    WElIDUp = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),1);
-    WElIDUp *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),1);
+    WElIDUp = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
+    WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
 
-    WElIDDown = GetSFFromHisto(SFElectronLooseID,lep1.Eta(),lep1.Pt(),-1);
-    WElIDDown *= GetSFFromHisto(SFElectronLooseID,lep2.Eta(),lep2.Pt(),-1);
+    WElIDDown = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),-1);
+    WElIDDown *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),-1);
 
     wcentral *= GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),0);
     WMuIDUp = GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),1);
@@ -2088,9 +2120,9 @@ void PreSelector::DefineSFs(){
     WMuIDUp  *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),1);
     WMuIDDown *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),-1);
 
-    wcentral *= GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),0);
-    WElIDUp   = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),1);
-    WElIDDown = GetSFFromHisto(SFElectronTightID,lep3.Eta(),lep3.Pt(),-1);
+    wcentral *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
+    WElIDUp   = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),1);
+    WElIDDown = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),-1);
 
   } else if (IsD) {
 
