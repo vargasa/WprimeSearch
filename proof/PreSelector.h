@@ -202,6 +202,7 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HPtl1l2;
   std::vector<TH2F*> HPtl1l3;
   std::vector<TH2F*> HZElId;
+  std::vector<TH2F*> HIDl1l2;
 
   //Angular
 
@@ -328,6 +329,9 @@ class PreSelector : public EventSelection {
   void FillCategory(const Int_t& crOffset,
                     const Leptons& lz,const Leptons& lw);
   void FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent);
+
+  std::string GetElIDString(Int_t& id);
+  std::string GetMuIDString(UChar_t& id);
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;

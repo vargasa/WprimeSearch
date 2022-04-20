@@ -236,7 +236,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HDistl2l3,"HDistl2l3",DistBins,0.,MaxDist);
   InitHVec<TH1F>(HDistZl3,"HDistZl3",DistBins,0.,MaxDist);
   InitHVec<TH1F>(HDistZW,"HDistZW",DistBins,0.,MaxDist);
-
+  InitHVec<TH2F>(HIDl1l2,"HIDl1l2",2,0.,2.,3,0.,3.);
 
   InitHVec<TH1F>(HWZDist,"HWZDist",DistBins,0.,MaxDist);
   InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
@@ -957,6 +957,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 
   // HiggsCombine Syst Histos
   if(IsA_){
+    HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l1]).c_str(),1.);
+    HIDl1l2[nh]->Fill("El2",GetElIDString(Electron_cutBased[l2]).c_str(),1.);
+    HIDl1l2[nh]->Fill("El3",GetElIDString(Electron_cutBased[l3]).c_str(),1.);
     FillH1(HElPt,nh,lep1.Pt());
     FillH1(HElPt,nh,lep2.Pt());
     FillH1(HElPt,nh,lep3.Pt());
@@ -989,8 +992,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId,Electron_cutBased[l2])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l3],ElPdgId,Electron_cutBased[l3])).c_str());
 #endif
-
   } else if (IsB) {
+    HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l1]).c_str(),1.);
+    HIDl1l2[nh]->Fill("El2",GetElIDString(Electron_cutBased[l2]).c_str(),1.);
+    HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l3]).c_str(),1.);
     FillH1(HElPt,nh,lep1.Pt());
     FillH1(HElPt,nh,lep2.Pt());
     FillH1(HMuPt,nh,lep3.Pt());
@@ -1029,6 +1034,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 #endif
 
   } else if (IsC) {
+    HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l1]).c_str(),1.);
+    HIDl1l2[nh]->Fill("Mu2",GetMuIDString(Muon_highPtId[l2]).c_str(),1.);
+    HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l3]).c_str(),1.);
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
     FillH1(HElPt,nh,lep3.Pt());
@@ -1066,6 +1074,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l3],ElPdgId,Electron_cutBased[l3])).c_str());
 #endif
   } else if (IsD) {
+    HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l1]).c_str(),1.);
+    HIDl1l2[nh]->Fill("Mu2",GetMuIDString(Muon_highPtId[l2]).c_str(),1.);
+    HIDl1l2[nh]->Fill("Mu3",GetMuIDString(Muon_highPtId[l3]).c_str(),1.);
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
     FillH1(HMuPt,nh,lep3.Pt());
@@ -1342,6 +1353,41 @@ Bool_t PreSelector::PairElDefineW(const Electrons& Els, const Muons& Mus){
 
   return kFALSE;
 
+}
+
+std::string PreSelector::GetMuIDString(UChar_t& id){
+
+  std::string ids = "";
+
+  if (id == 1) {
+    ids = "trkHighPt";
+  } else if(id == 2) {
+    ids = "HighPt";
+  } else {
+    ids = "Mu_Error";
+  }
+  return ids.c_str();
+
+}
+
+std::string PreSelector::GetElIDString(Int_t& id){
+
+  std::string ids = "";
+
+  if (id == 2) {
+    ids = "Loose";
+  } else if (id == 3) {
+    ids = "Medium";
+  } else if (id == 4) {
+    ids = "Tight";
+  } else if (id == 0) {
+    ids = "Fail";
+  } else if (id == 1) {
+    ids = "Veto";
+  } else {
+    ids = "El_Error";
+  }
+  return ids.c_str();
 }
 
 Bool_t PreSelector::Process(Long64_t entry) {
