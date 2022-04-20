@@ -519,20 +519,35 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpostVFP"));
   SFMuonTrkHighPtIDpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpreVFP"));
   SFMuonTrkHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpostVFP"));
-  SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
-  SFElectronTrigger2 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFElectronHLTLoosepreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTLoosepreVFP"));
+  SFElectronHLTMediumpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMediumpreVFP"));
+  SFElectronHLTTightpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTightpreVFP"));
+  SFElectronHLTLoosepostVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTLoosepostVFP"));
+  SFElectronHLTMediumpostVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMediumpostVFP"));
+  SFElectronHLTTightpostVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTightpostVFP"));
   SFElectronLooseIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpreVFP"));
   SFElectronLooseIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseIDpostVFP"));
   SFElectronTightIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpreVFP"));
   SFElectronTightIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightIDpostVFP"));
 #endif
 
-#if defined(Y2017) || defined(Y2018)
+#if !defined(ULSAMPLE) and (defined(Y2017) || defined(Y2018))
   SFMuonTrigger = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
   SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
   SFElectronTrigger1 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger1"));
   SFElectronTrigger2 = dynamic_cast<TGraphAsymmErrors*>(SFDb->FindObject("SFElectronTrigger2"));
+  SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
+  SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
+#endif
+
+#if defined(ULSAMPLE) and (defined(Y2017) || defined(Y2018))
+  SFMuonTrigger = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+  SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
+  SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
+  SFElectronHLTLoose =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTLoose"));
+  SFElectronHLTMedium =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMedium"));
+  SFElectronHLTTight =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTight"));
   SFElectronLooseID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronLooseID"));
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
@@ -647,7 +662,46 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
       GoodIndex.emplace_back(i);
   }
 
-  SortByDescPt(GoodIndex,El);
+  if(GoodIndex.size == 0) return GoodIndex;
+  if(GoodIndex.size > 1) SortByDescPt(GoodIndex,El);
+
+#if defined(ULSAMPLE)
+  const int id = El.cutBased[GoodIndex[0]];
+
+#if defined(Y2017) || defined(Y2018)
+  if (id == 2) {
+    SFElectronHLT= SFElectronHLTLoose;
+  } else if (id == 3) {
+    SFElectronHLT= SFElectronHLTMedium;
+  } else if (id == 4) {
+    SFElectronHLT= SFElectronHLTTight;
+  } else {
+    assert(true);
+  }
+#elif defined(Y2016)
+  if (IsPreVFP){
+    if ( id == 2 ) {
+      SFElectronHLT = SFElectronHLTpreVFPLoose;
+    } else if (id == 3){
+      SFElectronHLT = SFElectronHLTpreVFPMedium;
+    } else if (id == 4){
+      SFElectronHLT = SFElectronHLTpreVFPTight;
+    } else {
+      assert(true);
+    }
+  } else {
+    if ( id == 2 ) {
+      SFElectronHLT = SFElectronHLTpostVFPLoose;
+    } else if (id == 3){
+      SFElectronHLT = SFElectronHLTpostVFPMedium;
+    } else if (id == 4){
+      SFElectronHLT = SFElectronHLTpostVFPTight;
+    } else {
+      assert(true);
+    }
+  }
+#endif
+#endif //ULSAMPLE
 
   return GoodIndex;
 };
@@ -1808,6 +1862,7 @@ Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
   return h->GetBinContent(h->FindBin(npv));
 }
 ///////////////////////////////////////////////////////////
+#if !defined(ULSAMPLE)
 Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
                                    const Int_t& option) const{
 
@@ -1841,6 +1896,13 @@ Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
   return sf;
 
 }
+#endif
+#if defined(ULSAMPLE)
+Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
+                                     const Int_t& option) const{
+  return GetSFFromHisto(SFElectronHLT,eta,pt,option);
+}
+#endif
 ///////////////////////////////////////////////////////////
 Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, const int& option) const{
   assert(ApplyKFactors and h);

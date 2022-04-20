@@ -360,6 +360,21 @@ class PreSelector : public EventSelection {
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
 
+#if defined(ULSAMPLE)
+  TH2F* SFElectronHLT;
+  TH2F* SFElectronHLTLoose;
+  TH2F* SFElectronHLTMedium;
+  TH2F* SFElectronHLTTight;
+#if defined(Y2016)
+  TH2F* SFElectronHLTpreVFPLoose;
+  TH2F* SFElectronHLTpreVFPMedium;
+  TH2F* SFElectronHLTpreVFPTight;
+  TH2F* SFElectronHLTpostVFPLoose;
+  TH2F* SFElectronHLTpostVFPMedium;
+  TH2F* SFElectronHLTpostVFPTight;
+#endif
+#endif
+
 #endif
 
   Bool_t PairElDefineW(const Electrons& Els, const Muons& Mus);

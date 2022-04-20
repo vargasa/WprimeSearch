@@ -106,6 +106,7 @@ class EventSelection : public TSelector{
   TH2D* SFMuonHighPtIDGH;
   TH2F* SFMuonTriggerBF;
   TH2F* SFMuonTriggerGH;
+  Bool_t IsPreVFP{};
 #endif
 #if defined(Y2016) && defined(ULSAMPLE)
   TH2F* SFMuonHighPtIDpreVFP;
@@ -225,12 +226,14 @@ Bool_t EventSelection::Notify() {
     SFElectronTightID = SFElectronTightIDpreVFP;
     SFMuonHighPtID = SFMuonHighPtIDpreVFP;
     SFMuonTrkHighPtID = SFMuonTrkHighPtIDpreVFP;
+    IsPreVFP = true;
     std::clog << "Notify: Setting preVFP Muon and Electron SFs\t";
   } else {
     SFElectronLooseID = SFElectronLooseIDpostVFP;
     SFElectronTightID = SFElectronTightIDpostVFP;
     SFMuonHighPtID = SFMuonHighPtIDpostVFP;
     SFMuonTrkHighPtID = SFMuonTrkHighPtIDpostVFP;
+    IsPreVFP = false;
     std::clog << "Notify: Setting postVFP Muon and Electron SFs\t";
   }
   std::clog << "[Ok]\n";
