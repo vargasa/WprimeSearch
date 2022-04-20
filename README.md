@@ -365,6 +365,8 @@ do
   combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i -o "impacts_"$i".json"
   plotImpacts.py -i "impacts_"$i".json" -o "ImpactsPlot"$i".json"
 done
+
+scp avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/higgsCombine*.root
 ```
 
 ### Comparing graphs for different set of cuts:

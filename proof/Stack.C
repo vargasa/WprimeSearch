@@ -1059,7 +1059,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c2;
   };
 
-  std::function<void(THStack*,TH1*)>
+  std::function<std::map<std::string,double>(THStack*,TH1*)>
     printYieldsTable = [] (THStack* hss, TH1* hdata) {
 
     std::cout << "%%%% Yields Table %%%%\n";
@@ -1080,6 +1080,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       std::cout << row.first << "\t" << row.second << "\n";
     }
     std::cout << "%%%%%%%%%%%%%%%%%%%%%%\n";
+
+    return table;
 
   };
 
@@ -1603,9 +1605,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       std::clog << "Undefined canvas division: " << npads << "\n";
     }
 
-    Int_t j = 1;
-
     std::string pngName;
+    std::vector<std::map<std::string,double>> yieldsTable;
+    Int_t j = 1;
 
     for (auto hName : names) {
       int year = std::stoi(hName.substr(0,4));
@@ -1772,7 +1774,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
         }
 
-        printYieldsTable(hs, hdata);
+        yieldsTable.push_back(printYieldsTable(hs, hdata));
 
         mainPad->cd();
         hdata->SetMarkerStyle(kFullCircle);
@@ -1796,10 +1798,44 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       legend->Draw();
       if( r+1 == npads ){
-        c1->Print(Form("plots/%d/%s_%sM%d.png",year,fileLabel.c_str(),pngName.c_str(),WpMass));
+        c1->Print(Form("plots/%d/%s_%sM%d.pdf",year,fileLabel.c_str(),pngName.c_str(),WpMass));
         c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName.c_str(),WpMass));
       }
     }
+
+    ////////////////////////////////////////////////////
+    std::map<std::string,std::vector<double>> yieldsTable_;
+    for(auto sample: yieldsTable){
+      for(auto const&[sampleName, yield] : sample) {
+        yieldsTable_[sampleName].push_back(yield);
+      }
+    }
+    for(auto const&[sampleName, yields] : yieldsTable_) {
+      std::cout << sampleName << " & ";
+      Double_t total = 0.;
+      for(auto yield: yields){
+        total += yield;
+        std::cout << yield << " & ";
+      }
+      std::cout << total << "\\\\\n";
+    }
+
+    double totalBkgA = 0.;
+    double totalBkgB = 0.;
+    double totalBkgC = 0.;
+    double totalBkgD = 0.;
+
+    for(auto const&[sampleName, yields] : yieldsTable_) {
+      if(sampleName == "Data") continue;
+      totalBkgA += yields[0];
+      totalBkgB += yields[1];
+      totalBkgC += yields[2];
+      totalBkgD += yields[3];
+    }
+    std::cout << "Total Background & " << totalBkgA
+    << " & " << totalBkgB << " & " << totalBkgC
+    << " & " << totalBkgD << " & " << totalBkgA+totalBkgB+totalBkgC+totalBkgD << "\\\\\\hline\n";
+    ////////////////////////////////////////////////////
 
     delete c1;
 
