@@ -20,9 +20,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     // Run2 Luminosity
     // https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#CurRec
     {2016, 36.33},
-    {2017, 41.53},
-    {2018, 59.74},
-    {0, 137.60}
+    {2017, 41.48},
+    {2018, 59.83},
+    {0, 137.65}
   };
 
 
@@ -1100,11 +1100,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {"D", "mumumu"},
     };
 
+
     ofstream dcFile;
     dcFile.open(Form("%d_%d_DataCard.txt",year, wpmass));
 
     std::unordered_map<Int_t, Float_t> lumiSyst = {
-      { 2016, 0.025 }, /*AN2018_298_v14*/
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiLUM
+      { 2016, 0.012 },
       { 2017, 0.023 },
       { 2018, 0.025 },
     };
