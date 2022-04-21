@@ -691,26 +691,26 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
     SFElectronMediumID = SFElectronMediumIDpreVFP;
     SFElectronTightID = SFElectronTightIDpreVFP;
     if ( id == 2 ) {
-      SFElectronHLT = SFElectronHLTpreVFPLoose;
+      SFElectronHLT = SFElectronHLTLoosepreVFP;
     } else if (id == 3){
-      SFElectronHLT = SFElectronHLTpreVFPMedium;
+      SFElectronHLT = SFElectronHLTMediumpreVFP;
     } else if (id == 4){
-      SFElectronHLT = SFElectronHLTpreVFPTight;
+      SFElectronHLT = SFElectronHLTTightpreVFP;
     } else {
-      assert(true);
+      assert(false);
     }
   } else {
     SFElectronLooseID = SFElectronLooseIDpostVFP;
     SFElectronMediumID = SFElectronMediumIDpostVFP;
     SFElectronTightID = SFElectronTightIDpostVFP;
     if ( id == 2 ) {
-      SFElectronHLT = SFElectronHLTpostVFPLoose;
+      SFElectronHLT = SFElectronHLTLoosepostVFP;
     } else if (id == 3){
-      SFElectronHLT = SFElectronHLTpostVFPMedium;
+      SFElectronHLT = SFElectronHLTMediumpostVFP;
     } else if (id == 4){
-      SFElectronHLT = SFElectronHLTpostVFPTight;
+      SFElectronHLT = SFElectronHLTTightpostVFP;
     } else {
-      assert(true);
+      assert(false);
     }
   }
 #endif

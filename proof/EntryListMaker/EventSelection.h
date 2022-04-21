@@ -24,7 +24,6 @@ class EventSelection : public TSelector{
   TTreeReaderValue<Bool_t> Flag_globalSuperTightHalo2016Filter = {fReader, MakeBranchList("Flag_globalSuperTightHalo2016Filter")};
   TTreeReaderValue<Bool_t> Flag_hcalLaserEventFilter = {fReader, MakeBranchList("Flag_hcalLaserEventFilter")};
   TTreeReaderValue<Bool_t> Flag_EcalDeadCellTriggerPrimitiveFilter = {fReader, MakeBranchList("Flag_EcalDeadCellTriggerPrimitiveFilter")};
-  TTreeReaderValue<Bool_t> Flag_eeBadScFilter = {fReader, MakeBranchList("Flag_eeBadScFilter")};
   TTreeReaderValue<Bool_t> Flag_BadPFMuonFilter = {fReader, MakeBranchList("Flag_BadPFMuonFilter")};
   TTreeReaderValue<Bool_t> Flag_BadPFMuonSummer16Filter = {fReader, MakeBranchList("Flag_BadPFMuonSummer16Filter")};
   TTreeReaderValue<Bool_t> Flag_HBHENoiseFilter = {fReader, MakeBranchList("Flag_HBHENoiseFilter")};
@@ -107,9 +106,9 @@ class EventSelection : public TSelector{
   TH2D* SFMuonHighPtIDGH;
   TH2F* SFMuonTriggerBF;
   TH2F* SFMuonTriggerGH;
-  Bool_t IsPreVFP{};
 #endif
 #if defined(Y2016) && defined(ULSAMPLE)
+  Bool_t IsPreVFP{};
   TH2F* SFMuonHighPtIDpreVFP;
   TH2F* SFMuonHighPtIDpostVFP;
   TH2F* SFMuonTrkHighPtIDpreVFP;
@@ -120,6 +119,12 @@ class EventSelection : public TSelector{
   TH2F* SFElectronMediumIDpostVFP;
   TH2F* SFElectronTightIDpreVFP;
   TH2F* SFElectronTightIDpostVFP;
+  TH2F* SFElectronHLTLoosepreVFP;
+  TH2F* SFElectronHLTLoosepostVFP;
+  TH2F* SFElectronHLTMediumpreVFP;
+  TH2F* SFElectronHLTMediumpostVFP;
+  TH2F* SFElectronHLTTightpreVFP;
+  TH2F* SFElectronHLTTightpostVFP;
 #endif
 
 
