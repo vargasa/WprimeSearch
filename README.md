@@ -74,25 +74,23 @@ wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysi
 #[2018 - HighPt Bin]
 wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root
 
-
-
 # UL2016
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_preVFP/tnpEleTrig/trigger/egammaEffi.txt_EGM2D.root  -O egammaEffiHLT.txt_EGM2D_2016PreVFPLoose.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_preVFP/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root  -O egammaEffiHLT.txt_EGM2D_2016PreVFPMedium.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_preVFP/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root  -O egammaEffiHLT.txt_EGM2D_2016PreVFPTight.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_postVFP/tnpEleTrig/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2016PostVFPLoose.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_postVFP/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2016PostVFPMedium.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_postVFP/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2016PostVFPTight.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_preVFP/tnpEleTrig/trigger/egammaEffi.txt_EGM2D.root  -O proof/files/mc/2016/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2016PreVFPLoose.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_preVFP/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root  -O proof/files/mc/2016/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2016PreVFPMedium.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_preVFP/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root  -O proof/files/mc/2016/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2016PreVFPTight.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_postVFP/tnpEleTrig/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2016/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2016PostVFPLoose.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_postVFP/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2016/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2016PostVFPMedium.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2016_postVFP/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2016/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2016PostVFPTight.root
 
 # UL2017
-wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2017/tnpHLT/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2017Loose.root
-wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2017/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2017Medium.root
-wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2017/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2017Tight.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2017/tnpHLT/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2017/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2017Loose.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2017/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2017/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2017Medium.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2017/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2017/sf/UL/sf/egammaEffiHLT.txt_EGM2D_2017Tight.root
 
 # UL2018
-wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2018/tnpHLT/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2018Loose.root
-wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2018/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2018Medium.root
-wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/EleSF/UL2018/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root -O egammaEffiHLT.txt_EGM2D_2018Tight.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2018/tnpHLT/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2018/sf/UL/egammaEffiHLT.txt_EGM2D_2018Loose.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2018/tnpHLT_Medium/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2018/sf/UL/egammaEffiHLT.txt_EGM2D_2018Medium.root
+wget -c https://avargash.web.cern.ch/avargash/EleSF/UL2018/tnpHLT_Tight/trigger/egammaEffi.txt_EGM2D.root -O proof/files/mc/2018/sf/UL/egammaEffiHLT.txt_EGM2D_2018Tight.root
 ```
 
 #### Electron ID
