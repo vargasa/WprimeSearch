@@ -379,17 +379,19 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HNMu = new TH2I("HNMu","",BinsLep,MinLep,MaxLep,BinsLep,MinLep,MaxLep);
   fOutput->Add(HNMu);
 
-  const Float_t MaxPt = 1000;
+  const Float_t MaxPt = 2000.f;
   const Double_t MaxMet = 600.;
   const Double_t MinMet = 0.;
+  const Float_t MaxPtMet = 1000.f;
   const Int_t MetBins = 60;
 
-  InitHVec<TH1F>(HPtl1,"HPtl1",100,0.,MaxPt);
-  InitHVec<TH1F>(HPtl2,"HPtl2",200,0.,500.);
-  InitHVec<TH1F>(HPtl3,"HPtl3",100,0.,MaxPt);
-  InitHVec<TH1F>(HElPt,"HElPt",100,0.,MaxPt);
-  InitHVec<TH1F>(HMuPt,"HMuPt",100,0.,MaxPt);
-  InitHVec<TH1F>(HMetPt,"HMetPt",100,0.,MaxPt);
+  InitHVec<TH1F>(HPtLeading,"HPtLeading",200,0.,MaxPt);
+  InitHVec<TH1F>(HPtl1,"HPtl1",200,0.,MaxPt);
+  InitHVec<TH1F>(HPtl2,"HPtl2",400,0.,MaxPt);
+  InitHVec<TH1F>(HPtl3,"HPtl3",200,0.,MaxPt);
+  InitHVec<TH1F>(HElPt,"HElPt",200,0.,MaxPt);
+  InitHVec<TH1F>(HMuPt,"HMuPt",200,0.,MaxPt);
+  InitHVec<TH1F>(HMetPt,"HMetPt",200,0.,MaxPt);
 
   const Float_t MaxEta = 3.;
   const Int_t EtaBins = 25;
@@ -401,16 +403,16 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMuEta,"HMuEta",EtaBins,-1*MaxEta,MaxEta);
 
   InitHVec<TH2F>(HPtEtal1,"HPtEtal1",
-                 MetBins,0, MaxPt,
+                 MetBins,0, MaxPtMet,
                  EtaBins,-1*MaxEta,MaxEta);
 
   InitHVec<TH2F>(HPtEtal2,"HPtEtal2",
-                 MetBins,0, MaxPt,
+                 MetBins,0, MaxPtMet,
                  EtaBins,-1*MaxEta,MaxEta);
 
 
   InitHVec<TH2F>(HPtEtal3,"HPtEtal3",
-                 MetBins,0, MaxPt,
+                 MetBins,0, MaxPtMet,
                  EtaBins,-1*MaxEta,MaxEta);
 
   const Float_t MaxPhi = TMath::Pi();
@@ -983,6 +985,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HEtal3,nh,lep3.Eta());
 
   // Pt histos
+  FillH1(HPtLeading,nh, leadingLepton != nullptr? leadingLepton->Pt(): 999.);
   FillH1(HPtl1,nh,lep1.Pt());
   FillH1(HPtl2,nh,lep2.Pt());
   FillH1(HPtl3,nh,lep3.Pt());
@@ -1455,6 +1458,18 @@ std::string PreSelector::GetElIDString(Int_t& id){
   return ids.c_str();
 }
 
+void PreSelector::FindLeadingLepton(){
+  if((lep1.Pt() > lep2.Pt()) and (lep1.Pt() > lep3.Pt())){
+    leadingLepton = &lep1;
+  } else if ((lep2.Pt() > lep1.Pt()) and (lep2.Pt() > lep3.Pt())) {
+    leadingLepton = &lep2;
+  } else if ((lep3.Pt() > lep1.Pt()) and (lep3.Pt() > lep2.Pt())) {
+    leadingLepton = &lep3;
+  } else {
+    leadingLepton = nullptr;
+  }
+}
+
 Bool_t PreSelector::Process(Long64_t entry) {
 
 
@@ -1654,6 +1669,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
     HCutFlow->FillS("FailsLTCut");
     return kFALSE;
   }
+
+  FindLeadingLepton();
 
 #ifndef CMSDATA
   MetUncl = GetMetUncl();

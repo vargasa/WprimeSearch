@@ -232,6 +232,7 @@ class PreSelector : public EventSelection {
 
   std::vector<TH2I*> HNLep;
 
+  std::vector<TH1F*> HPtLeading;
   std::vector<TH1F*> HPtl1;
   std::vector<TH1F*> HPtl2;
   std::vector<TH1F*> HPtl3;
@@ -287,6 +288,7 @@ class PreSelector : public EventSelection {
   std::vector<UInt_t> SameFlvWCand;
   Bool_t PairEl{}, PairMu{};
   PtEtaPhiMVector lep1, lep2, zb, lep3;
+  PtEtaPhiMVector* leadingLepton;
   Nu4VObj wb; // Three Values for Met, MetUnclUp and MetUnclDown
   Nu4VObj nu;
 
@@ -326,6 +328,7 @@ class PreSelector : public EventSelection {
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
 
+  void FindLeadingLepton();
   void FillCategory(const Int_t& crOffset,
                     const Leptons& lz,const Leptons& lw);
   void FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent);
