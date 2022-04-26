@@ -45,6 +45,19 @@ Int_t PreSelector::nbTag(){
   return nbtag;
 }
 
+std::string GetMuonTypeString(const int& ln){
+
+  std::string type;
+
+  if (Muon_isPFcand[ln]){
+    type = "Muon.PF";
+  } else {
+    type = "Muon.NonPF";
+  }
+
+  return type;
+}
+
 void PreSelector::Begin(TTree *tree) {
 
   if (fInput->FindObject("SampleName")) {
@@ -279,6 +292,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t nJetBins = 15;
   InitHVec<TH1F>(HnJet,"HnJet",nJetBins,0.,(float)nJetBins);
 
+  InitHVec<TH1F>(HMuonPF,"HMuonPF",2,0,2);
 
   const Float_t MinMass = 0.;
   const Float_t MaxMass = 2200.;
@@ -1023,7 +1037,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HPtZMWZ,nh,zb.Pt()/wzm_Met);
   FillH1(HPtWMWZ,nh,wb.Met.Pt()/wzm_Met);
 
-  // HiggsCombine Syst Histos
   if(IsA_){
     HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l1]).c_str(),1.);
     HIDl1l2[nh]->Fill("El2",GetElIDString(Electron_cutBased[l2]).c_str(),1.);
@@ -1064,6 +1077,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l1]).c_str(),1.);
     HIDl1l2[nh]->Fill("El2",GetElIDString(Electron_cutBased[l2]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l3]).c_str(),1.);
+    HMuonPF[nh]->Fill(GetMuonTypeString(l3).c_str());
     FillH1(HElPt,nh,lep1.Pt());
     FillH1(HElPt,nh,lep2.Pt());
     FillH1(HMuPt,nh,lep3.Pt());
@@ -1105,6 +1119,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l1]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu2",GetMuIDString(Muon_highPtId[l2]).c_str(),1.);
     HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l3]).c_str(),1.);
+    HMuonPF[nh]->Fill(GetMuonTypeString(l1).c_str());
+    HMuonPF[nh]->Fill(GetMuonTypeString(l2).c_str());
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
     FillH1(HElPt,nh,lep3.Pt());
@@ -1145,6 +1161,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l1]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu2",GetMuIDString(Muon_highPtId[l2]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu3",GetMuIDString(Muon_highPtId[l3]).c_str(),1.);
+    HMuonPF[nh]->Fill(GetMuonTypeString(l1).c_str());
+    HMuonPF[nh]->Fill(GetMuonTypeString(l2).c_str());
+    HMuonPF[nh]->Fill(GetMuonTypeString(l3).c_str());
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
     FillH1(HMuPt,nh,lep3.Pt());
