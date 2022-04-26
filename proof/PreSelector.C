@@ -45,7 +45,11 @@ Int_t PreSelector::nbTag(){
   return nbtag;
 }
 
-std::string GetMuonTypeString(const int& ln){
+Float_t PreSelector::GetMuonPtDiff(const int& ln){
+  return Muon_tunepRelPt[ln] - 1.;
+}
+
+std::string PreSelector::GetMuonTypeString(const int& ln){
 
   std::string type;
 
@@ -292,7 +296,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t nJetBins = 15;
   InitHVec<TH1F>(HnJet,"HnJet",nJetBins,0.,(float)nJetBins);
 
-  InitHVec<TH1F>(HMuonPF,"HMuonPF",2,0,2);
+  InitHVec<TH1F>(HMuonPtDiff,"HMuonPtDiff",201,-0.4,0.4);
+  InitHVec<TH1F>(HMuonPF,"HMuonPF",2,0.,2.);
 
   const Float_t MinMass = 0.;
   const Float_t MaxMass = 2200.;
@@ -328,6 +333,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HCosl3Met,"HCosl3Met",100 , -1., 1.);
 
   InitHVec<TH2F>(HMassZWZ,"HMassZWZ",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
+  InitHVec<TH2F>(HMuonPtType,"HMuonPtType",2,0.,2.,201,-0.4,0.4);
 
   InitHVec<TH2F>(HZElId,"HZElId",6,-0.5,5.5,6,-0.5,5.5);
 
@@ -1077,7 +1083,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l1]).c_str(),1.);
     HIDl1l2[nh]->Fill("El2",GetElIDString(Electron_cutBased[l2]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l3]).c_str(),1.);
-    HMuonPF[nh]->Fill(GetMuonTypeString(l3).c_str());
+    HMuonPF[nh]->FillS(GetMuonTypeString(l3).c_str());
+    HMuonPtDiff[nh]->FillS(GetMuonPtDiff(l3));
+    HMuonPtType[nh]->Fill(GetMuonTypeString(l3).c_str(),GetMuonPtDiff(l3),1.);
     FillH1(HElPt,nh,lep1.Pt());
     FillH1(HElPt,nh,lep2.Pt());
     FillH1(HMuPt,nh,lep3.Pt());
@@ -1119,8 +1127,12 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l1]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu2",GetMuIDString(Muon_highPtId[l2]).c_str(),1.);
     HIDl1l2[nh]->Fill("El1",GetElIDString(Electron_cutBased[l3]).c_str(),1.);
-    HMuonPF[nh]->Fill(GetMuonTypeString(l1).c_str());
-    HMuonPF[nh]->Fill(GetMuonTypeString(l2).c_str());
+    HMuonPF[nh]->FillS(GetMuonTypeString(l1).c_str());
+    HMuonPF[nh]->FillS(GetMuonTypeString(l2).c_str());
+    HMuonPtDiff[nh]->Fill(GetMuonPtDiff(l1));
+    HMuonPtDiff[nh]->Fill(GetMuonPtDiff(l2));
+    HMuonPtType[nh]->Fill(GetMuonTypeString(l1).c_str(),GetMuonPtDiff(l1),1.);
+    HMuonPtType[nh]->Fill(GetMuonTypeString(l2).c_str(),GetMuonPtDiff(l2),1.);
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
     FillH1(HElPt,nh,lep3.Pt());
@@ -1161,9 +1173,15 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HIDl1l2[nh]->Fill("Mu1",GetMuIDString(Muon_highPtId[l1]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu2",GetMuIDString(Muon_highPtId[l2]).c_str(),1.);
     HIDl1l2[nh]->Fill("Mu3",GetMuIDString(Muon_highPtId[l3]).c_str(),1.);
-    HMuonPF[nh]->Fill(GetMuonTypeString(l1).c_str());
-    HMuonPF[nh]->Fill(GetMuonTypeString(l2).c_str());
-    HMuonPF[nh]->Fill(GetMuonTypeString(l3).c_str());
+    HMuonPF[nh]->FillS(GetMuonTypeString(l1).c_str());
+    HMuonPF[nh]->FillS(GetMuonTypeString(l2).c_str());
+    HMuonPF[nh]->FillS(GetMuonTypeString(l3).c_str());
+    HMuonPtDiff[nh]->Fill(GetMuonPtDiff(l1));
+    HMuonPtDiff[nh]->Fill(GetMuonPtDiff(l2));
+    HMuonPtDiff[nh]->Fill(GetMuonPtDiff(l3));
+    HMuonPtType[nh]->Fill(GetMuonTypeString(l1).c_str(),GetMuonPtDiff(l1),1.);
+    HMuonPtType[nh]->Fill(GetMuonTypeString(l2).c_str(),GetMuonPtDiff(l2),1.);
+    HMuonPtType[nh]->Fill(GetMuonTypeString(l3).c_str(),GetMuonPtDiff(l3),1.);
     FillH1(HMuPt,nh,lep1.Pt());
     FillH1(HMuPt,nh,lep2.Pt());
     FillH1(HMuPt,nh,lep3.Pt());

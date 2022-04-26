@@ -188,6 +188,7 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HRelIsol2;
   std::vector<TH1F*> HRelIsol3;
   std::vector<TH1F*> HnJet;
+  std::vector<TH1F*> HMuonPtDiff;
   std::vector<TH1F*> HMuonPF;
 
   std::vector<TH2F*> HMassZWZ;
@@ -203,6 +204,7 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HPtl1l3;
   std::vector<TH2F*> HZElId;
   std::vector<TH2F*> HIDl1l2;
+  std::vector<TH2F*> HMuonPtType;
 
   //Angular
 
@@ -335,7 +337,8 @@ class PreSelector : public EventSelection {
 
   std::string GetElIDString(Int_t& id);
   std::string GetMuIDString(UChar_t& id);
-  std::string GetMuonTypeString(const int& ln)
+  std::string GetMuonTypeString(const int& ln);
+  Float_t GetMuonPtDiff(const int& ln);
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;

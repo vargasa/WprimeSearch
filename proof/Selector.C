@@ -151,7 +151,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   istringstream f(files);
   std::string file;
   std::string sample;
-  std::string fileNameOut = "WprimeHistos_NanoAODv9MixWZv2.root";
+  std::string fileNameOut = "WprimeHistos_MuonPFPt.root";
 
   while(std::getline(f,file,'+')){
     sample += file.substr(file.rfind("/")+1);
