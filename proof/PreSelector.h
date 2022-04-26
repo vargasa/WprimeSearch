@@ -137,9 +137,9 @@ class PreSelector : public EventSelection {
   TTreeReaderValue<Float_t> MET_MetUnclustEnUpDeltaY = {fReader,"MET_MetUnclustEnUpDeltaY"};
 
 #if defined(Y2016) || defined (Y2017)
-  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Nom = {fReader, "L1PreFiringWeight_ECAL_Nom"};
-  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Up = {fReader, "L1PreFiringWeight_ECAL_Up"};
-  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Dn = {fReader, "L1PreFiringWeight_ECAL_Dn"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Nom = {fReader, "L1PreFiringWeight_Nom"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Up = {fReader, "L1PreFiringWeight_Up"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Dn = {fReader, "L1PreFiringWeight_Dn"};
 #endif
 #endif
   // Neutrinos
