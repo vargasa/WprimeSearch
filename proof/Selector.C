@@ -124,7 +124,7 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
   return SFDb;
 }
 
-Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile = ""){
+Int_t Selector(std::string outputLabel, std::string files = "", Int_t fWorkers = 4, std::string elistfile = ""){
 
 
   Int_t Year = 0;
@@ -151,7 +151,7 @@ Int_t Selector(std::string files = "", Int_t fWorkers = 4, std::string elistfile
   istringstream f(files);
   std::string file;
   std::string sample;
-  std::string fileNameOut = "WprimeHistos_MuonPFPt.root";
+  std::string fileNameOut = "WprimeHistos_"+outputLabel+".root";
 
   while(std::getline(f,file,'+')){
     sample += file.substr(file.rfind("/")+1);
