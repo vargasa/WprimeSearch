@@ -187,6 +187,7 @@ Int_t Selector(std::string outputLabel, std::string files = "", Int_t fWorkers =
   TEntryList *EList;
   TFile *FileEList;
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
+  gEnv->SetValue("Proof.PackageDir","/tmp/");
 
   if(!elistfile.empty()){
     fProof->SetParameter("EntryListSet",1);
