@@ -298,6 +298,7 @@ class PreSelector : public EventSelection {
 
   Double_t wcentral;
   Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
+    WElRecoUp,WElRecoDown,
     WElIDUp,WElIDDown,WMuIDUp,WMuIDDown,
     WKEWKUp,WKEWKDown,WKQCDUp,WKQCDDown;
 
@@ -373,7 +374,10 @@ class PreSelector : public EventSelection {
   TH2F* SFElectronHLTLoose;
   TH2F* SFElectronHLTMedium;
   TH2F* SFElectronHLTTight;
+  TH2F* SFElectronReco;
 #if defined(Y2016)
+  TH2F* SFElectronRecopreVFP;
+  TH2F* SFElectronRecopostVFP;
   TH2F* SFElectronHLTpreVFPLoose;
   TH2F* SFElectronHLTpreVFPMedium;
   TH2F* SFElectronHLTpreVFPTight;

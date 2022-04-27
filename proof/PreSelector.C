@@ -161,7 +161,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 
     std::vector<std::string> rgs = { "SR1" };
     std::vector<std::string> chs = { "A","B","C","D" };
-    std::vector<std::string> sys = { "ElTrigger","MuTrigger","ElID","MuID","MetUncl"};
+    std::vector<std::string> sys = { "ElReco","ElTrigger","MuTrigger","ElID","MuID","MetUncl"};
 #if defined(Y2016) || defined (Y2017)
     sys.push_back("L1Pref");
 #endif
@@ -542,6 +542,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpostVFP"));
   SFMuonTrkHighPtIDpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpreVFP"));
   SFMuonTrkHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpostVFP"));
+  SFElectronRecopreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronRecopreVFP"));
+  SFElectronRecopostVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronRecopostVFP"));
   SFElectronHLTLoosepreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTLoosepreVFP"));
   SFElectronHLTMediumpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMediumpreVFP"));
   SFElectronHLTTightpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTightpreVFP"));
@@ -571,6 +573,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonTrigger = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
   SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
+  SFElectronReco =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronReco"));
   SFElectronHLTLoose =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTLoose"));
   SFElectronHLTMedium =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMedium"));
   SFElectronHLTTight =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTight"));
@@ -707,6 +710,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   }
 #elif defined(Y2016)
   if (IsPreVFP){
+    SFElectronReco = SFElectronRecopreVFP;
     SFElectronLooseID = SFElectronLooseIDpreVFP;
     SFElectronMediumID = SFElectronMediumIDpreVFP;
     SFElectronTightID = SFElectronTightIDpreVFP;
@@ -720,6 +724,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
       assert(false);
     }
   } else {
+    SFElectronReco = SFElectronRecopostVFP;
     SFElectronLooseID = SFElectronLooseIDpostVFP;
     SFElectronMediumID = SFElectronMediumIDpostVFP;
     SFElectronTightID = SFElectronTightIDpostVFP;
@@ -1058,6 +1063,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
     if(crOffset==0){ // SR1
+      HMassWZ[HIdx["SR1_A_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
+      HMassWZ[HIdx["SR1_A_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
       HMassWZ[HIdx["SR1_A_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
       HMassWZ[HIdx["SR1_A_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
       HMassWZ[HIdx["SR1_A_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
@@ -1097,6 +1104,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep3.Phi());
 #ifndef CMSDATA
     if(crOffset==0){ // SR1
+      HMassWZ[HIdx["SR1_B_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
+      HMassWZ[HIdx["SR1_B_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
       HMassWZ[HIdx["SR1_B_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
       HMassWZ[HIdx["SR1_B_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
       HMassWZ[HIdx["SR1_B_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
@@ -1144,6 +1153,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
     if(crOffset==0){ // SR1
+      HMassWZ[HIdx["SR1_C_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
+      HMassWZ[HIdx["SR1_C_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
       HMassWZ[HIdx["SR1_C_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
       HMassWZ[HIdx["SR1_C_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
       HMassWZ[HIdx["SR1_C_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
@@ -2112,6 +2123,9 @@ void PreSelector::DefineSFs(){
 
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
+    wcentral *= GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),0);
     wcentral *= GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
     wcentral *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
     wcentral *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
@@ -2121,6 +2135,14 @@ void PreSelector::DefineSFs(){
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
+
+    WElRecoUp = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),1);
+    WElRecoUp *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),1);
+    WElRecoUp *= GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),1);
+
+    WElRecoDown = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),-1);
+    WElRecoDown *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),-1);
+    WElRecoDown *= GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),-1);
 
     WElIDUp =  GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
     WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
@@ -2137,6 +2159,8 @@ void PreSelector::DefineSFs(){
     wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     wcentral *= GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
     wcentral *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),0);
+    wcentral *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),0);
 #if defined(Y2016) || defined(Y2017)
     wcentral *= *L1PreFiringWeight_Nom;
 #endif
@@ -2145,6 +2169,12 @@ void PreSelector::DefineSFs(){
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
+
+    WElRecoUp = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),1);
+    WElRecoUp *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),1);
+
+    WElRecoDown = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),-1);
+    WElRecoDown *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),-1);
 
     WElIDUp = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
     WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
@@ -2161,9 +2191,13 @@ void PreSelector::DefineSFs(){
     wcentral = GetSFFromHisto(SFPileup,*PV_npvs);
     wcentral *= GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     wcentral *= GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
+    wcentral *= GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),0);
 #if defined(Y2016) || defined(Y2017)
     wcentral *= *L1PreFiringWeight_Nom;
 #endif
+
+    WElRecoUp = GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),1);
+    WElRecoDown = GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),-1);
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
@@ -2225,6 +2259,8 @@ void PreSelector::DefineSFs(){
   }
 
   wcentral *= *genWeight;
+  WElRecoUp *= *genWeight;
+  WElRecoDown *= *genWeight;
   WElTrigUp *= *genWeight;
   WElTrigDown *= *genWeight;
   WMuTrigUp *= *genWeight;
