@@ -30,7 +30,7 @@ DownloadSFs () {
     done
 }
 
-if [[ "$2" -eq "MC" ]]; then
+if [ "$2" =  "MC" ]; then
     DownloadSFs $1
     cd $WprimeDir/proof/
 
@@ -44,7 +44,7 @@ if [[ "$2" -eq "MC" ]]; then
         root -l -b -q "Selector.C(\""$OutputLabel"\",\"$i\", 6)";
     done
 
-elif [[ "$2" -eq "DATA" ]]; then
+elif [ "$2" = "DATA" ]; then
     xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/EntryListMaker/EntryLists_Unique.root $WprimeDir/proof/EntryListMaker/
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     if [ $1 -eq 2016 ] || [ $1 -eq 2017 ]; then
