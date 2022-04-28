@@ -186,8 +186,17 @@ Int_t Selector(std::string outputLabel, std::string files = "", Int_t fWorkers =
 
   TEntryList *EList;
   TFile *FileEList;
-  TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
+
+  gEnv->SetValue("Proof.Sandbox","/tmp/");
+  gEnv->SetValue("ProofLite.Sandbox","/tmp/proof/");
+  gEnv->SetValue("Proof.CacheDir","/tmp/proof/");
+  gEnv->SetValue("Proof.DataSetDir","/tmp/proof/");
   gEnv->SetValue("Proof.PackageDir","/tmp/");
+  gEnv->SetValue("ProofLite.SubPath","last-session");
+
+  TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
+
+
 
   if(!elistfile.empty()){
     fProof->SetParameter("EntryListSet",1);
