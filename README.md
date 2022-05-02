@@ -342,16 +342,17 @@ root -l -b -q "Selector.C(\"files/data/2018/SingleMuon.txt+files/data/2018/EGamm
 ```bash
 # 2016
 cd proof/
+OutputLabel="NanoAODv9_Mix"
 echo -e "#define Y2016\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2016/UL/ULSinglePhoton.txt+files/data/2016/UL/ULSingleElectron.txt+files/data/2016/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")"; # 8 Workers
+root -l -b -q "Selector.C(\""$OutputLabel"\",\"files/data/2016/UL/ULSinglePhoton.txt+files/data/2016/UL/ULSingleElectron.txt+files/data/2016/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")"; # 8 Workers
 
 # 2017
 echo -e "#define Y2017\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2017/UL/ULSinglePhoton.txt+files/data/2017/UL/ULSingleElectron.txt+files/data/2017/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
+root -l -b -q "Selector.C(\""$OutputLabel"\",\"files/data/2017/UL/ULSinglePhoton.txt+files/data/2017/UL/ULSingleElectron.txt+files/data/2017/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
 
 # 2018
 echo -e "#define Y2018\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2018/UL/ULSingleMuon.txt+files/data/2018/UL/ULEGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
+root -l -b -q "Selector.C(\""$OutputLabel"\",\"files/data/2018/UL/ULSingleMuon.txt+files/data/2018/UL/ULEGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
 
 ```
 

@@ -7,7 +7,7 @@ eval `scram runtime -sh`
 echo $CMSSW_BASE
 git clone https://github.com/vargasa/WprimeSearch.git Wprime_$1
 WprimeDir=$CMSSW_BASE/src/Wprime_$1/
-OutputLabel="ANv5Mixv2v9_"$1"_"$2
+OutputLabel="ANv5Mixv2v9_"$1"_"$2"_"$3"_"
 cd $WprimeDir
 
 DownloadSFs () {
@@ -45,12 +45,14 @@ if [ "$2" =  "MC" ]; then
     done
 
 elif [ "$2" = "DATA" ]; then
-    xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/EntryListMaker/EntryLists_Unique.root $WprimeDir/proof/EntryListMaker/
+    cd $WprimeDir/proof/
+    xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/EntryListMaker/EntryLists_Unique.root $WprimeDir/proof/EntryListMaker/EntryLists_Unique.root
+    file $WprimeDir/proof/EntryListMaker/EntryLists_Unique.root
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     if [ $1 -eq 2016 ] || [ $1 -eq 2017 ]; then
-        ROOTCommand="Selector.C(\""$OutputLabel"\",\"files/data/"$1"/UL/ULSinglePhoton.txt+files/data/"$1"/UL/ULSingleElectron.txt+files/data/"$1"/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
+        ROOTCommand="Selector.C(\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/"$1"/UL/ULSinglePhoton.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleElectron.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleMuon.txt\", 8, \""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\")";
     elif [[ $1 -eq 2018 ]]; then
-        ROOTCommand="Selector.C(\""$OutputLabel"\",\"files/data/2018/UL/ULSingleMuon.txt+files/data/2018/UL/ULEGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
+        ROOTCommand="Selector.C(\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/2018/UL/ULSingleMuon.txt+"$WprimeDir"/proof/files/data/2018/UL/ULEGamma.txt\", 8, \""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\")";
     fi
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     root -l -b -q $ROOTCommand;

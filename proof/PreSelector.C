@@ -695,7 +695,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   if(GoodIndex.size() == 0) return GoodIndex;
   if(GoodIndex.size() > 1) SortByDescPt(GoodIndex,El);
 
-#if defined(ULSAMPLE)
+#if !defined(CMSDATA) && defined(ULSAMPLE)
   const int id = El.cutBased[GoodIndex[0]];
 
 #if defined(Y2017) || defined(Y2018)
@@ -849,12 +849,16 @@ Nu4VObj PreSelector::GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep){
 
   Nu4VObj s;
   Float_t pz = (lep.Pz()/lep.Pt())*(*MET_pt);
+  s.Met = Get4V(pz,*MET_pt,*MET_phi);
+
+#if !defined(CMSDATA)
   Float_t pz_up = (lep.Pz()/lep.Pt())*(MetUncl.PtUp);
   Float_t pz_down = (lep.Pz()/lep.Pt())*(MetUncl.PtDown);
 
-  s.Met = Get4V(pz,*MET_pt,*MET_phi);
   s.MetUnclUp = Get4V(pz_up,MetUncl.PtUp,MetUncl.PhiUp);
   s.MetUnclDown = Get4V(pz_down,MetUncl.PtDown,MetUncl.PhiDown);
+#endif
+
   return s;
 }
 
@@ -868,6 +872,16 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
   Float_t b = (k + a);
   Float_t c = k*(k + 4.*lep.Pt()*(*MET_pt));
 
+  if ( c < 0 ) return GetNu4VFix(lep);
+
+  Float_t d = lep.P()*TMath::Sqrt(c);
+
+  NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt()); // What About the Positive Solution?
+
+  s.Met = Get4V(NuPz,*MET_pt,*MET_phi);
+
+
+#if !defined(CMSDATA)
   Float_t a_up = 2.*lep.Pt()*(MetUncl.PtUp);
   Float_t k_up = Mw*Mw - wmt.MetUnclUp*wmt.MetUnclUp;
   Float_t b_up = (k_up + a_up);
@@ -880,18 +894,15 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
 
   if ( c < 0 or c_down < 0 or c_up < 0 ) return GetNu4VFix(lep);
 
-  Float_t d = lep.P()*TMath::Sqrt(c);
-
   Float_t d_up = lep.P()*TMath::Sqrt(c_up);
   Float_t d_down = lep.P()*TMath::Sqrt(c_down);
 
-  NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt()); // What About the Positive Solution?
   NuPz_up = (lep.Pz()*b_up - d_up)/(2.*lep.Pt()*lep.Pt());
   NuPz_down = (lep.Pz()*b_down - d_down)/(2.*lep.Pt()*lep.Pt());
 
-  s.Met = Get4V(NuPz,*MET_pt,*MET_phi);
   s.MetUnclUp = Get4V(NuPz_up,MetUncl.PtUp,MetUncl.PhiUp);
   s.MetUnclDown = Get4V(NuPz_down,MetUncl.PtDown,MetUncl.PhiDown);
+#endif
 
   return s;
 
@@ -1039,8 +1050,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 
   // Mass Histos
   double wzm_Met = (wb.Met+zb).M();
+#if !defined(CMSDATA)
   double wzm_MetUnclUp = (wb.MetUnclUp+zb).M();
   double wzm_MetUnclDown = (wb.MetUnclDown+zb).M();
+#endif
   FillH1(HMassW,nh,wb.Met.M());
   FillH1(HMassZ,nh,PairZMass);
   FillH1(HMassTW,nh,wmt.Met);
@@ -1240,8 +1253,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HPhil2,nh,lep2.Phi());
   FillH1(HPhil3,nh,lep3.Phi());
   FillH1(HMetPhi,nh,*MET_phi);
+#if !defined (CMSDATA)
   FillH1(HMetUnclUpPhi,nh,MetUncl.PhiUp);
   FillH1(HMetUnclDownPhi,nh,MetUncl.PhiDown);
+#endif
 
   // Dxyz RelIso
   FillH1(HDxyl1,nh,lz.dxy[l1]);
@@ -1282,12 +1297,15 @@ bool PreSelector::DefineW(const Leptons& l){
   }
 
   wmt.Met = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
-  wmt.MetUnclUp = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtUp, MetUncl.PhiUp);
-  wmt.MetUnclDown = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtDown, MetUncl.PtDown);
   nu = PreSelector::GetNu4V(lep3);
   wb.Met = (lep3 + nu.Met);
+
+#if !defined(CMSDATA)
+  wmt.MetUnclUp = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtUp, MetUncl.PhiUp);
+  wmt.MetUnclDown = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), MetUncl.PtDown, MetUncl.PtDown);
   wb.MetUnclUp = (lep3 + nu.MetUnclUp);
   wb.MetUnclDown = (lep3 + nu.MetUnclDown);
+#endif
 
   return true;
 
