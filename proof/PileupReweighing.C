@@ -4,7 +4,7 @@
 
 Int_t PileupReweighing(){
 
-  TFile *mcFile = TFile::Open("WprimeHistos_MetUncl.root","READ");
+  TFile *mcFile = TFile::Open("WprimeHistos_ANv5Mixv2v9.root","READ");
 
   std::multimap<int, std::vector<std::string>> BgNamesUL =
     {
@@ -93,19 +93,18 @@ Int_t PileupReweighing(){
           "WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8",
           "WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",
           "WZZ_TuneCP5_13TeV-amcatnlo-pythia8",
-          "WprimeToWZToWlepZlep_narrow_1000_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_1200_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_1400_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_1600_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_1800_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_2000_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_2500_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_3000_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_3500_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_4000_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_4500_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_600_TuneCP5_13TeV-madgraph-pythia8",
-          "WprimeToWZToWlepZlep_narrow_800_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",
+          "WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",
           "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
           "ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",
           "ZZZ_TuneCP5_13TeV-amcatnlo-pythia8",

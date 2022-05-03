@@ -298,7 +298,7 @@ class PreSelector : public EventSelection {
 
   Double_t wcentral;
   Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
-    WElRecoUp,WElRecoDown,
+    WElRecoUp,WElRecoDown,WPileupUp,WPileupDown,
     WElIDUp,WElIDDown,WMuIDUp,WMuIDDown,
     WKEWKUp,WKEWKDown,WKQCDUp,WKQCDDown;
 
@@ -353,7 +353,7 @@ class PreSelector : public EventSelection {
   Double_t GetElIDSF(Int_t id ,const Float_t& eta, const Float_t& pt,const Int_t& option) const;
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;
   Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
-  Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
+  Float_t GetSFFromHisto(TH1* h, const Int_t& npv, const Int_t option);
   void DefineSFs();
 
   MetUnclObj GetMetUncl();

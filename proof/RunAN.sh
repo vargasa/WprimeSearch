@@ -42,6 +42,8 @@ if [ "$2" =  "MC" ]; then
     do
         echo -e "#define Y"$1"\n#define ULSAMPLE\n" > IsData.h # Make sure CMSDATA is undefined
         root -l -b -q "Selector.C(\""$OutputLabel"\",\"$i\", 6)";
+        skill proofserv.exe
+        skill root.exe
     done
 
 elif [ "$2" = "DATA" ]; then
@@ -50,12 +52,13 @@ elif [ "$2" = "DATA" ]; then
     file $WprimeDir/proof/EntryListMaker/EntryLists_Unique.root
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     if [ $1 -eq 2016 ] || [ $1 -eq 2017 ]; then
-        ROOTCommand="Selector.C(\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/"$1"/UL/ULSinglePhoton.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleElectron.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleMuon.txt\", 8, \""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\")";
+        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/"$1"/UL/ULSinglePhoton.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleElectron.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleMuon.txt\",8,\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
     elif [[ $1 -eq 2018 ]]; then
-        ROOTCommand="Selector.C(\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/2018/UL/ULSingleMuon.txt+"$WprimeDir"/proof/files/data/2018/UL/ULEGamma.txt\", 8, \""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\")";
+        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/2018/UL/ULSingleMuon.txt+"$WprimeDir"/proof/files/data/2018/UL/ULEGamma.txt\",8,\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
     fi
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-    root -l -b -q $ROOTCommand;
+    echo $ROOTCommand
+    root -l -b -q "Selector.C("$ROOTCommand")";
 fi
 
 xrdcp -f $WprimeDir/proof/WprimeHistos_$OutputLabel.root root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/WprimeHistos_$OutputLabel.root 2>&1

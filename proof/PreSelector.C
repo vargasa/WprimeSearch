@@ -161,7 +161,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 
     std::vector<std::string> rgs = { "SR1" };
     std::vector<std::string> chs = { "A","B","C","D" };
-    std::vector<std::string> sys = { "ElReco","ElTrigger","MuTrigger","ElID","MuID","MetUncl"};
+    std::vector<std::string> sys = { "ElReco","ElTrigger","ElID","MuTrigger","MuID","MetUncl","Pileup"};
 #if defined(Y2016) || defined (Y2017)
     sys.push_back("L1Pref");
 #endif
@@ -1084,6 +1084,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_A_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
       HMassWZ[HIdx["SR1_A_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
       HMassWZ[HIdx["SR1_A_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+      HMassWZ[HIdx["SR1_A_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+      HMassWZ[HIdx["SR1_A_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
       HMassWZ[HIdx["SR1_A_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
       HMassWZ[HIdx["SR1_A_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
@@ -1129,6 +1131,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_B_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
       HMassWZ[HIdx["SR1_B_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
       HMassWZ[HIdx["SR1_B_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+      HMassWZ[HIdx["SR1_B_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+      HMassWZ[HIdx["SR1_B_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
       HMassWZ[HIdx["SR1_B_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
       HMassWZ[HIdx["SR1_B_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
@@ -1178,6 +1182,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_C_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
       HMassWZ[HIdx["SR1_C_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
       HMassWZ[HIdx["SR1_C_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+      HMassWZ[HIdx["SR1_C_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+      HMassWZ[HIdx["SR1_C_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
       HMassWZ[HIdx["SR1_C_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
       HMassWZ[HIdx["SR1_C_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
@@ -1223,6 +1229,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
       HMassWZ[HIdx["SR1_D_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
       HMassWZ[HIdx["SR1_D_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
       HMassWZ[HIdx["SR1_D_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+      HMassWZ[HIdx["SR1_D_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+      HMassWZ[HIdx["SR1_D_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
       HMassWZ[HIdx["SR1_D_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
       HMassWZ[HIdx["SR1_D_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
@@ -1954,10 +1962,26 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
   return sf;
 }
 ///////////////////////////////////////////////////////////
-Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv){
+Float_t PreSelector::GetSFFromHisto(TH1* h, const Int_t& npv, const int option = 0){
+
   if(!h) return 1.;
-  assert(copysign(1.,h->GetBinContent(h->FindBin(npv))) > 0);
-  return h->GetBinContent(h->FindBin(npv));
+  Int_t nbin = h->FindBin(npv);
+  assert(copysign(1.,h->GetBinContent(nbin)) > 0);
+
+  Float_t sf = h->GetBinContent(nbin);
+  switch(option){
+  case -1:
+    sf -= h->GetBinErrorLow(nbin);
+    if(sf<0.) sf = 1e-6;
+    break;
+  case 1:
+    sf += h->GetBinErrorUp(nbin);
+    break;
+  case 0:
+    break;
+  }
+
+  return sf;
 }
 ///////////////////////////////////////////////////////////
 #if !defined(ULSAMPLE)
@@ -2136,6 +2160,10 @@ void PreSelector::DefineSFs(){
   auto applyIDSF = [&](TH1* h, const double& x, const double &y) {
     wcentral *= GetSFFromHisto(h,x,y,0);
   };
+
+  WPileupUp = GetSFFromHisto(SFPileup,*PV_npvs,1) ;
+  WPileupDown = GetSFFromHisto(SFPileup,*PV_npvs,-1);
+
 
   if(IsA_){
 
