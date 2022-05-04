@@ -1,6 +1,7 @@
 #!/bin/bash
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
+export NCORES=4
 scram project CMSSW CMSSW_12_2_1
 cd CMSSW_12_2_1/src
 eval `scram runtime -sh`
@@ -34,14 +35,14 @@ if [ "$2" =  "MC" ]; then
     DownloadSFs $1
     cd $WprimeDir/proof/
 
-    FILES=$WprimeDir/proof/files/mc/$1/UL/*.txt #Loop over set of the list files
+    FILES=$WprimeDir/proof/files/mc/$1/UL/$3*.txt #Loop over set of the list files
 
     echo "Processing Year:"$1
 
     for i in $FILES
     do
         echo -e "#define Y"$1"\n#define ULSAMPLE\n" > IsData.h # Make sure CMSDATA is undefined
-        root -l -b -q "Selector.C(\""$OutputLabel"\",\"$i\", 6)";
+        root -l -b -q "Selector.C(\""$OutputLabel"\",\"$i\","$NCORES")";
         skill proofserv.exe
         skill root.exe
     done
@@ -52,9 +53,9 @@ elif [ "$2" = "DATA" ]; then
     file $WprimeDir/proof/EntryListMaker/EntryLists_Unique.root
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     if [ $1 -eq 2016 ] || [ $1 -eq 2017 ]; then
-        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/"$1"/UL/ULSinglePhoton.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleElectron.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleMuon.txt\",8,\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
+        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/"$1"/UL/ULSinglePhoton.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleElectron.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleMuon.txt\","$NCORES",\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
     elif [[ $1 -eq 2018 ]]; then
-        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/2018/UL/ULSingleMuon.txt+"$WprimeDir"/proof/files/data/2018/UL/ULEGamma.txt\",8,\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
+        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/2018/UL/ULSingleMuon.txt+"$WprimeDir"/proof/files/data/2018/UL/ULEGamma.txt\","$NCORES",\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
     fi
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     echo $ROOTCommand
