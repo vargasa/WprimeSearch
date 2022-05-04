@@ -35,7 +35,7 @@ if [ "$2" =  "MC" ]; then
     DownloadSFs $1
     cd $WprimeDir/proof/
 
-    FILES=$WprimeDir/proof/files/mc/$1/UL/$3*.txt #Loop over set of the list files
+    FILES=$WprimeDir/proof/files/mc/$1/UL/$3
 
     echo "Processing Year:"$1
 
