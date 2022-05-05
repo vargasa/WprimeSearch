@@ -537,6 +537,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
 #endif
 
 #if defined(Y2016) and defined(ULSAMPLE)
+  SFPileuppreVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupNominalpreVFP"));
+  SFPileuppostVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupNominalpostVFP"));
+  SFPileupUppreVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupUppreVFP"));
+  SFPileupDownpreVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupDownpreVFP"));
+  SFPileupUppostVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupUppostVFP"));
+  SFPileupDownpostVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupDownpostVFP"));
   SFMuonTrigger =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpreVFP"));
   SFMuonHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpostVFP"));
@@ -570,6 +576,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
 #endif
 
 #if defined(ULSAMPLE) and (defined(Y2017) || defined(Y2018))
+  SFPileup = dynamic_cast<TH1F*>(SFDb->FindObject("PileupNominal"));
+  SFPileupUp = dynamic_cast<TH1F*>(SFDb->FindObject("PileupUp"));
+  SFPileupDown = dynamic_cast<TH1F*>(SFDb->FindObject("PileupDown"));
   SFMuonTrigger = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
   SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
   SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
@@ -581,13 +590,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronMediumID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronMediumID"));
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
-
-  auto l = dynamic_cast<TList*>(SFDb->FindObject("PileupSFList"));
-  SFPileup = static_cast<TH1D*>(l->FindObject(Form("%s_%d",SampleName.Data(),Year)));
-
-  std::clog << SFPileup << "\n";
-  if(!SFPileup)
-    std::clog << Form("WARNING: Pileup %s SF histogram not found!\nPileup weight will be taken as 1.\n",SampleName.Data());
 
   InitHVec<TH1F>(HScaleFactors,"HScaleFactors",70,-1.,6.);
 
@@ -2161,8 +2163,8 @@ void PreSelector::DefineSFs(){
     wcentral *= GetSFFromHisto(h,x,y,0);
   };
 
-  WPileupUp = GetSFFromHisto(SFPileup,*PV_npvs,1) ;
-  WPileupDown = GetSFFromHisto(SFPileup,*PV_npvs,-1);
+  WPileupUp = GetSFFromHisto(SFPileupUp,*PV_npvs) ;
+  WPileupDown = GetSFFromHisto(SFPileupDown,*PV_npvs);
 
 
   if(IsA_){

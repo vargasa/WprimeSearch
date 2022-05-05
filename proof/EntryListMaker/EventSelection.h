@@ -101,6 +101,9 @@ class EventSelection : public TSelector{
   TH2F* SFMuonHighPtID;
   TH2F* SFMuonTrkHighPtID;
   TH2F* SFMuonTrigger;
+  TH1F* SFPileup;
+  TH1F* SFPileupUp;
+  TH1F* SFPileupDown;
 #if defined(Y2016) && !defined(ULSAMPLE)
   TH2D* SFMuonHighPtIDBF;
   TH2D* SFMuonHighPtIDGH;
@@ -109,6 +112,10 @@ class EventSelection : public TSelector{
 #endif
 #if defined(Y2016) && defined(ULSAMPLE)
   Bool_t IsPreVFP{};
+  TH1F* SFPileuppreVFP;
+  TH1F* SFPileuppostVFP;
+  TH1F* SFPileupUppreVFP;
+  TH1F* SFPileupDownpostVFP;
   TH2F* SFMuonHighPtIDpreVFP;
   TH2F* SFMuonHighPtIDpostVFP;
   TH2F* SFMuonTrkHighPtIDpreVFP;
@@ -230,6 +237,9 @@ Bool_t EventSelection::Notify() {
   std::clog << Form("Branch being processed (HLT_TkMu50): %s\n", HLT_TkMu50.GetBranchName());
 #if !defined(CMSDATA) && defined(ULSAMPLE)
   if (fullPath.find("preVFP") != std::string::npos) {
+    SFPileup = SFPileuppreVFP;
+    SFPileupUp = SFPileupUppreVFP;
+    SFPileupDown = SFPileupDownpreVFP;
     SFElectronLooseID = SFElectronLooseIDpreVFP;
     SFElectronTightID = SFElectronTightIDpreVFP;
     SFMuonHighPtID = SFMuonHighPtIDpreVFP;
@@ -237,6 +247,9 @@ Bool_t EventSelection::Notify() {
     IsPreVFP = true;
     std::clog << "Notify: Setting preVFP Muon and Electron SFs\t";
   } else {
+    SFPileup = SFPileuppostVFP;
+    SFPileupUp = SFPileupUppostVFP;
+    SFPileupDown = SFPileupDownpostVFP;
     SFElectronLooseID = SFElectronLooseIDpostVFP;
     SFElectronTightID = SFElectronTightIDpostVFP;
     SFMuonHighPtID = SFMuonHighPtIDpostVFP;

@@ -13,7 +13,7 @@ cd $WprimeDir
 
 DownloadSFs () {
     SFDir=$WprimeDir/proof/files/mc/$1/UL/sf/
-    xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/PileupWeights_UL.root $WprimeDir/proof/
+    xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/ULPileup.root $WprimeDir/proof/
     mkdir -vp proof/files/mc/2016/sf/
     # KFactors are shared amoung Run2 years
     xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/files/mc/2016/sf/merged_kfactors_zjets.root $WprimeDir/proof/files/mc/2016/sf/

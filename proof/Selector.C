@@ -42,6 +42,12 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2016/sf/2016LegacyReReco_ElectronLoose.root","EGamma_SF2D",SFDb); //FixMe
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2016/sf/2016LegacyReReco_ElectronTight_Fall17V2.root","EGamma_SF2D",SFDb);
     } else {
+      AddSFHistoSFDb<TH1F>("PileupNominalpreVFP","ULPileup.root","2016preVFP_PileupNominal",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupNominalpostVFP","ULPileup.root","2016postVFP_PileupNominal",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupUppreVFP","ULPileup.root","2016preVFP_PileupUp",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupUppostVFP","ULPileup.root","2016postVFP_PileupUp",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupDownpreVFP","ULPileup.root","2016preVFP_PileupDown",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupDownpostVFP","ULPileup.root","2016postVFP_PileupDown",SFDb);
       AddSFHistoSFDb<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd",SFDb);
       AddSFHistoSFDb<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2016_var",SFDb);
@@ -77,6 +83,9 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2017/sf/2017_ElectronLoose.root","EGamma_SF2D",SFDb); //FixMe
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2017/sf/2017_ElectronTight.root","EGamma_SF2D",SFDb);
     } else {
+      AddSFHistoSFDb<TH1F>("PileupNominal","ULPileup.root","2017_PileupNominal",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupUp","ULPileup.root","2017_PileupUp",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupDown","ULPileup.root","2017_PileupDown",SFDb);
       AddSFHistoSFDb<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd",SFDb);
       AddSFHistoSFDb<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2017_var",SFDb);
@@ -103,6 +112,9 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
       AddSFHistoSFDb<TH2F>("SFElectronMediumID","files/mc/2018/sf/2018_ElectronLoose.root","EGamma_SF2D",SFDb); //FixMe
       AddSFHistoSFDb<TH2F>("SFElectronTightID","files/mc/2018/sf/2018_ElectronTight.root","EGamma_SF2D",SFDb);
     } else {
+      AddSFHistoSFDb<TH1F>("PileupNominal","ULPileup.root","2018_PileupNominal",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupUp","ULPileup.root","2018_PileupUp",SFDb);
+      AddSFHistoSFDb<TH1F>("PileupDown","ULPileup.root","2018_PileupDown",SFDb);
       AddSFHistoSFDb<TH1F>("SFDYKFactorQCD","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_qcd",SFDb);
       AddSFHistoSFDb<TH1F>("SFDYKFactorEWK","files/mc/2016/sf/merged_kfactors_zjets.root","kfactor_monojet_ewk",SFDb);
       AddSFHistoSFDb<TH2F>("SFMuonTrigger","files/mc/2016/UL/sf/OutFile-v20190510-Combined-Run2016BtoH_Run2017BtoF_Run2018AtoD-M120to10000.root","SF_2018_var",SFDb);
@@ -120,8 +132,6 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
 
   if(!IsUL){
     AddSFHistoSFDb<TList>("PileupSFList","PileupWeights.root","PileupSFList",SFDb);
-  } else {
-    AddSFHistoSFDb<TList>("PileupSFList","PileupWeights_UL.root","PileupSFList",SFDb);
   }
 
   return SFDb;

@@ -247,6 +247,7 @@ Which takes as input `WprimeHistos.root` and `PileupHistogram-goldenJSON-13tev-2
 ### Running using condor:
 cd proof/
 YEAR=2018;for i in `ls -1 files/mc/$YEAR/UL/*.txt |xargs -n1 basename`; do ./SubmitCondor.sh $YEAR MC $i; sleep 1; done
+for i in `ls *ANv5Mixv2v9*`; do root -l -b -q "copyFiles.C(\""$i"\")"; done
 ```
 
 ### Setup for Data
