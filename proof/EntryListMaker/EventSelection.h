@@ -115,6 +115,8 @@ class EventSelection : public TSelector{
   TH1F* SFPileuppreVFP;
   TH1F* SFPileuppostVFP;
   TH1F* SFPileupUppreVFP;
+  TH1F* SFPileupUppostVFP;
+  TH1F* SFPileupDownpreVFP;
   TH1F* SFPileupDownpostVFP;
   TH2F* SFMuonHighPtIDpreVFP;
   TH2F* SFMuonHighPtIDpostVFP;
