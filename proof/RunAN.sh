@@ -1,14 +1,14 @@
 #!/bin/bash
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
-export NCORES=4
+export NCORES=3
 scram project CMSSW CMSSW_12_2_1
 cd CMSSW_12_2_1/src
 eval `scram runtime -sh`
 echo $CMSSW_BASE
 git clone https://github.com/vargasa/WprimeSearch.git Wprime_$1
 WprimeDir=$CMSSW_BASE/src/Wprime_$1/
-OutputLabel="ANv5Mixv2v9_"$1"_"$2"_"$3"_"
+OutputLabel="ANv5NanoAODv9_"$1"_"$2"_"$3"_"
 cd $WprimeDir
 
 DownloadSFs () {

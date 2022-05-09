@@ -129,14 +129,14 @@ void EventIDMaker::Terminate() {
   ch->Print(Form("EventIDMaker_hlog_%s_%d.png",SampleName.Data(),Year));
 
   std::string dirName = Form("%s_%d",SampleName.Data(),Year);
-  std::unique_ptr<TFile> fEventIDTree(TFile::Open("EventIDTree.root","UPDATE"));
+  std::unique_ptr<TFile> fEventIDTree(TFile::Open(Form("EventIDTree_%d_%s.root",Year,SampleName.Data()),"UPDATE"));
   fEventIDTree->mkdir(dirName.c_str());
   fEventIDTree->cd(dirName.c_str());
   eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
   eTree->Write("eTree");
   fEventIDTree->Close();
 
-  std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists.root","UPDATE"));
+  std::unique_ptr<TFile> fEntryList(TFile::Open(Form("EntryLists_%d_%s.root",Year,SampleName.Data()),"UPDATE"));
   fEntryList->mkdir(dirName.c_str());
   fEntryList->cd(dirName.c_str());
   EntryList->Write("EntryList");

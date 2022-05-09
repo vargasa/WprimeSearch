@@ -31,6 +31,13 @@ Int_t MakeEventIDTree(std::string file = "", Int_t fWorkers = 2){
   sample = file.substr(file.rfind("/")+1);
   sample.resize(sample.size()-4);
 
+  gEnv->SetValue("Proof.Sandbox","/tmp/");
+  gEnv->SetValue("ProofLite.Sandbox","/tmp/proof/");
+  gEnv->SetValue("Proof.CacheDir","/tmp/proof/");
+  gEnv->SetValue("Proof.DataSetDir","/tmp/proof/");
+  gEnv->SetValue("Proof.PackageDir","/tmp/");
+  gEnv->SetValue("ProofLite.SubPath","last-session");
+
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
 
   fProof->SetProgressDialog(false);
