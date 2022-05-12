@@ -685,12 +685,21 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   }
   GoodIndex.reserve(10);
 
+
+  std::pair<float,float> phiHEM = {-1.57,-0.87};
+  std::pair<float,float> etaHEM = {-2.5,-1.3};
+
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; ++i){
     double abseta =  abs(El.eta[i]);
     if(El.cutBased[i]>=2 and
        abseta < MaxEta and
-       ( abseta < etaGap.first or abseta > etaGap.second))
+       ( abseta < etaGap.first or abseta > etaGap.second)
+#if defined(Y2018)
+       and !( El.eta[i] > etaHEM.first and El.eta[i] < etaHEM.second )
+       and !( El.phi[i] > phiHEM.first and El.phi[i] < phiHEM.second )
+#endif
+       )
       GoodIndex.emplace_back(i);
   }
 
