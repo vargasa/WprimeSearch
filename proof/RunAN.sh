@@ -50,7 +50,6 @@ if [ "$2" =  "MC" ]; then
 elif [ "$2" = "DATA" ]; then
     cd $WprimeDir/proof/
     xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/EntryListMaker/EntryLists_Unique.root $WprimeDir/proof/EntryListMaker/EntryLists_Unique.root
-    file $WprimeDir/proof/EntryListMaker/EntryLists_Unique.root
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     if [ $1 -eq 2016 ] || [ $1 -eq 2017 ]; then
         export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/"$1"/UL/ULSinglePhoton.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleElectron.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleMuon.txt\","$NCORES",\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
@@ -62,10 +61,8 @@ elif [ "$2" = "DATA" ]; then
     root -l -b -q "Selector.C("$ROOTCommand")";
 fi
 
-xrdcp -f $WprimeDir/proof/WprimeHistos_$OutputLabel.root root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/WprimeHistos_$OutputLabel.root 2>&1
-XRDEXIT=$?
-if [[ $XRDEXIT -ne 0 ]]; then
-    rm *.root
-    echo "exit code $XRDEXIT, failure in xrdcp"
-    exit $XRDEXIT
-fi
+cd $WprimeDir/proof/
+for i in `ls *.root`;
+do
+    xrdcp -vf $i root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/$i
+done

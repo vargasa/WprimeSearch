@@ -15,11 +15,8 @@ export FILES=$WprimeDir/proof/files/data/$1/UL/$2.txt
 echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE">../IsData.h
 root -l -b -q "MakeEventIDTree.C(\""$FILES"\","$NCORES")"
 
-xrdcp -f $WprimeDir/proof/EventIDTree_$1_$2.root root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/EventIDTree_$1_$2.root 2>&
-xrdcp -f $WprimeDir/proof/EntryLists_$1_$2.root root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/EntryLists_$1_$2.root 2>&1
-XRDEXIT=$?
-if [[ $XRDEXIT -ne 0 ]]; then
-    rm *.root
-    echo "exit code $XRDEXIT, failure in xrdcp"
-    exit $XRDEXIT
-fi
+cd $WprimeDir/proof/EntryListMaker/
+for i in `ls *.root`
+do
+    xrdcp -vf $i root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/$i
+done
