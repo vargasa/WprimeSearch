@@ -939,18 +939,19 @@ Float_t PreSelector::GetEtaPhiDistance(const float& eta1, const float& phi1,
 
 void PreSelector::FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent){
 
-#ifdef CMSDATA
-  assert( wcentral == 1.);
-#endif
-
   enum {
     kNoSf = 0,
     kCentral = 4,
   };
+
+#if defined(CMSDATA)
+  assert( wcentral == 1.);
   h1[nh+kNoSf]->Fill(binContent);
-#ifndef CMSDATA
+#else
+  h1[nh+kNoSf]->Fill(binContent,*genWeight);
   h1[nh+kCentral]->Fill(binContent,wcentral);
 #endif
+
 }
 
 void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Leptons& lw){
