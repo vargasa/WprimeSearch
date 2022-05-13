@@ -381,9 +381,12 @@ class PreSelector : public EventSelection {
   TH2F* SFElectronHLTMedium;
   TH2F* SFElectronHLTTight;
   TH2F* SFElectronReco;
+  TH2F* SFElectronRecoB20;
 #if defined(Y2016)
   TH2F* SFElectronRecopreVFP;
   TH2F* SFElectronRecopostVFP;
+  TH2F* SFElectronRecopreVFPB20;
+  TH2F* SFElectronRecopostVFPB20;
   TH2F* SFElectronHLTpreVFPLoose;
   TH2F* SFElectronHLTpreVFPMedium;
   TH2F* SFElectronHLTpreVFPTight;

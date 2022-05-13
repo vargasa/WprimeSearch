@@ -550,6 +550,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonTrkHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpostVFP"));
   SFElectronRecopreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronRecopreVFP"));
   SFElectronRecopostVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronRecopostVFP"));
+  SFElectronRecopreVFPB20 =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronRecopreVFPB20"));
+  SFElectronRecopostVFPB20 =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronRecopostVFPB20"));
   SFElectronHLTLoosepreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTLoosepreVFP"));
   SFElectronHLTMediumpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMediumpreVFP"));
   SFElectronHLTTightpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTightpreVFP"));
@@ -583,6 +585,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFMuonHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPt"));
   SFMuonTrkHighPtID = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtID"));
   SFElectronReco =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronReco"));
+  SFElectronRecoB20 =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronRecoB20"));
   SFElectronHLTLoose =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTLoose"));
   SFElectronHLTMedium =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTMedium"));
   SFElectronHLTTight =  dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronHLTTight"));
@@ -722,6 +725,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
 #elif defined(Y2016)
   if (IsPreVFP){
     SFElectronReco = SFElectronRecopreVFP;
+    SFElectronRecoB20 = SFElectronRecopreVFPB20;
     SFElectronLooseID = SFElectronLooseIDpreVFP;
     SFElectronMediumID = SFElectronMediumIDpreVFP;
     SFElectronTightID = SFElectronTightIDpreVFP;
@@ -736,6 +740,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
     }
   } else {
     SFElectronReco = SFElectronRecopostVFP;
+    SFElectronRecoB20 = SFElectronRecopostVFPB20;
     SFElectronLooseID = SFElectronLooseIDpostVFP;
     SFElectronMediumID = SFElectronMediumIDpostVFP;
     SFElectronTightID = SFElectronTightIDpostVFP;
@@ -2180,9 +2185,12 @@ void PreSelector::DefineSFs(const int& nh){
 
     float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
-    float ElRecol1 = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),0);
-    float ElRecol2 = GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),0);
-    float ElRecol3 = GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),0);
+    float ElRecol1 =
+      GetSFFromHisto(lep1.Pt() > 20.? SFElectronReco:SFElectronRecoB20,lep1.Eta(),lep1.Pt(),0);
+    float ElRecol2 =
+      GetSFFromHisto(lep2.Pt() > 20.? SFElectronReco:SFElectronRecoB20,lep2.Eta(),lep2.Pt(),0);
+    float ElRecol3 =
+      GetSFFromHisto(lep3.Pt() > 20.? SFElectronReco:SFElectronRecoB20,lep3.Eta(),lep3.Pt(),0);
     float ElIDl1 = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
     float ElIDl2 = GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
     float ElIDl3 = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
@@ -2229,8 +2237,8 @@ void PreSelector::DefineSFs(const int& nh){
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     float ElIDl1 = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
     float ElIDl2 = GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
-    float ElRecol1 = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),0);
-    float ElRecol2 = GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),0);
+    float ElRecol1 = GetSFFromHisto(lep1.Pt()>20.?SFElectronReco:SFElectronRecoB20,lep1.Eta(),lep1.Pt(),0);
+    float ElRecol2 = GetSFFromHisto(lep2.Pt()>20.?SFElectronReco:SFElectronRecoB20,lep2.Eta(),lep2.Pt(),0);
     float MuIDl3 = GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),0);
 
     wcentral = Pileup_*ElTrigger*MuTrigger*ElIDl1*ElIDl2*ElRecol1*ElRecol2*MuIDl3;
@@ -2277,7 +2285,7 @@ void PreSelector::DefineSFs(const int& nh){
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     float MuIDl1 = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),0);;
     float MuIDl2 = GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),0);;
-    float ElRecol3 = GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),0);
+    float ElRecol3 = GetSFFromHisto(lep3.Pt()>20.?SFElectronReco:SFElectronRecoB20,lep3.Eta(),lep3.Pt(),0);
     float ElIDl3 = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
 
     wcentral = Pileup_*ElTrigger*MuTrigger*MuIDl1*MuIDl2*ElRecol3*ElIDl3;
