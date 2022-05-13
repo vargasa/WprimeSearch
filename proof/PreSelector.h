@@ -140,6 +140,12 @@ class PreSelector : public EventSelection {
   TTreeReaderValue<Float_t> L1PreFiringWeight_Nom = {fReader, "L1PreFiringWeight_Nom"};
   TTreeReaderValue<Float_t> L1PreFiringWeight_Up = {fReader, "L1PreFiringWeight_Up"};
   TTreeReaderValue<Float_t> L1PreFiringWeight_Dn = {fReader, "L1PreFiringWeight_Dn"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Nom = {fReader, "L1PreFiringWeight_ECAL_Nom"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Up = {fReader, "L1PreFiringWeight_ECAL_Up"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Dn = {fReader, "L1PreFiringWeight_ECAL_Dn"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Muon_Nom = {fReader, "L1PreFiringWeight_Muon_Nom"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Muon_Up = {fReader, "L1PreFiringWeight_Muon_SystUp"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Muon_Dn = {fReader, "L1PreFiringWeight_Muon_SystDn"};
 #endif
 #endif
   // Neutrinos
@@ -224,6 +230,7 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HGenPartW;
   std::vector<TH2F*> HGenPartChgF;
   std::vector<TH1F*> HScaleFactors;
+  std::vector<TH2F*> HSFs;
   std::vector<TH2F*> HGenPartZWp;
   std::vector<TH2F*> HGenPartWWp;
 
@@ -353,7 +360,7 @@ class PreSelector : public EventSelection {
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;
   Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv, const Int_t option);
-  void DefineSFs();
+  void DefineSFs(const int& nh);
 
   MetUnclObj GetMetUncl();
 
