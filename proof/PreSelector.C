@@ -672,6 +672,8 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   MinPt = 32. + Delta;
 #endif
 
+  Float_t AbsMinPt = 10.; // No SF available under threshold
+
   std::pair<double,double> etaGap = std::make_pair(1.4442,1.5660);
 
   std::vector<UInt_t> GoodIndex = {};
@@ -688,14 +690,14 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   }
   GoodIndex.reserve(10);
 
-
   std::pair<float,float> phiHEM = {-1.57,-0.87};
   std::pair<float,float> etaHEM = {-2.5,-1.3};
 
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; ++i){
     double abseta =  abs(El.eta[i]);
-    if(El.cutBased[i]>=2 and
+    if(El.pt[i] > AbsMinPt and
+       El.cutBased[i]>=2 and
        abseta < MaxEta and
        ( abseta < etaGap.first or abseta > etaGap.second)
 #if defined(Y2018)
