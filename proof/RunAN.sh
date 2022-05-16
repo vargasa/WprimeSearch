@@ -51,11 +51,8 @@ elif [ "$2" = "DATA" ]; then
     cd $WprimeDir/proof/
     xrdcp root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/EntryListMaker/EntryLists_Unique.root $WprimeDir/proof/EntryListMaker/EntryLists_Unique.root
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-    if [ $1 -eq 2016 ] || [ $1 -eq 2017 ]; then
-        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/"$1"/UL/ULSinglePhoton.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleElectron.txt+"$WprimeDir"/proof/files/data/"$1"/UL/ULSingleMuon.txt\","$NCORES",\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
-    elif [[ $1 -eq 2018 ]]; then
-        export ROOTCommand="\""$OutputLabel"\",\""$WprimeDir"/proof/files/data/2018/UL/ULSingleMuon.txt+"$WprimeDir"/proof/files/data/2018/UL/ULEGamma.txt\","$NCORES",\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
-    fi
+    SAMPLEFILE=$WprimeDir"/proof/files/data/"$1"/UL/"$3
+    export ROOTCommand="\""$OutputLabel"\",\""$SAMPLEFILE"\","$NCORES",\""$WprimeDir"/proof/EntryListMaker/EntryLists_Unique.root\"";
     echo -e "#define Y"$1"\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
     echo $ROOTCommand
     root -l -b -q "Selector.C("$ROOTCommand")";
