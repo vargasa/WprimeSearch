@@ -880,9 +880,32 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       return hAll;
     }
     auto h = static_cast<TH1*>(f1->Get(hpath.c_str()));
-    h = static_cast<TH1*>(h->Clone());
+    if(h) h = static_cast<TH1*>(h->Clone());
     return h;
   };
+
+  std::function<TH1*(std::string,std::string)> getDataStack =
+    [&](std::string folder, std::string hName, std::string divider = "UL"){
+    std::clog << Form("Building Data Stack %s\n",folder.c_str());
+    std::string allSamples = folder.substr(folder.rfind("/")+1,folder.length());
+    std::string newSamples = allSamples;
+    std::vector<std::string> samples;
+    while(newSamples.rfind(divider) != std::string::npos){
+      Int_t last = newSamples.rfind(divider);
+      std::string tmp = newSamples.substr(last,newSamples.length());
+      std::cout << tmp << "\n";
+      samples.emplace_back(tmp);
+      newSamples = newSamples.substr(0,last);
+    }
+    assert(samples.size()>0);
+    std::string syr = folder.substr(0,folder.rfind("/")+1);
+    TH1F* h =
+    static_cast<TH1F*>(getHistoFromFile(syr+samples[0],hName)->Clone());
+    h->Add(getHistoFromFile(syr+samples[1],hName));
+    if(samples.size()>2) h->Add(getHistoFromFile(syr+samples[2],hName));
+    return h;
+  };
+
 
   std::function<void(const std::string)> diffSampleYear = [&] (const std::string& histoName) {
 
@@ -943,11 +966,16 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
+  std::set<std::string> MissingSamples;
   auto getBGStack = [&](int yr, std::string hname, TLegend* legend = NULL){
     THStack* hstck = new THStack();
     Int_t prevColor = -1;
     for (auto BGN: BgNames[yr]) {
       auto h = getHistoFromFile(Form("%d/%s",yr,BGN.folderName.c_str()),hname);
+      if(!h){
+        MissingSamples.insert(Form("%d/%s",yr,BGN.folderName.c_str()));
+        continue;
+      }
       applyLumiSF(h, Form("%d/%s",yr,BGN.folderName.c_str()), BGN.xsec);
       if(h->Integral() < 1e-6){
         std::cout << "\n\n*****************\n*****WARNING*****\n*****************\n"
@@ -1123,7 +1151,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string process  = "process\t";
     std::string rate     = "rate\t";
     std::string unc1     = "lumi_13TeV\tlnN\t";
-    std::vector<std::string> systEl = { "ElTrigger","ElID" };
+    std::vector<std::string> systEl = { "ElReco" , "ElTrigger","ElID" };
     std::vector<std::string> systMu = { "MuTrigger","MuID" };
     std::vector<std::string> systK = { "EWK","QCD" };
     std::string unc2     = "CMS_ElTrigger\tshape\t";
@@ -1133,7 +1161,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string unc6     = "CMS_KFactorQCD\tshape\t";
     std::string unc7     = "CMS_KFactorEWK\tshape\t";
     std::string unc8     = "CMS_MetUncl\tshape\t";
-
+    std::string unc9     = "CMS_ElReco\tshape\t";
 
     std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
       TH1* hzero = static_cast<TH1*>(hneg->Clone());
@@ -1229,6 +1257,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       unc6 += "--\t";
       unc7 += "--\t";
       unc8 += "--\t";
+      unc9 += "--\t";
 
       auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
                                     Form("%s_%s",fromHisto,ch.first.c_str()));
@@ -1254,6 +1283,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc4 += "1.0\t";
           unc5 += "-\t";
           unc8 += "1.0\t";
+          unc9 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "B") {
           unc2 += "1.0\t";
@@ -1261,6 +1291,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc4 += "1.0\t";
           unc5 += "1.0\t";
           unc8 += "1.0\t";
+          unc9 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "C") {
           unc2 += "1.0\t";
@@ -1268,6 +1299,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc4 += "1.0\t";
           unc5 += "1.0\t";
           unc8 += "1.0\t";
+          unc9 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "D") {
           unc2 += "-\t";
@@ -1306,6 +1338,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << unc6 << std::endl;
     dcFile << unc7 << std::endl;
     dcFile << unc8 << std::endl;
+    dcFile << unc9 << std::endl;
 
     fCombine->Close();
 
