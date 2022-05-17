@@ -1962,7 +1962,8 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
     break;
   }
 
-  assert(sf>=0.);
+  //std::cout <<  "\t" << h->GetName() <<"\t" << x << "\t" << y << ":\t" << sf << "\t" << h->GetBinErrorUp(nbin) << "\t" << h->GetBinErrorLow(nbin) << "\n";
+  assert(sf>0.);
 
   return sf;
 }
@@ -2018,7 +2019,7 @@ Double_t PreSelector::GetElTriggerSF(const Float_t& eta, const Float_t& pt,
   }
 #endif
 
-  assert(sf>0);
+  assert(sf>0.);
 
   return sf;
 
@@ -2165,16 +2166,19 @@ void PreSelector::DefineSFs(const int& nh){
   WPileupUp = GetSFFromHisto(SFPileupUp,*PV_npvs) ;
   WPileupDown = GetSFFromHisto(SFPileupDown,*PV_npvs);
 
+  //assert(WPileupUp > WPileupDown);
+
   if(IsA_){
+
+    TH1* SFElRecol1 = lep1.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
+    TH1* SFElRecol2 = lep2.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
+    TH1* SFElRecol3 = lep3.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
 
     float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
-    float ElRecol1 =
-      GetSFFromHisto(lep1.Pt() > 20.? SFElectronReco:SFElectronRecoB20,lep1.Eta(),lep1.Pt(),0);
-    float ElRecol2 =
-      GetSFFromHisto(lep2.Pt() > 20.? SFElectronReco:SFElectronRecoB20,lep2.Eta(),lep2.Pt(),0);
-    float ElRecol3 =
-      GetSFFromHisto(lep3.Pt() > 20.? SFElectronReco:SFElectronRecoB20,lep3.Eta(),lep3.Pt(),0);
+    float ElRecol1 = GetSFFromHisto(SFElRecol1,lep1.Eta(),lep1.Pt(),0);
+    float ElRecol2 = GetSFFromHisto(SFElRecol2,lep2.Eta(),lep2.Pt(),0);
+    float ElRecol3 = GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),0);
     float ElIDl1 = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
     float ElIDl2 = GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
     float ElIDl3 = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
@@ -2184,13 +2188,19 @@ void PreSelector::DefineSFs(const int& nh){
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],-1);
 
-    WElRecoUp = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),1);
-    WElRecoUp *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),1);
-    WElRecoUp *= GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),1);
+    assert(WElTrigUp > ElTrigger);
+    assert(WElTrigDown < ElTrigger);
 
-    WElRecoDown = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),-1);
-    WElRecoDown *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),-1);
-    WElRecoDown *= GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),-1);
+    WElRecoUp = GetSFFromHisto(SFElRecol1,lep1.Eta(),lep1.Pt(),1);
+    WElRecoUp *= GetSFFromHisto(SFElRecol2,lep2.Eta(),lep2.Pt(),1);
+    WElRecoUp *= GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),1);
+
+    WElRecoDown = GetSFFromHisto(SFElRecol1,lep1.Eta(),lep1.Pt(),-1);
+    WElRecoDown *= GetSFFromHisto(SFElRecol2,lep2.Eta(),lep2.Pt(),-1);
+    WElRecoDown *= GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),-1);
+
+    assert(WElRecoUp > ElRecol1*ElRecol2*ElRecol3);
+    assert(WElRecoDown < ElRecol1*ElRecol2*ElRecol3);
 
     WElIDUp =  GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
     WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
@@ -2199,6 +2209,9 @@ void PreSelector::DefineSFs(const int& nh){
     WElIDDown = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),-1);
     WElIDDown *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),-1);
     WElIDDown *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),-1);
+
+    assert(WElIDUp > ElIDl1*ElIDl2*ElIDl3);
+    assert(WElIDDown < ElIDl1*ElIDl2*ElIDl3);
 
     WAllUp = WPileupUp*WElTrigUp*WElRecoUp*WElIDUp;
     WAllDown = WPileupDown*WElTrigDown*WElRecoDown*WElIDDown;
@@ -2222,6 +2235,9 @@ void PreSelector::DefineSFs(const int& nh){
 
   } else if (IsB) {
 
+    TH1* SFElRecol1 = lep1.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
+    TH1* SFElRecol2 = lep2.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
+
     float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
@@ -2236,14 +2252,24 @@ void PreSelector::DefineSFs(const int& nh){
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
 
+    assert(WElTrigUp > ElTrigger);
+    assert(WElTrigDown < ElTrigger);
+
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
-    WElRecoUp = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),1);
-    WElRecoUp *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),1);
+    assert(WMuTrigUp > MuTrigger);
+    assert(WMuTrigDown < MuTrigger);
 
-    WElRecoDown = GetSFFromHisto(SFElectronReco,lep1.Eta(),lep1.Pt(),-1);
-    WElRecoDown *= GetSFFromHisto(SFElectronReco,lep2.Eta(),lep2.Pt(),-1);
+    WElRecoUp = GetSFFromHisto(SFElRecol1,lep1.Eta(),lep1.Pt(),1);
+    WElRecoUp *= GetSFFromHisto(SFElRecol2,lep2.Eta(),lep2.Pt(),1);
+
+    assert(WElRecoUp > ElRecol1*ElRecol2);
+
+    WElRecoDown = GetSFFromHisto(SFElRecol1,lep1.Eta(),lep1.Pt(),-1);
+    WElRecoDown *= GetSFFromHisto(SFElRecol2,lep2.Eta(),lep2.Pt(),-1);
+
+    assert(WElRecoDown < ElRecol1*ElRecol2);
 
     WElIDUp = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
     WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
@@ -2251,8 +2277,14 @@ void PreSelector::DefineSFs(const int& nh){
     WElIDDown = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),-1);
     WElIDDown *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),-1);
 
+    assert(WElIDUp > ElIDl1*ElIDl2);
+    assert(WElIDDown < ElIDl1*ElIDl2);
+
     WMuIDUp = GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),1);
     WMuIDDown = GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),-1);
+
+    assert(WMuIDUp > MuIDl3);
+    assert(WMuIDDown < MuIDl3);
 
     WAllUp = WPileupUp*WElTrigUp*WMuTrigUp*WElIDUp*WElRecoUp*WMuIDUp;
     WAllDown = WPileupDown*WElTrigDown*WMuTrigDown*WElIDDown*WElRecoDown*WMuIDDown;
@@ -2275,32 +2307,49 @@ void PreSelector::DefineSFs(const int& nh){
 
   } else if (IsC) {
 
+    TH1* SFElRecol3 = lep3.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
+
     float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     float MuIDl1 = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),0);;
     float MuIDl2 = GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),0);;
-    float ElRecol3 = GetSFFromHisto(lep3.Pt()>20.?SFElectronReco:SFElectronRecoB20,lep3.Eta(),lep3.Pt(),0);
+    float ElRecol3 = GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),0);
     float ElIDl3 = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
 
     WCentral = Pileup_*ElTrigger*MuTrigger*MuIDl1*MuIDl2*ElRecol3*ElIDl3;
 
-    WElRecoUp = GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),1);
-    WElRecoDown = GetSFFromHisto(SFElectronReco,lep3.Eta(),lep3.Pt(),-1);
+    WElRecoUp = GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),1);
+    WElRecoDown = GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),-1);
+
+    assert(WElRecoUp > ElRecol3);
+    assert(WElRecoDown < ElRecol3);
 
     WElTrigUp = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],1);
     WElTrigDown = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],-1);
+
+    assert(WElTrigUp > ElTrigger);
+    assert(WElTrigDown < ElTrigger);
+
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
-    WMuIDUp   = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),1);
-    WMuIDDown = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),-1);
+    assert(WMuTrigUp > MuTrigger);
+    assert(WMuTrigDown < MuTrigger);
 
+    WMuIDUp   = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),1);
     WMuIDUp  *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),1);
+    WMuIDDown = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),-1);
     WMuIDDown *= GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),-1);
+
+    assert(WMuIDUp > MuIDl1*MuIDl2);
+    assert(WMuIDDown < MuIDl1*MuIDl2);
 
     WElIDUp   = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),1);
     WElIDDown = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),-1);
+
+    assert(WElIDUp > ElIDl3);
+    assert(WElIDDown < ElIDl3);
 
     WAllUp = WPileupUp*WElTrigUp*WMuTrigUp*WMuIDUp*WElRecoUp*WElIDUp;
     WAllDown = WPileupDown*WElTrigDown*WMuTrigDown*WMuIDDown*WElRecoDown*WElIDDown;
@@ -2333,6 +2382,9 @@ void PreSelector::DefineSFs(const int& nh){
     WMuTrigUp = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],1);
     WMuTrigDown = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],-1);
 
+    assert(WMuTrigUp > MuTrigger);
+    assert(WMuTrigDown < MuTrigger);
+
     WMuIDUp   = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),1);
     WMuIDDown = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),-1);
 
@@ -2341,6 +2393,9 @@ void PreSelector::DefineSFs(const int& nh){
 
     WMuIDUp   *= GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),1);
     WMuIDDown *= GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),-1);
+
+    assert(WMuIDUp > MuIDl1*MuIDl2*MuIDl3);
+    assert(WMuIDDown < MuIDl1*MuIDl2*MuIDl3);
 
     WAllUp = WPileupUp*WMuTrigUp*WMuIDUp;
     WAllDown = WPileupUp*WMuTrigDown*WMuIDDown;
@@ -2392,9 +2447,18 @@ void PreSelector::DefineSFs(const int& nh){
   WMuIDUp *= *genWeight;
   WMuIDDown *= *genWeight;
 
+  // std::cout << IsA_ << IsB << IsC << IsD << "\t"
+  //           << WAllDown << "\t"
+  //           << WCentral << "\t"
+  //           << WAllUp << "\t\n";
+
+  // assert(WCentral < WAllUp);
+  // assert(WCentral > WAllDown);
+
   HSFs[nh]->Fill("Central",WCentral,1.);
   HSFs[nh]->Fill("WAllDown",WAllDown,1.);
   HSFs[nh]->Fill("WAllUp",WAllUp,1.);
+
 }
 ///////////////////////////////////////////////////////////
 #endif /////////////// Only MC Methods ////////////////////
