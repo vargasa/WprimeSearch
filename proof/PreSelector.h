@@ -302,7 +302,7 @@ class PreSelector : public EventSelection {
 
   Float_t PairZMass;
 
-  Double_t wcentral;
+  Double_t WCentral, WAllUp, WAllDown;
   Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
     WElRecoUp,WElRecoDown,WPileupUp,WPileupDown,
     WElIDUp,WElIDDown,WMuIDUp,WMuIDDown,
