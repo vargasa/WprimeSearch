@@ -107,8 +107,13 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                            Args... args){
 
   std::vector<std::string> idst = {};
-  std::vector<std::string> crs_ = { "SR1","CR1","CR2"};
-  std::vector<std::string> weights_ = { "NoSF", "WCentral", "WAllUp", "WAllDown"};
+  std::vector<std::string> crs_ = { "SR1","CR1","CR2"}; // 16 Slots per region: 4 Weights * 4 Channels
+  std::vector<std::string> weights_ = {
+    "NoSF"
+#if !defined(CMSDATA)
+    , "WCentral", "WAllUp", "WAllDown"
+#endif
+  };
   std::vector<std::string> chs_ = { "A", "B", "C", "D" };
 
   for(auto cr: crs_){
@@ -136,7 +141,6 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
       "MuTrigger","MuID",
       "MetUncl",
       "Pileup",
-      "AllUp","AllDown"
     };
 #if defined(Y2016) || defined (Y2017)
     sys.push_back("L1Pref");
@@ -1717,20 +1721,33 @@ Bool_t PreSelector::Process(Long64_t entry) {
            *run, *event, *luminosityBlock, zb.M());
   };
 
+#if !defined(CMSDATA)
+  enum {
+    kSR1 = 0,
+    kCR1 = 16, // 4 Channels * 4 Weights
+    kCR2 = 32,
+  };
+#else
+  enum {
+    kSR1 = 0,
+    kCR1 = 4, // 4 Channels
+    kCR2 = 8
+  }
+#endif
 
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist < 1.5;
   if(IsZMassOk){
     if(ZDistCut){
       HCutFlow->FillS("SR1");
-      FillRegion(0,Els,Mus); // 1st SR
+      FillRegion(kSR1,Els,Mus);
     } else {
       HCutFlow->FillS("CR1");
-      FillRegion(8,Els,Mus); // 8 -> CR1 Slot
+      FillRegion(kCR1,Els,Mus);
     }
   } else {
     HCutFlow->FillS("CR2");
-    FillRegion(16,Els,Mus);
+    FillRegion(kCR2,Els,Mus);
   }
 
   return kTRUE;
@@ -2113,6 +2130,7 @@ void PreSelector::DefineSFs(const int& nh){
 
   WPileupUp = GetSFFromHisto(SFPileupUp,*PV_npvs) ;
   WPileupDown = GetSFFromHisto(SFPileupDown,*PV_npvs);
+  float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
 
   //assert(WPileupUp > WPileupDown);
 
@@ -2122,7 +2140,6 @@ void PreSelector::DefineSFs(const int& nh){
     TH1* SFElRecol2 = lep2.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
     TH1* SFElRecol3 = lep3.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
 
-    float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx], Electron_pt[leadElIdx],0);
     float ElRecol1 = GetSFFromHisto(SFElRecol1,lep1.Eta(),lep1.Pt(),0);
     float ElRecol2 = GetSFFromHisto(SFElRecol2,lep2.Eta(),lep2.Pt(),0);
@@ -2186,7 +2203,6 @@ void PreSelector::DefineSFs(const int& nh){
     TH1* SFElRecol1 = lep1.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
     TH1* SFElRecol2 = lep2.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
 
-    float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     float ElIDl1 = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
@@ -2257,7 +2273,6 @@ void PreSelector::DefineSFs(const int& nh){
 
     TH1* SFElRecol3 = lep3.Pt() > 20.? SFElectronReco:SFElectronRecoB20;
 
-    float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     float MuIDl1 = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),0);;
@@ -2319,7 +2334,6 @@ void PreSelector::DefineSFs(const int& nh){
 
   } else if (IsD) {
 
-    float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
     float MuIDl1 = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),0);
     float MuIDl2 = GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),0);
@@ -2354,6 +2368,7 @@ void PreSelector::DefineSFs(const int& nh){
     WAllDown *= *L1PreFiringWeight_Muon_Dn;
     HSFs[nh]->Fill("Prefiring",*L1PreFiringWeight_Muon_Nom,1.);
 #endif
+    HSFs[nh]->Fill("Pileup",Pileup_,1.);
     HSFs[nh]->Fill("MuTrigger",MuTrigger,1.);
     HSFs[nh]->Fill("MuIDl1",MuIDl1,1.);
     HSFs[nh]->Fill("MuIDl2",MuIDl2,1.);
