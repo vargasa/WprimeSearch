@@ -55,7 +55,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         {
           BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
           BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,1.381e+01},
-          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.592e+02},
+          //BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.592e+02},
+          //BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",kBlue-2,5.675e1},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.148e+01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.399e+02},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.401e+02},
@@ -66,7 +67,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.324e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.974e-03},
           BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.161e-01},
-          //BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
+          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
+          BackgroundInfo{"TTV","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kCyan+1,365.9744},
+          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,0.283}, /*XSecAnayzer 0.*/
           BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.916e-01}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
@@ -88,7 +91,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         {
           BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
           BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,1.381e+01},
-          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.546e+02},
+          //BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.546e+02},
+          //BackgroundInfo{"t#bar{t}","TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8",kBlue-2,5.434e+1},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.557e+01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.393e+02},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,},
@@ -99,7 +103,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.330e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.975e-03},
           BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.162e-01},
-          //BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
+          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
+          BackgroundInfo{"TTV","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kCyan+1,365.9744},
+          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,5.324e-2},
           BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.910e-01},
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
@@ -119,9 +125,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2018,
         {
-          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin0p1_TuneCP5_13TeV-powheg-pythia8",kOrange,6.217e+01},
+          //BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
           BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,1.381e+01},
-          BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.560e+02},
+          //BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.560e+02},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.557e+01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.398e+02},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.405e+02},
@@ -132,7 +139,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.328e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.987e-03},
           BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.166e-01},
-          //BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
+          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
+          BackgroundInfo{"TTV","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kCyan+1,365.9744},
+          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,5.324e-2},
           BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.901e-01},
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
@@ -246,7 +255,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"ST","ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8",kGreen+3,3.740e+0},
           BackgroundInfo{"ST","ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.497e+1},
           BackgroundInfo{"ST","ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",kGreen+3,3.491e+1},
-
         }
       }
     };
@@ -647,6 +655,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     { "HCosl3Met_B","ee#mu#nu;cos(#phi_{l3}-#phi_{MET});Event count" },
     { "HCosl3Met_C","#mu#mue#nu;cos(#phi_{l3}-#phi_{MET});Event count" },
     { "HCosl3Met_D","#mu#mu#mu#nu;cos(#phi_{l3}-#phi_{MET});Event count" },
+    { "HMuonPtDiff_B","ee#mu#nu;(tunePPt - PFPt)/PFPt;Muon count"},
+    { "HMuonPtDiff_C","#mu#mue#nu;(tunePPt - PFPt)/PFPt;Muon count"},
+    { "HMuonPtDiff_D","#mu#mu#mu#nu;(tunePPt - PFPt)/PFPt;Muon count"},
   };
 
   std::vector<std::string> HistNames = {
@@ -1154,6 +1165,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::vector<std::string> systEl = { "ElReco" , "ElTrigger","ElID" };
     std::vector<std::string> systMu = { "MuTrigger","MuID" };
     std::vector<std::string> systK = { "EWK","QCD" };
+    std::vector<std::string> systShared = { "Pileup", "MetUncl" };
     std::string unc2     = "CMS_ElTrigger\tshape\t";
     std::string unc3     = "CMS_MuTrigger\tshape\t";
     std::string unc4     = "CMS_ElID\tshape\t";
@@ -1162,6 +1174,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string unc7     = "CMS_KFactorEWK\tshape\t";
     std::string unc8     = "CMS_MetUncl\tshape\t";
     std::string unc9     = "CMS_ElReco\tshape\t";
+    std::string unc10    = "CMS_Pileup\tshape\t";
 
     std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
       TH1* hzero = static_cast<TH1*>(hneg->Clone());
@@ -1219,9 +1232,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         }
       }
 
-      hname = Form("%s_%s_MetUncl",fromHisto,ch.c_str());
-      saveUpDown(folderName,hname,"MetUncl");
-
+      for (auto s: systShared){
+        hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
+        saveUpDown(folderName,hname,s);
+      }
 
       if(folderName.find(DYSample.c_str()) != std::string::npos){
         for (auto s: systK) {
@@ -1239,7 +1253,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       fCombine->cd(ch.second.c_str());
 
       SignalInfo signal = SignalSamples[year][SignalPos[wpmass]];
-      TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_%s_Central",fromHisto,ch.first.c_str()));
+      TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_%s_WCentral",fromHisto,ch.first.c_str()));
       applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
       hsig->Write(Form("Wprime%d",wpmass));
 
@@ -1258,6 +1272,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       unc7 += "--\t";
       unc8 += "--\t";
       unc9 += "--\t";
+      unc10 += "--\t";
 
       auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
                                     Form("%s_%s",fromHisto,ch.first.c_str()));
@@ -1271,7 +1286,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         processn += Form("%d\t",counter);
         process += Form("%s\t",BGN.folderName.c_str());
         std::string fname = Form("%d/%s",year,BGN.folderName.c_str());
-        auto h = stripNegativeBins(getHistoFromFile(fname.c_str(),Form("%s_%s_Central",fromHisto,ch.first.c_str())));
+        auto h = stripNegativeBins(getHistoFromFile(fname.c_str(),Form("%s_%s_WCentral",fromHisto,ch.first.c_str())));
         applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
         rate += Form("%.2f\t",h->Integral());
         h->Write(BGN.folderName.c_str());
@@ -1284,6 +1299,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc5 += "-\t";
           unc8 += "1.0\t";
           unc9 += "1.0\t";
+          unc10 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "B") {
           unc2 += "1.0\t";
@@ -1292,6 +1308,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc5 += "1.0\t";
           unc8 += "1.0\t";
           unc9 += "1.0\t";
+          unc10 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "C") {
           unc2 += "1.0\t";
@@ -1300,6 +1317,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc5 += "1.0\t";
           unc8 += "1.0\t";
           unc9 += "1.0\t";
+          unc10 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "D") {
           unc2 += "-\t";
@@ -1307,6 +1325,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc4 += "-\t";
           unc5 += "1.0\t";
           unc8 += "1.0\t";
+          unc10 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         }
 
@@ -1339,6 +1358,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << unc7 << std::endl;
     dcFile << unc8 << std::endl;
     dcFile << unc9 << std::endl;
+    dcFile << unc10 << std::endl;
 
     fCombine->Close();
 
@@ -1513,7 +1533,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     mg->Add(GHLTEff,"P");
     mg->Draw("A");
     gPad->BuildLegend();
-    c1->Print(Form("plots/%d/%s_%d_SignalTriggerEfficiency.png",yr,fileLabel.c_str(),yr));
+    c1->Print(Form("plots/%d/%s_%d_SignalTriggerEfficiency.pdf",yr,fileLabel.c_str(),yr));
     c1->Write(Form("%d_%s_SignalTriggerEfficiency",yr,fileLabel.c_str()));
 
     delete c1;
@@ -1604,17 +1624,17 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     bool includeAllYears{};
 
     std::function<void(std::string&)> removeCentral = [&] (std::string& s){
-      if (s.find("_Central") != std::string::npos){
-        s.erase(s.find("_Central"),8);
-
+      if (s.find("_WCentral") != std::string::npos){
+        s.erase(s.find("_WCentral"),9);
       } else if (s.find("_Up") != std::string::npos) {
         s.erase(s.find("_Up"),3);
       } else if ( s.find("_Down") != std::string::npos){
         s.erase(s.find("_Down"),5);
       }
-      if (s.find("_Central") != std::string::npos)  removeCentral(s);
+      if (s.find("_WCentral") != std::string::npos)  removeCentral(s);
       if (s.find("_Up")      != std::string::npos)  removeCentral(s);
       if (s.find("_Down")    != std::string::npos)  removeCentral(s);
+      s.append("_NoSF");
     };
 
     TCanvas* c1;
@@ -1649,7 +1669,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       if (year == 0) includeAllYears = true;
       hName = hName.substr(5,hName.size());
       if(hName.find("HFakeString") == std::string::npos)
-        hName += "_Central"; // Include Central SF and genWeight 
+        hName += "_WCentral"; // Include Central SF and genWeight
       SignalInfo signal;
       if (!includeAllYears) signal = SignalSamples[year][SignalPos[WpMass]];
       Int_t r = (j-1)%npads;
@@ -1759,6 +1779,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hsig->SetLineWidth(3);
       hsig->SetFillColor(0);
       std::string labelIdx = dataHName;
+      labelIdx.erase(labelIdx.find("_NoSF"),5);
       if (hName.find("CR1_") != std::string::npos) {
         labelIdx.erase(labelIdx.find("CR1_"),4);
       } else if (hName.find("CR2_") != std::string::npos) {
@@ -1776,8 +1797,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       std::cout << "TITLE::::::::\\n\n\n\n\n\n" << labelIdx.c_str() << "\n\n\n\n\n";
 
-      if (hName.find("CR1_") != std::string::npos) {
-        hs->SetTitle((Labels[labelIdx].c_str() + std::string(" CR")).c_str());
+      if (hName.find("CR1") != std::string::npos) {
+        hs->SetTitle((Labels[labelIdx].c_str() + std::string(" CR1")).c_str());
+      } else if (hName.find("CR2_") != std::string::npos) {
+        hs->SetTitle((Labels[labelIdx].c_str() + std::string(" CR2")).c_str());
+      } else if (hName.find("SR1_") != std::string::npos) {
+      hs->SetTitle((Labels[labelIdx].c_str() + std::string(" SR")).c_str());
       }
 
       legend->SetBorderSize(0);
@@ -1802,11 +1827,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
         TH1* hdata;
         if(includeAllYears){
-          hdata = getHistoFromFile(Form("%d/%s",2016,DataSampleNames[2016].c_str()),dataHName);
-          hdata->Add(getHistoFromFile(Form("%d/%s",2017,DataSampleNames[2017].c_str()),dataHName));
-          hdata->Add(getHistoFromFile(Form("%d/%s",2018,DataSampleNames[2018].c_str()),dataHName));
+          hdata = getDataStack(Form("%d/%s",2016,DataSampleNames[2016].c_str()),dataHName);
+          hdata->Add(getDataStack(Form("%d/%s",2017,DataSampleNames[2017].c_str()),dataHName));
+          hdata->Add(getDataStack(Form("%d/%s",2018,DataSampleNames[2016].c_str()),dataHName));
         } else {
-          hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
+          hdata = getDataStack(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
         }
 
         yieldsTable.push_back(printYieldsTable(hs, hdata));
