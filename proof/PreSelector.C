@@ -107,7 +107,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
                            Args... args){
 
   std::vector<std::string> idst = {};
-  std::vector<std::string> crs_ = { "SR1","CR1","CR2","CR3" };
+  std::vector<std::string> crs_ = { "SR1","CR1","CR2"};
   std::vector<std::string> weights_ = { "NoSF", "WCentral", "WAllUp", "WAllDown"};
   std::vector<std::string> chs_ = { "A", "B", "C", "D" };
 
@@ -231,36 +231,25 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HDistZW,"HDistZW",DistBins,0.,MaxDist);
   InitHVec<TH2F>(HIDl1l2,"HIDl1l2",2,0.,2.,3,0.,3.);
 
-  InitHVec<TH1F>(HWZDist,"HWZDist",DistBins,0.,MaxDist);
-  InitHVec<TH2F>(HWZPtDist,"HWZPtDist",100,0.,1400.,DistBins,0.,MaxDist);
   InitHVec<TH1F>(HZPt,"HZPt",60,0.,1e3);
   InitHVec<TH1F>(HWPt,"HWPt",60,0.,1e3);
   InitHVec<TH1F>(HWZPt,"HWZPt",60,0.,1e3);
 
+  InitHVec<TH1F>(HDxyl1,"HDxyl1",100,-0.25,0.25);
+  InitHVec<TH1F>(HDxyl2,"HDxyl2",100,-0.25,0.25);
+  InitHVec<TH1F>(HDxyl3,"HDxyl3",100,-0.25,0.25);
 
-  InitHVec<TH1F>(HDxyl1,"HDxyl1",1500,-0.25,0.25);
-  InitHVec<TH1F>(HDxyl2,"HDxyl2",1500,-0.25,0.25);
-  InitHVec<TH1F>(HDxyl3,"HDxyl3",1500,-0.25,0.25);
+  InitHVec<TH1F>(HDzl1,"HDzl1",50,-0.25,0.25);
+  InitHVec<TH1F>(HDzl2,"HDzl2",50,-0.25,0.25);
+  InitHVec<TH1F>(HDzl3,"HDzl3",50,-0.25,0.25);
 
-  InitHVec<TH2F>(HDxyl1l2,"HDxyl1l2",
-                 1500,-0.25,0.25,
-                 1500,-0.25,0.25);
+  InitHVec<TH1F>(HIP3Dl1,"HIP3Dl1",63,0.,0.25);
+  InitHVec<TH1F>(HIP3Dl2,"HIP3Dl2",63,0.,0.25);
+  InitHVec<TH1F>(HIP3Dl3,"HIP3Dl3",63,0.,0.25);
 
-  InitHVec<TH1F>(HDzl1,"HDzl1",400,-0.5,0.5);
-  InitHVec<TH1F>(HDzl2,"HDzl2",400,-0.5,0.5);
-  InitHVec<TH1F>(HDzl3,"HDzl3",400,-0.5,0.5);
-
-  InitHVec<TH1F>(HIP3Dl1,"HIP3Dl1",400,-0.5,0.5);
-  InitHVec<TH1F>(HIP3Dl2,"HIP3Dl2",400,-0.5,0.5);
-  InitHVec<TH1F>(HIP3Dl3,"HIP3Dl3",400,-0.5,0.5);
-
-  InitHVec<TH1F>(HSIP3Dl1,"HSIP3Dl1",400,-50.,50.);
-  InitHVec<TH1F>(HSIP3Dl2,"HSIP3Dl2",400,-50.,50.);
-  InitHVec<TH1F>(HSIP3Dl3,"HSIP3Dl3",400,-50.,50.);
-
-  InitHVec<TH1F>(HRelIsol1,"HRelIsol1",100,0.,1.0);
-  InitHVec<TH1F>(HRelIsol2,"HRelIsol2",100,0.,1.0);
-  InitHVec<TH1F>(HRelIsol3,"HRelIsol3",100,0.,1.0);
+  InitHVec<TH1F>(HSIP3Dl1,"HSIP3Dl1",125,0.,50.);
+  InitHVec<TH1F>(HSIP3Dl2,"HSIP3Dl2",125,0.,50.);
+  InitHVec<TH1F>(HSIP3Dl3,"HSIP3Dl3",125,0.,50.);\
 
   const Double_t MaxnLep = 7;
   const Double_t MinnLep = 0;
@@ -272,7 +261,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t nJetBins = 15;
   InitHVec<TH1F>(HnJet,"HnJet",nJetBins,0.,(float)nJetBins);
 
-  InitHVec<TH1F>(HMuonPtDiff,"HMuonPtDiff",201,-0.4,0.4);
+  InitHVec<TH1F>(HMuonPtDiff,"HMuonPtDiff",51,-0.05,0.05);
   InitHVec<TH1F>(HMuonPF,"HMuonPF",2,0.,2.);
 
   const Float_t MinMass = 0.;
@@ -309,7 +298,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HCosl3Met,"HCosl3Met",100 , -1., 1.);
 
   InitHVec<TH2F>(HMassZWZ,"HMassZWZ",MassBins,0.,1.5*HMaxZMass,MassBins,0.,MaxMass);
-  InitHVec<TH2F>(HMuonPtType,"HMuonPtType",2,0.,2.,201,-0.4,0.4);
+  InitHVec<TH2F>(HMuonPtType,"HMuonPtType",2,0.,2.,51,-0.05,0.05);
 
   InitHVec<TH2F>(HZElId,"HZElId",6,-0.5,5.5,6,-0.5,5.5);
 
@@ -320,9 +309,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t NBinsWZM = 45;
   const Int_t ZPtBins = 20;
   const Float_t ZPtMax = 2000;
-  InitHVec<TH2F>(HMassZTW,"HMassZTW",
-                 ZMassBins, HMinZMass, HMaxZMass,
-                 TWMassBins,0.,MaxTWMass);
 
   InitHVec<TH2F>(HDeltaRPtZ,"HDeltaRPtZ",
                  NBinsDeltaR,0.,MaxDeltaR,
@@ -334,10 +320,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH2F>(HDeltaRMWZ,"HDeltaRMWZ",
                  NBinsDeltaR,0.,MaxDeltaR,
-                 NBinsWZM,MinWZM,MaxWZM);
-
-  InitHVec<TH2F>(HLtMWZ,"HLtMWZ",
-                 20,0.,2000.,
                  NBinsWZM,MinWZM,MaxWZM);
 
 
@@ -398,25 +380,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HElEta,"HElEta",EtaBins,-1*MaxEta,MaxEta);
   InitHVec<TH1F>(HMuEta,"HMuEta",EtaBins,-1*MaxEta,MaxEta);
 
-  InitHVec<TH2F>(HPtEtal1,"HPtEtal1",
-                 MetBins,0, MaxPtMet,
-                 EtaBins,-1*MaxEta,MaxEta);
-
-  InitHVec<TH2F>(HPtEtal2,"HPtEtal2",
-                 MetBins,0, MaxPtMet,
-                 EtaBins,-1*MaxEta,MaxEta);
-
-
-  InitHVec<TH2F>(HPtEtal3,"HPtEtal3",
-                 MetBins,0, MaxPtMet,
-                 EtaBins,-1*MaxEta,MaxEta);
-
   const Float_t MaxPhi = TMath::Pi();
   const Int_t PhiBins = 20;
 
-  InitHVec<TH2F>(HEtaPhil1,"HEtaPhil1",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
-  InitHVec<TH2F>(HEtaPhil2,"HEtaPhil2",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
-  InitHVec<TH2F>(HEtaPhil3,"HEtaPhil3",EtaBins,-1.*MaxEta,MaxEta,PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH2F>(HPtl1l2,"HPtl1l2",50,0,250,50,0,250);
   InitHVec<TH2F>(HPtl1l3,"HPtl1l3",50,0,250,50,0,250);
   InitHVec<TH1F>(HPhil1,"HPhil1",PhiBins,-1*MaxPhi,MaxPhi);
@@ -967,29 +933,18 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   Int_t nh = nch + crOffset;
 
   // dR Histos
-  Double_t wzdist = GetEtaPhiDistance(wb.Met.Eta(),wb.Met.Phi(),zb.Eta(),zb.Phi());
   Double_t l1l2dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Double_t l1l3dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep3.Eta(),lep3.Phi());
   Double_t l2l3dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
 
   // 2DHistos
-  HWZPtDist[nh]->Fill((wb.Met+zb).Pt(),wzdist);
-  HPtEtal1[nh]->Fill(lep1.Pt(),lep1.Eta());
-  HPtEtal2[nh]->Fill(lep2.Pt(),lep2.Eta());
-  HPtEtal3[nh]->Fill(lep3.Pt(),lep3.Eta());
-  HMassZTW[nh]->Fill(zb.M(),wmt.Met);
   HDeltaRPtZ[nh]->Fill(l1l2dist,zb.Pt());
   HPtWPtZ[nh]->Fill(wb.Met.Pt(),zb.Pt());
   HDeltaRMWZ[nh]->Fill(l1l2dist,(wb.Met+zb).M());
-  HLtMWZ[nh]->Fill(lt,(wb.Met+zb).M());
   HNLep[nh]->Fill(GoodMuon.size(),GoodElectron.size());
   HMassZWZ[nh]->Fill(PairZMass,(wb.Met+zb).M());
-  HEtaPhil1[nh]->Fill(lep1.Eta(),lep1.Phi());
-  HEtaPhil2[nh]->Fill(lep2.Eta(),lep2.Phi());
-  HEtaPhil3[nh]->Fill(lep3.Eta(),lep3.Phi());
   HPtl1l2[nh]->Fill(lep1.Pt(),lep2.Pt());
   HPtl1l3[nh]->Fill(lep1.Pt(),lep3.Pt());
-  HDxyl1l2[nh]->Fill(lz.dxy[l1],lz.dxy[l2]);
 
   if(IsA_ or IsB) { // PairEl
     HZElId[nh]->Fill(Electron_cutBased[l1],Electron_cutBased[l2]);
@@ -1254,7 +1209,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   }
 
   // dR Histos
-  FillH1(HWZDist,nh,wzdist);
   FillH1(HDistl1l2,nh,l1l2dist);
   FillH1(HDistl1l3,nh,l1l3dist);
   FillH1(HDistl2l3,nh,l2l3dist);
@@ -1284,9 +1238,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HSIP3Dl1,nh,lz.sip3d[l1]);
   FillH1(HSIP3Dl2,nh,lz.sip3d[l2]);
   FillH1(HSIP3Dl3,nh,lw.sip3d[l3]);
-  FillH1(HRelIsol1,nh,lz.relIso[l1]);
-  FillH1(HRelIsol2,nh,lz.relIso[l2]);
-  FillH1(HRelIsol3,nh,lz.relIso[l3]);
 }
 
 
@@ -1780,10 +1731,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
   } else {
     HCutFlow->FillS("CR2");
     FillRegion(16,Els,Mus);
-    if(nbTag()>=2){
-      HCutFlow->FillS("CR3");
-      FillRegion(24,Els,Mus);
-    }
   }
 
   return kTRUE;
@@ -1962,8 +1909,9 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
     break;
   }
 
-  //std::cout <<  "\t" << h->GetName() <<"\t" << x << "\t" << y << ":\t" << sf << "\t" << h->GetBinErrorUp(nbin) << "\t" << h->GetBinErrorLow(nbin) << "\n";
-  assert(sf>0.);
+  //std::cout <<  "\t" << h->GetName() <<":" << option <<"\t" << x << "\t" << y << ":\t" << sf << "\t" << h->GetBinErrorUp(nbin) << "\t" << h->GetBinErrorLow(nbin) << "\n";
+  assert(option >= 0? sf>0. : sf>=0.);
+
 
   return sf;
 }

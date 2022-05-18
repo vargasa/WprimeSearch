@@ -180,7 +180,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HDxyl1;
   std::vector<TH1F*> HDxyl2;
   std::vector<TH1F*> HDxyl3;
-  std::vector<TH2F*> HDxyl1l2;
   std::vector<TH1F*> HDzl1;
   std::vector<TH1F*> HDzl2;
   std::vector<TH1F*> HDzl3;
@@ -190,22 +189,14 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HSIP3Dl1;
   std::vector<TH1F*> HSIP3Dl2;
   std::vector<TH1F*> HSIP3Dl3;
-  std::vector<TH1F*> HRelIsol1;
-  std::vector<TH1F*> HRelIsol2;
-  std::vector<TH1F*> HRelIsol3;
   std::vector<TH1F*> HnJet;
   std::vector<TH1F*> HMuonPtDiff;
   std::vector<TH1F*> HMuonPF;
 
   std::vector<TH2F*> HMassZWZ;
-  std::vector<TH2F*> HMassZTW;
   std::vector<TH2F*> HDeltaRPtZ;
   std::vector<TH2F*> HPtWPtZ;
   std::vector<TH2F*> HDeltaRMWZ;
-  std::vector<TH2F*> HLtMWZ;
-  std::vector<TH2F*> HEtaPhil1;
-  std::vector<TH2F*> HEtaPhil2;
-  std::vector<TH2F*> HEtaPhil3;
   std::vector<TH2F*> HPtl1l2;
   std::vector<TH2F*> HPtl1l3;
   std::vector<TH2F*> HZElId;
@@ -256,10 +247,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HElEta;
   std::vector<TH1F*> HMuEta;
 
-  std::vector<TH2F*> HPtEtal1;
-  std::vector<TH2F*> HPtEtal2;
-  std::vector<TH2F*> HPtEtal3;
-
   std::vector<TH1F*> HPhil1;
   std::vector<TH1F*> HPhil2;
   std::vector<TH1F*> HPhil3;
@@ -271,10 +258,8 @@ class PreSelector : public EventSelection {
 
   std::vector<TH1F*> HZPt;
   std::vector<TH1F*> HWPt;
-  std::vector<TH1F*> HWZDist;
   std::vector<TH1F*> HWZPt;
 
-  std::vector<TH2F*> HWZPtDist;
 
   TH1D *HPileup;
   TH1D *HTruePileup;
