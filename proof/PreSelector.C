@@ -1732,7 +1732,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     kSR1 = 0,
     kCR1 = 4, // 4 Channels
     kCR2 = 8
-  }
+  };
 #endif
 
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
