@@ -141,7 +141,8 @@ TList* CreateSFDb(Int_t Year, Bool_t IsUL, TList* SFDb){
   return SFDb;
 }
 
-Int_t Selector(std::string outputLabel, std::string files = "", Int_t fWorkers = 4, std::string elistfile = ""){
+Int_t Selector(std::string outputLabel, std::string files = "", Int_t fWorkers = 4,
+               std::string elistfile = "", Int_t nfstart = 0, Int_t nfend = -1){
 
 
   Int_t Year = 0;
@@ -188,12 +189,23 @@ Int_t Selector(std::string outputLabel, std::string files = "", Int_t fWorkers =
     std::ifstream infile(file);
     std::string line;
 
+    UInt_t counter = 0;
     while(std::getline(infile, line)){
-      if(line.empty() or line.find("#") == 0) continue;
-      line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
-      //line = Form("root://cms-xrd-global.cern.ch/%s",line.c_str());
-      std::cout << "Chaining [" << fChain->GetNtrees() << "]\t" << line << std::endl;
-      fChain->AddFile(line.c_str());
+      if(line.empty() or line.find("#") == 0
+         or line.find("/store") == std::string::npos) continue;
+      if( nfend == -1 or
+	  (counter >= nfstart and counter <= nfend)){
+        line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
+        //line = Form("root://cms-xrd-global.cern.ch/%s",line.c_str());
+        std::cout << "Chaining [" << counter << ":" << fChain->GetNtrees() << "]\t" << line << "\t";
+        int ans = fChain->AddFile(line.c_str());
+        if(ans == 1){
+          std::cout << "[Ok]\n";
+        } else {
+          std::cout << "[Error]\n";
+        }
+      }
+      ++counter;
     }
   }
 
