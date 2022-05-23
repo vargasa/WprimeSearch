@@ -220,7 +220,6 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HGenPartZ;
   std::vector<TH2F*> HGenPartW;
   std::vector<TH2F*> HGenPartChgF;
-  std::vector<TH1F*> HScaleFactors;
   std::vector<TH2F*> HSFs;
   std::vector<TH2F*> HGenPartZWp;
   std::vector<TH2F*> HGenPartWWp;

@@ -328,7 +328,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 
   HOverlap = new TH1F("HOverlap","Overlapping events."
-                      " -1: l<3 0:None 1: NoOverlap",6,-1,5);
+                      " -1: l<3 0:None 1: NoOverlap",5,-1,5);
   fOutput->Add(HOverlap);
 
   const Int_t nPvsBins = 99;
@@ -350,7 +350,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   HCutFlow = new TH1D("HCutFlow","",50,0.,50.);  /* Limits are meaningless here */
   fOutput->Add(HCutFlow);
 
-  const Int_t BinsLep = 10;
+  const Int_t BinsLep = 9;
   const Float_t MinLep = 0.;
   const Float_t MaxLep = 10.;
 
@@ -540,8 +540,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
 
-  InitHVec<TH1F>(HScaleFactors,"HScaleFactors",70,-1.,6.);
-  InitHVec<TH2F>(HSFs,"HSFs",15,0.,15.,150,0.,3.);
+  InitHVec<TH2F>(HSFs,"HSFs",15,0.,15.,60,0.,6.);
 #endif
 
   const Double_t wzbins[31] = {
@@ -2396,6 +2395,11 @@ void PreSelector::DefineSFs(const int& nh){
     HSFs[nh]->Fill("KFactor",ksf,1.);
   }
 
+  HSFs[nh]->Fill("Central",WCentral,1.);
+  HSFs[nh]->Fill("WAllDown",WAllDown,1.);
+  HSFs[nh]->Fill("WAllUp",WAllUp,1.);
+  HSFs[nh]->Fill("genWeight",*genWeight,1.);
+
   WCentral *= *genWeight;
   WAllUp *= *genWeight;
   WAllDown *= *genWeight;
@@ -2414,13 +2418,8 @@ void PreSelector::DefineSFs(const int& nh){
   //           << WAllDown << "\t"
   //           << WCentral << "\t"
   //           << WAllUp << "\t\n";
-
   // assert(WCentral < WAllUp);
   // assert(WCentral > WAllDown);
-
-  HSFs[nh]->Fill("Central",WCentral,1.);
-  HSFs[nh]->Fill("WAllDown",WAllDown,1.);
-  HSFs[nh]->Fill("WAllUp",WAllUp,1.);
 
 }
 ///////////////////////////////////////////////////////////
