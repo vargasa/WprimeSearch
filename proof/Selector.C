@@ -9,7 +9,7 @@ template<class T>
 void AddSFHistoSFDb(std::string newLabel,
                 std::string filename, std::string histoname,
                 TList* SFDb){
-  TFile* f = TFile::Open(filename.c_str());
+  TFile* f = TFile::Open(Form("root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/%s",filename.c_str()));
   T* h = dynamic_cast<T*>((f->Get(histoname.c_str()))->Clone());
   h->SetName(newLabel.c_str());
   std::clog << "\tAdding " << h->GetName() << " to SFDB: " << filename << ":" << histoname <<  ":" << h  <<" \n";
