@@ -194,7 +194,7 @@ Int_t Selector(std::string outputLabel, std::string files = "", Int_t fWorkers =
       if(line.empty() or line.find("#") == 0
          or line.find("/store") == std::string::npos) continue;
       if( nfend == -1 or
-	  (counter >= nfstart and counter <= nfend)){
+          (counter >= nfstart and counter <= nfend)){
         line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
         //line = Form("root://cms-xrd-global.cern.ch/%s",line.c_str());
         std::cout << "Chaining [" << counter << ":" << fChain->GetNtrees() << "]\t" << line << "\t";
