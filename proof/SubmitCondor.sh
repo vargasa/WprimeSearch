@@ -1,4 +1,5 @@
 #!/bin/bash
+#./SubmitCondor 2018 DATA ULEGamma.txt
 YEARP=$1
 TYPEP=$2
 SAMPLEFILENAME=$3
@@ -7,7 +8,7 @@ MEMORY=2048
 NSPLIT=5;
 NFSTART=${4:0}
 NFEND=${5:0}
-OUTPUTLABEL="AnV5_"$YEARP"_"$TYPEP"_"$SAMPLEFILENAME"_"
+OUTPUTLABEL="ANv5LPC_"$YEARP"_"$TYPEP"_"$SAMPLEFILENAME"_"
 
 SubmitSingle () {
     printf "%4d_%4d\n" $1 $2
@@ -29,11 +30,8 @@ Queue 1"
     condor_submit /tmp/condor_job_$OutputLabel.jdl
 }
 
-if [[ $NFEND -ne 0 ]]; then SubmitSingle $NFSTART $NFEND; exit; fi
-
-if [ "$TYPEP" =  "DATA" ]; then
-    SAMPLEFILE=$PWD"/files/data/"$YEARP"/UL/"$SAMPLEFILENAME
-    NLINES=`wc -l < $SAMPLEFILE`
+SplitAndSubmit () {
+    NLINES=`wc -l < $1`
     if [[ $NFSTART -eq 0 ]]; then NFSTART=0; fi
     while true; do
         NFEND=$(( $NFSTART + $NSPLIT ))
@@ -42,20 +40,13 @@ if [ "$TYPEP" =  "DATA" ]; then
         if [ $NFEND -eq $NLINES ]; then break; fi
         NFSTART=$(( $NFEND + 1 ))
     done
+}
+
+if [[ $NFEND -ne 0 ]]; then SubmitSingle $NFSTART $NFEND; exit; fi
+
+if [ "$TYPEP" =  "DATA" ]; then
+    export SAMPLEFILE=$PWD"/files/data/"$YEARP"/UL/"$SAMPLEFILENAME
 elif [ "$TYPEP" = "MC" ]; then
-    jdlString="universe = vanilla
-+JobFlavour = \"tomorrow\"
-Executable = RunAN.sh
-should_transfer_files = YES
-when_to_transfer_output = ON_EXIT
-request_cpus = $NCORES
-request_memory = $MEMORY
-Output = RunAN_\$(Cluster)_\$(Process)_$1_$2_$3.stdout
-Error = RunAN_\$(Cluster)_\$(Process)_$1_$2_$3.stderr
-Log = RunAN_\$(Cluster)_\$(Process)_$1_$2_$3.log
-Arguments = $YEARP $TYPEP $SAMPLEFILENAME
-Queue 1"
-    echo "$jdlString" > /tmp/condor_job_$OutputLabel.jdl
-    echo /tmp/condor_job_$OutputLabel.jdl
-    condor_submit /tmp/condor_job_$OutputLabel.jdl
+    export SAMPLEFILE=$PWD"/files/mc/"$YEARP"/UL/"$SAMPLEFILENAME
 fi
+SplitAndSubmit $SAMPLEFILE

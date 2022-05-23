@@ -49,10 +49,7 @@ if [ "$TYPEP" =  "MC" ]; then
     SAMPLEFILE=$WprimeDir/proof/files/mc/$YEARP/UL/$SAMPLEFILENAME
     echo "Processing Year:"$YEARP
     echo -e "#define Y"$YEARP"\n#define ULSAMPLE\n" > IsData.h # Make sure CMSDATA is undefined
-    root -l -b -q "Selector.C(\""$OutputLabel"\",\""$SAMPLEFILE"\","$NCORES")";
-    skill proofserv.exe
-    skill root.exe
-
+    root -l -b -q "Selector.C(\""$OutputLabel"\",\""$SAMPLEFILE"\","$NCORES",\"\",$NFSTART,$NFEND)";
 elif [ "$TYPEP" = "DATA" ]; then
     cd $WprimeDir/proof/
     ENTRYLISTFILE="root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/EntryListMaker/EntryLists_Unique.root"
