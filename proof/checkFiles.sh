@@ -7,7 +7,7 @@ YEARP=$1
 TYPEP=$2
 OUTPUTLABEL=$3
 SAMPLEFILENAME=$4
-NSPLIT=5
+NSPLIT=10
 if [ $TYPEP = "MC" ]; then export PATHTOSAMPLE=$PWD/files/mc/$YEARP/UL/$SAMPLEFILENAME; fi
 if [ $TYPEP = "DATA" ]; then export PATHTOSAMPLE=$PWD/files/data/$YEARP/UL/$SAMPLEFILENAME; fi
 NLINES=`wc -l < $PATHTOSAMPLE`
@@ -26,5 +26,5 @@ while true; do
 done
 
 if $PASS; then
-    hadd `printf "%s/WprimeHistos_%s_Merged.root" $OUTPUTFOLDER $SAMPLEFILENAME` `printf "%s/WprimeHistos_%s_%d_%s_%s*.root" $OUTPUTFOLDER $OUTPUTLABEL $YEARP $TYPEP $SAMPLEFILENAME`
+    hadd `printf "%s/WprimeHistos_%d_%s_%s_Merged.root" $OUTPUTFOLDER $YEARP $TYPEP $SAMPLEFILENAME` `printf "%s/WprimeHistos_%s_%d_%s_%s*.root" $OUTPUTFOLDER $OUTPUTLABEL $YEARP $TYPEP $SAMPLEFILENAME`
 fi

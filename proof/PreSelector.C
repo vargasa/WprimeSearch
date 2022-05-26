@@ -566,23 +566,24 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
   if(!MuonTest()) return GoodIndex;
   if(*Mu.n == 0) return GoodIndex;
 
-  leadMuIdx = LeadingIdx(Mu);
 
-  if(Mu.pt[leadMuIdx] < 52.)  /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
-    return GoodIndex;
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 20.;
-  if(abs(Mu.eta[leadMuIdx]) >= MaxEta){
-    HCutFlow->FillS("LeadingMuOut");
-    return GoodIndex;
-  }
-  GoodIndex.reserve(10);
+  GoodIndex.reserve(8);
+
   for (UInt_t i=0; i<*Mu.n;i++){
     if( Muon_highPtId[i] >=1 && Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
       GoodIndex.emplace_back(i);
   }
 
-  SortByDescPt(GoodIndex,Mu);
+  if (GoodIndex.size() == 0) return GoodIndex;
+  if (GoodIndex.size() > 1) SortByDescPt(GoodIndex,Mu);
+
+  leadMuIdx = GoodIndex[0];
+
+  if (Muon_pt[leadMuIdx] < 52.) { /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
+    GoodIndex.clear();
+  }
 
   return GoodIndex;
 }
@@ -624,16 +625,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
   if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
-
-  leadElIdx = LeadingIdx(El);
-
-  if( El.pt[leadElIdx] < MinPt ) return GoodIndex;
-
-  if(abs(El.eta[leadElIdx]) >= MaxEta){
-    HCutFlow->FillS("LeadingElOut");
-    return GoodIndex;
-  }
-  GoodIndex.reserve(10);
+  GoodIndex.reserve(8);
 
   std::pair<float,float> phiHEM = {-1.57,-0.87};
   std::pair<float,float> etaHEM = {-2.5,-1.3};
@@ -641,13 +633,13 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; ++i){
     double abseta =  abs(El.eta[i]);
-    if(El.pt[i] > AbsMinPt and
-       El.cutBased[i]>=2 and
+    if(Electron_pt[i] > AbsMinPt and
+       Electron_cutBased[i]>=2 and
        abseta < MaxEta and
        ( abseta < etaGap.first or abseta > etaGap.second)
 #if defined(Y2018)
-       and !( El.eta[i] > etaHEM.first and El.eta[i] < etaHEM.second )
-       and !( El.phi[i] > phiHEM.first and El.phi[i] < phiHEM.second )
+       and !( Electron_eta[i] > etaHEM.first and Electron_eta[i] < etaHEM.second )
+       and !( Electron_phi[i] > phiHEM.first and Electron_phi[i] < phiHEM.second )
 #endif
        )
       GoodIndex.emplace_back(i);
@@ -656,8 +648,15 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   if(GoodIndex.size() == 0) return GoodIndex;
   if(GoodIndex.size() > 1) SortByDescPt(GoodIndex,El);
 
+  leadElIdx = GoodIndex[0];
+
+  if( Electron_pt[leadElIdx] < MinPt ) {
+    GoodIndex.clear();
+    return GoodIndex;
+  }
+
 #if !defined(CMSDATA) && defined(ULSAMPLE)
-  const int id = El.cutBased[GoodIndex[0]];
+  int id = Electron_cutBased[leadElIdx];
 
 #if defined(Y2017) || defined(Y2018)
   if (id == 2) {
@@ -667,7 +666,7 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   } else if (id == 4) {
     SFElectronHLT= SFElectronHLTTight;
   } else {
-    assert(true);
+    assert(false);
   }
 #elif defined(Y2016)
   if (IsPreVFP){
@@ -2021,13 +2020,15 @@ Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, 
   return sf;
 }
 ///////////////////////////////////////////////////////////
-Double_t PreSelector::GetElIDSF(Int_t id /* 2: loose. 3: medium. 4: tight*/,
-                                const Float_t& eta, const Float_t& pt,
-                                const Int_t& option) const{
+Double_t PreSelector::GetElIDSF(Int_t& nl, const Int_t& option) const{
   /* Option 0: Central Value, -1: Low, +1: up */
   Double_t sf;
 
+  if (nl == leadElIdx) return 1.; /* Leading El SF is applied with HLT SF */
+
   TH2F* h2source;
+
+  const Int_t id = Electron_cutBased[nl]; /* 2: loose. 3: medium. 4: tight*/
 
   if(id == 2){
     h2source = SFElectronLooseID;
@@ -2037,7 +2038,7 @@ Double_t PreSelector::GetElIDSF(Int_t id /* 2: loose. 3: medium. 4: tight*/,
     h2source = SFElectronTightID;
   }
 
-  sf = GetSFFromHisto(h2source, eta,pt,option);
+  sf = GetSFFromHisto(h2source, Electron_eta[nl], Electron_pt[nl], option);
   return sf;
 }
 
@@ -2143,9 +2144,9 @@ void PreSelector::DefineSFs(const int& nh){
     float ElRecol1 = GetSFFromHisto(SFElRecol1,lep1.Eta(),lep1.Pt(),0);
     float ElRecol2 = GetSFFromHisto(SFElRecol2,lep2.Eta(),lep2.Pt(),0);
     float ElRecol3 = GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),0);
-    float ElIDl1 = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
-    float ElIDl2 = GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
-    float ElIDl3 = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
+    float ElIDl1 = GetElIDSF(l1,0);
+    float ElIDl2 = GetElIDSF(l2,0);
+    float ElIDl3 = GetElIDSF(l3,0);
 
     WCentral = Pileup_*ElTrigger*ElRecol1*ElRecol2*ElRecol3*ElIDl1*ElIDl2*ElIDl3;
 
@@ -2166,13 +2167,13 @@ void PreSelector::DefineSFs(const int& nh){
     assert(WElRecoUp > ElRecol1*ElRecol2*ElRecol3);
     assert(WElRecoDown < ElRecol1*ElRecol2*ElRecol3);
 
-    WElIDUp =  GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
-    WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
-    WElIDUp *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),1);
+    WElIDUp =  GetElIDSF(l1,1);
+    WElIDUp *= GetElIDSF(l2,1);
+    WElIDUp *= GetElIDSF(l3,1);
 
-    WElIDDown = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),-1);
-    WElIDDown *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),-1);
-    WElIDDown *= GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),-1);
+    WElIDDown = GetElIDSF(l1,-1);
+    WElIDDown *= GetElIDSF(l2,-1);
+    WElIDDown *= GetElIDSF(l3,-1);
 
     assert(WElIDUp > ElIDl1*ElIDl2*ElIDl3);
     assert(WElIDDown < ElIDl1*ElIDl2*ElIDl3);
@@ -2204,8 +2205,8 @@ void PreSelector::DefineSFs(const int& nh){
 
     float ElTrigger = GetElTriggerSF(Electron_eta[leadElIdx],Electron_pt[leadElIdx],0);
     float MuTrigger = GetMuTriggerSF(Muon_eta[leadMuIdx],Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx],0);
-    float ElIDl1 = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),0);
-    float ElIDl2 = GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),0);
+    float ElIDl1 = GetElIDSF(l1,0);
+    float ElIDl2 = GetElIDSF(l2,0);
     float ElRecol1 = GetSFFromHisto(lep1.Pt()>20.?SFElectronReco:SFElectronRecoB20,lep1.Eta(),lep1.Pt(),0);
     float ElRecol2 = GetSFFromHisto(lep2.Pt()>20.?SFElectronReco:SFElectronRecoB20,lep2.Eta(),lep2.Pt(),0);
     float MuIDl3 = GetMuIDSF(Muon_highPtId[l3],lep3.Eta(),lep3.Pt(),0);
@@ -2234,11 +2235,11 @@ void PreSelector::DefineSFs(const int& nh){
 
     assert(WElRecoDown < ElRecol1*ElRecol2);
 
-    WElIDUp = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),1);
-    WElIDUp *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),1);
+    WElIDUp = GetElIDSF(l1,1);
+    WElIDUp *= GetElIDSF(l2,1);
 
-    WElIDDown = GetElIDSF(Electron_cutBased[l1],lep1.Eta(),lep1.Pt(),-1);
-    WElIDDown *= GetElIDSF(Electron_cutBased[l2],lep2.Eta(),lep2.Pt(),-1);
+    WElIDDown = GetElIDSF(l1,-1);
+    WElIDDown *= GetElIDSF(l2,-1);
 
     assert(WElIDUp > ElIDl1*ElIDl2);
     assert(WElIDDown < ElIDl1*ElIDl2);
@@ -2277,7 +2278,7 @@ void PreSelector::DefineSFs(const int& nh){
     float MuIDl1 = GetMuIDSF(Muon_highPtId[l1],lep1.Eta(),lep1.Pt(),0);;
     float MuIDl2 = GetMuIDSF(Muon_highPtId[l2],lep2.Eta(),lep2.Pt(),0);;
     float ElRecol3 = GetSFFromHisto(SFElRecol3,lep3.Eta(),lep3.Pt(),0);
-    float ElIDl3 = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),0);
+    float ElIDl3 = GetElIDSF(l3,0);
 
     WCentral = Pileup_*ElTrigger*MuTrigger*MuIDl1*MuIDl2*ElRecol3*ElIDl3;
 
@@ -2307,11 +2308,11 @@ void PreSelector::DefineSFs(const int& nh){
     assert(WMuIDUp > MuIDl1*MuIDl2);
     assert(WMuIDDown < MuIDl1*MuIDl2);
 
-    WElIDUp   = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),1);
-    WElIDDown = GetElIDSF(Electron_cutBased[l3],lep3.Eta(),lep3.Pt(),-1);
+    WElIDUp   = GetElIDSF(l3,1);
+    WElIDDown = GetElIDSF(l3,-1);
 
-    assert(WElIDUp > ElIDl3);
-    assert(WElIDDown < ElIDl3);
+    assert(l3 != leadElIdx ? (WElIDUp > ElIDl3) : true);
+    assert(l3 != leadElIdx ? (WElIDDown < ElIDl3) : true);
 
     WAllUp = WPileupUp*WElTrigUp*WMuTrigUp*WMuIDUp*WElRecoUp*WElIDUp;
     WAllDown = WPileupDown*WElTrigDown*WMuTrigDown*WMuIDDown*WElRecoDown*WElIDDown;
