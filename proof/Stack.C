@@ -66,11 +66,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.682e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.324e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.974e-03},
-          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.161e-01},
-          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
-          BackgroundInfo{"TTV","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kCyan+1,365.9744},
-          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,0.283}, /*XSecAnayzer 0.*/
-          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.916e-01}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
+          BackgroundInfo{"t#bar{t}","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kBlue-2,2.161e-01},
+          BackgroundInfo{"t#bar{t}","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kBlue-2,88.29},
+          BackgroundInfo{"t#bar{t}","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kBlue-2,365.9744},
+          BackgroundInfo{"t#bar{t}","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kBlue-2,0.283}, /*XSecAnayzer 0.*/
+          BackgroundInfo{"t#bar{t}","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kBlue-2,5.916e-01}, // dataset=/ttZJets*/RunIISummer20*/NANOAODSIM
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
           BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
@@ -102,11 +102,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.692e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.330e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.975e-03},
-          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.162e-01},
-          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
-          BackgroundInfo{"TTV","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kCyan+1,365.9744},
-          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,5.324e-2},
-          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.910e-01},
+          BackgroundInfo{"t#bar{t}","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kBlue-2,2.162e-01},
+          BackgroundInfo{"t#bar{t}","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kBlue-2,88.29},
+          BackgroundInfo{"t#bar{t}","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kBlue-2,365.9744},
+          BackgroundInfo{"t#bar{t}","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kBlue-2,5.324e-2},
+          BackgroundInfo{"t#bar{t}","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kBlue-2,5.910e-01},
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
           BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
@@ -125,8 +125,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       {
         2018,
         {
-          BackgroundInfo{"WZ","WZTo3LNu_mllmin0p1_TuneCP5_13TeV-powheg-pythia8",kOrange,6.217e+01},
-          //BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
+          BackgroundInfo{"WZ","WZTo3LNu_mllmin4p0_TuneCP5_13TeV-powheg-pythia8",kOrange,4.664e+00},
           BackgroundInfo{"ZZ","ZZTo4L_M-1toInf_TuneCP5_13TeV_powheg_pythia8",kBlue,1.381e+01},
           //BackgroundInfo{"t#bar{t}","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8",kBlue-2,7.560e+02},
           BackgroundInfo{"Z#gamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",kRed+3,5.557e+01},
@@ -138,11 +137,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,5.683e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,1.328e-01},
           BackgroundInfo{"DY","DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8",kOrange+7,2.987e-03},
-          BackgroundInfo{"TTV","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kCyan+1,2.166e-01},
-          BackgroundInfo{"TTV","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kCyan+1,88.29},
-          BackgroundInfo{"TTV","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kCyan+1,365.9744},
-          BackgroundInfo{"TTV","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kCyan+1,5.324e-2},
-          BackgroundInfo{"TTV","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kCyan+1,5.901e-01},
+          BackgroundInfo{"t#bar{t}","TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",kBlue-2,2.166e-01},
+          BackgroundInfo{"t#bar{t}","TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",kBlue-2,88.29},
+          BackgroundInfo{"t#bar{t}","TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",kBlue-2,365.9744},
+          BackgroundInfo{"t#bar{t}","TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8",kBlue-2,5.324e-2},
+          BackgroundInfo{"t#bar{t}","ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8",kBlue-2,5.901e-01},
           BackgroundInfo{"VVV","WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,2.158e-01},
           BackgroundInfo{"VVV","WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",14,1.707e-01},
           BackgroundInfo{"VVV","WZZ_TuneCP5_13TeV-amcatnlo-pythia8",14,5.709e-02},
@@ -303,19 +302,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     {
       2017,
       {
-        SignalInfo{"W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_600_TuneCP5_13TeV-madgraph-pythia8",6.252E-2},
-        SignalInfo{"W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_800_TuneCP5_13TeV-madgraph-pythia8",1.886E-2},
-        SignalInfo{"W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_1000_TuneCP5_13TeV-madgraph-pythia8",7.381E-3},
-        SignalInfo{"W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_1200_TuneCP5_13TeV-madgraph-pythia8",3.356E-3},
-        SignalInfo{"W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_1400_TuneCP5_13TeV-madgraph-pythia8",1.684E-3},
-        SignalInfo{"W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_1600_TuneCP5_13TeV-madgraph-pythia8",9.036E-4},
-        SignalInfo{"W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_1800_TuneCP5_13TeV-madgraph-pythia8",5.087E-4},
-        SignalInfo{"W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_2000_TuneCP5_13TeV-madgraph-pythia8",2.967E-4},
-        SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_2500_TuneCP5_13TeV-madgraph-pythia8",8.548E-5},
-        SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_3000_TuneCP5_13TeV-madgraph-pythia8",2.680E-5},
-        SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_3500_TuneCP5_13TeV-madgraph-pythia8",8.754E-6},
-        SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_4000_TuneCP5_13TeV-madgraph-pythia8",2.893E-6},
-        SignalInfo{"W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_4500_TuneCP5_13TeV-madgraph-pythia8",9.543E-7},
+        SignalInfo{"W' (0.6TeV)","WprimeToWZToWlepZlep_narrow_M600_TuneCP5_13TeV-madgraph-pythia8",6.252E-2},
+        SignalInfo{"W' (0.8TeV)","WprimeToWZToWlepZlep_narrow_M800_TuneCP5_13TeV-madgraph-pythia8",1.886E-2},
+        SignalInfo{"W' (1.0TeV)","WprimeToWZToWlepZlep_narrow_M1000_TuneCP5_13TeV-madgraph-pythia8",7.381E-3},
+        SignalInfo{"W' (1.2TeV)","WprimeToWZToWlepZlep_narrow_M1200_TuneCP5_13TeV-madgraph-pythia8",3.356E-3},
+        SignalInfo{"W' (1.4TeV)","WprimeToWZToWlepZlep_narrow_M1400_TuneCP5_13TeV-madgraph-pythia8",1.684E-3},
+        SignalInfo{"W' (1.6TeV)","WprimeToWZToWlepZlep_narrow_M1600_TuneCP5_13TeV-madgraph-pythia8",9.036E-4},
+        SignalInfo{"W' (1.8TeV)","WprimeToWZToWlepZlep_narrow_M1800_TuneCP5_13TeV-madgraph-pythia8",5.087E-4},
+        SignalInfo{"W' (2.0TeV)","WprimeToWZToWlepZlep_narrow_M2000_TuneCP5_13TeV-madgraph-pythia8",2.967E-4},
+        SignalInfo{"W' (2.5TeV)","WprimeToWZToWlepZlep_narrow_M2500_TuneCP5_13TeV-madgraph-pythia8",8.548E-5},
+        SignalInfo{"W' (3.0TeV)","WprimeToWZToWlepZlep_narrow_M3000_TuneCP5_13TeV-madgraph-pythia8",2.680E-5},
+        SignalInfo{"W' (3.5TeV)","WprimeToWZToWlepZlep_narrow_M3500_TuneCP5_13TeV-madgraph-pythia8",8.754E-6},
+        SignalInfo{"W' (4.0TeV)","WprimeToWZToWlepZlep_narrow_M4000_TuneCP5_13TeV-madgraph-pythia8",2.893E-6},
+        SignalInfo{"W' (4.5TeV)","WprimeToWZToWlepZlep_narrow_M4500_TuneCP5_13TeV-madgraph-pythia8",9.543E-7},
       }
     },
     {
@@ -1165,7 +1164,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::vector<std::string> systEl = { "ElReco" , "ElTrigger","ElID" };
     std::vector<std::string> systMu = { "MuTrigger","MuID" };
     std::vector<std::string> systK = { "EWK","QCD" };
-    std::vector<std::string> systShared = { "Pileup", "MetUncl" };
+    std::vector<std::string> systShared = { "Pileup", "MetUncl", "L1Pref"};
     std::string unc2     = "CMS_ElTrigger\tshape\t";
     std::string unc3     = "CMS_MuTrigger\tshape\t";
     std::string unc4     = "CMS_ElID\tshape\t";
@@ -1175,6 +1174,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string unc8     = "CMS_MetUncl\tshape\t";
     std::string unc9     = "CMS_ElReco\tshape\t";
     std::string unc10    = "CMS_Pileup\tshape\t";
+    std::string unc11    = "CMS_L1Pref\tshape\t";
 
     std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
       TH1* hzero = static_cast<TH1*>(hneg->Clone());
@@ -1201,6 +1201,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
                          const std::string&,
                          const std::string&)>
       saveUpDown = [&] (std::string folder, std::string hname, std::string s/*ystematic*/){
+        if( (s.find("L1Pref") != std::string::npos) and
+            (year == 2018) ) return;
         auto hup = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_Up",hname.c_str())));
         applyLumiSF(hup, folder.c_str(), xsec);
         hup->Write(std::string(sampleName+Form("_CMS_%sUp",s.c_str())).c_str());
@@ -1273,9 +1275,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       unc8 += "--\t";
       unc9 += "--\t";
       unc10 += "--\t";
+      unc11 += "--\t";
 
-      auto hdata = getHistoFromFile(Form("%d/%s",year,DataSampleNames[year].c_str()),
-                                    Form("%s_%s",fromHisto,ch.first.c_str()));
+
+      auto hdata = getDataStack(Form("%d/%s",year,DataSampleNames[year].c_str()),Form("%s_%s_NoSF",fromHisto,ch.first.c_str()));
       bin0 += Form("%s\t",ch.second.c_str());
       obs += Form("%.2f\t",hdata->Integral());
       hdata->Write("data_obs");
@@ -1300,6 +1303,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc8 += "1.0\t";
           unc9 += "1.0\t";
           unc10 += "1.0\t";
+          unc11 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "B") {
           unc2 += "1.0\t";
@@ -1309,6 +1313,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc8 += "1.0\t";
           unc9 += "1.0\t";
           unc10 += "1.0\t";
+          unc11 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "C") {
           unc2 += "1.0\t";
@@ -1318,6 +1323,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc8 += "1.0\t";
           unc9 += "1.0\t";
           unc10 += "1.0\t";
+          unc11 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         } else if (ch.first == "D") {
           unc2 += "-\t";
@@ -1325,7 +1331,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc4 += "-\t";
           unc5 += "1.0\t";
           unc8 += "1.0\t";
+          unc9 += "-\t";
           unc10 += "1.0\t";
+          unc11 += "1.0\t";
           saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
         }
 
@@ -1340,8 +1348,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
     }
 
-
-    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << "\nkmax\t8\n";
+    int nSyst = (year != 2018)? 11:10;
+    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << Form("\nkmax\t%d\n",nSyst);
     dcFile << "------------\n";
     dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $CHANNEL/$PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
     dcFile << bin0 << std::endl;
@@ -1359,6 +1367,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << unc8 << std::endl;
     dcFile << unc9 << std::endl;
     dcFile << unc10 << std::endl;
+
+    if( year != 2018 ) {
+      dcFile << unc11 << std::endl;
+    }
 
     fCombine->Close();
 
@@ -1668,7 +1680,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       int year = std::stoi(hName.substr(0,4));
       if (year == 0) includeAllYears = true;
       hName = hName.substr(5,hName.size());
-      if(hName.find("HFakeString") == std::string::npos)
+      if(hName.find("HFakeString") == std::string::npos or
+         hName.find("HMuonPtDiff") == std::string::npos) 
         hName += "_WCentral"; // Include Central SF and genWeight
       SignalInfo signal;
       if (!includeAllYears) signal = SignalSamples[year][SignalPos[WpMass]];
@@ -1676,9 +1689,13 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       c1->cd(r+1);
       std::string dataHName = hName;
       removeCentral(dataHName);
-      pngName += dataHName + "_";
-      pngName = pngName.substr(0,20);
-      if(includeAllYears) pngName += "Run2_";
+      pngName += hName + "_";
+      //pngName = pngName.substr(0,20);
+      if(includeAllYears){
+        pngName += "Run2_";
+      } else {
+        pngName += Form("%d_",year);
+      }
 
       const Float_t leftMargin = 0.12;
       const Float_t rightMargin = 0.12;
@@ -1804,16 +1821,27 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       } else if (hName.find("SR1_") != std::string::npos) {
       hs->SetTitle((Labels[labelIdx].c_str() + std::string(" SR")).c_str());
       }
-
       legend->SetBorderSize(0);
       gStyle->SetOptStat(0);
 
       mainPad->cd();
       hs->Draw("HIST");
       hsig->Draw("HIST SAME");
-      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.5)+1);
-      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.5)-1);
-      //hs->GetHistogram()->GetXaxis()->SetRangeUser(minx,maxx);
+      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(5e-1)+1);
+      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(5e-1));
+      TH1*   htmp = hs->GetHistogram();
+      TAxis* gtmp = htmp->GetXaxis();
+      minx = gtmp->GetBinLowEdge(htmp->FindBin(minx));
+      maxx = gtmp->GetBinLowEdge(htmp->FindBin(maxx)) + gtmp->GetBinWidth(htmp->FindBin(maxx));
+      if(hName.find("HIP3D") != std::string::npos){
+        minx = 0.;
+        maxx = 0.06;
+      } else if (hName.find("HMuonPtDiff") != std::string::npos){
+        minx = -0.01;
+        maxx = 0.01;
+      }
+      gtmp->SetRange(htmp->FindBin(minx),htmp->FindBin(maxx));
+
       fixYRange(hs,getMaxY(last));
 
       if (includeData) {
@@ -1829,7 +1857,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         if(includeAllYears){
           hdata = getDataStack(Form("%d/%s",2016,DataSampleNames[2016].c_str()),dataHName);
           hdata->Add(getDataStack(Form("%d/%s",2017,DataSampleNames[2017].c_str()),dataHName));
-          hdata->Add(getDataStack(Form("%d/%s",2018,DataSampleNames[2016].c_str()),dataHName));
+          hdata->Add(getDataStack(Form("%d/%s",2018,DataSampleNames[2018].c_str()),dataHName));
         } else {
           hdata = getDataStack(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
         }
@@ -1847,9 +1875,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         auto hcdata = getRatio(hdata,hs);
         subPad->cd();
         subPad->SetGrid();
+        hcdata->GetXaxis()->SetNdivisions(hs->GetHistogram()->GetXaxis()->GetNdivisions());
+        hcdata->GetXaxis()->SetLimits(minx,maxx);
+
+
         hcdata->Draw("ap");
-        hcdata->GetXaxis()->SetRangeUser(hs->GetHistogram()->GetXaxis()->GetXmin(),                hs->GetHistogram()->GetXaxis()->GetXmax());
-	hcdata->GetXaxis()->SetNdivisions(hs->GetHistogram()->GetXaxis()->GetNdivisions());
         subPad->SetFrameLineWidth(1);
 
       }
@@ -1970,14 +2000,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   //plotPunziSignificance(2016);
 
   //Run2 Plots
-  for(auto h : hints){
-    std::vector<std::string> hNames;
-    for(auto ch: chs){
-      hNames.emplace_back(Form("0000/%s_CR1_%s",h.c_str(),ch.c_str())); //0000 -> Run2
-      if(hNames.size() == 4){
-        canvasStacked(600,hNames,true);
-        hNames.clear() ;
+  std::vector<std::string> yearp = { "2016","2017","2018","0000"};
+  for(auto y : yearp){
+    for(auto h : hints){
+      std::vector<std::string> hNames;
+      for(auto ch: chs){
+        hNames.emplace_back(Form("%s/%s_CR1_%s",y.c_str(),h.c_str(),ch.c_str())); //0000 -> Run2
+        if(hNames.size() == 4){
+          canvasStacked(600,hNames,true);
+          hNames.clear() ;
+        }
       }
+    }
+  }
+
+  if(MissingSamples.size()>0){
+    for(auto s: MissingSamples){
+      std::puts(Form("WARNING! Missing sample: %s", s.c_str()));
     }
   }
 
