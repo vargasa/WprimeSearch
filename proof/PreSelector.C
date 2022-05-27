@@ -562,17 +562,22 @@ void PreSelector::SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l){
 }
 
 std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
+
   std::vector<UInt_t> GoodIndex = {};
+
   if(!MuonTest()) return GoodIndex;
   if(*Mu.n == 0) return GoodIndex;
 
-
   const Float_t MaxEta = 2.4;
   const Float_t MinPt = 20.;
+  const Float_t farFromPV = 0.01;
   GoodIndex.reserve(8);
 
   for (UInt_t i=0; i<*Mu.n;i++){
-    if( Muon_highPtId[i] >=1 && Mu.pt[i]>MinPt && abs(Mu.eta[i])<MaxEta)
+    if(Muon_highPtId[i] >=1 and
+       Mu.pt[i] > MinPt and
+       abs(Mu.eta[i]) < MaxEta and
+       Muon_ip3d[i] < farFromPV)
       GoodIndex.emplace_back(i);
   }
 
@@ -581,9 +586,8 @@ std::vector<UInt_t> PreSelector::GetGoodMuon(const Muons& Mu){
 
   leadMuIdx = GoodIndex[0];
 
-  if (Muon_pt[leadMuIdx] < 52.) { /* HLT_Mu50_OR_HLT_TkMu50 lower pt limit from SFDB*/
-    GoodIndex.clear();
-  }
+  const float leadMuMinPt = 70.;
+  if (Muon_tunepRelPt[leadMuIdx]*Muon_pt[leadMuIdx] < leadMuMinPt) GoodIndex.clear();
 
   return GoodIndex;
 }
@@ -607,23 +611,13 @@ Int_t PreSelector::LeadingIdx(const Leptons& l) {
 std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   const Float_t MaxEta = 2.5;
 
-  Float_t MinPt;
-  Float_t Delta = 5.f;
-
-#if defined(Y2016)
-  MinPt = 27. + Delta;
-#elif defined(Y2017)
-  MinPt = 35. + Delta;
-#elif defined(Y2018)
-  MinPt = 32. + Delta;
-#endif
-
   Float_t AbsMinPt = 10.; // No SF available under threshold
 
   std::pair<double,double> etaGap = std::make_pair(1.4442,1.5660);
 
   std::vector<UInt_t> GoodIndex = {};
   if(!ElectronTest()) return GoodIndex;
+
   if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
   GoodIndex.reserve(8);
 
@@ -650,7 +644,8 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
 
   leadElIdx = GoodIndex[0];
 
-  if( Electron_pt[leadElIdx] < MinPt ) {
+  const float leadElMinPt = 50.;
+  if( Electron_pt[leadElIdx] < leadElMinPt ) {
     GoodIndex.clear();
     return GoodIndex;
   }
@@ -1277,20 +1272,8 @@ bool PreSelector::DefineW(const Leptons& l){
 
 }
 
-Bool_t PreSelector::CheckElectronPair(const std::pair<UInt_t,UInt_t>& p) const{
-
-  Float_t LeadingMinPt = 50.;
-
-  if (Electron_pt[p.first] < LeadingMinPt)
-    return kFALSE;
-  return kTRUE;
-}
 
 Bool_t PreSelector::CheckMuonPair(const std::pair<UInt_t,UInt_t>& p) const{
-
-  if (Muon_tunepRelPt[p.first]*Muon_pt[p.first] < 70.) return kFALSE;
-  const Float_t farFromPV = 1e-2;
-  if (Muon_ip3d[p.first] > farFromPV or Muon_ip3d[p.second] > farFromPV) return kFALSE;
 
   Bool_t GlobalHighPtl1 = (Muon_highPtId[p.first] == 2);
   Bool_t GlobalHighPtl2 = (Muon_highPtId[p.second] == 2);
@@ -1594,7 +1577,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
   if(!ztmu.empty() && CheckMuonPair(ztmu.Pair)) PairMu = true;
 
   ztel = FindZ(Els);
-  if(!ztel.empty() && CheckElectronPair(ztel.Pair)) PairEl = true;
+  if(!ztel.empty()) PairEl = true;
 
   if (!PairEl && !PairMu) {
     HCutFlow->FillS("NoPairs");
@@ -1665,8 +1648,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
     for(const int& i: GoodMuon){
       if(i!=l1 && i!=l2){
         const Float_t minPt = 50.;
-        const Float_t farFromPV = 1e-2;
-        if(Muon_highPtId[i] == 2 and Muon_tunepRelPt[i]*Muon_pt[i] > minPt and Muon_ip3d[i] < farFromPV)
+        if(Muon_highPtId[i] == 2 and Muon_tunepRelPt[i]*Muon_pt[i] > minPt)
           SameFlvWCand.emplace_back(i);
       }
     }

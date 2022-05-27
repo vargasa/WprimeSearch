@@ -313,7 +313,6 @@ class PreSelector : public EventSelection {
   void SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l);
 
   bool DefineW(const Leptons& l);
-  Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&) const;
   Bool_t CheckMuonPair(const std::pair<UInt_t,UInt_t>&) const;
   Float_t GetEtaPhiDistance(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoZ(const float&,const float&,const float&,const float&,
