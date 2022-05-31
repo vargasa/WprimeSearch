@@ -25,6 +25,36 @@ PreSelector::PreSelector(TTree *)
 
 }
 
+#if defined(Y2018)
+Bool_t PreSelector::CheckHEMElectron() {
+
+  Bool_t ans = true;
+  for(UInt_t i = 0; i < *nElectron; ++i ){
+    if ( (Electron_phi[i] > phiHEM.first and Electron_phi[i] < phiHEM.second) and
+         (Electron_eta[i] > etaHEM.first and Electron_eta[i] < etaHEM.second) ) {
+      ans = false;
+      break;
+    }
+  }
+  return ans;
+
+}
+#endif
+#if defined(Y2018)
+Bool_t PreSelector::CheckHEMJet() {
+
+  Bool_t ans =  true;
+  for(UInt_t i = 0; i < *nJet; ++i){
+    if ( (Jet_phi[i] > phiHEM.first and Jet_phi[i] < phiHEM.second) and
+         (Jet_eta[i] > etaHEM.first and Jet_eta[i] < etaHEM.second) ) {
+      ans = false;
+      break;
+    }
+  }
+  return ans;
+
+}
+#endif
 Int_t PreSelector::nbTag(){
 
   float medium;
@@ -621,21 +651,13 @@ std::vector<UInt_t> PreSelector::GetGoodElectron(const Electrons& El){
   if(*El.n == 0) return GoodIndex; /*Photon Trigger*/
   GoodIndex.reserve(8);
 
-  std::pair<float,float> phiHEM = {-1.57,-0.87};
-  std::pair<float,float> etaHEM = {-2.5,-1.3};
-
   UInt_t index = 0;
   for (UInt_t i = 0; i< *El.n; ++i){
     double abseta =  abs(El.eta[i]);
     if(Electron_pt[i] > AbsMinPt and
        Electron_cutBased[i]>=2 and
        abseta < MaxEta and
-       ( abseta < etaGap.first or abseta > etaGap.second)
-#if defined(Y2018)
-       and !( Electron_eta[i] > etaHEM.first and Electron_eta[i] < etaHEM.second )
-       and !( Electron_phi[i] > phiHEM.first and Electron_phi[i] < phiHEM.second )
-#endif
-       )
+       ( abseta < etaGap.first or abseta > etaGap.second))
       GoodIndex.emplace_back(i);
   }
 
@@ -1501,6 +1523,13 @@ Bool_t PreSelector::Process(Long64_t entry) {
   ReadEntry(entry);
 
   HCutFlow->FillS("NoCuts");
+
+#if defined(Y2018)
+  if( !CheckHEMElectron() or !CheckHEMJet() ){
+    HCutFlow->FillS("HEMJetOrElectron");
+    return false;
+  }
+#endif
 
 #ifndef CMSDATA
   HCutFlow->Fill("genWeight",*genWeight);

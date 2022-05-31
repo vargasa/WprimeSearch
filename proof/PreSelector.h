@@ -59,6 +59,9 @@ class PreSelector : public EventSelection {
 
  private :
 
+  const std::pair<float,float> phiHEM = {-1.57,-0.87};
+  const std::pair<float,float> etaHEM = {-2.5,-1.3};
+
   TTreeReaderValue<UInt_t> run = {fReader, "run"};
   TTreeReaderValue<UInt_t> luminosityBlock = {fReader, "luminosityBlock"};
   TTreeReaderValue<ULong64_t> event = {fReader, "event"};
@@ -118,6 +121,9 @@ class PreSelector : public EventSelection {
   // nJets
   TTreeReaderValue<UInt_t> nJet = {fReader, "nJet"};
   TTreeReaderArray<Float_t> Jet_btagDeepFlavB = {fReader, "Jet_btagDeepFlavB"};
+  TTreeReaderArray<Float_t> Jet_phi = {fReader, "Jet_phi"};
+  TTreeReaderArray<Float_t> Jet_eta = {fReader, "Jet_eta"};
+  TTreeReaderArray<Float_t> Jet_pt = {fReader, "Jet_pt"};
 
   // GenPart
 #ifndef CMSDATA
@@ -329,6 +335,11 @@ class PreSelector : public EventSelection {
   std::string GetMuIDString(UChar_t& id);
   std::string GetMuonTypeString(const int& ln);
   Float_t GetMuonPtDiff(const int& ln);
+
+#if defined(Y2018)
+  Bool_t CheckHEMElectron() ;
+  Bool_t CheckHEMJet() ;
+#endif
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
