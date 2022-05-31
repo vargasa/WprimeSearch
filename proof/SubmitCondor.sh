@@ -8,7 +8,7 @@ MEMORY=2048
 NSPLIT=20;
 NFSTART=${4:0}
 NFEND=${5:0}
-OUTPUTLABEL="lead7050_"$YEARP"_"$TYPEP"_"$SAMPLEFILENAME"_"
+OUTPUTLABEL="HEMCorrMET_"$YEARP"_"$TYPEP"_"$SAMPLEFILENAME"_"
 
 SubmitSingle () {
     printf "%4d_%4d\n" $1 $2
@@ -17,6 +17,7 @@ SubmitSingle () {
 +JobFlavour = \"longlunch\"
 Executable = RunAN.sh
 should_transfer_files = YES
+Transfer_Output_Files = WprimeHistos_"$OutputLabel".root
 when_to_transfer_output = ON_EXIT
 request_cpus = $NCORES
 request_memory = $MEMORY

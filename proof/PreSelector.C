@@ -1638,14 +1638,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   if(PairEl){
-    if (*MET_pt < 40.) {
-      return kFALSE;
-    }
     zt = &ztel;
   } else { //PairMu
-    if (*MET_pt < 60.) {
-      return kFALSE;
-    }
     zt = &ztmu;
   }
 
