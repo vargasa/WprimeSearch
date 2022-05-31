@@ -21,6 +21,7 @@
 #include "EntryListMaker/EventSelection.h"
 #include "TGraphAsymmErrors.h"
 #include <unordered_map>
+#include "XYMETCorrection_withUL17andUL18andUL16.h"
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
@@ -276,10 +277,11 @@ class PreSelector : public EventSelection {
   Int_t l1, l2, l3; // Lepton pair index and lead remaining
   Int_t leadMuIdx; // Leading is not 0th index
   Int_t leadElIdx;
-  WmtObj wmt;// W Transverse mass; 
+  WmtObj wmt;// W Transverse mass;
   Float_t lt; // Sum of leptons Pt
 
   Bool_t IsA_{},IsB{},IsC{},IsD{};
+  std::pair<double,double> CorrMetPtPhi;
 
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;

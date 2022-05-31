@@ -11,6 +11,7 @@ class EventSelection : public TSelector{
 
  protected:
   TTreeReader fReader;
+  std::string fullPath;
 
   std::vector<const char*> BranchNamesList;
   const char *MakeBranchList(const char *bname);
@@ -231,7 +232,7 @@ void EventSelection::Init(TTree *tree)
 
 Bool_t EventSelection::Notify() {
 
-  std::string fullPath((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
+  fullPath = std::string((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
 
   std::clog << Form("Processing: %s\n",fullPath.c_str());
 

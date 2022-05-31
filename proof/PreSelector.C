@@ -734,7 +734,7 @@ float PreSelector::MassRecoZ(const float& pt1, const float& eta1, const float& p
 
 Float_t PreSelector::MassRecoW(const ROOT::Math::PtEtaPhiMVector& lep){
 
-  return PreSelector::MassRecoW(lep.Pt(),lep.Phi(),*MET_pt,*MET_phi);
+  return PreSelector::MassRecoW(lep.Pt(),lep.Phi(),CorrMetPtPhi.first,CorrMetPtPhi.second);
 
 };
 
@@ -827,8 +827,8 @@ ZPairInfo PreSelector::FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
 Nu4VObj PreSelector::GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep){
 
   Nu4VObj s;
-  Float_t pz = (lep.Pz()/lep.Pt())*(*MET_pt);
-  s.Met = Get4V(pz,*MET_pt,*MET_phi);
+  Float_t pz = (lep.Pz()/lep.Pt())*(CorrMetPtPhi.first);
+  s.Met = Get4V(pz,CorrMetPtPhi.first,CorrMetPtPhi.second);
 
 #if !defined(CMSDATA)
   Float_t pz_up = (lep.Pz()/lep.Pt())*(MetUncl.PtUp);
@@ -846,10 +846,10 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
   Nu4VObj s;
   Float_t NuPz, NuPz_up, NuPz_down = 0.;
   const Float_t Mw = 80.379;
-  Float_t a = 2.*lep.Pt()*(*MET_pt);
+  Float_t a = 2.*lep.Pt()*(CorrMetPtPhi.first);
   Float_t k = Mw*Mw - wmt.Met*wmt.Met;
   Float_t b = (k + a);
-  Float_t c = k*(k + 4.*lep.Pt()*(*MET_pt));
+  Float_t c = k*(k + 4.*lep.Pt()*(CorrMetPtPhi.first));
 
   if ( c < 0 ) return GetNu4VFix(lep);
 
@@ -857,7 +857,7 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
 
   NuPz = (lep.Pz()*b - d)/(2.*lep.Pt()*lep.Pt()); // What About the Positive Solution?
 
-  s.Met = Get4V(NuPz,*MET_pt,*MET_phi);
+  s.Met = Get4V(NuPz,CorrMetPtPhi.first,CorrMetPtPhi.second);
 
 
 #if !defined(CMSDATA)
@@ -1004,7 +1004,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HPtl1,nh,lep1.Pt());
   FillH1(HPtl2,nh,lep2.Pt());
   FillH1(HPtl3,nh,lep3.Pt());
-  FillH1(HMetPt,nh,*MET_pt);
+  FillH1(HMetPt,nh,CorrMetPtPhi.first);
 #ifndef CMSDATA
   FillH1(HMetUnclUpPt,nh,MetUncl.PtUp);
   FillH1(HMetUnclDownPt,nh,MetUncl.PtDown);
@@ -1017,10 +1017,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HPtl1Lt,nh,lep1.Pt()/lt);
   FillH1(HPtl2Lt,nh,lep2.Pt()/lt);
   FillH1(HPtl3Lt,nh,lep3.Pt()/lt);
-  FillH1(HMetPtLt,nh,*MET_pt/lt);
-  FillH1(HPtl3Met,nh,*MET_pt/lep3.Pt());
+  FillH1(HMetPtLt,nh,CorrMetPtPhi.first/lt);
+  FillH1(HPtl3Met,nh,CorrMetPtPhi.first/lep3.Pt());
 
-  FillH1(HCosl3Met,nh,TMath::Cos(lep3.Phi()-*MET_phi));
+  FillH1(HCosl3Met,nh,TMath::Cos(lep3.Phi()-CorrMetPtPhi.second));
 
   // n Histos
   FillH1(HnEl,nh,(double)GoodElectron.size());
@@ -1238,7 +1238,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HPhil1,nh,lep1.Phi());
   FillH1(HPhil2,nh,lep2.Phi());
   FillH1(HPhil3,nh,lep3.Phi());
-  FillH1(HMetPhi,nh,*MET_phi);
+  FillH1(HMetPhi,nh,CorrMetPtPhi.second);
 #if !defined (CMSDATA)
   FillH1(HMetUnclUpPhi,nh,MetUncl.PhiUp);
   FillH1(HMetUnclDownPhi,nh,MetUncl.PhiDown);
@@ -1279,7 +1279,7 @@ bool PreSelector::DefineW(const Leptons& l){
     return false;
   }
 
-  wmt.Met = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), *MET_pt, *MET_phi);
+  wmt.Met = PreSelector::MassRecoW(lep3.Pt(), lep3.Phi(), CorrMetPtPhi.first, CorrMetPtPhi.second);
   nu = PreSelector::GetNu4V(lep3);
   wb.Met = (lep3 + nu.Met);
 
@@ -1555,7 +1555,19 @@ Bool_t PreSelector::Process(Long64_t entry) {
     return kFALSE;
   }
 
-  if (*MET_pt < 40.){
+  std::string SYear = Form("%d",Year);
+#if defined(Y2016) and !defined(CMSDATA)
+  SYear += fullPath.find("preVFP") != std::string::npos ? "APV":"nonAPV";
+#endif
+#if defined(Y2016) and defined(CMSDATA)
+  SYear += fullPath.find("HIPM") != std::string::npos ? "APV":"nonAPV";
+#endif
+
+  CorrMetPtPhi =
+    METXYCorr_Met_MetPhi(*MET_pt,*MET_phi,*run,SYear,
+                         !IsData,*PV_npvs,IsUL,false /*IsPuppi*/);
+
+  if (CorrMetPtPhi.first < 40.){
     HCutFlow->FillS("MET<40");
     return kFALSE;
   }
@@ -1790,8 +1802,8 @@ void PreSelector::Terminate() {
 ///////////////////////////////////////////////////////////
 MetUnclObj PreSelector::GetMetUncl(){
 
-  Float_t metPx = (*MET_pt)*(cos(*MET_phi));
-  Float_t metPy = (*MET_pt)*(sin(*MET_phi));
+  Float_t metPx = (CorrMetPtPhi.first)*(cos(CorrMetPtPhi.second));
+  Float_t metPy = (CorrMetPtPhi.first)*(sin(CorrMetPtPhi.second));
 
   Float_t metPxUp = metPx + *MET_MetUnclustEnUpDeltaX;
   Float_t metPxDown = metPx - *MET_MetUnclustEnUpDeltaX;
