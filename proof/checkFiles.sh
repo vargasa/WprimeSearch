@@ -16,6 +16,7 @@ PASS=true
 while true; do
     NFEND=$(( $NFSTART + $NSPLIT ))
     if [ $NFEND -gt $NLINES ]; then NFEND=$NLINES; fi
+    if [ $NFEND -eq $NFSTART ]; then break; fi
     FILE=`printf "%s/WprimeHistos_%s_%d_%s_%s__%04d_%04d.root" $OUTPUTFOLDER $OUTPUTLABEL $YEARP $TYPEP $SAMPLEFILENAME $NFSTART $NFEND`
     if [ ! -f "$FILE" ]; then
         printf "./SubmitCondor.sh %d %s %s %d %d\n" $YEARP $TYPEP $SAMPLEFILENAME $NFSTART $NFEND

@@ -17,7 +17,6 @@ SubmitSingle () {
 +JobFlavour = \"longlunch\"
 Executable = RunAN.sh
 should_transfer_files = YES
-Transfer_Output_Files = WprimeHistos_"$OutputLabel".root
 when_to_transfer_output = ON_EXIT
 request_cpus = $NCORES
 request_memory = $MEMORY
