@@ -4,11 +4,11 @@ YEARP=$1
 TYPEP=$2
 SAMPLEFILENAME=$3
 NCORES=2
-MEMORY=2048
-NSPLIT=20;
+MEMORY=1024
+NSPLIT=10;
 NFSTART=${4:0}
 NFEND=${5:0}
-OUTPUTLABEL="HEMCorrMET_"$YEARP"_"$TYPEP"_"$SAMPLEFILENAME"_"
+OUTPUTLABEL="Split10v2_"$YEARP"_"$TYPEP"_"$SAMPLEFILENAME"_"
 
 SubmitSingle () {
     printf "%4d_%4d\n" $1 $2
@@ -20,9 +20,9 @@ should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 request_cpus = $NCORES
 request_memory = $MEMORY
-Output = RunAN_"$OutputLabel"_\$(Cluster).stdout
-Error = RunAN_"$OutputLabel"_\$(Cluster).stderr
-Log = RunAN_"$OutputLabel"_\$(Cluster).log
+Output = WprimeHistos_"$OutputLabel".root___\$(Cluster).stdout
+Error = WprimeHistos_"$OutputLabel".root___\$(Cluster).stderr
+Log = WprimeHistos_"$OutputLabel".root___\$(Cluster).log
 Arguments = $YEARP $TYPEP $SAMPLEFILENAME $OutputLabel $1 $2
 Queue 1"
     echo "$jdlString" > /tmp/condor_job_$OutputLabel.jdl

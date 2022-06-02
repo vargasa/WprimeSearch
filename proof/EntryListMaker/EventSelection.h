@@ -186,17 +186,15 @@ void EventSelection::Init(TTree *tree)
 Bool_t EventSelection::Notify() {
 
   fullPath = std::string((fReader.GetTree())->GetCurrentFile()->GetEndpointUrl()->GetUrl());
-  std::clog << Form("Processing: %s\n",fullPath.c_str());
+  std::clog << Form("Processing: %s\t%lld\n",fullPath.c_str(),fReader.GetCurrentEntry());
 
   Long64_t nentry = fReader.GetCurrentEntry();
-
-  std::cout << "CurrentEntry " << nentry << "\n";
+  TTree* t_ = fReader.GetTree();
 
   fReader.Restart();
 
-  std::cout << "Restart " << fReader.GetCurrentEntry() << "\n";
-
   for(auto brn: HLTsMap){
+    brn.second->reset();
     TTree* tree = fReader.GetTree();
     const TBranch *b = tree->FindBranch(brn.first.c_str());
     if(b != nullptr){
@@ -208,6 +206,7 @@ Bool_t EventSelection::Notify() {
     }
   }
 
+  fReader.SetTree(t_);
   fReader.SetEntry(nentry);
 
 #if defined(Y2016) and !defined(CMSDATA) and defined(ULSAMPLE)
