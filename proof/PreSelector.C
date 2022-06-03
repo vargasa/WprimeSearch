@@ -1925,8 +1925,8 @@ Double_t PreSelector::GetSFFromHisto(TH1* h,const Float_t& x, const Float_t& y,
                                     const Int_t& option) const {
   assert(h!= NULL);
   assert(x < h->GetXaxis()->GetXmax() && x > h->GetXaxis()->GetXmin());
-  if(y > h->GetYaxis()->GetXmax())
-    return GetSFFromHisto(h,x,h->GetYaxis()->GetXmax() - 1e-3,option);
+  if(y >= h->GetYaxis()->GetXmax())
+    return GetSFFromHisto(h,x,float(h->GetYaxis()->GetXmax()) - 1e-3,option);
   Int_t nbin = h->FindBin(x,y);
   Double_t sf = h->GetBinContent(nbin);
   switch(option){
