@@ -164,7 +164,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 
   if(name == "HMassWZ"){
 
-    std::vector<std::string> rgs = { "SR1" };
+    std::vector<std::string> rgs = { "SR1", "CR1", "CR2" };
     std::vector<std::string> chs = { "A","B","C","D" };
     std::vector<std::string> sys = {
       "ElReco","ElTrigger","ElID",
@@ -203,8 +203,8 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 
     for(const auto id: syst){
       vec.emplace_back(new T(Form("%s_%s",name.data(),id.c_str()),
-                             name.data(),
-                             args...));
+                                      name.data(),
+                                      args...));
     }
 
     int ci = idst.size();
@@ -215,9 +215,23 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
 
 #endif
 
+  float mem = 0.f;
   for(auto h: vec){
+    const Int_t nbins = h->GetNbinsX()+h->GetNbinsY()+h->GetNbinsZ();
+    size_t sizePerBin = 0;
+
+    if constexpr (std::is_same_v<T,TH1F> or std::is_same_v<T,TH2F>) {
+      sizePerBin = sizeof(float);
+    } else if(std::is_same_v<T,TH1D> or std::is_same_v<T,TH2D>) {
+      sizePerBin = sizeof(double);
+    }
+    float estSize = (float)(nbins*sizePerBin)/1e2;
+    std::clog << "Histogram: " << h->GetName() << " Bins: " << nbins  << " | " << estSize <<"\n";
+    mem += estSize;
     fOutput->Add(h);
   }
+
+  std::clog << "Estimated Histogram Memory: " << name << "\t" << mem << "\n";
 
 }
 
@@ -399,7 +413,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HPtLeading,"HPtLeading",200,0.,MaxPt);
   InitHVec<TH1F>(HPtl1,"HPtl1",200,0.,MaxPt);
-  InitHVec<TH1F>(HPtl2,"HPtl2",400,0.,MaxPt);
+  InitHVec<TH1F>(HPtl2,"HPtl2",200,0.,MaxPt);
   InitHVec<TH1F>(HPtl3,"HPtl3",200,0.,MaxPt);
   InitHVec<TH1F>(HElPt,"HElPt",200,0.,MaxPt);
   InitHVec<TH1F>(HMuPt,"HMuPt",200,0.,MaxPt);
@@ -950,6 +964,7 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   }
 
   Int_t nh = nch + crOffset;
+  const std::string regionName = GetRegionNameFromOffset(crOffset);
 
   // dR Histos
   Double_t l1l2dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
@@ -1054,27 +1069,25 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep2.Phi());
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_A_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
-      HMassWZ[HIdx["SR1_A_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
-      HMassWZ[HIdx["SR1_A_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
-      HMassWZ[HIdx["SR1_A_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
-      HMassWZ[HIdx["SR1_A_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
-      HMassWZ[HIdx["SR1_A_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
-      HMassWZ[HIdx["SR1_A_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
-      HMassWZ[HIdx["SR1_A_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
-      HMassWZ[HIdx["SR1_A_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
-      HMassWZ[HIdx["SR1_A_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
+    HMassWZ[HIdx[regionName + "_A_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
+    HMassWZ[HIdx[regionName + "_A_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
+    HMassWZ[HIdx[regionName + "_A_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
+    HMassWZ[HIdx[regionName + "_A_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
+    HMassWZ[HIdx[regionName + "_A_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
+    HMassWZ[HIdx[regionName + "_A_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
+    HMassWZ[HIdx[regionName + "_A_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+    HMassWZ[HIdx[regionName + "_A_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+    HMassWZ[HIdx[regionName + "_A_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+    HMassWZ[HIdx[regionName + "_A_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
-      HMassWZ[HIdx["SR1_A_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_ECAL_Up)*(*genWeight));
-      HMassWZ[HIdx["SR1_A_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_ECAL_Dn)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_A_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_ECAL_Up)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_A_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_ECAL_Dn)*(*genWeight));
 #endif
-      if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_A_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
-        HMassWZ[HIdx["SR1_A_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
-        HMassWZ[HIdx["SR1_A_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
-        HMassWZ[HIdx["SR1_A_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
-      }
+    if(ApplyKFactors){
+      HMassWZ[HIdx[regionName + "_A_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+      HMassWZ[HIdx[regionName + "_A_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+      HMassWZ[HIdx[regionName + "_A_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+      HMassWZ[HIdx[regionName + "_A_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
     }
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId,Electron_cutBased[l2])).c_str());
@@ -1097,31 +1110,29 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HElPhi,nh,lep2.Phi());
     FillH1(HMuPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_B_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
-      HMassWZ[HIdx["SR1_B_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
-      HMassWZ[HIdx["SR1_B_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
-      HMassWZ[HIdx["SR1_B_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
-      HMassWZ[HIdx["SR1_B_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
-      HMassWZ[HIdx["SR1_B_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
-      HMassWZ[HIdx["SR1_B_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
-      HMassWZ[HIdx["SR1_B_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
-      HMassWZ[HIdx["SR1_B_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
-      HMassWZ[HIdx["SR1_B_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
-      HMassWZ[HIdx["SR1_B_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
-      HMassWZ[HIdx["SR1_B_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
-      HMassWZ[HIdx["SR1_B_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
-      HMassWZ[HIdx["SR1_B_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
+    HMassWZ[HIdx[regionName + "_B_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
+    HMassWZ[HIdx[regionName + "_B_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
+    HMassWZ[HIdx[regionName + "_B_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
+    HMassWZ[HIdx[regionName + "_B_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
+    HMassWZ[HIdx[regionName + "_B_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
+    HMassWZ[HIdx[regionName + "_B_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
+    HMassWZ[HIdx[regionName + "_B_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
+    HMassWZ[HIdx[regionName + "_B_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
+    HMassWZ[HIdx[regionName + "_B_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
+    HMassWZ[HIdx[regionName + "_B_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
+    HMassWZ[HIdx[regionName + "_B_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+    HMassWZ[HIdx[regionName + "_B_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+    HMassWZ[HIdx[regionName + "_B_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+    HMassWZ[HIdx[regionName + "_B_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
-      HMassWZ[HIdx["SR1_B_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
-      HMassWZ[HIdx["SR1_B_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_B_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_B_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
 #endif
-      if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_B_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
-        HMassWZ[HIdx["SR1_B_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
-        HMassWZ[HIdx["SR1_B_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
-        HMassWZ[HIdx["SR1_B_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
-      }
+    if(ApplyKFactors){
+      HMassWZ[HIdx[regionName + "_B_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+      HMassWZ[HIdx[regionName + "_B_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+      HMassWZ[HIdx[regionName + "_B_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+      HMassWZ[HIdx[regionName + "_B_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
     }
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId,Electron_cutBased[l2])).c_str());
@@ -1148,31 +1159,29 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep2.Phi());
     FillH1(HElPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_C_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
-      HMassWZ[HIdx["SR1_C_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
-      HMassWZ[HIdx["SR1_C_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
-      HMassWZ[HIdx["SR1_C_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
-      HMassWZ[HIdx["SR1_C_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
-      HMassWZ[HIdx["SR1_C_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
-      HMassWZ[HIdx["SR1_C_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
-      HMassWZ[HIdx["SR1_C_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
-      HMassWZ[HIdx["SR1_C_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
-      HMassWZ[HIdx["SR1_C_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
-      HMassWZ[HIdx["SR1_C_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
-      HMassWZ[HIdx["SR1_C_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
-      HMassWZ[HIdx["SR1_C_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
-      HMassWZ[HIdx["SR1_C_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
+    HMassWZ[HIdx[regionName + "_C_ElReco_Up"]]->Fill(wzm_Met,WElRecoUp);
+    HMassWZ[HIdx[regionName + "_C_ElReco_Down"]]->Fill(wzm_Met,WElRecoDown);
+    HMassWZ[HIdx[regionName + "_C_ElTrigger_Up"]]->Fill(wzm_Met,WElTrigUp);
+    HMassWZ[HIdx[regionName + "_C_ElTrigger_Down"]]->Fill(wzm_Met,WElTrigDown);
+    HMassWZ[HIdx[regionName + "_C_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
+    HMassWZ[HIdx[regionName + "_C_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
+    HMassWZ[HIdx[regionName + "_C_ElID_Up"]]->Fill(wzm_Met,WElIDUp);
+    HMassWZ[HIdx[regionName + "_C_ElID_Down"]]->Fill(wzm_Met,WElIDDown);
+    HMassWZ[HIdx[regionName + "_C_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
+    HMassWZ[HIdx[regionName + "_C_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
+    HMassWZ[HIdx[regionName + "_C_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+    HMassWZ[HIdx[regionName + "_C_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+    HMassWZ[HIdx[regionName + "_C_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+    HMassWZ[HIdx[regionName + "_C_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
-      HMassWZ[HIdx["SR1_C_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
-      HMassWZ[HIdx["SR1_C_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_C_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Up)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_C_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Dn)*(*genWeight));
 #endif
-      if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_C_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
-        HMassWZ[HIdx["SR1_C_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
-        HMassWZ[HIdx["SR1_C_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
-        HMassWZ[HIdx["SR1_C_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
-      }
+    if(ApplyKFactors){
+      HMassWZ[HIdx[regionName + "_C_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+      HMassWZ[HIdx[regionName + "_C_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+      HMassWZ[HIdx[regionName + "_C_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+      HMassWZ[HIdx[regionName + "_C_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
     }
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l2],MuPdgId,Muon_highPtId[l2])).c_str());
@@ -1201,25 +1210,23 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     FillH1(HMuPhi,nh,lep2.Phi());
     FillH1(HMuPhi,nh,lep3.Phi());
 #ifndef CMSDATA
-    if(crOffset==0){ // SR1
-      HMassWZ[HIdx["SR1_D_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
-      HMassWZ[HIdx["SR1_D_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
-      HMassWZ[HIdx["SR1_D_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
-      HMassWZ[HIdx["SR1_D_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
-      HMassWZ[HIdx["SR1_D_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
-      HMassWZ[HIdx["SR1_D_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
-      HMassWZ[HIdx["SR1_D_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
-      HMassWZ[HIdx["SR1_D_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
+    HMassWZ[HIdx[regionName + "_D_MuTrigger_Up"]]->Fill(wzm_Met,WMuTrigUp);
+    HMassWZ[HIdx[regionName + "_D_MuTrigger_Down"]]->Fill(wzm_Met,WMuTrigDown);
+    HMassWZ[HIdx[regionName + "_D_MuID_Up"]]->Fill(wzm_Met,WMuIDUp);
+    HMassWZ[HIdx[regionName + "_D_MuID_Down"]]->Fill(wzm_Met,WMuIDDown);
+    HMassWZ[HIdx[regionName + "_D_MetUncl_Up"]]->Fill(wzm_MetUnclUp);
+    HMassWZ[HIdx[regionName + "_D_MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+    HMassWZ[HIdx[regionName + "_D_Pileup_Up"]]->Fill(wzm_Met,WPileupUp);
+    HMassWZ[HIdx[regionName + "_D_Pileup_Down"]]->Fill(wzm_Met,WPileupDown);
 #if defined(Y2016) || defined(Y2017)
-      HMassWZ[HIdx["SR1_D_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Muon_Up)*(*genWeight));
-      HMassWZ[HIdx["SR1_D_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Muon_Dn)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_D_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_Muon_Up)*(*genWeight));
+    HMassWZ[HIdx[regionName + "_D_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_Muon_Dn)*(*genWeight));
 #endif
-      if(ApplyKFactors){
-        HMassWZ[HIdx["SR1_D_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
-        HMassWZ[HIdx["SR1_D_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
-        HMassWZ[HIdx["SR1_D_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
-        HMassWZ[HIdx["SR1_D_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
-      }
+    if(ApplyKFactors){
+      HMassWZ[HIdx[regionName + "_D_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp);
+      HMassWZ[HIdx[regionName + "_D_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown);
+      HMassWZ[HIdx[regionName + "_D_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp);
+      HMassWZ[HIdx[regionName + "_D_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown);
     }
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l1],MuPdgId,Muon_highPtId[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Muon_genPartIdx[l2],MuPdgId,Muon_highPtId[l2])).c_str());
@@ -1259,6 +1266,24 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   FillH1(HSIP3Dl3,nh,lw.sip3d[l3]);
 }
 
+std::string PreSelector::GetRegionNameFromOffset(const int& offset) const{
+
+  std::string regionName = "";
+
+  switch(offset){
+  case kSR1:
+    regionName = "SR1";
+    break;
+  case kCR1:
+    regionName = "CR1";
+    break;
+  case kCR2:
+    regionName = "CR2";
+    break;
+  }
+
+  return regionName;
+}
 
 bool PreSelector::DefineW(const Leptons& l){
 
@@ -1736,32 +1761,18 @@ Bool_t PreSelector::Process(Long64_t entry) {
            *run, *event, *luminosityBlock, zb.M());
   };
 
-#if !defined(CMSDATA)
-  enum {
-    kSR1 = 0,
-    kCR1 = 16, // 4 Channels * 4 Weights
-    kCR2 = 32,
-  };
-#else
-  enum {
-    kSR1 = 0,
-    kCR1 = 4, // 4 Channels
-    kCR2 = 8
-  };
-#endif
-
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist < 1.5;
   if(IsZMassOk){
     if(ZDistCut){
-      HCutFlow->FillS("SR1");
+      HCutFlow->FillS(GetRegionNameFromOffset(kSR1).c_str());
       FillRegion(kSR1,Els,Mus);
     } else {
-      HCutFlow->FillS("CR1");
+      HCutFlow->FillS(GetRegionNameFromOffset(kCR1).c_str());
       FillRegion(kCR1,Els,Mus);
     }
   } else {
-    HCutFlow->FillS("CR2");
+    HCutFlow->FillS(GetRegionNameFromOffset(kCR2).c_str());
     FillRegion(kCR2,Els,Mus);
   }
 

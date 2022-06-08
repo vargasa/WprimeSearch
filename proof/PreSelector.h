@@ -58,6 +58,20 @@ struct WmtObj {
 
 class PreSelector : public EventSelection {
 
+#if !defined(CMSDATA)
+  enum {
+    kSR1 = 0,
+    kCR1 = 16, // 4 Channels * 4 Weights
+    kCR2 = 32,
+  };
+#else
+  enum {
+    kSR1 = 0,
+    kCR1 = 4, // 4 Channels
+    kCR2 = 8
+  };
+#endif
+
  private :
 
   const std::pair<float,float> phiHEM = {-1.57,-0.87};
@@ -337,6 +351,7 @@ class PreSelector : public EventSelection {
   std::string GetMuIDString(UChar_t& id);
   std::string GetMuonTypeString(const int& ln);
   Float_t GetMuonPtDiff(const int& ln);
+  std::string GetRegionNameFromOffset(const int& offset) const;
 
 #if defined(Y2018)
   Bool_t CheckHEMElectron() ;
