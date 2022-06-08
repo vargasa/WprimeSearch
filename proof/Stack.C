@@ -867,9 +867,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       std::vector<std::string> chn;
       chn.reserve(6);
       TH1* hAll = nullptr;
+      std::string postfix = "WCentral";
       for (const auto ch: hName.substr(hName.find("_+")+2)) {
         if ( ch == std::string("_") ) break;
-        chn.emplace_back(Form("%c",ch));
+        chn.emplace_back(Form("%c_%s",ch,postfix.c_str()));
       }
       for(const auto& ch: chn){
         std::string hn = hName.substr(0, hName.find("_+") + 1);
@@ -1124,12 +1125,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
-  std::function<void(const int&, const int&)>
-    printDataCard = [&] (const int& year, const int& wpmass) {
+  std::function<void(const int&, const int&, const char*)>
+    printDataCard = [&] (const int& year, const int& wpmass, const char* fromHisto = "HMassWZ_SR1") {
 
     std::clog << Form("Printing datacard: Year[%d], WpMass[%d]\n",year,wpmass);
-
-    const char* fromHisto = "HMassWZ_SR1";
 
     std::unordered_map<std::string,std::string> channels = {
       {"A", "eee"},
@@ -1140,7 +1139,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
 
     ofstream dcFile;
-    dcFile.open(Form("%d_%d_DataCard.txt",year, wpmass));
+    dcFile.open(Form("DataCard_%s_%d_%d.txt",fromHisto,year, wpmass));
 
     std::unordered_map<Int_t, Float_t> lumiSyst = {
       // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiLUM
@@ -1149,7 +1148,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       { 2018, 0.025 },
     };
 
-    std::string rootFilename = Form("CombineFile_%d_%d.root",year,wpmass);
+    std::string rootFilename = Form("CombineFile_%s_%d_%d.root",fromHisto,year, wpmass);
     TFile* fCombine = TFile::Open(rootFilename.c_str(),"UPDATE");
 
     std::string DYSample = "DYJetsToLL";
@@ -1626,9 +1625,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     delete c1;
   };
 
-
-  std::function<void(const Int_t, std::vector<std::string>,bool)>
-    canvasStacked = [&] (const Int_t WpMass,
+  std::function<void(std::vector<Int_t>, std::vector<std::string>,bool)>
+    canvasStacked = [&] (std::vector<Int_t> WpMass,
                          std::vector<std::string> names,
                          bool includeData = true) {
 
@@ -1642,7 +1640,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         s.erase(s.find("_Up"),3);
       } else if ( s.find("_Down") != std::string::npos){
         s.erase(s.find("_Down"),5);
+      } else if (s.find("_NoSF") != std::string:: npos){
+        s.erase(s.find("_NoSF"),5);
       }
+      
       if (s.find("_WCentral") != std::string::npos)  removeCentral(s);
       if (s.find("_Up")      != std::string::npos)  removeCentral(s);
       if (s.find("_Down")    != std::string::npos)  removeCentral(s);
@@ -1683,8 +1684,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       if(hName.find("HFakeString") == std::string::npos or
          hName.find("HMuonPtDiff") == std::string::npos) 
         hName += "_WCentral"; // Include Central SF and genWeight
-      SignalInfo signal;
-      if (!includeAllYears) signal = SignalSamples[year][SignalPos[WpMass]];
       Int_t r = (j-1)%npads;
       c1->cd(r+1);
       std::string dataHName = hName;
@@ -1774,27 +1773,33 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
 
       TH1F* last = static_cast<TH1F*>(hs->GetStack()->Last());
+      std::vector<std::pair<SignalInfo,TH1*>> signals;
 
-      TH1* hsig;
       if(includeAllYears){
         TH1* hsigRun2;
-        for(auto yr_: Run2Years){
-          signal = SignalSamples[yr_][SignalPos[WpMass]];
-          hsig = getHistoFromFile(Form("%d/%s",yr_,signal.folderName.c_str()),hName);
-          applyLumiSF(hsig, Form("%d/%s",yr_,signal.folderName.c_str()), signal.xsec);
-          if (yr_ == 2016) hsigRun2 = hsig;
-          hsigRun2->Add(hsig);
+        for(auto m: WpMass){
+          for(auto yr_: Run2Years){
+            SignalInfo signal = SignalSamples[yr_][SignalPos[m]];
+            TH1* hsig = getHistoFromFile(Form("%d/%s",yr_,signal.folderName.c_str()),hName);
+            applyLumiSF(hsig, Form("%d/%s",yr_,signal.folderName.c_str()), signal.xsec);
+            if (yr_ == 2016) {
+              hsigRun2 = hsig;
+            } else {
+              hsigRun2->Add(hsig);
+            }
+          }
+          SignalInfo tmp_ = { Form("Wprime %.2f TeV",((float)m)/1e3), "", 0.};
+          signals.emplace_back(std::make_pair(tmp_,hsigRun2));
         }
-        hsig = hsigRun2;
       } else {
-        hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),hName);
-        applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
+        for(auto m: WpMass) signals.emplace_back(std::make_pair(SignalSamples[year][SignalPos[m]],nullptr));
+        for(auto& signal: signals){
+          TH1* hh = getHistoFromFile(Form("%d/%s",year,signal.first.folderName.c_str()),hName);
+          applyLumiSF(hh, Form("%d/%s",year,signal.first.folderName.c_str()), signal.first.xsec);
+          signal.second = hh;
+        }
       }
-      hsig->SetTitle(signal.legendName.c_str());
-      legend->AddEntry(hsig,Form("%s",signal.legendName.c_str()),"L");
-      hsig->SetLineColor(kBlack);
-      hsig->SetLineWidth(3);
-      hsig->SetFillColor(0);
+
       std::string labelIdx = dataHName;
       labelIdx.erase(labelIdx.find("_NoSF"),5);
       if (hName.find("CR1_") != std::string::npos) {
@@ -1826,7 +1831,15 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
       mainPad->cd();
       hs->Draw("HIST");
-      hsig->Draw("HIST SAME");
+      int color_ = kBlack;
+      for(auto signal: signals){
+        signal.second->SetTitle(signal.first.legendName.c_str());
+        legend->AddEntry(signal.second,Form("%s",signal.first.legendName.c_str()),"L");
+        signal.second->SetLineColor(color_++);
+        signal.second->SetLineWidth(3);
+        signal.second->SetFillColor(0);
+        signal.second->Draw("HIST SAME");
+      }
       double maxx = last->GetBinLowEdge(last->FindLastBinAbove(5e-1)+1);
       double minx = last->GetBinLowEdge(last->FindFirstBinAbove(5e-1));
       TH1*   htmp = hs->GetHistogram();
@@ -1888,8 +1901,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       legend->Draw();
       if( r+1 == npads ){
-        c1->Print(Form("plots/%d/%s_%sM%d.pdf",year,fileLabel.c_str(),pngName.c_str(),WpMass));
-        c1->Write(Form("%d_%s_%s_Wprime%d_Data",year,fileLabel.c_str(),hName.c_str(),WpMass));
+        c1->Print(Form("plots/%d/%s_%s.png",year,fileLabel.c_str(),pngName.c_str()));
+        c1->Write(Form("%d_%s_%s_Wprime_Data",year,fileLabel.c_str(),hName.c_str()));
       }
     }
 
@@ -2000,15 +2013,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   //plotPunziSignificance(2016);
 
   //Run2 Plots
-  std::vector<std::string> yearp = { "2016","2017","2018","0000"};
-  for(auto y : yearp){
-    for(auto h : hints){
-      std::vector<std::string> hNames;
-      for(auto ch: chs){
-        hNames.emplace_back(Form("%s/%s_CR1_%s",y.c_str(),h.c_str(),ch.c_str())); //0000 -> Run2
-        if(hNames.size() == 4){
-          canvasStacked(600,hNames,true);
-          hNames.clear() ;
+  std::vector<std::string> yearp = { "2016","2017","2018","0000" };
+  std::vector<std::string> reg_ = { "CR1","CR2","SR1" };
+  std::vector<Int_t> signals_ = { 600,800,1000,1200,1400,1600 };
+  for(auto rr: reg_){
+    for(auto y : yearp){
+      for(auto h : hints){
+        std::vector<std::string> hNames;
+        for(auto ch: chs){
+          hNames.emplace_back(Form("%s/%s_%s_%s",y.c_str(),h.c_str(),rr.c_str(),ch.c_str())); //0000 -> Run2
+          if(hNames.size() == 4){
+            canvasStacked(signals_,hNames,rr != "SR1");
+            hNames.clear() ;
+          }
         }
       }
     }
