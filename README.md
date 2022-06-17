@@ -20,12 +20,13 @@ echo "TFile *f = TFile::Open(\"WprimeHistos.root\",\"UPDATE\");gDirectory->rmdir
 ```
 
 ```cpp
-TFile *f = TFile::Open("WprimeHistos.root","UPDATE");
+TFile *f = TFile::Open("WprimeHistos_AddSystCRDraft.root","UPDATE");
 std::vector<int> years = {2016,2017,2018};
 for(const auto& year: years){
   f->cd(Form("%d",year));
   for (auto i: *(gDirectory->GetListOfKeys())) {
-    if ( std::string(i->GetName()).find("Single") == std::string::npos ){ /*Do not delete CMSDATA plots just MC*/
+    if ( std::string(i->GetName()).find("Single") == std::string::npos 
+         and std::string(i->GetName()).find("EGamma") == std::string::npos ){ /*Do not delete CMSDATA plots just MC*/
       std::cout << Form("%d/%s;1",year,i->GetName()) << std::endl;
       gDirectory->Delete(Form("%s;1",i->GetName()));
     }
@@ -110,12 +111,17 @@ where all the stack plots are produced. Plots are also saved in `png` format in 
 
 ```cpp
 // Copy Data histos to different root file
-TFile* fileFrom = TFile::Open("WprimeHistos_Data.root");
-TFile* fileTo = TFile::Open("WprimeHistos_MC.root","UPDATE");
+TFile* fileFrom = TFile::Open("WprimeHistos_ApplyMETPtPhiCorrectionv5.root");
+TFile* fileTo = TFile::Open("WprimeHistos_AddSystCR.root","UPDATE");
 std::vector<std::string> dirNames = {
-   "2016/SinglePhotonSingleElectronSingleMuon",
-   "2017/SinglePhotonSingleElectronSingleMuon",
-   "2018/SingleMuonEGamma",
+   "2016/ULSinglePhoton",
+   "2016/ULSingleElectron",
+   "2016/ULSingleMuon",
+   "2017/ULSinglePhoton",
+   "2017/ULSingleElectron",
+   "2017/ULSingleMuon",
+   "2018/ULSingleMuon",
+   "2018/ULEGamma"
 }
 
 for(const auto& dir: dirNames){
@@ -134,10 +140,10 @@ for(const auto& dir: dirNames){
 
 ```bash
 # Fix names for DataCards
-sed -i 's/t#bar{t}/TT/' plots/*/*.txt
-sed -i 's/Z#gamma/ZG/' plots/*/*.txt
+sed -i 's/t#bar{t}/TT/' *.txt
+sed -i 's/Z#gamma/ZG/' *.txt
 
-scp *Datacards.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
+scp DataCard*.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
 scp CombineFile*.root avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
 
 cd /eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
