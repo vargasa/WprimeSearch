@@ -148,6 +148,14 @@ scp CombineFile*.root avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW
 
 cd /eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
 
+for i in 600 800 1000 \
+  1200 1400 1600 1800 2000 \
+  2500 3000 3500 4000 4500; do
+  for j in 0.025 0.16 0.5 0.84 0.975; do
+     ./SubmitLimitJob.sh $i $j
+  done
+done
+
 for i in 600 800 1000 1200 \
   1400 1600 1800 2000 2500 \
   3000 3500 4000
