@@ -18,6 +18,7 @@ while true; do
     if [ $NFEND -gt $NLINES ]; then NFEND=$NLINES; fi
     if [ $NFEND -eq $NFSTART ]; then break; fi
     FILE=`printf "%s/WprimeHistos_%s_%d_%s_%s__%04d_%04d.root" $OUTPUTFOLDER $OUTPUTLABEL $YEARP $TYPEP $SAMPLEFILENAME $NFSTART $NFEND`
+#    echo $FILE
     if [ ! -f "$FILE" ]; then
         printf "./SubmitCondor.sh %s %d %s %s %d %d\n" $OUTPUTLABEL $YEARP $TYPEP $SAMPLEFILENAME $NFSTART $NFEND
         PASS=false
@@ -26,6 +27,7 @@ while true; do
     NFSTART=$(( $NFEND + 1 ))
 done
 
-if $PASS; then
-    hadd `printf "%s/WprimeHistos_%d_%s_%s_Merged.root" $OUTPUTFOLDER $YEARP $TYPEP $SAMPLEFILENAME` `printf "%s/WprimeHistos_%s_%d_%s_%s*.root" $OUTPUTFOLDER $OUTPUTLABEL $YEARP $TYPEP $SAMPLEFILENAME`
-fi
+#if $PASS; then
+#    echo "COMPLETED: "$SAMPLEFILENAME
+#    hadd `printf "%s/WprimeHistos_%d_%s_%s_Merged.root" $OUTPUTFOLDER $YEARP $TYPEP $SAMPLEFILENAME` `printf "%s/WprimeHistos_%s_%d_%s_%s*.root" $OUTPUTFOLDER $OUTPUTLABEL $YEARP $TYPEP $SAMPLEFILENAME`
+#fi

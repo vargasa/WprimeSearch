@@ -1762,6 +1762,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   const float_t l1l2Dist = GetEtaPhiDistance(lep1.Eta(),lep1.Phi(),lep2.Eta(),lep2.Phi());
   Bool_t ZDistCut = l1l2Dist < 1.5;
+  const float MinMinZMass  = 10.f;
   if(IsZMassOk){
     if(ZDistCut){
       HCutFlow->FillS(GetRegionNameFromOffset(kSR1).c_str());
@@ -1770,7 +1771,7 @@ Bool_t PreSelector::Process(Long64_t entry) {
       HCutFlow->FillS(GetRegionNameFromOffset(kCR1).c_str());
       FillRegion(kCR1,Els,Mus);
     }
-  } else {
+  } else if ( PairZMass > MinMinZMass ) {
     HCutFlow->FillS(GetRegionNameFromOffset(kCR2).c_str());
     FillRegion(kCR2,Els,Mus);
   }
