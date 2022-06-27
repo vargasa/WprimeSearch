@@ -7,3 +7,6 @@
 [submodule "doc/AN-20-200"]
 	path = doc/AN-20-200
 	url = ssh://git@gitlab.cern.ch:7999/tdr/notes/AN-20-200.git
+[submodule "doc/B2G-21-006"]
+	path = doc/B2G-21-006
+	url = ssh://git@gitlab.cern.ch:7999/tdr/papers/B2G-21-006.git

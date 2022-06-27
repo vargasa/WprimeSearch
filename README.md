@@ -144,6 +144,7 @@ sed -i 's/t#bar{t}/TT/' *.txt
 sed -i 's/Z#gamma/ZG/' *.txt
 
 scp DataCard*.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
+
 scp CombineFile*.root avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
 
 cd /eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
@@ -168,6 +169,8 @@ do
   combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i -o "impacts_"$i".json"
   plotImpacts.py -i "impacts_"$i".json" -o "ImpactsPlot"$i".json"
 done
+
+scp avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/higgsCombine*.root
 ```
 
 ### Comparing graphs for different set of cuts:
