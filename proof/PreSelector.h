@@ -21,6 +21,7 @@
 #include "EntryListMaker/EventSelection.h"
 #include "TGraphAsymmErrors.h"
 #include <unordered_map>
+#include "XYMETCorrection_withUL17andUL18andUL16.h"
 
 using PtEtaPhiMVector = ROOT::Math::PtEtaPhiMVector;
 
@@ -36,9 +37,45 @@ struct ZPairInfo{
 
 };
 
+struct MetUnclObj {
+  Double_t PtUp;
+  Double_t PtDown;
+  Double_t PhiUp;
+  Double_t PhiDown;
+};
+
+struct Nu4VObj {
+  ROOT::Math::PxPyPzMVector Met;
+  ROOT::Math::PxPyPzMVector MetUnclUp;
+  ROOT::Math::PxPyPzMVector MetUnclDown;
+};
+
+struct WmtObj {
+  Float_t Met; // No Corrections Applied
+  Float_t MetUnclUp; //Unclustered Met Up
+  Float_t MetUnclDown; //Unclustered Met Down
+};
+
 class PreSelector : public EventSelection {
 
+#if !defined(CMSDATA)
+  enum {
+    kSR1 = 0,
+    kCR1 = 16, // 4 Channels * 4 Weights
+    kCR2 = 32,
+  };
+#else
+  enum {
+    kSR1 = 0,
+    kCR1 = 4, // 4 Channels
+    kCR2 = 8
+  };
+#endif
+
  private :
+
+  const std::pair<float,float> phiHEM = {-1.57,-0.87};
+  const std::pair<float,float> etaHEM = {-2.5,-1.3};
 
   TTreeReaderValue<UInt_t> run = {fReader, "run"};
   TTreeReaderValue<UInt_t> luminosityBlock = {fReader, "luminosityBlock"};
@@ -99,6 +136,9 @@ class PreSelector : public EventSelection {
   // nJets
   TTreeReaderValue<UInt_t> nJet = {fReader, "nJet"};
   TTreeReaderArray<Float_t> Jet_btagDeepFlavB = {fReader, "Jet_btagDeepFlavB"};
+  TTreeReaderArray<Float_t> Jet_phi = {fReader, "Jet_phi"};
+  TTreeReaderArray<Float_t> Jet_eta = {fReader, "Jet_eta"};
+  TTreeReaderArray<Float_t> Jet_pt = {fReader, "Jet_pt"};
 
   // GenPart
 #ifndef CMSDATA
@@ -114,6 +154,20 @@ class PreSelector : public EventSelection {
   TTreeReaderArray<Int_t> GenPart_status = {fReader, "GenPart_status"};
   TTreeReaderArray<Int_t> GenPart_statusFlags = {fReader, "GenPart_statusFlags"};
   TTreeReaderValue<Float_t> Pileup_nTrueInt = {fReader, "Pileup_nTrueInt"};
+  TTreeReaderValue<Float_t> MET_MetUnclustEnUpDeltaX = {fReader,"MET_MetUnclustEnUpDeltaX"};
+  TTreeReaderValue<Float_t> MET_MetUnclustEnUpDeltaY = {fReader,"MET_MetUnclustEnUpDeltaY"};
+
+#if defined(Y2016) || defined (Y2017)
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Nom = {fReader, "L1PreFiringWeight_Nom"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Up = {fReader, "L1PreFiringWeight_Up"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Dn = {fReader, "L1PreFiringWeight_Dn"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Nom = {fReader, "L1PreFiringWeight_ECAL_Nom"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Up = {fReader, "L1PreFiringWeight_ECAL_Up"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_ECAL_Dn = {fReader, "L1PreFiringWeight_ECAL_Dn"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Muon_Nom = {fReader, "L1PreFiringWeight_Muon_Nom"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Muon_Up = {fReader, "L1PreFiringWeight_Muon_SystUp"};
+  TTreeReaderValue<Float_t> L1PreFiringWeight_Muon_Dn = {fReader, "L1PreFiringWeight_Muon_SystDn"};
+#endif
 #endif
   // Neutrinos
   TTreeReaderValue<Float_t> MET_phi = {fReader, "MET_phi"};
@@ -147,7 +201,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HDxyl1;
   std::vector<TH1F*> HDxyl2;
   std::vector<TH1F*> HDxyl3;
-  std::vector<TH2F*> HDxyl1l2;
   std::vector<TH1F*> HDzl1;
   std::vector<TH1F*> HDzl2;
   std::vector<TH1F*> HDzl3;
@@ -157,23 +210,19 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HSIP3Dl1;
   std::vector<TH1F*> HSIP3Dl2;
   std::vector<TH1F*> HSIP3Dl3;
-  std::vector<TH1F*> HRelIsol1;
-  std::vector<TH1F*> HRelIsol2;
-  std::vector<TH1F*> HRelIsol3;
   std::vector<TH1F*> HnJet;
+  std::vector<TH1F*> HMuonPtDiff;
+  std::vector<TH1F*> HMuonPF;
 
   std::vector<TH2F*> HMassZWZ;
-
-  std::vector<TH2F*> HMassZTW;
   std::vector<TH2F*> HDeltaRPtZ;
   std::vector<TH2F*> HPtWPtZ;
   std::vector<TH2F*> HDeltaRMWZ;
-  std::vector<TH2F*> HLtMWZ;
-  std::vector<TH2F*> HEtaPhil1;
-  std::vector<TH2F*> HEtaPhil2;
-  std::vector<TH2F*> HEtaPhil3;
   std::vector<TH2F*> HPtl1l2;
+  std::vector<TH2F*> HPtl1l3;
   std::vector<TH2F*> HZElId;
+  std::vector<TH2F*> HIDl1l2;
+  std::vector<TH2F*> HMuonPtType;
 
   //Angular
 
@@ -192,10 +241,9 @@ class PreSelector : public EventSelection {
   std::vector<TH2F*> HGenPartZ;
   std::vector<TH2F*> HGenPartW;
   std::vector<TH2F*> HGenPartChgF;
-  std::vector<TH1F*> HScaleFactors;
+  std::vector<TH2F*> HSFs;
   std::vector<TH2F*> HGenPartZWp;
   std::vector<TH2F*> HGenPartWWp;
-  TH1D *SFPileup;
 
 #endif
 
@@ -203,12 +251,15 @@ class PreSelector : public EventSelection {
 
   std::vector<TH2I*> HNLep;
 
+  std::vector<TH1F*> HPtLeading;
   std::vector<TH1F*> HPtl1;
   std::vector<TH1F*> HPtl2;
   std::vector<TH1F*> HPtl3;
   std::vector<TH1F*> HElPt;
   std::vector<TH1F*> HMuPt;
   std::vector<TH1F*> HMetPt;
+  std::vector<TH1F*> HMetUnclUpPt;
+  std::vector<TH1F*> HMetUnclDownPt;
 
   std::vector<TH1F*> HEtal1;
   std::vector<TH1F*> HEtal2;
@@ -216,23 +267,19 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HElEta;
   std::vector<TH1F*> HMuEta;
 
-  std::vector<TH2F*> HPtEtal1;
-  std::vector<TH2F*> HPtEtal2;
-  std::vector<TH2F*> HPtEtal3;
-
   std::vector<TH1F*> HPhil1;
   std::vector<TH1F*> HPhil2;
   std::vector<TH1F*> HPhil3;
   std::vector<TH1F*> HElPhi;
   std::vector<TH1F*> HMuPhi;
   std::vector<TH1F*> HMetPhi;
+  std::vector<TH1F*> HMetUnclUpPhi;
+  std::vector<TH1F*> HMetUnclDownPhi;
 
   std::vector<TH1F*> HZPt;
   std::vector<TH1F*> HWPt;
-  std::vector<TH1F*> HWZDist;
   std::vector<TH1F*> HWZPt;
 
-  std::vector<TH2F*> HWZPtDist;
 
   TH1D *HPileup;
   TH1D *HTruePileup;
@@ -244,22 +291,26 @@ class PreSelector : public EventSelection {
   Int_t l1, l2, l3; // Lepton pair index and lead remaining
   Int_t leadMuIdx; // Leading is not 0th index
   Int_t leadElIdx;
-  Float_t wmt; // W Transverse mass;
+  WmtObj wmt;// W Transverse mass;
   Float_t lt; // Sum of leptons Pt
 
   Bool_t IsA_{},IsB{},IsC{},IsD{};
+  std::pair<double,double> CorrMetPtPhi;
 
   std::vector<UInt_t> GoodElectron;
   std::vector<UInt_t> GoodMuon;
   std::vector<UInt_t> SameFlvWCand;
   Bool_t PairEl{}, PairMu{};
-  PtEtaPhiMVector lep1, lep2, zb, wb, lep3;
-  std::vector<ROOT::Math::PxPyPzMVector> nu;
+  PtEtaPhiMVector lep1, lep2, zb, lep3;
+  PtEtaPhiMVector* leadingLepton;
+  Nu4VObj wb; // Three Values for Met, MetUnclUp and MetUnclDown
+  Nu4VObj nu;
 
   Float_t PairZMass;
 
-  Double_t wcentral;
+  Double_t WCentral, WAllUp, WAllDown;
   Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
+    WElRecoUp,WElRecoDown,WPileupUp,WPileupDown,
     WElIDUp,WElIDDown,WMuIDUp,WMuIDDown,
     WKEWKUp,WKEWKDown,WKQCDUp,WKQCDDown;
 
@@ -284,7 +335,6 @@ class PreSelector : public EventSelection {
   void SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l);
 
   bool DefineW(const Leptons& l);
-  Bool_t CheckElectronPair(const std::pair<UInt_t,UInt_t>&) const;
   Bool_t CheckMuonPair(const std::pair<UInt_t,UInt_t>&) const;
   Float_t GetEtaPhiDistance(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoZ(const float&,const float&,const float&,const float&,
@@ -292,9 +342,21 @@ class PreSelector : public EventSelection {
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
 
+  void FindLeadingLepton();
   void FillCategory(const Int_t& crOffset,
                     const Leptons& lz,const Leptons& lw);
   void FillH1(std::vector<TH1F*>& h1, const Int_t& nh, const Double_t& binContent);
+
+  std::string GetElIDString(Int_t& id);
+  std::string GetMuIDString(UChar_t& id);
+  std::string GetMuonTypeString(const int& ln);
+  Float_t GetMuonPtDiff(const int& ln);
+  std::string GetRegionNameFromOffset(const int& offset) const;
+
+#if defined(Y2018)
+  Bool_t CheckHEMElectron() ;
+  Bool_t CheckHEMJet() ;
+#endif
 
 #ifndef CMSDATA
   std::pair<Int_t,Int_t> GetMother(Int_t,Int_t) const;
@@ -305,10 +367,15 @@ class PreSelector : public EventSelection {
   Double_t GetElTriggerSF(const Float_t& eta, const Float_t& pt, const Int_t& option) const;
   Double_t GetMuTriggerSF(const Float_t& eta, Float_t pt, const Int_t& option) const;
   Double_t GetMuIDSF(UChar_t MuonID /* 2: highPt. 1: TrkHighPt*/,const Float_t& eta, const Float_t& pt, const Int_t& option) const;
+  Double_t GetElIDSF(Int_t& nl, const Int_t& option) const;
   Double_t GetSFFromHisto(TH1* h,const Float_t& eta,const Float_t& pt,const Int_t& option) const;
   Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
-  Float_t GetSFFromHisto(TH1* h, const Int_t& npv);
-  void DefineSFs();
+  Float_t GetSFFromHisto(TH1* h, const Int_t& npv, const Int_t option);
+  void DefineSFs(const int& nh);
+
+  MetUnclObj GetMetUncl();
+
+  MetUnclObj MetUncl;
 
   Bool_t ApplyKFactors{};
   Double_t KSFMinPt;
@@ -318,6 +385,27 @@ class PreSelector : public EventSelection {
 
   TGraphAsymmErrors* SFElectronTrigger1;
   TGraphAsymmErrors* SFElectronTrigger2;
+
+#if defined(ULSAMPLE)
+  TH2F* SFElectronHLT;
+  TH2F* SFElectronHLTLoose;
+  TH2F* SFElectronHLTMedium;
+  TH2F* SFElectronHLTTight;
+  TH2F* SFElectronReco;
+  TH2F* SFElectronRecoB20;
+#if defined(Y2016)
+  TH2F* SFElectronRecopreVFP;
+  TH2F* SFElectronRecopostVFP;
+  TH2F* SFElectronRecopreVFPB20;
+  TH2F* SFElectronRecopostVFPB20;
+  TH2F* SFElectronHLTpreVFPLoose;
+  TH2F* SFElectronHLTpreVFPMedium;
+  TH2F* SFElectronHLTpreVFPTight;
+  TH2F* SFElectronHLTpostVFPLoose;
+  TH2F* SFElectronHLTpostVFPMedium;
+  TH2F* SFElectronHLTpostVFPTight;
+#endif
+#endif
 
 #endif
 
@@ -331,11 +419,9 @@ class PreSelector : public EventSelection {
   ZPairInfo FindZ(const std::vector<std::pair<UInt_t,UInt_t>>& Pairs,
                   const Leptons& l,
                   const std::vector<UInt_t>& GoodLepton) const;
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4V(const ROOT::Math::PtEtaPhiMVector&,const Float_t&);
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VAlt(ROOT::Math::PtEtaPhiMVector,Float_t); 
-  std::vector<ROOT::Math::PxPyPzMVector> GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep,
-                                                    const Float_t& Wmt);
-  ROOT::Math::PxPyPzMVector Get4V(const Float_t& Pz);
+  Nu4VObj GetNu4V(const ROOT::Math::PtEtaPhiMVector&);
+  Nu4VObj GetNu4VFix(const ROOT::Math::PtEtaPhiMVector& lep);
+  ROOT::Math::PxPyPzMVector Get4V(const Float_t& pz, const Float_t& pt, const Float_t phi);
 
   Int_t nbTag();
 

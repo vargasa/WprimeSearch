@@ -20,12 +20,13 @@ echo "TFile *f = TFile::Open(\"WprimeHistos.root\",\"UPDATE\");gDirectory->rmdir
 ```
 
 ```cpp
-TFile *f = TFile::Open("WprimeHistos.root","UPDATE");
+TFile *f = TFile::Open("WprimeHistos_AddSystCRDraft.root","UPDATE");
 std::vector<int> years = {2016,2017,2018};
 for(const auto& year: years){
   f->cd(Form("%d",year));
   for (auto i: *(gDirectory->GetListOfKeys())) {
-    if ( std::string(i->GetName()).find("Single") == std::string::npos ){ /*Do not delete CMSDATA plots just MC*/
+    if ( std::string(i->GetName()).find("Single") == std::string::npos 
+         and std::string(i->GetName()).find("EGamma") == std::string::npos ){ /*Do not delete CMSDATA plots just MC*/
       std::cout << Form("%d/%s;1",year,i->GetName()) << std::endl;
       gDirectory->Delete(Form("%s;1",i->GetName()));
     }
@@ -53,204 +54,20 @@ for(const auto& hs: histos){
 
 ```
 
-
-### Setup for MC
-
-Scale factors: Additional notes [here](https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/README.txt)
-
-#### Electron Trigger
+### Running Analysis Framework
 
 ```bash
-#[2016 - LowPt Bin]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to175_withsyst.root 
-#[2016 - HighPt Bin]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/ElectronTriggerScaleFactors_eta_ele_binned_official_pt175toInf.root
-#[2017 - LowPt Bin]
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root
-#[2017 - HighPt Bin]
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root
-#[2018 - LowPt Bin]
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/ElectronTriggerScaleFactors_eta_ele_binned_official_pt30to200_withsyst.root
-#[2018 - HighPt Bin]
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/ElectronTriggerScaleFactors_eta_ele_binned_official_pt200toInf.root
-```
 
-#### Electron ID
+## Unique EntryList
+wget -P proof/EntryListMaker/ https://avargash.web.cern.ch/avargash/analysisFiles/EntryLists_Unique.root
 
-```bash
-# [2016]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronLoose.root
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronMedium_Fall17V2.root
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/2016LegacyReReco_ElectronTight_Fall17V2.root
-# [UL2016]
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Loose_preVFP_EGM2D.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Loose_postVFP_EGM2D.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Tight_preVFP_EGM2D.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/egammaEffi.txt_Ele_Tight_postVFP_EGM2D.root
-# [2017]
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronLoose.root
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronMedium.root
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/2017_ElectronTight.root
-# [UL2017]
-wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/egammaEffi.txt_EGM2D_PHO_Loose_UL17.root
-wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/egammaEffi.txt_EGM2D_PHO_Tight_UL17.root
-# [2018]
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronLoose.root
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronMedium.root
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/2018_ElectronTight.root
-# [UL2018]
-wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/egammaEffi.txt_Ele_Loose_EGM2D.root
-wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/egammaEffi.txt_Ele_Tight_EGM2D.root
-```
+### UL Samples
 
-#### Muon Trigger:
-
-```bash
-#[2016 GH]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesAndSF_Period4.root
-#[2016 B-F]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesAndSF_RunBtoF.root
-#[UL2016]
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/EfficienciesStudies_UL2016_preVFP_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_SingleMuonTriggers.root
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/EfficienciesStudies_UL2016_postVFP_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_SingleMuonTriggers.root
-#[2017 BCDEF]
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root
-#[UL2017]
-wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/EfficienciesStudies_UL2017_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_SingleMuonTriggers.root
-#[2018 ABCD]
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root
-#[UL2018]
-wget -P proof/files/mc/2018/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/EfficienciesStudies_UL2018_Trigger_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_SingleMuonTriggers.root
-````
-
-#### Muon ID:
-
-Download filename differs from the one shown in the URL
-
-```bash
-#[2016 GH]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunGH_SF_ID.root
-#[2016 B-F]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/RunBCDEF_SF_ID.root
-#[UL2016]
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root #preVFP
-wget -P proof/files/mc/2016/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/UL/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root #postVFP
-#[2017 BCDEF]
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/RunBCDEF_SF_ID_2017.root
-#[UL2017]
-wget -P proof/files/mc/2017/sf/UL/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/UL/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
-#[2018 ABCD]
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/RunABCD_SF_ID.root
-#[UL2018]
-wget -P proof/files/mc/2018/sf/UL -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/UL/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root 
-```
-
-#### Muon ID [UL]:
-
-```bash
-#[2016]
-wget -P proof/files/mc/2016/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2016/EfficienciesStudies_UL2016_postVFP_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root
-#[2017]
-wget -P proof/files/mc/2017/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2017/EfficienciesStudies_UL2017_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
-#[2018]
-wget -P proof/files/mc/2018/sf/ -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/2018/EfficienciesStudies_UL2018_DEN_TrackerMuons_rootfiles_Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
-```
-
-### Pileup distribution
-
-```bash
-wget -c https://avargash.web.cern.ch/avargash/analysisFiles/scaleFactors/PileupWeights.root
-```
-
-```bash
-#2016
-wget -P proof/files/mc/2016/sf/ -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2016-69200ub.root
-#2017
-wget -P proof/files/mc/2017/sf/ -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2017-69200ub.root
-#2018
-wget -P proof/files/mc/2018/sf/ -c https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PileUp/PileupHistogram-goldenJSON-13tev-2018-69200ub.root
-
-```
-### kFactors
-```
-#2016
-wget -P proof/files/mc/2016/sf -c https://github.com/rishabhCMS/decaf/raw/master/analysis/data/vjets_SFs/merged_kfactors_zjets.root
-#2017 / 2018
-wget -P proof/files/mc/2017/sf -c https://github.com/rishabhCMS/decaf/raw/master/analysis/data/vjets_SFs/SF_QCD_NLO_DYJetsToLL.root
-
-```
-
-
-The pileup scalefactors `PileupWeights.root` is computed by using:
-
-```bash
-root -l PileupReweighing.C
-```
-
-Which takes as input `WprimeHistos.root` and `PileupHistogram-goldenJSON-13tev-2016-69200ub.root`
-
-```bash
+#### MC
+##### Running using condor:
 cd proof/
-# Copy paste formulas:
-
-FILES=files/mc/2016/*.txt #Loop over set of the list files
-for i in $FILES
-do
- echo "#define Y2016" > IsData.h # Make sure CMSDATA is undefined
- root -l -b -q "Selector.C(\"$i\", 4)";
-done
-
-FILES=files/mc/2017/*.txt #Loop over set of the list files
-for i in $FILES
-do
- echo "#define Y2017" > IsData.h # Make sure CMSDATA is undefined
- root -l -b -q "Selector.C(\"$i\", 4)";
-done
-
-FILES=files/mc/2018/*.txt #Loop over set of the list files
-for i in $FILES
-do
- echo "#define Y2018" > IsData.h # Make sure CMSDATA is undefined
- root -l -b -q "Selector.C(\"$i\", 4)";
-done
-
-#### UL Samples
-
-## 2016
-GLOBIGNORE="*"
-YEAR=2016
-groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
-for str in ${groups[@]}; do
-  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; \
-                   for i in $FILES; do \
-                     echo -e "#define Y'$YEAR'\n#define ULSAMPLE" > IsData.h; \
-                     root -l -b -q "Selector.C(\"$i\", 4)"; \
-                    done'
-done
-
-## 2017
-GLOBIGNORE="*"
-YEAR=2017
-groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
-for str in ${groups[@]}; do
-  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; \
-                   for i in $FILES; do \
-                     echo -e "#define Y'$YEAR'\n#define ULSAMPLE" > IsData.h; \
-                     root -l -b -q "Selector.C(\"$i\", 4)"; \
-                    done'
-done
-
-## 2018
-GLOBIGNORE="*"
-YEAR=2018
-groups=('*.txt' 'T*.txt' 'S*.txt' 'W*.txt' 'Z*.txt')
-for str in ${groups[@]}; do
-  tmux new-window 'FILES=files/mc/'$YEAR'/UL/'$str'; \
-                   for i in $FILES; do \
-                     echo -e "#define Y'$YEAR'\n#define ULSAMPLE" > IsData.h; \
-                     root -l -b -q "Selector.C(\"$i\", 4)"; \
-                    done'
-done
+YEAR=2018;for i in `ls -1 files/mc/$YEAR/UL/*.txt |xargs -n1 basename`; do ./SubmitCondor.sh $YEAR MC $i; sleep 1; done
+LABEL=Anv5Mixv2v9;for i in `ls *$LABEL*`; do root -l -b -q "copyFiles.C(\""$i"\")"; done
 
 ```
 
@@ -268,54 +85,43 @@ new `TEntryList`. Check `proof/EntryListMaker/README.md` for further details on 
 create the required `EntryLists.root` file.
 
 ```bash
-# 2016
-cd proof/
-# Make sure CMSDATA is defined and Year is provided
-echo -e "#define Y2016\n#define CMSDATA" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2016/SinglePhoton.txt+files/data/2016/SingleElectron.txt+files/data/2016/SingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")"; # 8 Workers
-# SampleName is not commutative ;)
-# It will look for: SinglePhotonSingleElectronSingleMuon/EntryList into EntryLists_Unique
-
-# 2017
-echo -e "#define Y2017\n#define CMSDATA" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2017/SinglePhoton.txt+files/data/2017/SingleElectron.txt+files/data/2017/SingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
-
-# 2018
-echo -e "#define Y2018\n#define CMSDATA" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2018/SingleMuon.txt+files/data/2018/EGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
-
-```
 #### Ultra-Legacy Samples
 
 ```bash
-# 2016
-cd proof/
-echo -e "#define Y2016\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2016/UL/ULSinglePhoton.txt+files/data/2016/UL/ULSingleElectron.txt+files/data/2016/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")"; # 8 Workers
-
-# 2017
-echo -e "#define Y2017\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2017/UL/ULSinglePhoton.txt+files/data/2017/UL/ULSingleElectron.txt+files/data/2017/UL/ULSingleMuon.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
-
-# 2018
-echo -e "#define Y2018\n#define CMSDATA\n#define ULSAMPLE" > IsData.h
-root -l -b -q "Selector.C(\"files/data/2018/UL/ULSingleMuon.txt+files/data/2018/UL/ULEGamma.txt\", 8, \"EntryListMaker/EntryLists_Unique.root\")";
-
+YEAR=2018;for i in `ls -1 files/data/$YEAR/UL/*.txt |xargs -n1 basename`; do ./SubmitCondor.sh $YEAR DATA $i; sleep 1; done
+LABEL=Anv5Mixv2v9;for i in `ls *$LABEL*`; do root -l -b -q "copyFiles.C(\""$i"\")"; done
 ```
 
 This will create `WprimeHistos.root` file which will contain all the histograms
 created on `PreSelector.C` classified by the sample name as a root directory.
 
 
+### Stack
+
+```bash
+root -l -b -q "Stack.C(\"WprimeHistos_all.root\")";
+```
+
+Where "_all" stands for MC + Data. It creates a file `WprimeStack_all.root` (or `_label`)
+where all the stack plots are produced. Plots are also saved in `png` format in the
+`plots/[year]` directory.
+
+
 #### For reference
+
 ```cpp
 // Copy Data histos to different root file
-TFile* fileFrom = TFile::Open("WprimeHistos_Data.root");
-TFile* fileTo = TFile::Open("WprimeHistos_MC.root","UPDATE");
+TFile* fileFrom = TFile::Open("WprimeHistos_ApplyMETPtPhiCorrectionv5.root");
+TFile* fileTo = TFile::Open("WprimeHistos_AddSystCR.root","UPDATE");
 std::vector<std::string> dirNames = {
-   "2016/SinglePhotonSingleElectronSingleMuon",
-   "2017/SinglePhotonSingleElectronSingleMuon",
-   "2018/SingleMuonEGamma",
+   "2016/ULSinglePhoton",
+   "2016/ULSingleElectron",
+   "2016/ULSingleMuon",
+   "2017/ULSinglePhoton",
+   "2017/ULSingleElectron",
+   "2017/ULSingleMuon",
+   "2018/ULSingleMuon",
+   "2018/ULEGamma"
 }
 
 for(const auto& dir: dirNames){
@@ -330,28 +136,26 @@ for(const auto& dir: dirNames){
 }
 ```
 
-
-### Stack
-
-```bash
-root -l -b -1 "Stack.C(\"WprimeHistos_all.root\")";
-```
-
-Where "_all" stands for MC + Data. It creates a file `WprimeStack_all.root` (or `_label`)
-where all the stack plots are produced. Plots are also saved in `png` format in the
-`plots/[year]` directory.
-
 ### Combine
 
 ```bash
 # Fix names for DataCards
-sed -i 's/t#bar{t}/TT/' plots/*/*.txt
-sed -i 's/Z#gamma/ZG/' plots/*/*.txt
+sed -i 's/t#bar{t}/TT/' *.txt
+sed -i 's/Z#gamma/ZG/' *.txt
 
-scp *DataCard.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
+scp DataCard*.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
+
 scp CombineFile*.root avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
 
 cd /eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
+
+for i in 600 800 1000 \
+  1200 1400 1600 1800 2000 \
+  2500 3000 3500 4000 4500; do
+  for j in 0.025 0.16 0.5 0.84 0.975; do
+     ./SubmitLimitJob.sh $i $j
+  done
+done
 
 for i in 600 800 1000 1200 \
   1400 1600 1800 2000 2500 \
