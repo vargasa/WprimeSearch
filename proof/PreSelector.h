@@ -142,6 +142,15 @@ class PreSelector : public EventSelection {
 
   // GenPart
 #ifndef CMSDATA
+  TTreeReaderValue<UInt_t> nLHEPdfWeight = {fReader, "nLHEPdfWeight"};
+  TTreeReaderArray<Float_t> LHEPdfWeight = {fReader, "LHEPdfWeight"};
+  TTreeReaderValue<UInt_t> nLHEReweightingWeight = {fReader, "nLHEReweightingWeight"};
+  TTreeReaderArray<Float_t> LHEReweightingWeight = {fReader, "LHEReweightingWeight"};
+  TTreeReaderValue<UInt_t> nLHEScaleWeight = {fReader, "nLHEScaleWeight"};
+  TTreeReaderArray<Float_t> LHEScaleWeight = {fReader, "LHEScaleWeight"};
+  TTreeReaderValue<UInt_t> nPSWeight = {fReader, "nPSWeight"};
+  TTreeReaderArray<Float_t> PSWeight = {fReader, "PSWeight"};
+
   TTreeReaderValue<Float_t> genWeight = {fReader, "genWeight"};
   TTreeReaderArray<Int_t> Electron_genPartIdx = {fReader, "Electron_genPartIdx"};
   TTreeReaderArray<Int_t> Muon_genPartIdx = {fReader, "Muon_genPartIdx"};
@@ -310,6 +319,7 @@ class PreSelector : public EventSelection {
 
   Double_t WCentral, WAllUp, WAllDown;
   Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
+    WLHEPdfUp,WLHEPdfDown,WLHEScaleUp,WLHEScaleDown,
     WElRecoUp,WElRecoDown,WPileupUp,WPileupDown,
     WElIDUp,WElIDDown,WMuIDUp,WMuIDDown,
     WKEWKUp,WKEWKDown,WKQCDUp,WKQCDDown;
@@ -372,7 +382,8 @@ class PreSelector : public EventSelection {
   Double_t GetSFFromGraph(TGraphAsymmErrors* g,const Float_t& eta, const Int_t& option) const;
   Float_t GetSFFromHisto(TH1* h, const Int_t& npv, const Int_t option);
   void DefineSFs(const int& nh);
-
+  std::pair<Float_t,Float_t> GetMinMaxFromArray(TTreeReaderValue<UInt_t>* size,
+                                                TTreeReaderArray<Float_t>* content);
   MetUnclObj GetMetUncl();
 
   MetUnclObj MetUncl;
