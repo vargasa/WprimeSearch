@@ -103,9 +103,10 @@ BRANCHNAME=RestoreWZBins;OUTDIR=/uscms/home/avargash/store/WprimeSearchCondorOut
 # Check which files are missing
 OUTPUTLABEL=RestoreWZBins
 for k in {2016..2018}; do
-  YEAR=$k;TYPEP=mc;for i in `ls -1 files/${TYPEP,,}/$YEAR/UL/*.txt |xargs -n1 basename`; do ./checkFiles.sh $YEAR ${TYPEP^^} $OUTPUTLABEL $i; done 
+  for j in {data,mc}; do
+    YEAR=$k;TYPEP=$j;for i in `ls -1 files/${TYPEP,,}/$YEAR/UL/*.txt |xargs -n1 basename`; do ./checkFiles.sh $YEAR ${TYPEP^^} $OUTPUTLABEL $i; done 
+  done
 done;
-
 ```
 
 This will create `WprimeHistos.root` file which will contain all the histograms
