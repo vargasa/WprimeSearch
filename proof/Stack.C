@@ -278,6 +278,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     {3000,9},
     {3500,10},
     {4000,11},
+    {4500,12},
   };
 
   std::unordered_map<int, std::vector<SignalInfo>> SignalSamples = { //UltraLegacy
@@ -1152,6 +1153,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     TFile* fCombine = TFile::Open(rootFilename.c_str(),"UPDATE");
 
     std::string DYSample = "DYJetsToLL";
+    std::string GluGluSample = "GluGluToContinToZZTo";
 
     std::string bin0 = "bin\t";
     std::string obs  = "observation\t";
@@ -1163,7 +1165,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::vector<std::string> systEl = { "ElReco" , "ElTrigger","ElID" };
     std::vector<std::string> systMu = { "MuTrigger","MuID" };
     std::vector<std::string> systK = { "EWK","QCD" };
-    std::vector<std::string> systShared = { "Pileup", "MetUncl", "L1Pref"};
+    std::vector<std::string> systShared = { "Pileup", "MetUncl", "L1Pref", "LHEPdf", "LHEScale"};
     std::string unc2     = "CMS_ElTrigger\tshape\t";
     std::string unc3     = "CMS_MuTrigger\tshape\t";
     std::string unc4     = "CMS_ElID\tshape\t";
@@ -1174,6 +1176,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string unc9     = "CMS_ElReco\tshape\t";
     std::string unc10    = "CMS_Pileup\tshape\t";
     std::string unc11    = "CMS_L1Pref\tshape\t";
+    std::string unc12    = "CMS_LHEPdf\tshape\t";
+    std::string unc13    = "CMS_LHEScale\tshape\t";
 
     std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
       TH1* hzero = static_cast<TH1*>(hneg->Clone());
@@ -1275,6 +1279,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       unc9 += "--\t";
       unc10 += "--\t";
       unc11 += "--\t";
+      unc12 += "--\t";
+      unc13 += "--\t";
 
 
       auto hdata = getDataStack(Form("%d/%s",year,DataSampleNames[year].c_str()),Form("%s_%s_NoSF",fromHisto,ch.first.c_str()));
@@ -1343,6 +1349,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           unc6 += "-\t";
           unc7 += "-\t";
         }
+
+        if (BGN.folderName.find(GluGluSample.c_str()) != std::string::npos){
+          unc12 += "1.0\t";
+          unc13 += "1.0\t";
+        } else {
+          unc12 += "-\t";
+          unc13 += "-\t";
+        }
         ++counter;
       }
     }
@@ -1366,6 +1380,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << unc8 << std::endl;
     dcFile << unc9 << std::endl;
     dcFile << unc10 << std::endl;
+    dcFile << unc12 << std::endl;
+    dcFile << unc13 << std::endl;
 
     if( year != 2018 ) {
       dcFile << unc11 << std::endl;
