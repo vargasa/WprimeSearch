@@ -28,7 +28,7 @@ PreSelector::PreSelector(TTree *)
 std::pair<Float_t,Float_t> PreSelector::GetMinMaxFromArray(TTreeReaderValue<UInt_t>* size,
                                                            TTreeReaderArray<Float_t>* content) {
 
-  assert(**size > 0);
+  if(**size == 0) return std::make_pair(0.,0.);
 
   Float_t min = (*content)[0];
   Float_t max = (*content)[0];
