@@ -606,11 +606,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HSFs,"HSFs",15,0.,15.,60,0.,6.);
 #endif
 
-  const Double_t wzbins[19] = {
-    0,60,110,168,234,309,394,489,595,712,841,983,1139,1309,1494,1695,1913,4913,6000
+  const Double_t wzbins[28] = {
+    60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,
+    1190,1340,1500,2000,5000,7500
   };
 
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",18,wzbins);
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",28,wzbins);
 }
 
 void PreSelector::SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l){
