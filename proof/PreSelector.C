@@ -552,7 +552,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFPileupDownpreVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupDownpreVFP"));
   SFPileupUppostVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupUppostVFP"));
   SFPileupDownpostVFP = dynamic_cast<TH1F*>(SFDb->FindObject("PileupDownpostVFP"));
-  SFMuonTrigger =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrigger"));
+  SFMuonTriggerpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerpreVFP"));
+  SFMuonTriggerpostVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTriggerpostVFP"));
   SFMuonHighPtIDpreVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpreVFP"));
   SFMuonHighPtIDpostVFP = dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonHighPtIDpostVFP"));
   SFMuonTrkHighPtIDpreVFP =  dynamic_cast<TH2F*>(SFDb->FindObject("SFMuonTrkHighPtIDpreVFP"));
@@ -2129,8 +2130,7 @@ Double_t PreSelector::GetMuTriggerSF(const Float_t& eta, Float_t pt,
 #endif
 
 #if (defined(Y2016) && defined(ULSAMPLE)) || ((defined(Y2017) || defined(Y2018)) && defined(ULSAMPLE))
-  if (pt > 1e3) pt = 0.999e3;
-  sf = GetSFFromHisto(SFMuonTrigger,pt,abs(eta),option);
+  sf = GetSFFromHisto(SFMuonTrigger,abs(eta),pt,option);
 #endif
 
 #if (defined(Y2017) || defined (Y2018)) && !defined(ULSAMPLE)
