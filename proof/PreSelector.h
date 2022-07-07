@@ -318,11 +318,16 @@ class PreSelector : public EventSelection {
   Float_t PairZMass;
 
   Double_t WCentral, WAllUp, WAllDown;
-  Double_t WElTrigUp, WElTrigDown, WMuTrigUp, WMuTrigDown,
-    WLHEPdfUp,WLHEPdfDown,WLHEScaleUp,WLHEScaleDown,
-    WElRecoUp,WElRecoDown,WPileupUp,WPileupDown,
-    WElIDUp,WElIDDown,WMuIDUp,WMuIDDown,
-    WKEWKUp,WKEWKDown,WKQCDUp,WKQCDDown;
+  Double_t WElTrigUp, WElTrigDown, WElTrigNom,
+    WMuTrigUp, WMuTrigDown, WMuTrigNom,
+    WLHEPdfUp, WLHEPdfDown,
+    WLHEScaleUp, WLHEScaleDown,
+    WElRecoUp, WElRecoDown, WElRecoNom,
+    WPileupUp, WPileupDown, WPileupNom,
+    WElIDUp, WElIDDown, WElIDNom,
+    WMuIDUp, WMuIDDown, WMuIDNom,
+    WKEWKUp,WKEWKDown, WKEWKNom,
+    WKQCDUp,WKQCDDown, WKQCDNom;
 
   std::unordered_map<std::string,int> HIdx;
 
