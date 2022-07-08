@@ -17,6 +17,7 @@ git clone --branch $BRANCHNAME https://github.com/vargasa/WprimeSearch.git Wprim
 WprimeDir=$PWD/Wprime_$YEARP/
 echo "Analysis Dir: "$WprimeDir
 #sed -i 's/cmsxrootd.fnal.gov/xrootd-cms.infn.it/' $WprimeDir/proof/Selector.C
+#sed -i 's/cmsxrootd.fnal.gov/xrootd.unl.edu/' $WprimeDir/proof/Selector.C
 sed -i 's/cmsxrootd.fnal.gov/cms-xrd-global.cern.ch/' $WprimeDir/proof/Selector.C
 cd $WprimeDir/proof
 wget -c https://avargash.web.cern.ch/avargash/WprimeSearch/x509up_u114404

@@ -1227,8 +1227,8 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   }
 
 #ifndef CMSDATA
-  HMassWZ[HIdx[regionName + chStr + "MetUncl_Up"]]->Fill(wzm_MetUnclUp);
-  HMassWZ[HIdx[regionName + chStr + "MetUncl_Down"]]->Fill(wzm_MetUnclDown);
+  HMassWZ[HIdx[regionName + chStr + "MetUncl_Up"]]->Fill(wzm_MetUnclUp*WCentral);
+  HMassWZ[HIdx[regionName + chStr + "MetUncl_Down"]]->Fill(wzm_MetUnclDown*WCentral);
   HMassWZ[HIdx[regionName + chStr + "Pileup_Up"]]->Fill(wzm_Met,WPileupUp*WCentral/WPileupNom);
   HMassWZ[HIdx[regionName + chStr + "Pileup_Down"]]->Fill(wzm_Met,WPileupDown*WCentral/WPileupNom);
   HMassWZ[HIdx[regionName + chStr + "LHEPdf_Up"]]->Fill(wzm_Met,WLHEPdfUp*WCentral/(*genWeight));
