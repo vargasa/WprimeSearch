@@ -213,7 +213,7 @@ void PreSelector::InitHVec(std::vector<T*>& vec,
         for(auto ch: chs){
           for(auto t: type){
             for(auto l: limit){
-              syst.push_back(Form("%s_%s_KFactor_%s_%s",r.c_str(),ch.c_str(),t.c_str(),l.c_str()));
+              syst.push_back(Form("%s_%s_KFactor%s_%s",r.c_str(),ch.c_str(),t.c_str(),l.c_str()));
             }
           }
         }
@@ -2169,6 +2169,7 @@ void PreSelector::DefineSFs(const int& nh){
   WPileupUp = GetSFFromHisto(SFPileupUp,*PV_npvs) ;
   WPileupDown = GetSFFromHisto(SFPileupDown,*PV_npvs);
   float Pileup_ = GetSFFromHisto(SFPileup,*PV_npvs);
+  if (Pileup_ == 0.) Pileup_ = 1.; // Singular case for GluGluToContinToZZTo2e2Mu Pileup 112
   WPileupNom = Pileup_;
 
   std::pair<Float_t,Float_t> pDownUp =
