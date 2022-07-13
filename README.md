@@ -258,23 +258,26 @@ for i in $ALLMASSP; do
     for k in {2016,2017,2018}; do
       LABEL=${j}_${k}_${i}
       DCARD=${DCARDIR}/DataCard_HMassWZ_${LABEL}.root
-      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --doInitialFit --robustFit 1
-      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --robustFit 1 --doFits --parallel 8
-      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i -o Impacts_${LABEL}.json
+      RLIM=10
+      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
+      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
+      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
       plotImpacts.py -n ${j}_${k} -i Impacts_${i}.json -o ImactsPlot_${i}.json
     done
   done
 done
 
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
 for i in $ALLMASSP; do
-  for j in {CR1,CR2,SR1}; do
+  for j in {CR1,CR2}; do
     LABEL=${j}_${i}
     DCARD=${DCARDIR}/RunII_${LABEL}_Datacard.root
     file $DCARD
-    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --doInitialFit --robustFit 1
-    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --robustFit 1 --doFits --parallel 8
-    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i -o Impacts_${LABEL}.json
-    plotImpacts.py -i Impacts_${LABEL}.json -o ImpactsPlot_${LABEL}.png
+    RLIM=10
+    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1 
+    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
+    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}_${RLIM}.json
+    plotImpacts.py -i Impacts_${LABEL}_${RLIM}.json -o ImpactsPlot_${LABEL}_${RLIM}
   done
 done
 ```
@@ -286,21 +289,22 @@ done
 ```bash
 ALLMASSP=600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
-for i in $ALLMASSP; do
-  for j in {CR1,CR2,SR1}; do
-    LABEL=${j}_${i}
-    echo -e "\n=======GOODNESS OF FIT=="$i"=======\n"
-    ALGO="saturated"
-    combineTool.py -M GoodnessOfFit --algorithm  $ALGO -m $i -d $DCARDIR"RunII_"$LABEL"_Datacard.root" -n ".$ALGO.$LABEL" --plots\
-      --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
-    combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $i -d $DCARDIR"RunII_"$LABEL"_Datacard.root" \
-      -n ".$ALGO.toys.$LABEL" -t -10 -s 1234:1244:1 --saveToys --parallel 10 --verbose 0 \
-      --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
-    combineTool.py -M CollectGoodnessOfFit --input higgsCombine.${ALGO}.${LABEL}.GoodnessOfFit.mH${i}.root \
-      higgsCombine.saturated.toys.${LABEL}.GoodnessOfFit.mH${i}.*.root -o saturated.${i}.json
-    python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py --bins 1000000 --statistic saturated --mass ${i}.0 --output GoF_${LABEL} saturated.${i}.json
-  done
+for i in $ALLMASSP
+do
+  LABEL="CR2_"$i
+  echo -e "\n=======GOODNESS OF FIT=="$i"=======\n"
+  ALGO="saturated"
+  combineTool.py -M GoodnessOfFit --algorithm  $ALGO -m $i -d $DCARDIR"RunII_"$LABEL"_Datacard.root" -n ".$ALGO.$LABEL" --plots\
+    --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
+  combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $i -d $DCARDIR"RunII_"$LABEL"_Datacard.root" \
+    -n ".$ALGO.toys.$LABEL" --saveToys -t 50 -s 1234:1284:1 --parallel 10 --verbose 0 \
+    --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
+  combineTool.py -M CollectGoodnessOfFit --input higgsCombine.${ALGO}.${LABEL}.GoodnessOfFit.mH${i}.root \
+    higgsCombine.saturated.toys.${LABEL}.GoodnessOfFit.mH${i}.*.root -o saturated.${i}.json
+  python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py --bins 50 --statistic saturated --mass ${i}.0 --output GoF_${LABEL} saturated.${i}.json --range 0 2500
 done
+
+python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py --bins 50 --statistic saturated --mass 600.0 --output GoF_CR2_600 saturated.600.json --range 0 2500
 ```
 
 ### Limits
