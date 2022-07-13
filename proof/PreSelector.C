@@ -604,7 +604,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
   SFElectronTightID = dynamic_cast<TH2F*>(SFDb->FindObject("SFElectronTightID"));
 #endif
 
-  InitHVec<TH2F>(HSFs,"HSFs",15,0.,15.,60,0.,6.);
+  InitHVec<TH2F>(HSFs,"HSFs",45,0.,45.,60,0.,6.);
 #endif
 
   const Double_t wzbins[28] = {
@@ -1243,6 +1243,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   }
 #endif
 
+  HSFs[nh]->Fill("LHEPdf_Up",WLHEPdfUp,1.);
+  HSFs[nh]->Fill("LHEPdf_Dn",WLHEPdfDown,1.);
+  HSFs[nh]->Fill("LHEScale_Up",WLHEScaleUp,1.);
+  HSFs[nh]->Fill("LHEScale_Dn",WLHEScaleDown,1.);
 
   // dR Histos
   FillH1(HDistl1l2,nh,l1l2dist);
@@ -2234,18 +2238,34 @@ void PreSelector::DefineSFs(const int& nh){
     WCentral *= *L1PreFiringWeight_ECAL_Nom;
     WAllUp *= *L1PreFiringWeight_ECAL_Up;
     WAllDown *= *L1PreFiringWeight_ECAL_Dn;
-    HSFs[nh]->Fill("Prefiring",*L1PreFiringWeight_ECAL_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Nm",*L1PreFiringWeight_ECAL_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Up",*L1PreFiringWeight_ECAL_Up,1.);
+    HSFs[nh]->Fill("Prefiring_Dn",*L1PreFiringWeight_ECAL_Dn,1.);
 #endif
 
-    HSFs[nh]->Fill("Pileup",Pileup_,1.);
-    HSFs[nh]->Fill("ElTriggerSF",ElTrigger,1.);
+    HSFs[nh]->Fill("Pileup_Nm",Pileup_,1.);
+    HSFs[nh]->Fill("Pileup_Up",WPileupUp,1.);
+    HSFs[nh]->Fill("Pileup_Dn",WPileupDown,1.);
+
+    HSFs[nh]->Fill("ElTrigger_Nm",ElTrigger,1.);
+    HSFs[nh]->Fill("ElTrigger_Up",WElTrigUp,1.);
+    HSFs[nh]->Fill("ElTrigger_Dn",WElTrigDown,1.);
+
     HSFs[nh]->Fill("ELRecol1",ElRecol1,1.);
     HSFs[nh]->Fill("ElRecol2",ElRecol2,1.);
     HSFs[nh]->Fill("ElRecol3",ElRecol3,1.);
+
+    HSFs[nh]->Fill("ElReco_Nm",WElRecoNom,1.);
+    HSFs[nh]->Fill("ElReco_Up",WElRecoUp,1.);
+    HSFs[nh]->Fill("ElReco_Dn",WElRecoDown,1.);
+
     HSFs[nh]->Fill("ElIDl1",ElIDl1,1.);
     HSFs[nh]->Fill("ElIDl2",ElIDl2,1.);
     HSFs[nh]->Fill("ElIDl3",ElIDl3,1.);
 
+    HSFs[nh]->Fill("ElID_Nm",WElIDNom,1.);
+    HSFs[nh]->Fill("ElID_Up",WElIDUp,1.);
+    HSFs[nh]->Fill("ElID_Dn",WElIDDown,1.);
 
   } else if (IsB) {
 
@@ -2298,17 +2318,42 @@ void PreSelector::DefineSFs(const int& nh){
     WCentral *= *L1PreFiringWeight_Nom;
     WAllUp *= *L1PreFiringWeight_Up;
     WAllDown *= *L1PreFiringWeight_Dn;
-    HSFs[nh]->Fill("Prefiring",*L1PreFiringWeight_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Nm",*L1PreFiringWeight_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Up",*L1PreFiringWeight_Up,1.);
+    HSFs[nh]->Fill("Prefiring_Dn",*L1PreFiringWeight_Dn,1.);
 #endif
 
-    HSFs[nh]->Fill("Pileup",Pileup_,1.);
-    HSFs[nh]->Fill("ElTrigger",ElTrigger,1.);
-    HSFs[nh]->Fill("MuTrigger",MuTrigger,1.);
+    HSFs[nh]->Fill("Pileup_Nm",Pileup_,1.);
+    HSFs[nh]->Fill("Pileup_Up",WPileupUp,1.);
+    HSFs[nh]->Fill("Pileup_Dn",WPileupDown,1.);
+
+    HSFs[nh]->Fill("ElTrigger_Nm",WElTrigNom,1.);
+    HSFs[nh]->Fill("ElTrigger_Up",WElTrigUp,1.);
+    HSFs[nh]->Fill("ElTrigger_Dn",WElTrigDown,1.);
+
+    HSFs[nh]->Fill("MuTrigger_Nm",WMuTrigNom,1.);
+    HSFs[nh]->Fill("MuTrigger_Up",WMuTrigUp,1.);
+    HSFs[nh]->Fill("MuTrigger_Dn",WMuTrigDown,1.);
+
     HSFs[nh]->Fill("ELRecol1",ElRecol1,1.);
     HSFs[nh]->Fill("ElRecol2",ElRecol2,1.);
+
+    HSFs[nh]->Fill("ElReco_Nm",WElRecoNom,1.);
+    HSFs[nh]->Fill("ElReco_Up",WElRecoUp,1.);
+    HSFs[nh]->Fill("ElReco_Dn",WElRecoDown,1.);
+
     HSFs[nh]->Fill("ElIDl1",ElIDl1,1.);
     HSFs[nh]->Fill("ElIDl2",ElIDl2,1.);
+
+    HSFs[nh]->Fill("ElID_Nm",WElIDNom,1.);
+    HSFs[nh]->Fill("ElID_Up",WElIDUp,1.);
+    HSFs[nh]->Fill("ElID_Dn",WElIDDown,1.);
+
     HSFs[nh]->Fill("MuIDl3",MuIDl3,1.);
+
+    HSFs[nh]->Fill("MuID_Nm",WMuIDNom,1.);
+    HSFs[nh]->Fill("MuID_Up",WMuIDUp,1.);
+    HSFs[nh]->Fill("MuID_Dn",WMuIDDown,1.);
 
   } else if (IsC) {
 
@@ -2355,16 +2400,41 @@ void PreSelector::DefineSFs(const int& nh){
     WCentral *= *L1PreFiringWeight_Nom;
     WAllUp *= *L1PreFiringWeight_Up;
     WAllDown *= *L1PreFiringWeight_Dn;
-    HSFs[nh]->Fill("Prefiring",*L1PreFiringWeight_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Nm",*L1PreFiringWeight_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Up",*L1PreFiringWeight_Up,1.);
+    HSFs[nh]->Fill("Prefiring_Dn",*L1PreFiringWeight_Dn,1.);
 #endif
 
-    HSFs[nh]->Fill("Pileup",Pileup_,1.);
-    HSFs[nh]->Fill("ElTrigger",ElTrigger,1.);
-    HSFs[nh]->Fill("MuTrigger",MuTrigger,1.);
+    HSFs[nh]->Fill("Pileup_Nm",Pileup_,1.);
+    HSFs[nh]->Fill("Pileup_Up",WPileupUp,1.);
+    HSFs[nh]->Fill("Pileup_Dn",WPileupDown,1.);
+
+    HSFs[nh]->Fill("ElTrigger_Nm",WElTrigNom,1.);
+    HSFs[nh]->Fill("ElTrigger_Up",WElTrigUp,1.);
+    HSFs[nh]->Fill("ElTrigger_Dn",WElTrigDown,1.);
+
+    HSFs[nh]->Fill("MuTrigger_Nm",WMuTrigNom,1.);
+    HSFs[nh]->Fill("MuTrigger_Up",WMuTrigUp,1.);
+    HSFs[nh]->Fill("MuTrigger_Dn",WMuTrigDown,1.);
+
     HSFs[nh]->Fill("MuIDl1",MuIDl1,1.);
     HSFs[nh]->Fill("MuIDl2",MuIDl2,1.);
+
+    HSFs[nh]->Fill("MuID_Nm",WMuIDNom,1.);
+    HSFs[nh]->Fill("MuID_Up",WMuIDUp,1.);
+    HSFs[nh]->Fill("MuID_Dn",WMuIDDown,1.);
+
     HSFs[nh]->Fill("ElRecol3",ElRecol3,1.);
+
+    HSFs[nh]->Fill("ElReco_Nm",WElRecoNom,1.);
+    HSFs[nh]->Fill("ElReco_Up",WElRecoUp,1.);
+    HSFs[nh]->Fill("ElReco_Dn",WElRecoDown,1.);
+
     HSFs[nh]->Fill("ElIDl3",ElIDl3,1.);
+
+    HSFs[nh]->Fill("ElID_Nm",WElIDNom,1.);
+    HSFs[nh]->Fill("ElID_Up",WElIDUp,1.);
+    HSFs[nh]->Fill("ElID_Dn",WElIDDown,1.);
 
   } else if (IsD) {
 
@@ -2397,13 +2467,26 @@ void PreSelector::DefineSFs(const int& nh){
     WCentral *= *L1PreFiringWeight_Muon_Nom;
     WAllUp *= *L1PreFiringWeight_Muon_Up;
     WAllDown *= *L1PreFiringWeight_Muon_Dn;
-    HSFs[nh]->Fill("Prefiring",*L1PreFiringWeight_Muon_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Nm",*L1PreFiringWeight_Muon_Nom,1.);
+    HSFs[nh]->Fill("Prefiring_Up",*L1PreFiringWeight_Muon_Up,1.);
+    HSFs[nh]->Fill("Prefiring_Dn",*L1PreFiringWeight_Muon_Dn,1.);
+
 #endif
-    HSFs[nh]->Fill("Pileup",Pileup_,1.);
-    HSFs[nh]->Fill("MuTrigger",MuTrigger,1.);
+    HSFs[nh]->Fill("Pileup_Nm",Pileup_,1.);
+    HSFs[nh]->Fill("Pileup_Up",WPileupUp,1.);
+    HSFs[nh]->Fill("Pileup_Dn",WPileupDown,1.);
+
+    HSFs[nh]->Fill("MuTrigger_Nm",WMuTrigNom,1.);
+    HSFs[nh]->Fill("MuTrigger_Up",WMuTrigUp,1.);
+    HSFs[nh]->Fill("MuTrigger_Dn",WMuTrigDown,1.);
+
     HSFs[nh]->Fill("MuIDl1",MuIDl1,1.);
     HSFs[nh]->Fill("MuIDl2",MuIDl2,1.);
     HSFs[nh]->Fill("MuIDl3",MuIDl3,1.);
+
+    HSFs[nh]->Fill("MuID_Nm",WMuIDNom,1.);
+    HSFs[nh]->Fill("MuID_Up",WMuIDUp,1.);
+    HSFs[nh]->Fill("MuID_Dn",WMuIDDown,1.);
 
   } else {
     assert (false);
@@ -2426,8 +2509,15 @@ void PreSelector::DefineSFs(const int& nh){
     WCentral *= ksf;
     WAllUp *= WKEWKUp*WKQCDUp;
     WAllDown *= WKEWKDown*WKQCDDown;
-    HSFs[nh]->Fill("KFactor",ksf,1.);
+    HSFs[nh]->Fill("KFactor", ksf,1.);
+    HSFs[nh]->Fill("KFactorEWK_Nm",WKEWKNom,1.);
+    HSFs[nh]->Fill("KFactorEWK_Up",WKEWKUp,1.);
+    HSFs[nh]->Fill("KFactorEWK_Dn",WKEWKDown,1.);
+    HSFs[nh]->Fill("KFactorQCD_Nm",WKQCDNom,1.);
+    HSFs[nh]->Fill("KFactorQCD_Up",WKQCDUp,1.);
+    HSFs[nh]->Fill("KFactorQCD_Dn",WKQCDDown,1.);
   }
+
 
   HSFs[nh]->Fill("Central",WCentral,1.);
   HSFs[nh]->Fill("WAllDown",WAllDown,1.);
