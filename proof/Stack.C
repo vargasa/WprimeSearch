@@ -25,7 +25,12 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     {0, 137.65}
   };
 
-
+  std::unordered_map<std::string,std::string> channels = {
+    {"A", "eee"},
+    {"B", "eemu"},
+    {"C", "mumue"},
+    {"D", "mumumu"},
+  };
 
   struct BackgroundInfo {
     std::string legendName;
@@ -1125,18 +1130,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
+  
+
 
   std::function<void(const int&, const int&, const char*)>
     printDataCard = [&] (const int& year, const int& wpmass, const char* fromHisto = "HMassWZ_SR1") {
 
     std::clog << Form("Printing datacard: Year[%d], WpMass[%d]\n",year,wpmass);
 
-    std::unordered_map<std::string,std::string> channels = {
-      {"A", "eee"},
-      {"B", "eemu"},
-      {"C", "mumue"},
-      {"D", "mumumu"},
-    };
 
 
     ofstream dcFile;
@@ -1161,23 +1162,38 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string processn = "process\t";
     std::string process  = "process\t";
     std::string rate     = "rate\t";
-    std::string unc1     = "lumi_13TeV\tlnN\t";
-    std::vector<std::string> systEl = { "ElReco" , "ElTrigger","ElID" };
-    std::vector<std::string> systMu = { "MuTrigger","MuID" };
-    std::vector<std::string> systK = { "EWK","QCD" };
+    std::string unc_lumi = "lumi_13TeV\tlnN\t";
+    std::vector<std::string> systEl     = { "ElReco" , "ElTrigger","ElID"};
+    std::vector<std::string> systMu     = { "MuTrigger","MuID" };
+    std::vector<std::string> systK      = { "KFactorEWK","KFactorQCD" };
     std::vector<std::string> systShared = { "Pileup", "MetUncl", "L1Pref", "LHEPdf", "LHEScale"};
-    std::string unc2     = "CMS_ElTrigger\tshape\t";
-    std::string unc3     = "CMS_MuTrigger\tshape\t";
-    std::string unc4     = "CMS_ElID\tshape\t";
-    std::string unc5     = "CMS_MuID\tshape\t";
-    std::string unc6     = "CMS_KFactorQCD\tshape\t";
-    std::string unc7     = "CMS_KFactorEWK\tshape\t";
-    std::string unc8     = "CMS_MetUncl\tshape\t";
-    std::string unc9     = "CMS_ElReco\tshape\t";
-    std::string unc10    = "CMS_Pileup\tshape\t";
-    std::string unc11    = "CMS_L1Pref\tshape\t";
-    std::string unc12    = "CMS_LHEPdf\tshape\t";
-    std::string unc13    = "CMS_LHEScale\tshape\t";
+    std::string unc_ElTrigger  = "CMS_ElTrigger\tshape\t";
+    std::string unc_MuTrigger  = "CMS_MuTrigger\tshape\t";
+    std::string unc_ElID       = "CMS_ElID\tshape\t";
+    std::string unc_MuID       = "CMS_MuID\tshape\t";
+    std::string unc_KFactorQCD = "CMS_KFactorQCD\tshape\t";
+    std::string unc_KFactorEWK = "CMS_KFactorEWK\tshape\t";
+    std::string unc_MetUncl    = "CMS_MetUncl\tshape\t";
+    std::string unc_ElReco     = "CMS_ElReco\tshape\t";
+    std::string unc_Pileup     = "CMS_Pileup\tshape\t";
+    std::string unc_L1Pref     = "CMS_L1Pref\tshape\t";
+    std::string unc_LHEPdf     = "CMS_LHEPdf\tshape\t";
+    std::string unc_LHEScale   = "CMS_LHEScale\tshape\t";
+
+    std::unordered_map<std::string,std::string*> uncs = {
+      { "ElTrigger"  , &unc_ElTrigger  },
+      { "MuTrigger"  , &unc_MuTrigger  },
+      { "ElID"       , &unc_ElID       },
+      { "MuID"       , &unc_MuID       },
+      { "KFactorQCD" , &unc_KFactorQCD },
+      { "KFactorEWK" , &unc_KFactorEWK },
+      { "MetUncl"    , &unc_MetUncl    },
+      { "ElReco"     , &unc_ElReco     },
+      { "Pileup"     , &unc_Pileup     },
+      { "L1Pref"     , &unc_L1Pref     },
+      { "LHEPdf"     , &unc_LHEPdf     },
+      { "LHEScale"   , &unc_LHEScale   },
+    };
 
     std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
       TH1* hzero = static_cast<TH1*>(hneg->Clone());
@@ -1193,62 +1209,78 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       return hzero;
     };
 
-
     std::function<void(const std::string&, const std::string&, const float&)>
     saveHisto = [&] (const std::string& sampleName,
                      const std::string& ch,
                      const float& xsec) {
 
-
-      std::function<void(const std::string&,
-                         const std::string&,
-                         const std::string&)>
-      saveUpDown = [&] (std::string folder, std::string hname, std::string s/*ystematic*/){
+      std::function<float(const std::string&,
+                          const std::string&,
+                          const std::string&)>
+      saveUpDown = [&] (std::string folder, std::string hname, std::string s/*ystematic*/) -> float {
         if( (s.find("L1Pref") != std::string::npos) and
-            (year == 2018) ) return;
-        auto hup = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_Up",hname.c_str())));
+            (year == 2018) ) return 0.; //L1Pref only '16 and '17
+        auto hup = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_%s_Up",hname.c_str(),s.c_str())));
         applyLumiSF(hup, folder.c_str(), xsec);
+        if(hup->Integral() == 0.) std::clog << Form("\n\tWARNING: %s Up Systematic is 0.: %s\n\n",s.c_str(),folder.c_str());
         hup->Write(std::string(sampleName+Form("_CMS_%sUp",s.c_str())).c_str());
-        auto hdown = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_Down",hname.c_str())));
+        auto hdown = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_%s_Down",hname.c_str(),s.c_str())));
         applyLumiSF(hdown, folder.c_str(), xsec);
+        if(hdown->Integral() == 0.) std::clog << Form("\n\tWARNING: %s Down Systematic is 0.: %s\n\n",s.c_str(),folder.c_str());
         hdown->Write(std::string(sampleName+Form("_CMS_%sDown",s.c_str())).c_str());
+        return hup->Integral()*hdown->Integral(); // We just need to know if any of this is zero
       };
 
       std::string folderName = Form("%d/%s",year,sampleName.c_str());
       std::string hname;
       if(ch == "A") {
         for (auto s: systEl) {
-          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
-          saveUpDown(folderName,hname,s);
+          hname = Form("%s_%s",fromHisto,ch.c_str());
+          float rate = saveUpDown(folderName,hname,s);
+          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+        }
+        for (auto s: systMu) {
+          *(uncs[s]) += "-\t";
         }
       } else if (ch == "B" or ch == "C") {
         for (auto s: systEl) {
-          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
-          saveUpDown(folderName,hname,s);
+          hname = Form("%s_%s",fromHisto,ch.c_str());
+          float rate = saveUpDown(folderName,hname,s);
+          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
         }
         for (auto s: systMu) {
-          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
-          saveUpDown(folderName,hname,s);
+          hname = Form("%s_%s",fromHisto,ch.c_str());
+          float rate = saveUpDown(folderName,hname,s);
+          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
         }
       } else if (ch == "D") {
+        for (auto s: systEl) {
+          *(uncs[s]) += "-\t";
+        }
         for (auto s: systMu) {
-          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
-          saveUpDown(folderName,hname,s);
+          hname = Form("%s_%s",fromHisto,ch.c_str());
+          float rate = saveUpDown(folderName,hname,s);
+          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
         }
       }
 
       for (auto s: systShared){
-        hname = Form("%s_%s_%s",fromHisto,ch.c_str(),s.c_str());
-        saveUpDown(folderName,hname,s);
+        hname = Form("%s_%s",fromHisto,ch.c_str());
+        float rate = saveUpDown(folderName,hname,s);
+        *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
       }
 
       if(folderName.find(DYSample.c_str()) != std::string::npos){
         for (auto s: systK) {
-          hname = Form("%s_%s_%s",fromHisto,ch.c_str(),Form("KFactor_%s",s.c_str()));
-          saveUpDown(folderName,hname,Form("KFactor%s",s.c_str()));
+          hname = Form("%s_%s",fromHisto,ch.c_str());
+          float rate = saveUpDown(folderName,hname,s);
+          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+        }
+      } else {
+        for (auto s: systK) {
+          *(uncs[s]) += "-\t";
         }
       }
-
     };
 
     for(auto ch: channels){
@@ -1260,28 +1292,16 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       SignalInfo signal = SignalSamples[year][SignalPos[wpmass]];
       TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_%s_WCentral",fromHisto,ch.first.c_str()));
       applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
-      hsig->Write(Form("Wprime%d",wpmass));
-
+      hsig->Write(signal.folderName.c_str());
+      unc_lumi += Form("%.4f\t",1. + lumiSyst[year]);
       saveHisto(signal.folderName, ch.first, signal.xsec);
 
       bin1 += ch.second + "\t";
       processn += "0\t";
-      process += Form("Wprime%d\t",wpmass);
+      //process += Form("Wprime%d\t",wpmass);
+      std::cout << "SIGNALNAME?\t" << signal.folderName << "\n";
+      process += Form("%s\t",signal.folderName.c_str());
       rate += Form("%.2f\t",hsig->Integral());
-      unc1 += "--\t";
-      unc2 += "--\t";
-      unc3 += "--\t";
-      unc4 += "--\t";
-      unc5 += "--\t";
-      unc6 += "--\t";
-      unc7 += "--\t";
-      unc8 += "--\t";
-      unc9 += "--\t";
-      unc10 += "--\t";
-      unc11 += "--\t";
-      unc12 += "--\t";
-      unc13 += "--\t";
-
 
       auto hdata = getDataStack(Form("%d/%s",year,DataSampleNames[year].c_str()),Form("%s_%s_NoSF",fromHisto,ch.first.c_str()));
       bin0 += Form("%s\t",ch.second.c_str());
@@ -1298,70 +1318,23 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
         rate += Form("%.2f\t",h->Integral());
         h->Write(BGN.folderName.c_str());
-        unc1 += Form("%.4f\t",1. + lumiSyst[year]);
+        unc_lumi += Form("%.4f\t",1. + lumiSyst[year]);
 
-        if (ch.first == "A") {
-          unc2 += "1.0\t";
-          unc3 += "-\t";
-          unc4 += "1.0\t";
-          unc5 += "-\t";
-          unc8 += "1.0\t";
-          unc9 += "1.0\t";
-          unc10 += "1.0\t";
-          unc11 += "1.0\t";
-          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
-        } else if (ch.first == "B") {
-          unc2 += "1.0\t";
-          unc3 += "1.0\t";
-          unc4 += "1.0\t";
-          unc5 += "1.0\t";
-          unc8 += "1.0\t";
-          unc9 += "1.0\t";
-          unc10 += "1.0\t";
-          unc11 += "1.0\t";
-          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
-        } else if (ch.first == "C") {
-          unc2 += "1.0\t";
-          unc3 += "1.0\t";
-          unc4 += "1.0\t";
-          unc5 += "1.0\t";
-          unc8 += "1.0\t";
-          unc9 += "1.0\t";
-          unc10 += "1.0\t";
-          unc11 += "1.0\t";
-          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
-        } else if (ch.first == "D") {
-          unc2 += "-\t";
-          unc3 += "1.0\t";
-          unc4 += "-\t";
-          unc5 += "1.0\t";
-          unc8 += "1.0\t";
-          unc9 += "-\t";
-          unc10 += "1.0\t";
-          unc11 += "1.0\t";
-          saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
-        }
-
-        if (BGN.folderName.find(DYSample.c_str()) != std::string::npos){
-          unc6 += "1.0\t";
-          unc7 += "1.0\t";
-        } else {
-          unc6 += "-\t";
-          unc7 += "-\t";
-        }
+        saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
 
         if (BGN.folderName.find(GluGluSample.c_str()) != std::string::npos){
-          unc12 += "1.0\t";
-          unc13 += "1.0\t";
+          unc_LHEPdf += "1.0\t";
+          unc_LHEScale += "1.0\t";
         } else {
-          unc12 += "-\t";
-          unc13 += "-\t";
+          unc_LHEPdf += "-\t";
+          unc_LHEScale += "-\t";
         }
+
         ++counter;
       }
     }
 
-    int nSyst = (year != 2018)? 11:10;
+    int nSyst = (year != 2018)? 13:12; //L1Pref only '16 and '17
     dcFile << "imax\t4\njmax\t" << BgNames[year].size() << Form("\nkmax\t%d\n",nSyst);
     dcFile << "------------\n";
     dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $CHANNEL/$PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
@@ -1370,21 +1343,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << "------------\n";
     dcFile << bin1 << std::endl << process << std::endl << processn << std::endl << rate << std::endl;
     dcFile << "------------\n";
-    dcFile << unc1 << std::endl;
-    dcFile << unc2 << std::endl;
-    dcFile << unc3 << std::endl;
-    dcFile << unc4 << std::endl;
-    dcFile << unc5 << std::endl;
-    dcFile << unc6 << std::endl;
-    dcFile << unc7 << std::endl;
-    dcFile << unc8 << std::endl;
-    dcFile << unc9 << std::endl;
-    dcFile << unc10 << std::endl;
-    dcFile << unc12 << std::endl;
-    dcFile << unc13 << std::endl;
+    dcFile << unc_lumi << std::endl;
+    dcFile << unc_ElTrigger << std::endl;
+    dcFile << unc_MuTrigger << std::endl;
+    dcFile << unc_ElID << std::endl;
+    dcFile << unc_MuID << std::endl;
+    dcFile << unc_KFactorQCD << std::endl;
+    dcFile << unc_KFactorEWK << std::endl;
+    dcFile << unc_MetUncl << std::endl;
+    dcFile << unc_ElReco << std::endl;
+    dcFile << unc_Pileup << std::endl;
+    dcFile << unc_LHEPdf << std::endl;
+    dcFile << unc_LHEScale << std::endl;
 
     if( year != 2018 ) {
-      dcFile << unc11 << std::endl;
+      dcFile << unc_L1Pref << std::endl;
     }
 
     fCombine->Close();
