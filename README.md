@@ -230,9 +230,9 @@ for i in $ALLMASSP; do
     for k in {2016,2017,2018}; do
       LABEL=${j}_${k}_${i}
       DCARD=${DCARDIR}/DataCard_HMassWZ_${LABEL}.root
-      combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n ${LABEL}
-      python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics.Asimov.${LABEL}.root --sortBy=impact -g PlotAsimov${LABEL}.root --all
-      root -l -b -q PrintPulls.C\(\"${LABEL}\"\)
+      combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
+      python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --sortBy=impact -g PlotAsimov${LABEL}.root --all
+      root -l -b -q PrintPulls.C\(\"Asimov${LABEL}\"\)
     done
   done
 done
@@ -262,7 +262,7 @@ for i in $ALLMASSP; do
       combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
       combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
       combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
-      plotImpacts.py -n ${j}_${k} -i Impacts_${i}.json -o ImactsPlot_${i}.json
+      plotImpacts.py -i Impacts_${i}.json -o ImactsPlot_${i}.json
     done
   done
 done
