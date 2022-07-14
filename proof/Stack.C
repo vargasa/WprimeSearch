@@ -1285,6 +1285,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     for(auto ch: channels){
 
+      THStack* hss = getBGStack(year,Form("%s_%s_WCentral",fromHisto,ch.first.c_str()));
+      float totalBGYield = ((TH1*)(hss->GetStack()->Last()))->Integral();
+
       fCombine->cd("/");
       fCombine->mkdir(ch.second.c_str());
       fCombine->cd(ch.second.c_str());
@@ -1318,7 +1321,14 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         applyLumiSF(h, Form("%d/%s",year,BGN.folderName.c_str()), BGN.xsec);
         rate += Form("%.2f\t",h->Integral());
         h->Write(BGN.folderName.c_str());
-        unc_lumi += Form("%.4f\t",1. + lumiSyst[year]);
+        const float contribTreshold = 0.03;
+        const float contribFromSample = h->Integral()/totalBGYield;
+        if ( contribFromSample > contribTreshold ) {
+          unc_lumi += Form("%.4f\t",1. + lumiSyst[year]);
+        } else {
+          unc_lumi += "-\t";
+          std::clog << Form("\tContribution from %s is %.4f%%: Excluding Lumi Systematics\n",BGN.folderName.c_str(),contribFromSample*100.); 
+        }
 
         saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
 
