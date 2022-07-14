@@ -1364,10 +1364,156 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   };
 
-  std::vector<int> yyyy = { 2016, 2017, 2018 };
-  for(auto y: yyyy) {
-    for (auto n: SignalPos) {
-      printDataCard(y,n.first);
+  // std::vector<int> yyyy = { 2016, 2017, 2018 };
+  // for(auto y: yyyy) {
+  //   for (auto n: SignalPos) {
+  //     printDataCard(y,n.first,"HMassWZ_SR1");
+  //   }
+  // }
+  // throw;
+
+  std::function<TGraphAsymmErrors*(int, const std::string, const std::string, const std::string)>
+    getUpDownErrorGraph = [&](int year, const std::string sample, const std::string ch, const std::string syst){
+    auto hUp = (TH1*)f1->Get(Form("%d/%s/HMassWZ_SR1_%s_%s_Up",year,sample.c_str(),ch.c_str(),syst.c_str()));
+    std::cout << Form("%d/%s/HMassWZ_SR1_%s_%s_Up",year,sample.c_str(),ch.c_str(),syst.c_str()) << std::endl;
+    auto hDown = (TH1*)f1->Get(Form("%d/%s/HMassWZ_SR1_%s_%s_Down",year,sample.c_str(),ch.c_str(),syst.c_str()));
+    Int_t nBins = hUp->GetNbinsX();
+    auto g1 = new TGraphAsymmErrors(nBins);
+    g1->SetName(Form("%d_%s_%s_%s",year,sample.c_str(),ch.c_str(),syst.c_str()));
+    for(uint i = 1; i < nBins; ++i){
+      float xlow = hUp->GetBinLowEdge(i);
+      float xhigh = xlow + hUp->GetBinWidth(i);
+      float ymax = hUp->GetBinContent(i);
+      float ymin = hDown->GetBinContent(i);
+      if (ymin > ymax) std::swap(ymin,ymax);
+      float xx = (xlow+xhigh)/2.;
+      float yy = (ymax+ymin)/2.;
+      xlow = xx - xlow;
+      xhigh = xhigh - xx;
+      ymax = ymax - yy;
+      ymin = yy - ymin;
+      // std::cout << xx << "\t" << xlow << "\t" <<  xhigh << "\n";
+      // std::cout << yy << "\t" << ymax << "\t" <<  ymin << "\n";
+      g1->SetPoint(i,xx,yy);
+      g1->SetPointError(i,xlow,xhigh,ymin,ymax);
+    }
+    // auto c1 = new TCanvas("c1","c1");
+    // g1->Draw("A2P");
+    // c1->Print("tmp.png");
+    return g1;
+  };
+
+
+  std::function<void(int, const std::string, const std::string)>
+    printUpDown = [&](int year, const std::string sample, const std::string syst){
+
+    auto c = new TCanvas("c","c",2000,2000);
+    c->Divide(2,2);
+    std::vector<std::string> chs = { "A","B","C","D" };
+    uint counter = 1;
+    for(auto ch: chs){
+      c->cd(counter);
+      auto mainPad = new TPad(Form("mainPad_%s_%s",sample.c_str(),ch.c_str()),"mainPad",0.,0.25,1.,1.);
+      mainPad->SetTopMargin(0);
+      mainPad->SetLeftMargin(0.12);
+      mainPad->SetRightMargin(0.12);
+      mainPad->SetTopMargin(0);
+      mainPad->SetBottomMargin(0.5);
+      mainPad->SetBottomMargin(1e-3);
+      mainPad->Draw();
+      auto subPad = new TPad(Form("subPad_%s_%s",sample.c_str(),ch.c_str()),"subPad",0.,0.,1.,0.25);
+      subPad->Draw();
+      subPad->SetTopMargin(0);
+      subPad->SetLeftMargin(0.12);
+      subPad->SetRightMargin(0.12);
+      subPad->SetTopMargin(0);
+      subPad->SetBottomMargin(0.5);
+      mainPad->cd();
+      auto hNom = (TH1*)(f1->Get(Form("%d/%s/HMassWZ_SR1_%s_WCentral",year,sample.c_str(),ch.c_str())));
+      auto g = getUpDownErrorGraph(year, sample, ch, syst);
+      auto gr = new TGraphAsymmErrors(g->GetN());
+      float absmin = 1e3, absmax = -1.;
+      for(int i = 0; i < g->GetN(); ++i){
+        float nom = hNom->GetBinContent(i);
+        double xv, yv;
+        g->GetPoint(i,xv,yv);
+        float rhigh = ((yv + g->GetErrorYhigh(i))/nom);
+        if (rhigh>absmax) absmax = rhigh;
+        rhigh = rhigh - 1.;
+        float rlow = ((yv - g->GetErrorYlow(i))/nom);
+        if (rlow<absmin) absmin = rlow;
+        rlow = 1. - rlow;
+        gr->SetPoint(i,xv, 1.);
+        gr->SetPointError(i,
+                          g->GetErrorXlow(i),
+                          g->GetErrorXhigh(i),
+                          nom != 0.? rlow : 0.,
+                          nom != 0.? rhigh : 0.);
+      }
+      std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~\n";
+      g->Print();
+      std::cout << sample.c_str() << "\t" << ch.c_str() << "\t" << syst << "\t" << absmin << "\t" << absmax << "\n";
+      std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~\n";
+      gr->Print();
+      g->SetFillColor(2);
+      g->SetFillStyle(3001);
+      //g->SetMarkerSize();
+      g->SetMarkerStyle(21);
+      hNom->SetTitle(Form("%d %s %s; ;%s",year,syst.c_str(),channels[ch].c_str(),sample.c_str()));
+      hNom->SetStats(kFALSE);
+      hNom->GetXaxis()->SetRangeUser(0,5e3);
+      hNom->Draw("HIST");
+      g->Draw("2P");
+      subPad->cd();
+      gr->SetFillColor(kGreen);
+      gr->SetFillStyle(3001);
+      gr->SetMarkerStyle(21);
+      gr->Draw("A2");
+      //gr->Draw("P");
+      gr->GetYaxis()->SetRangeUser(absmin,absmax);
+      gr->GetXaxis()->SetRangeUser(0,5e3);
+      const int font = 43;
+      const float fontSize = 8.;
+      const float labelSize = 0.14;
+      gr->SetTitle("");
+      gr->GetXaxis()->SetTitleFont(font);
+      gr->GetXaxis()->SetTitleSize(fontSize);
+      gr->GetXaxis()->SetLabelSize(labelSize);
+      gr->GetXaxis()->SetTitleOffset(12.0);
+      gr->GetYaxis()->SetTitleFont(font);
+      gr->GetYaxis()->SetTitleSize(fontSize);
+      gr->GetYaxis()->SetLabelSize(labelSize);
+      gr->GetYaxis()->SetTitleOffset(4.0);
+      gr->GetYaxis()->SetNdivisions(6,3,0);
+
+      //gPad->SetLogx();
+      ++counter;
+    }
+    c->SetLogx();
+    c->Print(Form("plots/%d_%s_%s.png",year,syst.c_str(),sample.c_str()));
+    delete c;
+  };
+
+
+    std::vector<int> yyyy = { /*2016, 2017,*/ 2018 };
+  std::vector<std::string> systematics = {
+    "KFactorQCD",
+    "KFactorEWK",
+    "ElReco",
+    "ElTrigger","ElID",
+    "MuTrigger",
+    "MuID",
+    "MetUncl",
+    "Pileup",
+    "LHEPdf",
+    "LHEScale"
+  };
+  for(auto syst: systematics){
+    for(auto y: yyyy){
+      for (auto BGN: BgNames[y]){
+        if(syst.find("KFactor") != std::string::npos and BGN.folderName.find("DYJets") == std::string::npos) continue;
+          printUpDown(y,BGN.folderName,syst);
+      }
     }
   }
   throw;
@@ -1917,6 +2063,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     double totalBkgC = 0.;
     double totalBkgD = 0.;
 
+    double totalSigA = 0.;
+    double totalSigB = 0.;
+    double totalSigC = 0.;
+    double totalSigD = 0.;
+
     for(auto const&[sampleName, yields] : yieldsTable_) {
       if(sampleName == "Data") continue;
       totalBkgA += yields[0];
@@ -2019,6 +2170,27 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       }
     }
   }
+
+  // Combine all Lepton channels Run2 plots
+  // std::vector<std::string> yearp = { "2016","2017","2018","0000" };  //0000 -> Run2
+  // std::vector<std::string> reg_ = { "CR1","CR2","SR1" };
+  // std::vector<Int_t> signals_ = { 600,800,1000,1200,1400,1600,1800,2000,2500,/*3000,3500,4000,4500*/ };
+  // for(auto rr: reg_){
+  //   for(auto y : yearp){
+  //     for(auto h : hints){
+  //       std::vector<std::string> hNames;
+  //       for(auto ch: chs){
+  //         std::string s_ = Form("%s/%s_%s_+ABCD",y.c_str(),h.c_str(),rr.c_str());
+  //         hNames.emplace_back(s_);
+  //         std::cout << s_ << std::endl;
+  //         if(hNames.size() == 1){
+  //           canvasStacked(signals_,hNames,rr != "SR1");
+  //           hNames.clear() ;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   if(MissingSamples.size()>0){
     for(auto s: MissingSamples){
