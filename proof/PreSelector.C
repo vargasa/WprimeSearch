@@ -461,8 +461,8 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #if !defined(CMSDATA)
 
-  InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",100,0.,MaxPt);
-  InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",100,0.,MaxPt);
+  InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",200,0.,MaxPt);
+  InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",200,0.,MaxPt);
 
   InitHVec<TH1F>(HMetUnclUpPhi,"HMetUnclUpPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMetUnclDownPhi,"HMetUnclDownPhi",PhiBins,-1*MaxPhi,MaxPhi);
@@ -1613,6 +1613,11 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
 #ifndef CMSDATA
+  MetUncl = GetMetUncl();
+#endif
+
+
+#ifndef CMSDATA
   Muons Mus(nMuon,Muon_tunepRelPt,Muon_pt,Muon_eta,Muon_phi,
             Muon_charge,Muon_dxy,Muon_dz,Muon_pfRelIso03_all,
             Muon_ip3d,Muon_sip3d,
@@ -1764,10 +1769,6 @@ Bool_t PreSelector::Process(Long64_t entry) {
   }
 
   FindLeadingLepton();
-
-#ifndef CMSDATA
-  MetUncl = GetMetUncl();
-#endif
 
   auto printEventInfo = [&](){
     std::cout <<
