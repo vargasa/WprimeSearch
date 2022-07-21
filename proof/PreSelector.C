@@ -461,11 +461,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #if !defined(CMSDATA)
 
-  InitHVec<TH2F>(HMetPtPhi,"HMetPtPHi",200.,0.,MaxPt,PhiBins,-1*MaxPhi,MaxPhi);
-
-  InitHVec<TH2F>(HMetUnclUpPtPhi,"HUnclMetUpPtPhi",200.,0.,MaxPt,PhiBins,-1*MaxPhi,MaxPhi);
-  InitHVec<TH2F>(HMetUnclDownPtPhi,"HUnclMetDownPtPhi",200.,0.,MaxPt,PhiBins,-1*MaxPhi,MaxPhi);
-
   InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",200,0.,MaxPt);
   InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",200,0.,MaxPt);
 
@@ -1041,9 +1036,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HGenPartZWp[nh]->Fill( motherl1.second, GetMother(motherl1).second );
   HGenPartZWp[nh]->Fill( motherl2.second, GetMother(motherl2).second );
   HGenPartWWp[nh]->Fill( motherl3.second, GetMother(motherl3).second );
-  HMetPtPhi[nh]->Fill( CorrMetPtPhi.first, CorrMetPtPhi.second );
-  HMetUnclUpPtPhi[nh]->Fill( MetUncl.PtUp, MetUncl.PhiUp );
-  HMetUnclDownPtPhi[nh]->Fill( MetUncl.PtDown, MetUncl.PhiDown );
 
 #endif
 
