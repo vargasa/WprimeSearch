@@ -461,11 +461,26 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #if !defined(CMSDATA)
 
+  InitHVec<TH2F>(HMetPtPhi,"HMetPtPHi",200.,0.,MaxPt,PhiBins,-1*MaxPhi,MaxPhi);
+
+  InitHVec<TH2F>(HMetUnclUpPtPhi,"HUnclMetUpPtPhi",200.,0.,MaxPt,PhiBins,-1*MaxPhi,MaxPhi);
+  InitHVec<TH2F>(HMetUnclDownPtPhi,"HUnclMetDownPtPhi",200.,0.,MaxPt,PhiBins,-1*MaxPhi,MaxPhi);
+
   InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",200,0.,MaxPt);
   InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",200,0.,MaxPt);
 
   InitHVec<TH1F>(HMetUnclUpPhi,"HMetUnclUpPhi",PhiBins,-1*MaxPhi,MaxPhi);
   InitHVec<TH1F>(HMetUnclDownPhi,"HMetUnclDownPhi",PhiBins,-1*MaxPhi,MaxPhi);
+
+  InitHVec<TH1F>(HMetUnclUpPtRatio,"HMetUnclUpPtRatio",20,0.,2.);
+  InitHVec<TH1F>(HMetUnclUpPhiRatio,"HMetUnclUpPhiRatio",20,0.,2.);
+  InitHVec<TH1F>(HMetUnclDownPtRatio,"HMetUnclDownPtRatio",20,0.,2.);
+  InitHVec<TH1F>(HMetUnclDownPhiRatio,"HMetUnclDownPhiRatio",20,0.,2.);
+  InitHVec<TH1F>(HNuMetUnclUpPtRatio,"HNuMetUnclUpPtRatio",20,0.,2.);
+  InitHVec<TH1F>(HNuMetUnclUpPhiRatio,"HNuMetUnclUpPhiRatio",20,0.,2.);
+  InitHVec<TH1F>(HNuMetUnclDownPtRatio,"HNuMetUnclDownPtRatio",20,0.,2.);
+  InitHVec<TH1F>(HNuMetUnclDownPhiRatio,"HNuMetUnclDownPhiRatio",20,0.,2.);
+
 
   InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
 
@@ -1026,6 +1041,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HGenPartZWp[nh]->Fill( motherl1.second, GetMother(motherl1).second );
   HGenPartZWp[nh]->Fill( motherl2.second, GetMother(motherl2).second );
   HGenPartWWp[nh]->Fill( motherl3.second, GetMother(motherl3).second );
+  HMetPtPhi[nh]->Fill( CorrMetPtPhi.first, CorrMetPtPhi.second );
+  HMetUnclUpPtPhi[nh]->Fill( MetUncl.PtUp, MetUncl.PhiUp );
+  HMetUnclDownPtPhi[nh]->Fill( MetUncl.PtDown, MetUncl.PhiDown );
+
 #endif
 
   // Eta histos
@@ -1043,6 +1062,17 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 #ifndef CMSDATA
   FillH1(HMetUnclUpPt,nh,MetUncl.PtUp);
   FillH1(HMetUnclDownPt,nh,MetUncl.PtDown);
+
+
+  FillH1(HMetUnclUpPtRatio,nh,MetUncl.PtUp/CorrMetPtPhi.first);
+  FillH1(HMetUnclUpPhiRatio,nh,MetUncl.PhiUp/CorrMetPtPhi.second);
+  FillH1(HMetUnclDownPtRatio,nh,MetUncl.PtDown/CorrMetPtPhi.first);
+  FillH1(HMetUnclDownPhiRatio,nh,MetUncl.PhiDown/CorrMetPtPhi.second);
+
+  FillH1(HNuMetUnclUpPtRatio,nh,nu.MetUnclUp.Pt()/CorrMetPtPhi.first);
+  FillH1(HNuMetUnclUpPhiRatio,nh,nu.MetUnclUp.Phi()/CorrMetPtPhi.second);
+  FillH1(HNuMetUnclDownPtRatio,nh,nu.MetUnclDown.Pt()/CorrMetPtPhi.first);
+  FillH1(HNuMetUnclDownPhiRatio,nh,nu.MetUnclDown.Phi()/CorrMetPtPhi.second);
 #endif
   FillH1(HZPt,nh,zb.Pt());
   FillH1(HWPt,nh,wb.Met.Pt());
