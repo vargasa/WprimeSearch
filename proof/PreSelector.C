@@ -461,6 +461,26 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
 #if !defined(CMSDATA)
 
+  InitHVec<TH2F>(HTrackQuadTerms,"HTrackQuadTerms",15,0.,15,160,-2.,2.);
+  std::vector<std::string> prefill = {
+    "wzm_MetUnclUp","wzm_MetUnclDown",
+    "cFlips",
+    "Mwz_UnclUp","Mwz_UnclDown",
+    "MetPt_Up", "MetPt_Down" ,
+    "MetPhi_Up", "MetPhi_down",
+    "NuPz_up", "NuPz_down",
+    "a_up", "a_down",
+    "b_up", "b_down",
+    "c_up", "c_down",
+    "d_up", "d_down",
+    "k_up", "k_down",
+  };
+  for(unsigned int n = 0; n < HTrackQuadTerms.size(); ++n){
+    for(auto& ss: prefill){
+      HTrackQuadTerms[n]->Fill(ss.c_str(),2.1,1e-6);
+    }
+  }
+
   InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",200,0.,MaxPt);
   InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",200,0.,MaxPt);
 
@@ -479,7 +499,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
 
-  std::vector<std::string> prefill = {
+  prefill = {
     "El.Prompt.Loose","El.Prompt.Medium","El.Prompt.Tight",
     "El.NonPrompt.Loose","El.NonPrompt.Medium","El.NonPrompt.Tight",
     "El.HFD.Loose","El.HFD.Medium","El.HFD.Tight",
@@ -890,6 +910,7 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
   Nu4VObj s;
   Float_t NuPz, NuPz_up, NuPz_down = 0.;
   const Float_t Mw = 80.379;
+
   Float_t a = 2.*lep.Pt()*(CorrMetPtPhi.first);
   Float_t k = Mw*Mw - wmt.Met*wmt.Met;
   Float_t b = (k + a);
@@ -915,6 +936,16 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
   Float_t b_down = (k_down + a_down);
   Float_t c_down = k_down*(k_down + 4.*lep.Pt()*(MetUncl.PtDown));
 
+  if ( c < 0 ) {
+    QuadTerms.insert({ {"Fix", 1.} });
+  }
+
+  if ( c > 0 and  ( c_down < 0 or c_up < 0 ) ){
+    QuadTerms.insert({ {"cFlips", 1.} });
+  } else {
+    QuadTerms.insert({ {"cFlips", 0.} });
+  }
+
   if ( c < 0 or c_down < 0 or c_up < 0 ) return GetNu4VFix(lep);
 
   Float_t d_up = lep.P()*TMath::Sqrt(c_up);
@@ -925,6 +956,25 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
 
   s.MetUnclUp = Get4V(NuPz_up,MetUncl.PtUp,MetUncl.PhiUp);
   s.MetUnclDown = Get4V(NuPz_down,MetUncl.PtDown,MetUncl.PhiDown);
+
+  QuadTerms.insert({
+      {"a_up", a_up/a },
+      {"k_up", k_up/k },
+      {"b_up", b_up/b },
+      {"c_up", c_up/c },
+      {"d_up", d_up/d },
+      {"NuPz_up", NuPz_up/NuPz },
+      {"MetPt_Up",  s.MetUnclUp.Pt()/s.Met.Pt() },
+      {"MetPhi_Up", s.MetUnclUp.Phi()/s.Met.Phi() },
+      {"a_down", a_down/a },
+      {"k_down", k_down/k },
+      {"b_down", b_down/b },
+      {"c_down", c_down/c },
+      {"d_down", d_down/d },
+      {"NuPz_down", NuPz_down/NuPz},
+      {"MetPt_Down" , s.MetUnclDown.Pt()/s.Met.Pt() },
+      {"MetPhi_down", s.MetUnclDown.Pt()/s.Met.Pt()},
+    });
 #endif
 
   return s;
@@ -1019,6 +1069,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 #ifndef CMSDATA
 
   DefineSFs(nh);
+
+  for(auto const&[key,value] : QuadTerms){
+    HTrackQuadTerms[nh]->Fill(key.c_str(), value, 1.);
+  }
 
   HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
   HGenPartChgF[nh]->Fill(lz.charge[l2],GenPart_pdgId[lz.genPartIdx[l2]]);
@@ -1264,6 +1318,9 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx[regionName + chStr + "KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp*WCentral/WKQCDNom);
     HMassWZ[HIdx[regionName + chStr + "KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown*WCentral/WKQCDNom);
   }
+
+  HTrackQuadTerms[nh]->Fill("wzm_MetUnclUp",   wzm_MetUnclUp/wzm_Met, 1.);
+  HTrackQuadTerms[nh]->Fill("wzm_MetUnclDown", wzm_MetUnclDown/wzm_Met, 1.);
 #endif
 
   HSFs[nh]->Fill("LHEPdf_Up",WLHEPdfUp,1.);

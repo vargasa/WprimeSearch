@@ -263,6 +263,9 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HNuMetUnclDownPtRatio;
   std::vector<TH1F*> HNuMetUnclDownPhiRatio;
 
+  std::vector<TH2F*> HTrackQuadTerms;
+  std::unordered_map<std::string,Float_t> QuadTerms;
+
 #endif
 
   TH1D *HCutFlow;
