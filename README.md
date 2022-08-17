@@ -262,7 +262,7 @@ for i in $ALLMASSP; do
       combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
       combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
       combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
-      plotImpacts.py -i Impacts_${i}.json -o ImactsPlot_${i}.json
+      plotImpacts.py -i Impacts_${LABEL}.json -o ImactsPlot_${i}.json
     done
   done
 done

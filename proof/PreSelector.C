@@ -1182,12 +1182,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx[regionName + "_A_L1Pref_Up"]]->Fill(wzm_Met,(*L1PreFiringWeight_ECAL_Up)*WCentral/(*L1PreFiringWeight_ECAL_Nom));
     HMassWZ[HIdx[regionName + "_A_L1Pref_Down"]]->Fill(wzm_Met,(*L1PreFiringWeight_ECAL_Dn)*WCentral/(*L1PreFiringWeight_ECAL_Nom));
 #endif
-    if(ApplyKFactors){
-      HMassWZ[HIdx[regionName + "_A_KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp*WCentral/WKEWKNom);
-      HMassWZ[HIdx[regionName + "_A_KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown*WCentral/WKEWKNom);
-      HMassWZ[HIdx[regionName + "_A_KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp*WCentral/WKQCDNom);
-      HMassWZ[HIdx[regionName + "_A_KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown*WCentral/WKQCDNom);
-    }
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l1],ElPdgId,Electron_cutBased[l1])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l2],ElPdgId,Electron_cutBased[l2])).c_str());
     HFakeString[nh]->FillS((GetFakeString(Electron_genPartIdx[l3],ElPdgId,Electron_cutBased[l3])).c_str());
@@ -1317,10 +1311,10 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   HMassWZ[HIdx[regionName + chStr + "LHEScale_Up"]]->Fill(wzm_Met,WLHEScaleUp*WCentral/(*genWeight));
   HMassWZ[HIdx[regionName + chStr + "LHEScale_Down"]]->Fill(wzm_Met,WLHEScaleDown*WCentral/(*genWeight));
   if(ApplyKFactors){
-    HMassWZ[HIdx[regionName + chStr + "KFactor_EWK_Up"]]->Fill(wzm_Met,WKEWKUp*WCentral/WKEWKNom);
-    HMassWZ[HIdx[regionName + chStr + "KFactor_EWK_Down"]]->Fill(wzm_Met,WKEWKDown*WCentral/WKEWKNom);
-    HMassWZ[HIdx[regionName + chStr + "KFactor_QCD_Up"]]->Fill(wzm_Met,WKQCDUp*WCentral/WKQCDNom);
-    HMassWZ[HIdx[regionName + chStr + "KFactor_QCD_Down"]]->Fill(wzm_Met,WKQCDDown*WCentral/WKQCDNom);
+    HMassWZ[HIdx[regionName + chStr + "KFactorEWK_Up"]]->Fill(wzm_Met,WKEWKUp*WCentral/WKEWKNom);
+    HMassWZ[HIdx[regionName + chStr + "KFactorEWK_Down"]]->Fill(wzm_Met,WKEWKDown*WCentral/WKEWKNom);
+    HMassWZ[HIdx[regionName + chStr + "KFactorQCD_Up"]]->Fill(wzm_Met,WKQCDUp*WCentral/WKQCDNom);
+    HMassWZ[HIdx[regionName + chStr + "KFactorQCD_Down"]]->Fill(wzm_Met,WKQCDDown*WCentral/WKQCDNom);
   }
 
   HTrackQuadTerms[nh]->Fill("wzm_MetUnclUp",   abs(wzm_MetUnclUp/wzm_Met), 1.);
