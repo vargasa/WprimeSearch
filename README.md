@@ -198,7 +198,7 @@ done
 
 ### Pulls
 
-```
+```bash
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
 for i in $ALLMASSP; do
   for k in {CR1,CR2,SR1}; do
@@ -284,27 +284,78 @@ done
 
 
 
-### Goodnes of Fit
+### Goodness of Fit
 
 ```bash
 ALLMASSP=600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
-for i in $ALLMASSP
-do
-  LABEL="CR2_"$i
-  echo -e "\n=======GOODNESS OF FIT=="$i"=======\n"
-  ALGO="saturated"
-  combineTool.py -M GoodnessOfFit --algorithm  $ALGO -m $i -d $DCARDIR"RunII_"$LABEL"_Datacard.root" -n ".$ALGO.$LABEL" --plots\
-    --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
-  combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $i -d $DCARDIR"RunII_"$LABEL"_Datacard.root" \
-    -n ".$ALGO.toys.$LABEL" --saveToys -t 50 -s 1234:1284:1 --parallel 10 --verbose 0 \
-    --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
-  combineTool.py -M CollectGoodnessOfFit --input higgsCombine.${ALGO}.${LABEL}.GoodnessOfFit.mH${i}.root \
-    higgsCombine.saturated.toys.${LABEL}.GoodnessOfFit.mH${i}.*.root -o saturated.${i}.json
-  python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py --bins 50 --statistic saturated --mass ${i}.0 --output GoF_${LABEL} saturated.${i}.json --range 0 2500
+ALGO="saturated"
+
+function processGOF {
+    WSPACE=$1
+    LABEL=$2
+    MASS=$3
+    echo -e "\n=======GOODNESS OF FIT==${LABEL}=======\n"
+    echo "Processing GOF for ${WSPACE} ${LABEL} ${MASS}"
+    ALGO="saturated"
+    file $WSPACE
+    combineTool.py -M GoodnessOfFit --algorithm  $ALGO -m $i -d ${WSPACE} -n .${ALGO}.${LABEL} --plots\
+        --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
+    combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $i -d ${WSPACE} \
+        -n .${ALGO}.toys.${LABEL} --saveToys --toysFreq -t 1000 -s 12345 --parallel 10 --verbose 0 \
+        --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
+    combineTool.py -M CollectGoodnessOfFit --input higgsCombine.${ALGO}.${LABEL}.GoodnessOfFit.mH${i}.root \
+        higgsCombine.saturated.toys.${LABEL}.GoodnessOfFit.mH${MASS}.*.root -o saturated.${LABEL}.json
+    python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py --bins 40 --statistic saturated --mass ${MASS}.0 --output GoF_${LABEL} saturated.${LABEL}.json --range 0 500    
+}
+
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        LABEL=${j}_${i}
+        processGOF ${DCARDIR}RunII_${LABEL}_Datacard.root ${LABEL} ${i}
+    done
 done
 
-python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py --bins 50 --statistic saturated --mass 600.0 --output GoF_CR2_600 saturated.600.json --range 0 2500
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        for k in {2016,2017,2018}; do
+            LABEL=${j}_${k}_${i}
+            processGOF ${DCARDIR}DataCard_HMassWZ_${LABEL}.root ${LABEL} ${i}
+        done
+    done
+done
+
+```
+
+### Signal Injection tests
+
+```bash
+ALLMASSP="600 800 1000 \
+  1200 1400 1600 1800 \
+  2000 2500 3000 3500 \
+  4000 4500"
+
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+  for j in {2016,2017,2018}; do
+    echo -e "\n=============="$i"="$j"==============\n"
+    LABEL=${j}_${i}
+    CR1=${DCARDIR}DataCard_HMassWZ_CR1_${LABEL}
+    CR2=${DCARDIR}DataCard_HMassWZ_CR2_${LABEL}
+    SR1=${DCARDIR}DataCard_HMassWZ_SR1_${LABEL}
+    ALL=${DCARDIR}CombinedRegionsDatacard_${LABEL}
+    file ${SR1}.txt ${CR1}.txt ${CR2}.txt
+    combineCards.py SR1_${LABEL}=${SR1}.txt CR1_${LABEL}=${CR1}.txt CR2_${LABEL}=${CR2}.txt >${ALL}.txt
+    file $ALL.txt
+    combineTool.py -M T2W --channel-masks -o ${ALL}.root -i ${ALL}.txt
+    file $ALL.root
+    combine -d ${ALL}.root -M FitDiagnostics --saveShapes \
+      --saveWithUncertainties -n $LABEL -t 50 \
+      --setParameters \
+      mask_SR1_${LABEL}_mumumu=1,mask_SR1_${LABEL}_mumue=1,mask_SR1_${LABEL}_eemu=1,mask_SR1_${LABEL}_eee=1
+  done
+done
+
 ```
 
 ### Limits
