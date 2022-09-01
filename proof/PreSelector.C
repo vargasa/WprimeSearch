@@ -2622,10 +2622,10 @@ void PreSelector::DefineSFs(const int& nh){
   WMuIDUp *= *genWeight;
   WMuIDDown *= *genWeight;
   WMuIDNom *= *genWeight;
-  WLHEPdfDown = *genWeight;
-  WLHEPdfUp = *genWeight;
-  WLHEScaleDown = *genWeight;
-  WLHEScaleUp = *genWeight;
+  WLHEPdfDown *= *genWeight;
+  WLHEPdfUp *= *genWeight;
+  WLHEScaleDown *= *genWeight;
+  WLHEScaleUp *= *genWeight;
 
   // std::cout << IsA_ << IsB << IsC << IsD << "\t"
   //           << WAllDown << "\t"
