@@ -830,6 +830,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       const int font = 43;
       const float fontSize = 12.;
       const float labelSize = 0.14;
+      double xmin, xmax, ymin, ymax;
+      hratio->ComputeRange(xmin,ymin,xmax,ymax);
       hratio->SetTitle("");
       hratio->GetXaxis()->SetTitle(hss->GetHistogram()->GetXaxis()->GetTitle());
       hratio->GetXaxis()->SetTitleFont(font);
@@ -842,8 +844,9 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       hratio->GetYaxis()->SetTitleOffset(4.0);
       hratio->GetYaxis()->SetNdivisions(6,3,0);
       hratio->GetYaxis()->SetTitle("Data/MC");
-      hratio->SetMinimum(0.1);
-      hratio->SetMaximum(1.9);
+      //hratio->SetMinimum(ymin);
+      //hratio->SetMaximum(ymax);
+      hratio->GetYaxis()->SetRangeUser(0.1,3.);
       hratio->SetFillColor(2);
       hratio->SetFillStyle(3001);
       hratio->SetDrawOption("ap");
@@ -1148,16 +1151,18 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
   
 
-
-  std::function<void(const int&, const int&, const char*)>
-    printDataCard = [&] (const int& year, const int& wpmass, const char* fromHisto = "HMassWZ_SR1") {
+  std::function<void(const int&, const int&,
+                     const std::pair<std::string,std::string>&, const char*)>
+    printDataCard = [&] (const int& year, const int& wpmass,
+                         const std::pair<std::string,std::string>& ch,
+                         const char* fromHisto = "HMassWZ_SR1") {
 
     std::clog << Form("Printing datacard: Year[%d], WpMass[%d]\n",year,wpmass);
 
 
 
     ofstream dcFile;
-    dcFile.open(Form("DataCard_%s_%d_%d.txt",fromHisto,year, wpmass));
+    dcFile.open(Form("DataCard_%s_%s_%d_%d.txt",ch.second.c_str(),fromHisto,year, wpmass));
 
     std::unordered_map<Int_t, Float_t> lumiSyst = {
       // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiLUM
@@ -1178,37 +1183,25 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string processn = "process\t";
     std::string process  = "process\t";
     std::string rate     = "rate\t";
-    std::string unc_lumi = "lumi_13TeV\tlnN\t";
     std::vector<std::string> systEl     = { "ElReco" , "ElTrigger","ElID"};
     std::vector<std::string> systMu     = { "MuTrigger","MuID" };
     std::vector<std::string> systK      = { "KFactorEWK","KFactorQCD" };
-    std::vector<std::string> systShared = { "Pileup", "MetUncl", "L1Pref", "LHEPdf", "LHEScale"};
-    std::string unc_ElTrigger  = "CMS_ElTrigger\tshape\t";
-    std::string unc_MuTrigger  = "CMS_MuTrigger\tshape\t";
-    std::string unc_ElID       = "CMS_ElID\tshape\t";
-    std::string unc_MuID       = "CMS_MuID\tshape\t";
-    std::string unc_KFactorQCD = "CMS_KFactorQCD\tshape\t";
-    std::string unc_KFactorEWK = "CMS_KFactorEWK\tshape\t";
-    std::string unc_MetUncl    = "CMS_MetUncl\tshape\t";
-    std::string unc_ElReco     = "CMS_ElReco\tshape\t";
-    std::string unc_Pileup     = "CMS_Pileup\tshape\t";
-    std::string unc_L1Pref     = "CMS_L1Pref\tshape\t";
-    std::string unc_LHEPdf     = "CMS_LHEPdf\tshape\t";
-    std::string unc_LHEScale   = "CMS_LHEScale\tshape\t";
+    std::vector<std::string> systShared = { "Pileup", "MetUncl", "L1Pref"};
 
-    std::unordered_map<std::string,std::string*> uncs = {
-      { "ElTrigger"  , &unc_ElTrigger  },
-      { "MuTrigger"  , &unc_MuTrigger  },
-      { "ElID"       , &unc_ElID       },
-      { "MuID"       , &unc_MuID       },
-      { "KFactorQCD" , &unc_KFactorQCD },
-      { "KFactorEWK" , &unc_KFactorEWK },
-      { "MetUncl"    , &unc_MetUncl    },
-      { "ElReco"     , &unc_ElReco     },
-      { "Pileup"     , &unc_Pileup     },
-      { "L1Pref"     , &unc_L1Pref     },
-      { "LHEPdf"     , &unc_LHEPdf     },
-      { "LHEScale"   , &unc_LHEScale   },
+    std::unordered_map<std::string,std::string> uncs = {
+      { "Lumi"       , Form("lumi_13TeV%d\tlnN\t",year)       },
+      { "ElTrigger"  , Form("CMS_ElTrigger%d\tshape\t",year)  },
+      { "MuTrigger"  , Form("CMS_MuTrigger%d\tshape\t",year)  },
+      { "ElID"       , Form("CMS_ElID%d\tshape\t",year)       },
+      { "MuID"       , Form("CMS_MuID%d\tshape\t",year)       },
+      { "KFactorQCD" , Form("CMS_KFactorQCD%d\tshape\t",year) },
+      { "KFactorEWK" , Form("CMS_KFactorEWK%d\tshape\t",year) },
+      { "MetUncl"    , Form("CMS_MetUncl%d\tshape\t",year)    },
+      { "ElReco"     , Form("CMS_ElReco%d\tshape\t",year)     },
+      { "Pileup"     , Form("CMS_Pileup%d\tshape\t",year)     },
+      { "L1Pref"     , Form("CMS_L1Pref%d\tshape\t",year)     },
+      { "LHEPdf"     , Form("CMS_LHEPdf%d\tshape\t",year)     },
+      { "LHEScale"   , Form("CMS_LHEScale%d\tshape\t",year)   },
     };
 
     std::function<TH1*(TH1*)> stripNegativeBins = [] (TH1* hneg) {
@@ -1227,7 +1220,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
 
     std::function<void(const std::string&, const std::string&, const float&)>
     saveHisto = [&] (const std::string& sampleName,
-                     const std::string& ch,
+                     const std::string& ch_,
                      const float& xsec) {
 
       std::function<float(const std::string&,
@@ -1239,67 +1232,77 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         auto hup = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_%s_Up",hname.c_str(),s.c_str())));
         applyLumiSF(hup, folder.c_str(), xsec);
         if(hup->Integral() == 0.) std::clog << Form("\n\tWARNING: %s Up Systematic is 0.: %s\n\n",s.c_str(),folder.c_str());
-        hup->Write(std::string(sampleName+Form("_CMS_%sUp",s.c_str())).c_str());
+        hup->Write(std::string(sampleName+Form("_CMS_%s%dUp",s.c_str(),year)).c_str());
         auto hdown = stripNegativeBins(getHistoFromFile(folder.c_str(),Form("%s_%s_Down",hname.c_str(),s.c_str())));
         applyLumiSF(hdown, folder.c_str(), xsec);
         if(hdown->Integral() == 0.) std::clog << Form("\n\tWARNING: %s Down Systematic is 0.: %s\n\n",s.c_str(),folder.c_str());
-        hdown->Write(std::string(sampleName+Form("_CMS_%sDown",s.c_str())).c_str());
+        hdown->Write(std::string(sampleName+Form("_CMS_%s%dDown",s.c_str(),year)).c_str());
         return hup->Integral()*hdown->Integral(); // We just need to know if any of this is zero
       };
 
       std::string folderName = Form("%d/%s",year,sampleName.c_str());
+
       std::string hname;
-      if(ch == "A") {
+      if(ch_ == "A") {
         for (auto s: systEl) {
-          hname = Form("%s_%s",fromHisto,ch.c_str());
+          hname = Form("%s_%s",fromHisto,ch_.c_str());
           float rate = saveUpDown(folderName,hname,s);
-          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+          uncs[s] += rate > 0. ? "1.0\t" : "-\t";
         }
         for (auto s: systMu) {
-          *(uncs[s]) += "-\t";
+          uncs[s] += "-\t";
         }
-      } else if (ch == "B" or ch == "C") {
+      } else if (ch_ == "B" or ch_ == "C") {
         for (auto s: systEl) {
-          hname = Form("%s_%s",fromHisto,ch.c_str());
+          hname = Form("%s_%s",fromHisto,ch_.c_str());
           float rate = saveUpDown(folderName,hname,s);
-          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+          uncs[s] += rate > 0. ? "1.0\t" : "-\t";
         }
         for (auto s: systMu) {
-          hname = Form("%s_%s",fromHisto,ch.c_str());
+          hname = Form("%s_%s",fromHisto,ch_.c_str());
           float rate = saveUpDown(folderName,hname,s);
-          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+          uncs[s] += rate > 0. ? "1.0\t" : "-\t";
         }
-      } else if (ch == "D") {
+      } else if (ch_ == "D") {
         for (auto s: systEl) {
-          *(uncs[s]) += "-\t";
+          uncs[s] += "-\t";
         }
         for (auto s: systMu) {
-          hname = Form("%s_%s",fromHisto,ch.c_str());
+          hname = Form("%s_%s",fromHisto,ch_.c_str());
           float rate = saveUpDown(folderName,hname,s);
-          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+          uncs[s] += rate > 0. ? "1.0\t" : "-\t";
         }
       }
 
       for (auto s: systShared){
-        hname = Form("%s_%s",fromHisto,ch.c_str());
+        hname = Form("%s_%s",fromHisto,ch_.c_str());
         float rate = saveUpDown(folderName,hname,s);
-        *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+        uncs[s] += rate > 0. ? "1.0\t" : "-\t";
       }
 
       if(folderName.find(DYSample.c_str()) != std::string::npos){
         for (auto s: systK) {
-          hname = Form("%s_%s",fromHisto,ch.c_str());
+          hname = Form("%s_%s",fromHisto,ch_.c_str());
           float rate = saveUpDown(folderName,hname,s);
-          *(uncs[s]) += rate > 0. ? "1.0\t" : "-\t";
+          uncs[s] += rate > 0. ? "1.0\t" : "-\t";
         }
       } else {
         for (auto s: systK) {
-          *(uncs[s]) += "-\t";
+          uncs[s] += "-\t";
         }
       }
-    };
 
-    for(auto ch: channels){
+      if (folderName.find(GluGluSample.c_str()) == std::string::npos){
+        float rate = saveUpDown(folderName,hname,"LHEPdf");
+        uncs["LHEPdf"] += rate > 0. ? "1.0\t" : "-\t";
+        rate = saveUpDown(folderName,hname,"LHEScale");
+        uncs["LHEScale"] += rate > 0. ? "1.0\t" : "-\t";
+      } else {
+        uncs["LHEPdf"] += "-\t";
+        uncs["LHEScale"] += "-\t";
+      }
+
+    };
 
       THStack* hss = getBGStack(year,Form("%s_%s_WCentral",fromHisto,ch.first.c_str()));
       float totalBGYield = ((TH1*)(hss->GetStack()->Last()))->Integral();
@@ -1312,7 +1315,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       TH1* hsig = getHistoFromFile(Form("%d/%s",year,signal.folderName.c_str()),Form("%s_%s_WCentral",fromHisto,ch.first.c_str()));
       applyLumiSF(hsig, Form("%d/%s",year,signal.folderName.c_str()), signal.xsec);
       hsig->Write(signal.folderName.c_str());
-      unc_lumi += Form("%.4f\t",1. + lumiSyst[year]);
+      uncs["Lumi"] += Form("%.4f\t",1. + lumiSyst[year]);
       saveHisto(signal.folderName, ch.first, signal.xsec);
 
       bin1 += ch.second + "\t";
@@ -1340,28 +1343,21 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         const float contribTreshold = 0.03;
         const float contribFromSample = h->Integral()/totalBGYield;
         if ( contribFromSample > contribTreshold ) {
-          unc_lumi += Form("%.4f\t",1. + lumiSyst[year]);
+          uncs["Lumi"] += Form("%.4f\t",1. + lumiSyst[year]);
         } else {
-          unc_lumi += "-\t";
+          uncs["Lumi"] += "-\t";
           std::clog << Form("\tContribution from %s is %.4f%%: Excluding Lumi Systematics\n",BGN.folderName.c_str(),contribFromSample*100.); 
         }
 
-        saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
 
-        if (BGN.folderName.find(GluGluSample.c_str()) != std::string::npos){
-          unc_LHEPdf += "1.0\t";
-          unc_LHEScale += "1.0\t";
-        } else {
-          unc_LHEPdf += "-\t";
-          unc_LHEScale += "-\t";
-        }
+        saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
 
         ++counter;
       }
-    }
+
 
     int nSyst = (year != 2018)? 13:12; //L1Pref only '16 and '17
-    dcFile << "imax\t4\njmax\t" << BgNames[year].size() << Form("\nkmax\t%d\n",nSyst);
+    dcFile << "imax\t1\njmax\t" << BgNames[year].size() << Form("\nkmax\t%d\n",nSyst);
     dcFile << "------------\n";
     dcFile << Form("shapes * * %s $CHANNEL/$PROCESS $CHANNEL/$PROCESS_$SYSTEMATIC\n",rootFilename.c_str());
     dcFile << bin0 << std::endl;
@@ -1369,34 +1365,39 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << "------------\n";
     dcFile << bin1 << std::endl << process << std::endl << processn << std::endl << rate << std::endl;
     dcFile << "------------\n";
-    dcFile << unc_lumi << std::endl;
-    dcFile << unc_ElTrigger << std::endl;
-    dcFile << unc_MuTrigger << std::endl;
-    dcFile << unc_ElID << std::endl;
-    dcFile << unc_MuID << std::endl;
-    dcFile << unc_KFactorQCD << std::endl;
-    dcFile << unc_KFactorEWK << std::endl;
-    dcFile << unc_MetUncl << std::endl;
-    dcFile << unc_ElReco << std::endl;
-    dcFile << unc_Pileup << std::endl;
-    dcFile << unc_LHEPdf << std::endl;
-    dcFile << unc_LHEScale << std::endl;
+    dcFile << uncs["Lumi"] << std::endl;
+    dcFile << uncs["ElTrigger"] << std::endl;
+    dcFile << uncs["MuTrigger"] << std::endl;
+    dcFile << uncs["ElID"] << std::endl;
+    dcFile << uncs["MuID"] << std::endl;
+    dcFile << uncs["KFactorQCD"] << std::endl;
+    dcFile << uncs["KFactorEWK"] << std::endl;
+    dcFile << uncs["MetUncl"] << std::endl;
+    dcFile << uncs["ElReco"] << std::endl;
+    dcFile << uncs["Pileup"] << std::endl;
+    dcFile << uncs["LHEPdf"] << std::endl;
+    dcFile << uncs["LHEScale"] << std::endl;
 
     if( year != 2018 ) {
-      dcFile << unc_L1Pref << std::endl;
+      dcFile << uncs["L1Pref"] << std::endl;
     }
 
     fCombine->Close();
 
   };
 
-  // std::vector<int> yyyy = { 2016, 2017, 2018 };
-  // for(auto y: yyyy) {
-  //   for (auto n: SignalPos) {
-  //     printDataCard(y,n.first,"HMassWZ_SR1");
-  //   }
-  // }
-  // throw;
+  std::vector<std::string> crr_ = { "HMassWZ_CR1", "HMassWZ_CR2", "HMassWZ_SR1" };
+  std::vector<int> yyyy = { 2016, 2017, 2018 };
+  for(auto y: yyyy) {
+    for (auto n: SignalPos) {
+      for (const auto& ch: channels){
+        for(const auto& cr : crr_){
+          printDataCard(y,n.first,ch,cr.c_str());
+        }
+      }
+    }
+  }
+  throw;
 
   std::function<TGraphAsymmErrors*(int, const std::string, const std::string, const std::string)>
     getUpDownErrorGraph = [&](int year, const std::string sample, const std::string ch, const std::string syst){
@@ -1406,6 +1407,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     Int_t nBins = hUp->GetNbinsX();
     auto g1 = new TGraphAsymmErrors(nBins);
     g1->SetName(Form("%d_%s_%s_%s",year,sample.c_str(),ch.c_str(),syst.c_str()));
+    float logError = 0.f;
     for(uint i = 1; i < nBins; ++i){
       float xlow = hUp->GetBinLowEdge(i);
       float xhigh = xlow + hUp->GetBinWidth(i);
@@ -1418,11 +1420,19 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       xhigh = xhigh - xx;
       ymax = ymax - yy;
       ymin = yy - ymin;
+      logError += ymax;
       // std::cout << xx << "\t" << xlow << "\t" <<  xhigh << "\n";
       // std::cout << yy << "\t" << ymax << "\t" <<  ymin << "\n";
       g1->SetPoint(i,xx,yy);
       g1->SetPointError(i,xlow,xhigh,ymin,ymax);
     }
+    g1->SetMarkerStyle(21);
+    g1->SetFillColor(2);
+    g1->SetFillStyle(3001);
+    if(logError == 0.f and hUp->Integral() > 0.f and hDown->Integral() > 0.f)
+      g1->SetMarkerColor(kRed);
+    else
+      g1->SetMarkerColor(kBlack);
     // auto c1 = new TCanvas("c1","c1");
     // g1->Draw("A2P");
     // c1->Print("tmp.png");
@@ -1456,25 +1466,30 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       subPad->SetBottomMargin(0.5);
       mainPad->cd();
       auto hNom = (TH1*)(f1->Get(Form("%d/%s/HMassWZ_SR1_%s_WCentral",year,sample.c_str(),ch.c_str())));
-      auto g = getUpDownErrorGraph(year, sample, ch, syst);
+      const auto g = getUpDownErrorGraph(year, sample, ch, syst);
       auto gr = new TGraphAsymmErrors(g->GetN());
-      float absmin = 1e3, absmax = -1.;
+      float absmin = 1e3, absmax = -1.f;
       for(int i = 0; i < g->GetN(); ++i){
         float nom = hNom->GetBinContent(i);
         double xv, yv;
         g->GetPoint(i,xv,yv);
-        float rhigh = ((yv + g->GetErrorYhigh(i))/nom);
+        if (nom == 0.f or nom < 0) {
+          gr->SetPoint(i,xv,1.);
+          gr->SetPointError(i,g->GetErrorXlow(i),g->GetErrorXhigh(i), 0., 0.);
+          continue;
+        }
+        float rhigh = (yv + g->GetErrorYhigh(i))/nom;
         if (rhigh>absmax) absmax = rhigh;
-        rhigh = rhigh - 1.;
-        float rlow = ((yv - g->GetErrorYlow(i))/nom);
+        rhigh = rhigh - 1.f;
+        float rlow = (yv - g->GetErrorYlow(i))/nom;
+
         if (rlow<absmin) absmin = rlow;
         rlow = 1. - rlow;
         gr->SetPoint(i,xv, 1.);
         gr->SetPointError(i,
                           g->GetErrorXlow(i),
                           g->GetErrorXhigh(i),
-                          nom != 0.? rlow : 0.,
-                          nom != 0.? rhigh : 0.);
+                          rlow, rhigh);
       }
       std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~\n";
       g->Print();
@@ -1496,8 +1511,11 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       gr->SetMarkerStyle(21);
       gr->Draw("A2");
       //gr->Draw("P");
-      gr->GetYaxis()->SetRangeUser(absmin,absmax);
-      gr->GetXaxis()->SetRangeUser(0,5e3);
+      gr->GetYaxis()->SetRangeUser( absmin < absmax? absmin : 0., absmin < absmax? absmax: 1.);
+      // gr->GetXaxis()->SetRangeUser(0,hNom->GetBinLowEdge(hNom->GetNbinsX()+1)+
+      //                               hNom->GetBinWidth(hNom->GetNbinsX()+1));
+      gr->GetXaxis()->SetRangeUser(100.,5e3);
+
       const int font = 43;
       const float fontSize = 8.;
       const float labelSize = 0.14;
@@ -1993,20 +2011,20 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
       mainPad->cd();
       hs->Draw("HIST");
       int color_ = kBlack;
-      for(auto signal: signals){
-        signal.second->SetTitle(signal.first.legendName.c_str());
-        legend->AddEntry(signal.second,Form("%s",signal.first.legendName.c_str()),"L");
-        signal.second->SetLineColor(color_++);
-        signal.second->SetLineWidth(3);
-        signal.second->SetFillColor(0);
-        signal.second->Draw("HIST SAME");
+      if(hName.find("CR") == std::string::npos){
+        for(auto signal: signals){
+          signal.second->SetTitle(signal.first.legendName.c_str());
+          legend->AddEntry(signal.second,Form("%s",signal.first.legendName.c_str()),"L");
+          signal.second->SetLineColor(color_++);
+          signal.second->SetLineWidth(3);
+          signal.second->SetFillColor(0);
+          signal.second->Draw("HIST SAME");
+        }
       }
-      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(5e-1)+1);
-      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(5e-1));
+      double maxx = last->GetBinLowEdge(last->FindLastBinAbove(0.9)+1);
+      double minx = last->GetBinLowEdge(last->FindFirstBinAbove(0.9));
       TH1*   htmp = hs->GetHistogram();
       TAxis* gtmp = htmp->GetXaxis();
-      minx = gtmp->GetBinLowEdge(htmp->FindBin(minx));
-      maxx = gtmp->GetBinLowEdge(htmp->FindBin(maxx)) + gtmp->GetBinWidth(htmp->FindBin(maxx));
       if(hName.find("HIP3D") != std::string::npos){
         minx = 0.;
         maxx = 0.06;
@@ -2014,7 +2032,8 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         minx = -0.01;
         maxx = 0.01;
       }
-      gtmp->SetRange(htmp->FindBin(minx),htmp->FindBin(maxx));
+      //gtmp->SetRange(htmp->FindBin(minx),htmp->FindBin(maxx));
+      gtmp->SetRangeUser(minx,maxx);
 
       fixYRange(hs,getMaxY(last));
 
@@ -2035,6 +2054,10 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
         } else {
           hdata = getDataStack(Form("%d/%s",year,DataSampleNames[year].c_str()),dataHName);
         }
+
+        minx = hdata->GetBinLowEdge(hdata->FindFirstBinAbove(0.1));
+        maxx = hdata->GetBinLowEdge(hdata->FindLastBinAbove(0.1))+hdata->GetBinWidth(hdata->FindLastBinAbove(0.));
+        gtmp->SetRangeUser(minx,maxx);
 
         yieldsTable.push_back(printYieldsTable(hs, hdata));
 
