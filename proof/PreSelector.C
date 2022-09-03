@@ -1641,6 +1641,8 @@ Bool_t PreSelector::Process(Long64_t entry) {
 
   HCutFlow->FillS("NoCuts");
 
+  if (*genWeight < 0.f) return false;
+
 #if defined(Y2018)
   if( !CheckHEMElectron() or !CheckHEMJet() ){
     HCutFlow->FillS("HEMJetOrElectron");
