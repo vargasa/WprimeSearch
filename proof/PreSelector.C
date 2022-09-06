@@ -2143,11 +2143,10 @@ Double_t PreSelector::GetKFactor(TH1* h /*EWK or QCD*/, const Double_t& ZGenPt, 
   return sf;
 }
 ///////////////////////////////////////////////////////////
-Double_t PreSelector::GetElIDSF(Int_t& nl, const Int_t& option) const{
+Double_t PreSelector::GetElIDSF(const Int_t& nl, const Int_t& option) const{
   /* Option 0: Central Value, -1: Low, +1: up */
+  if (nl == leadElIdx and option == 0) return 1.; /* Leading El SF is applied with HLT SF */
   Double_t sf;
-
-  if (nl == leadElIdx) return 1.; /* Leading El SF is applied with HLT SF */
 
   TH2F* h2source;
 
@@ -2469,9 +2468,6 @@ void PreSelector::DefineSFs(const int& nh){
     WElIDUp   = GetElIDSF(l3,1);
     WElIDDown = GetElIDSF(l3,-1);
     WElIDNom  = GetElIDSF(l3,0);
-
-    assert(l3 != leadElIdx ? (WElIDUp > ElIDl3) : true);
-    assert(l3 != leadElIdx ? (WElIDDown < ElIDl3) : true);
 
     WAllUp = WPileupUp*WElTrigUp*WMuTrigUp*WMuIDUp*WElRecoUp*WElIDUp;
     WAllDown = WPileupDown*WElTrigDown*WMuTrigDown*WMuIDDown*WElRecoDown*WElIDDown;
