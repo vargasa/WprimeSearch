@@ -357,6 +357,26 @@ done
 
 ```
 
+### PostFit plots
+
+```bash
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        for k in {2016,2017,2018}; do
+            for l in {eee,eemu,mumue,mumumu}; do
+                LABEL=${l}_HMassWZ_${j}_${k}_${i}
+                DCARD=${DCARDIR}/DataCard_${LABEL}
+                combineTool.py -M FitDiagnostics $DCARD.root -n ${LABEL}
+                PostFitShapesFromWorkspace -w ${DCARD}.root -d ${DCARD}.txt \
+                    -f fitDiagnostics${LABEL}.root:fit_b --postfit \
+                    --sampling --samples 300 -o PostFit_${LABEL}.root
+            done
+        done
+    done
+done
+```
+
+
 ### Limits
 
 ```bash
