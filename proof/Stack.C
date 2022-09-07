@@ -1440,6 +1440,123 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
   };
 
 
+  
+  auto printPostFitPlots = [&](const int& yr, const string& cr, const string& ch,
+                               const int& mass, const string fit = "postfit",
+                               const string folder = "plots/PostFit"){
+
+    auto file = TFile::Open(Form("%s/PostFit_%s_HMassWZ_%s_%d_%d.root",
+                                 folder.c_str(),ch.c_str(),cr.c_str(),
+                                 yr,mass));
+
+    auto cc = new TCanvas(Form("can_%s_%s",ch.c_str(),cr.c_str()),"",1000,1000);
+
+    auto mainPad = new TPad(Form("mainPad_%s",ch.c_str()),"mainPad",0.,0.25,1.,1.);
+    mainPad->Draw();
+    mainPad->SetLeftMargin(0.12);
+    mainPad->SetRightMargin(0.12);
+    //mainPad->SetLogy();
+    mainPad->SetTickx();
+    mainPad->SetTicky();
+    auto subPad = new TPad(Form("subPad_%s_%s",ch.c_str(),cr.c_str()),"subPad",0.,0.,1.,0.25);
+    subPad->Draw();
+    subPad->SetTopMargin(0);
+    subPad->SetLeftMargin(0.12);
+    subPad->SetRightMargin(0.12);
+    subPad->SetTopMargin(0);
+    subPad->SetBottomMargin(0.5);
+
+    mainPad->cd();
+
+    std::vector<BackgroundInfo>& Bkgs = BgNames[yr];
+
+    THStack* hs = new THStack(Form("hs%s",fit.c_str()),"HMassWZ");
+    auto legend = new TLegend(0.3, 0.66, .87, .89);
+    legend->SetNColumns(2);
+
+    Int_t prevColor = -1;
+    for(const auto& bkg: Bkgs){
+
+      auto h =  dynamic_cast<TH1F*>(file->Get(Form("%s_%s/%s",
+                                                   ch.c_str(),fit.c_str()
+                                                   ,bkg.folderName.c_str())));
+      if(h == nullptr) continue;
+      h->SetFillStyle(1001);
+      h->SetTitle(bkg.legendName.c_str());
+      h->SetFillColor(bkg.color);
+      h->SetLineWidth(0);
+      hs->Add(h,"HIST PL");
+      if(prevColor != bkg.color)
+        legend->AddEntry(h,bkg.legendName.c_str(),"F");
+      prevColor = bkg.color;
+    }
+
+
+    mainPad->cd();
+    hs->SetTitle(Form("M_{WZ} %s ;M_{WZ}^{%s} (GeV);Event count (%s)",ch.c_str(),ch.c_str(),fit.c_str()));
+    hs->Draw();
+
+    auto cmsLabel = new TPaveText(0.11,0.93,0.3,1.0,"NDC");
+    cmsLabel->SetFillColor(0);
+    cmsLabel->SetBorderSize(0);
+    cmsLabel->AddText("CMS Preliminary");
+    cmsLabel->SetTextAlign(12);
+    cmsLabel->Draw();
+
+    auto lumiLabel = new TPaveText(0.6,0.93,0.89,1.0,"NDC");
+    lumiLabel->SetFillColor(0);
+    lumiLabel->SetBorderSize(0);
+    lumiLabel->AddText(Form("#sqrt{s} = 13TeV L = %.2f fb^{-1}",luminosity[yr]));
+    lumiLabel->SetTextAlign(12);
+    lumiLabel->Draw();
+
+    auto hdata = dynamic_cast<TH1F*>(file->Get(Form("%s_%s/data_obs", ch.c_str(),fit.c_str())));
+
+    fixYRange(hs,getMaxY(hdata));
+    hdata->SetMarkerStyle(kFullCircle);
+    hdata->Draw("SAME P");
+
+    double minx = hdata->GetBinLowEdge(hdata->FindFirstBinAbove(0.1));
+    double maxx = hdata->GetBinLowEdge(hdata->FindLastBinAbove(0.1))+hdata->GetBinWidth(hdata->FindLastBinAbove(0.));
+    hs->GetXaxis()->SetRangeUser(minx,maxx);
+    legend->AddEntry(hdata, Form("Data %d",yr));
+    legend->SetBorderSize(0);
+    legend->Draw();
+
+
+    auto hcdata = getRatio(hdata,hs);
+
+    subPad->cd();
+    subPad->SetGrid();
+    hcdata->GetXaxis()->SetNdivisions(hs->GetHistogram()->GetXaxis()->GetNdivisions());
+    hcdata->GetXaxis()->SetLimits(minx,maxx);
+    hcdata->Draw("AP");
+
+
+
+    cc->SaveAs(Form("%s/%s_%s_HMassWZ_%s_%d_%d.png",
+                    folder.c_str(),fit.c_str(),ch.c_str(),cr.c_str(),
+                    yr,mass));
+  };
+
+
+
+  for(const auto& fitType: std::initializer_list<std::string>{ "prefit","postfit" }){
+    for(const auto&[massp,pos]: SignalPos){
+      if (massp != 600) continue;
+      for(const auto&[yr,lumi]: luminosity){
+        if (yr == 0) continue;
+        for(const auto& cr: std::initializer_list<std::string>{ "CR1","CR2" }){
+          for(const auto&[non,ch]: channels){
+            printPostFitPlots(yr,cr,ch,massp,fitType);
+          }
+        }
+      }
+    }
+  };
+  throw;
+
+
   std::function<void(int, const std::string, const std::string)>
     printUpDown = [&](int year, const std::string sample, const std::string syst){
 
