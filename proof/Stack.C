@@ -1183,6 +1183,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     std::string processn = "process\t";
     std::string process  = "process\t";
     std::string rate     = "rate\t";
+
     std::vector<std::string> systEl     = { "ElReco" , "ElTrigger","ElID"};
     std::vector<std::string> systMu     = { "MuTrigger","MuID" };
     std::vector<std::string> systK      = { "KFactorEWK","KFactorQCD" };
@@ -1349,7 +1350,6 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
           std::clog << Form("\tContribution from %s is %.4f%%: Excluding Lumi Systematics\n",BGN.folderName.c_str(),contribFromSample*100.); 
         }
 
-
         saveHisto(BGN.folderName.c_str(),ch.first,BGN.xsec);
 
         ++counter;
@@ -1365,6 +1365,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << "------------\n";
     dcFile << bin1 << std::endl << process << std::endl << processn << std::endl << rate << std::endl;
     dcFile << "------------\n";
+
     dcFile << uncs["Lumi"] << std::endl;
     dcFile << uncs["ElTrigger"] << std::endl;
     dcFile << uncs["MuTrigger"] << std::endl;
@@ -1377,6 +1378,7 @@ void Stack(std::string FileName = "WprimeHistos_all.root"){
     dcFile << uncs["Pileup"] << std::endl;
     dcFile << uncs["LHEPdf"] << std::endl;
     dcFile << uncs["LHEScale"] << std::endl;
+
 
     if( year != 2018 ) {
       dcFile << uncs["L1Pref"] << std::endl;

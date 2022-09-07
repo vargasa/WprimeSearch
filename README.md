@@ -88,8 +88,25 @@ create the required `EntryLists.root` file.
 #### Ultra-Legacy Samples
 
 ```bash
-YEAR=2018;for i in `ls -1 files/data/$YEAR/UL/*.txt |xargs -n1 basename`; do ./SubmitCondor.sh $YEAR DATA $i; sleep 1; done
-LABEL=Anv5Mixv2v9;for i in `ls *$LABEL*`; do root -l -b -q "copyFiles.C(\""$i"\")"; done
+
+# Submit Condor Jobs
+BRANCHNAME=RestoreWZBins
+for k in {2016..2018}; do
+  for j in {data,mc}; do
+    YEAR=$k;TYPEP=$j;for i in `ls -1 files/${TYPEP,,}/$YEAR/UL/*.txt |xargs -n1 basename`; do ./SubmitCondor.sh $BRANCHNAME $YEAR ${TYPEP^^} $OUTPUTLABEL $i; done 
+  done
+done;
+
+# Delete Condor Output if errors occurred
+BRANCHNAME=RestoreWZBins;OUTDIR=/uscms/home/avargash/store/WprimeSearchCondorOutput/;for i in `grep -l -E "(error|crash|already deleted)" *_$BRANCHNAME*`; do FILE=`grep -oE 'WprimeHistos.*root' <<< $i`; rm -vf $OUTDIR/$FILE; rm -vf $i;done
+
+# Check which files are missing
+OUTPUTLABEL=RestoreWZBins
+for k in {2016..2018}; do
+  for j in {data,mc}; do
+    YEAR=$k;TYPEP=$j;for i in `ls -1 files/${TYPEP,,}/$YEAR/UL/*.txt |xargs -n1 basename`; do ./checkFiles.sh $YEAR ${TYPEP^^} $OUTPUTLABEL $i; done 
+  done
+done;
 ```
 
 This will create `WprimeHistos.root` file which will contain all the histograms
@@ -142,24 +159,217 @@ for(const auto& dir: dirNames){
 # Fix names for DataCards
 sed -i 's/t#bar{t}/TT/' *.txt
 sed -i 's/Z#gamma/ZG/' *.txt
+```
 
-scp DataCard*.txt avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
+### Datacards location
 
-scp CombineFile*.root avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/datacards/
+```bash
+scp DataCard*.txt      avargash@lxplus.cern.ch:/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+scp CombineFile*.root  avargash@lxplus.cern.ch:/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+```
 
+### Combining Datacards
+
+```bash
+ALLMASSP="600 800 1000 \
+  1200 1400 1600 1800 \
+  2000 2500 3000 3500 \
+  4000 4500"
+
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP
+do
+  for j in {SR1,CR1,CR2}; do
+  echo -e "\n=================="$i"="$j"==================\n"
+    LABEL=${j}_${i}
+    Y16=${DCARDIR}DataCard_HMassWZ_${j}_2016_${i}
+    Y17=${DCARDIR}DataCard_HMassWZ_${j}_2017_${i}
+    Y18=${DCARDIR}DataCard_HMassWZ_${j}_2018_${i}
+    combineCards.py Y16_${j}=${Y16}.txt Y17_${j}=${Y17}.txt Y18_${j}=${Y18}.txt >${DCARDIR}RunII_${LABEL}_Datacard.txt
+    file ${Y16}.txt ${Y17}.txt ${Y18}.txt
+    combineTool.py -M T2W -o ${Y16}.root -i ${Y16}.txt
+    combineTool.py -M T2W -o ${Y17}.root -i ${Y17}.txt
+    combineTool.py -M T2W -o ${Y18}.root -i ${Y18}.txt
+    file ${Y16}.root ${Y17}.root ${Y18}.root
+    combineTool.py -M T2W -o ${DCARDIR}RunII_${LABEL}_Datacard.root -i ${DCARDIR}RunII_${LABEL}_Datacard.txt
+  done
+done
+```
+
+### Pulls
+
+```bash
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+  for k in {CR1,CR2,SR1}; do
+    for j in {2016,2017,2018}; do
+      LABEL=${k}_${j}_${i}
+      DCARD=${DCARDIR}/DataCard_HMassWZ_${LABEL}.root
+      file $DCARD
+      combineTool.py -M FitDiagnostics $DCARD -n $LABEL
+      python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics${LABEL}.root --sortBy=impact -g Plot${LABEL}.root --all
+      root -l -b -q PrintPulls.C\(\"${LABEL}\"\)
+    done
+    LABEL=${k}_${i}
+    DCARD=${DCARDIR}/RunII_${LABEL}_Datacard.root
+    file $DCARD
+    combineTool.py -M FitDiagnostics $DCARD -n $LABEL
+    python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics${LABEL}.root --sortBy=impact -g Plot${LABEL}.root --all
+    root -l -b -q PrintPulls.C\(\"${LABEL}\"\)
+  done
+done
+```
+
+
+### Pulls Asimov Dataset
+
+```bash
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+  for j in {CR1,CR2,SR1}; do
+    for k in {2016,2017,2018}; do
+      LABEL=${j}_${k}_${i}
+      DCARD=${DCARDIR}/DataCard_HMassWZ_${LABEL}.root
+      combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
+      python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --sortBy=impact -g PlotAsimov${LABEL}.root --all
+      root -l -b -q PrintPulls.C\(\"Asimov${LABEL}\"\)
+    done
+  done
+done
+
+for i in $ALLMASSP; do
+  for j in {CR1,CR2,SR1}; do
+    LABEL=${j}_${i}
+    DCARD=${DCARDIR}/RunII_${LABEL}_Datacard.root
+    combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
+    python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py \
+           fitDiagnosticsAsimov.${LABEL}.root --sortBy=impact -g PlotAsimov${LABEL}.root --all
+    root -l -b -q PrintPulls.C\(\"Asimov${LABEL}\"\)
+  done
+done
+```
+
+
+### Impacts
+```bash
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+  for j in {CR1,CR2,SR1}; do
+    for k in {2016,2017,2018}; do
+      LABEL=${j}_${k}_${i}
+      DCARD=${DCARDIR}/DataCard_HMassWZ_${LABEL}.root
+      RLIM=10
+      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
+      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
+      combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
+      plotImpacts.py -i Impacts_${LABEL}.json -o ImactsPlot_${i}.json
+    done
+  done
+done
+
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+  for j in {CR1,CR2}; do
+    LABEL=${j}_${i}
+    DCARD=${DCARDIR}/RunII_${LABEL}_Datacard.root
+    file $DCARD
+    RLIM=10
+    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1 
+    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
+    combineTool.py -n ${j}_${i} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}_${RLIM}.json
+    plotImpacts.py -i Impacts_${LABEL}_${RLIM}.json -o ImpactsPlot_${LABEL}_${RLIM}
+  done
+done
+```
+
+
+
+### Goodness of Fit
+
+```bash
+ALLMASSP=600
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+ALGO="saturated"
+
+function processGOF {
+    WSPACE=$1
+    LABEL=$2
+    MASS=$3
+    echo -e "\n=======GOODNESS OF FIT==${LABEL}=======\n"
+    echo "Processing GOF for ${WSPACE} ${LABEL} ${MASS}"
+    ALGO="saturated"
+    file $WSPACE
+    combineTool.py -M GoodnessOfFit --algorithm  $ALGO -m $i -d ${WSPACE} -n .${ALGO}.${LABEL} --plots\
+        --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
+    combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $i -d ${WSPACE} \
+        -n .${ALGO}.toys.${LABEL} --saveToys --toysFreq -t 1000 -s 12345 --parallel 10 --verbose 0 \
+        --X-rtd MINIMIZER_analytic --cminDefaultMinimizerStrategy 0
+    combineTool.py -M CollectGoodnessOfFit --input higgsCombine.${ALGO}.${LABEL}.GoodnessOfFit.mH${i}.root \
+        higgsCombine.saturated.toys.${LABEL}.GoodnessOfFit.mH${MASS}.*.root -o saturated.${LABEL}.json
+    python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py --bins 40 --statistic saturated --mass ${MASS}.0 --output GoF_${LABEL} saturated.${LABEL}.json --range 0 500    
+}
+
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        LABEL=${j}_${i}
+        processGOF ${DCARDIR}RunII_${LABEL}_Datacard.root ${LABEL} ${i}
+    done
+done
+
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        for k in {2016,2017,2018}; do
+            LABEL=${j}_${k}_${i}
+            processGOF ${DCARDIR}DataCard_HMassWZ_${LABEL}.root ${LABEL} ${i}
+        done
+    done
+done
+
+```
+
+### Signal Injection tests
+
+```bash
+ALLMASSP="600 800 1000 \
+  1200 1400 1600 1800 \
+  2000 2500 3000 3500 \
+  4000 4500"
+
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+  for j in {2016,2017,2018}; do
+    echo -e "\n=============="$i"="$j"==============\n"
+    LABEL=${j}_${i}
+    CR1=${DCARDIR}DataCard_HMassWZ_CR1_${LABEL}
+    CR2=${DCARDIR}DataCard_HMassWZ_CR2_${LABEL}
+    SR1=${DCARDIR}DataCard_HMassWZ_SR1_${LABEL}
+    ALL=${DCARDIR}CombinedRegionsDatacard_${LABEL}
+    file ${SR1}.txt ${CR1}.txt ${CR2}.txt
+    combineCards.py SR1_${LABEL}=${SR1}.txt CR1_${LABEL}=${CR1}.txt CR2_${LABEL}=${CR2}.txt >${ALL}.txt
+    file $ALL.txt
+    combineTool.py -M T2W --channel-masks -o ${ALL}.root -i ${ALL}.txt
+    file $ALL.root
+    combine -d ${ALL}.root -M FitDiagnostics --saveShapes \
+      --saveWithUncertainties -n $LABEL -t 50 \
+      --setParameters \
+      mask_SR1_${LABEL}_mumumu=1,mask_SR1_${LABEL}_mumue=1,mask_SR1_${LABEL}_eemu=1,mask_SR1_${LABEL}_eee=1
+  done
+done
+
+```
+
+### Limits
+
+```bash
 cd /eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
 
-for i in 600 800 1000 \
-  1200 1400 1600 1800 2000 \
-  2500 3000 3500 4000 4500; do
+for i $ALLMASSP
   for j in 0.025 0.16 0.5 0.84 0.975; do
      ./SubmitLimitJob.sh $i $j
   done
 done
 
-for i in 600 800 1000 1200 \
-  1400 1600 1800 2000 2500 \
-  3000 3500 4000
+for i in $ALLMASSP
 do
   combineCards.py Y16="datacards/2016_"$i"_DataCard.txt" Y17="datacards/2017_"$i"_DataCard.txt" Y18="datacards/2018_"$i"_DataCard.txt">"datacards/RunII_"$i"_Datacard.txt"
   combine  -m 125 -n "."$i -M AsymptoticLimits -d "datacards/RunII_"$i"_Datacard.txt"
