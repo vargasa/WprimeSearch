@@ -250,12 +250,12 @@ done
 ```bash
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
 for i in $ALLMASSP; do
-    for j in {CR1,CR2,SR1}; do
+    for j in {CR1,CR2}; do
         for k in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
                 LABEL=${l}_HMassWZ_${j}_${k}_${i}
                 DCARD=${DCARDIR}/DataCard_${LABEL}.root
-                RLIM=10
+                RLIM=50
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
@@ -269,8 +269,7 @@ for i in $ALLMASSP; do
         done
     done
   done
-done
-```
+  ```
 
 
 
