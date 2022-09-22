@@ -196,12 +196,79 @@ do
 done
 ```
 
+
+### Workspace from Datacards (per channel
+
+```
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        for l in {2016,2017,2018}; do
+            for k in {eee,eemu,mumue,mumumu}; do
+                LABEL=${k}_HMassWZ_${j}_${l}_${i}
+                DCARD=${DCARDIR}DataCard_${LABEL}
+                file ${DCARD}.txt
+                combineTool.py -M T2W -o ${DCARD}.root -i ${DCARD}.txt
+                file ${DCARD}.root
+            done
+        done
+    done
+  done
+done
+
+```
+
+
+### Pulls Asimov Dataset
+
+#### PrintPulls.C
+
+```cpp
+int PrintPulls(std::string label){
+
+  const char* ext = "png";
+  TFile* f1 = TFile::Open(Form("Plot%s.root",label.c_str()));
+  TCanvas* nuisances = (TCanvas*)f1->Get("nuisances");
+  TH1F* h = (TH1F*)nuisances->GetPrimitive("prefit_nuisancs");
+  h->SetTitle(Form("%s [%s]",h->GetTitle(),label.c_str()));
+  nuisances->Print(Form("Plot%s_nuisances.%s",label.c_str(),ext));
+  TCanvas* post_fit_errs = (TCanvas*)f1->Get("post_fit_errs");
+  h = (TH1F*)post_fit_errs->GetPrimitive("errors_b");
+  h->SetTitle(Form("%s [%s]",h->GetTitle(),label.c_str()));
+  post_fit_errs->Print(Form("Plot%s_post_fit_errs.%s",label.c_str(),ext));
+
+  return 0;
+}
+```
+
+```bash
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        for k in {2016,2017,2018}; do
+            for l in {eee,eemu,mumue,mumumu}; do
+                LABEL=${l}_HMassWZ_${j}_${k}_${i}
+                #/DataCard_mumumu_HMassWZ_CR2_2018_4500.root
+                DCARD=${DCARDIR}/DataCard_${LABEL}.root
+                combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
+                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --sortBy=impact -g PlotAsimov_${LABEL}.root --all
+                root -l -b -q PrintPulls.C\(\"Asimov_${LABEL}\"\)
+            done
+            montage -geometry +0+0 -tile 2x2 \
+                Plot*_HMassWZ_${j}_${k}_${i}_nuisances.png \
+                PlotAsimovMerged_${j}_${k}_${i}_nuisances.png
+        done
+    done
+  done
+done
+```
+
 ### Pulls
 
 ```bash
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
 for i in $ALLMASSP; do
-    for k in {CR1,CR2,SR1}; do
+    for k in {CR1,CR2}; do
         for j in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
                 LABEL=${l}_HMassWZ_${k}_${j}_${i}
@@ -220,42 +287,16 @@ for i in $ALLMASSP; do
 done
 ```
 
-
-### Pulls Asimov Dataset
-
-```bash
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
-for i in $ALLMASSP; do
-    for j in {CR1,CR2,SR1}; do
-        for k in {2016,2017,2018}; do
-            for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}
-                #/DataCard_mumumu_HMassWZ_CR2_2018_4500.root
-                DCARD=${DCARDIR}/DataCard_${LABEL}.root
-                combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
-                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --sortBy=impact -g PlotAsimov_${LABEL}.root --all
-                root -l -b -q PrintPulls.C\(\"${LABEL}\"\)
-            done
-            montage -geometry +0+0 -tile 2x2 \
-                Plot*_HMassWZ_${j}_${k}_${i}_nuisances.png \
-                PlotAsimovMerged_${j}_${k}_${i}_nuisances.png
-        done
-    done
-  done
-done
-```
-
-
 ### Impacts
 ```bash
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
 for i in $ALLMASSP; do
-    for j in {CR1,CR2,SR1}; do
+    for j in {CR1,CR2}; do
         for k in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
                 LABEL=${l}_HMassWZ_${j}_${k}_${i}
                 DCARD=${DCARDIR}/DataCard_${LABEL}.root
-                RLIM=10
+                RLIM=50
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
@@ -277,7 +318,6 @@ done
 ### Goodness of Fit
 
 ```bash
-ALLMASSP=600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
 ALGO="saturated"
 
@@ -360,17 +400,47 @@ done
 ### PostFit plots
 
 ```bash
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
 for i in $ALLMASSP; do
     for j in {CR1,CR2}; do
         for k in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
                 LABEL=${l}_HMassWZ_${j}_${k}_${i}
                 DCARD=${DCARDIR}/DataCard_${LABEL}
-                combineTool.py -M FitDiagnostics $DCARD.root -n ${LABEL}
+                combine -M FitDiagnostics $DCARD.root -n ${LABEL} \
+                    --expectSignal 0 --minos=all \
+                    --cminDefaultMinimizerStrategy 0 --forceRecreateNLL
                 PostFitShapesFromWorkspace -w ${DCARD}.root -d ${DCARD}.txt \
                     -f fitDiagnostics${LABEL}.root:fit_b --postfit \
                     --sampling --samples 300 -o PostFit_${LABEL}.root
             done
+        done
+    done
+done
+
+#### Locally
+
+scp avargash@lxplus.cern.ch:/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/PostFit/PostFit*.root ./WprimeSearch/proof/plots/PostFit/
+
+#### Run printPostfitPlots
+
+root -l -b -q Stack.C\(\"WprimeHistos_PosGenWv3.root\"\)
+cd plots/PostFit/
+
+ALLMASSP=600
+for i in $ALLMASSP; do
+    for j in {CR1,CR2}; do
+        for k in {2016,2017,2018}; do
+            for l in {eee,eemu,mumue,mumumu}; do
+                LABEL=${l}_HMassWZ_${j}_${k}_${i}
+                montage -geometry +0+0 -tile 2x1 \
+                    prefit_${LABEL}.png \
+                    postfit_${LABEL}.png \
+                    FitMerged_${LABEL}.png
+            done
+            montage -geometry +0+0 -tile 2x2 \
+            FitMerged_*_${j}_${k}_${i}.png \
+            ${k}_${j}_${i}.png
         done
     done
 done
@@ -386,17 +456,6 @@ for i $ALLMASSP
   for j in 0.025 0.16 0.5 0.84 0.975; do
      ./SubmitLimitJob.sh $i $j
   done
-done
-
-for i in $ALLMASSP
-do
-  combineCards.py Y16="datacards/2016_"$i"_DataCard.txt" Y17="datacards/2017_"$i"_DataCard.txt" Y18="datacards/2018_"$i"_DataCard.txt">"datacards/RunII_"$i"_Datacard.txt"
-  combine  -m 125 -n "."$i -M AsymptoticLimits -d "datacards/RunII_"$i"_Datacard.txt"
-  text2workspace.py "datacards/RunII_"$i"_Datacard.txt"
-  combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i --doInitialFit --robustFit 1
-  combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i --robustFit 1 --doFits --parallel 4
-  combineTool.py -M Impacts -d "datacards/RunII_"$i"_Datacard.root" -m $i -o "impacts_"$i".json"
-  plotImpacts.py -i "impacts_"$i".json" -o "ImpactsPlot"$i".json"
 done
 
 scp avargash@lxplus.cern.ch:/eos/home-a/avargash/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/higgsCombine*.root
