@@ -3,7 +3,7 @@
 MASS=$1
 RLIMIT=$2
 NCORES=1
-MEMORY=4096
+MEMORY=16000
 jdlString="universe = vanilla
 Executable = RunCombineHybrid.sh
 should_transfer_files = YES
