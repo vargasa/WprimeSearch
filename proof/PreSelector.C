@@ -643,11 +643,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HSFs,"HSFs",45,0.,45.,60,0.,6.);
 #endif
 
-  const Double_t wzbins[17] = {
-    60,90,126,170,223,287,364,457,569,704,866,1061,1295,1576,2000,5000,7500
+  const Double_t wzbins[11] = {
+    60,95,148,228,348,528,798,1203,2000,5000,7500
   };
 
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",16,wzbins);
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",10,wzbins);
 }
 
 void PreSelector::SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l){
