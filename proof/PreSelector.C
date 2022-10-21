@@ -1318,12 +1318,13 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 
   HTrackQuadTerms[nh]->Fill("wzm_MetUnclUp",   abs(wzm_MetUnclUp/wzm_Met), 1.);
   HTrackQuadTerms[nh]->Fill("wzm_MetUnclDown", abs(wzm_MetUnclDown/wzm_Met), 1.);
-#endif
+
 
   HSFs[nh]->Fill("LHEPdf_Up",WLHEPdfUp,1.);
   HSFs[nh]->Fill("LHEPdf_Dn",WLHEPdfDown,1.);
   HSFs[nh]->Fill("LHEScale_Up",WLHEScaleUp,1.);
   HSFs[nh]->Fill("LHEScale_Dn",WLHEScaleDown,1.);
+#endif
 
   // dR Histos
   FillH1(HDistl1l2,nh,l1l2dist);
