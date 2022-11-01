@@ -37,7 +37,7 @@ LABEL=${l}_HMassWZ_${j}_${k}_${i}
 DCARD=${DCARDIR}/DataCard_${LABEL}
 combineTool.py -M T2W -o ${DCARD}.root -i ${DCARD}.txt
 DCARD=${DCARDIR}/DataCard_${LABEL}.root
-RMINLIM=0
+RMINLIM=-${RMAXLIM}
 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin ${RMINLIM} --rMax ${RMAXLIM} --doInitialFit --robustFit 1
 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin ${RMINLIM} --rMax ${RMAXLIM} --robustFit 1 --doFits
 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin ${RMINLIM} --rMax ${RMAXLIM} -o Impacts_${LABEL}.json

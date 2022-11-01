@@ -24,6 +24,12 @@ Queue 1"
     condor_submit /tmp/condor_job_$OUTPUTLABEL.jdl
 }
 
-for i in `seq -f "%.2f" 0.0 0.1 50.0`; do
-    SubmitSingle $i
-done
+BRANCHNAME="16Bins"
+for RMAXLIM in `seq -f "%.2f" 100. 10. 110.0`; do
+    for CHANNEL in {eee,eemu,mumue,mumumu}; do
+        for YEAR in {2016,2017,2018}; do
+            for CR in {CR1,CR2}; do
+                SubmitSingle $MASS $CR $YEAR $CHANNEL $RMAXLIM $BRANCHNAME
+            done
+        done
+    done
