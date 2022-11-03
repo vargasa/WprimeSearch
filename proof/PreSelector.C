@@ -9,6 +9,41 @@
 
 #define FillS(xx) Fill(xx,1.)
 
+
+
+std::pair<int,std::unique_ptr<double[]>> PreSelector::generateBins(const float& spacingFactor, const double& firstBin, const double& secondBin){
+
+    const double limitEdge = 1500.0f;
+    const double lastBinEdge = 5000.0f;
+    const double overflowBinEdge = 7500.0f;
+    const int reserveSize = 30;
+
+    int nBins = 0;
+    double leftEdge = firstBin;
+    double rightEdge = secondBin;
+
+    std::vector<double> bins;
+    bins.reserve(reserveSize);
+    bins.push_back(leftEdge);
+
+    while(rightEdge < limitEdge){
+        bins.push_back(rightEdge);
+        double newRightEdge = rightEdge + (rightEdge - leftEdge)*spacingFactor;
+        leftEdge = rightEdge;
+        rightEdge = newRightEdge;
+    }
+
+    bins.push_back(lastBinEdge);
+    bins.push_back(overflowBinEdge);
+
+    std::unique_ptr<double[]> binsArray(new double[bins.size()]);
+    
+    move(bins.begin(), bins.end(), binsArray.get());
+
+    return std::make_pair(bins.size(), std::move(binsArray));
+    
+}
+
 PreSelector::PreSelector(TTree *)
 {
 
@@ -643,11 +678,9 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HSFs,"HSFs",45,0.,45.,60,0.,6.);
 #endif
 
-  const Double_t wzbins[17] = {
-    60,90,126,170,223,287,364,457,569,704,866,1061,1295,1576,2000,5000,7500
-  };
+  std::pair<int,std::unique_ptr<double[]>> binsArrayPair = generateBins(SPACING_FACTOR,FIRSTBIN_LEFTEDGE,FIRSTBIN_RIGHTEDGE);
 
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",16,wzbins);
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",binsArrayPair.first,binsArrayPair.second.get());
 }
 
 void PreSelector::SortByDescPt(std::vector<UInt_t>& GoodIdx, const Leptons& l){

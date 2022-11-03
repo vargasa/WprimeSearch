@@ -1,3 +1,6 @@
-#define Y2016
+#define CMSDATA
+#define Y2018
 #define ULSAMPLE
-
+#define SPACING_FACTOR 1.15
+#define FIRSTBIN_LEFTEDGE 60.
+#define FIRSTBIN_RIGHTEDGE 70.

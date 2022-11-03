@@ -368,6 +368,7 @@ class PreSelector : public EventSelection {
                      const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
+  std::pair<int,std::unique_ptr<double[]>> generateBins(const float& spacingFactor, const double& firstBin, const double& secondBin);
 
   void FindLeadingLepton();
   void FillCategory(const Int_t& crOffset,
