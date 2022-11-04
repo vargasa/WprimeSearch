@@ -7,9 +7,9 @@ SAMPLEFILENAME=$4 # ULX.txt
 OutputLabel=$5
 NFSTART=${6:0} #FromFile
 NFEND=${7:-1} #ToFile
-SPACING_FACTOR=${8:1.15}
-FIRSTBIN_LEFTEDGE=${9:60.0}
-FIRSTBIN_RIGHTEDGE=${10:70.0}
+SPACING_FACTOR=${7:-1.15}
+FIRSTBIN_LEFTEDGE=${8:-60.0}
+FIRSTBIN_RIGHTEDGE=${9:-70.0}
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
 scram project CMSSW CMSSW_12_2_1
@@ -31,6 +31,7 @@ voms-proxy-info -all -file $X509_USER_PROXY
 cd $WprimeDir/proof/
 
 BINOPTIONS="#define SPACING_FACTOR ${SPACING_FACTOR}\n#define FIRSTBIN_LEFTEDGE ${FIRSTBIN_LEFTEDGE}\n#define FIRSTBIN_RIGHTEDGE ${FIRSTBIN_RIGHTEDGE}\n"
+echo $BINOPTIONS
 
 if [ "$TYPEP" =  "MC" ]; then
     export SAMPLEFILE=$WprimeDir/proof/files/mc/$YEARP/UL/$SAMPLEFILENAME

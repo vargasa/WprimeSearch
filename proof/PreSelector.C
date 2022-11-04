@@ -9,9 +9,7 @@
 
 #define FillS(xx) Fill(xx,1.)
 
-
-
-std::pair<int,std::unique_ptr<double[]>> PreSelector::generateBins(const float& spacingFactor, const double& firstBin, const double& secondBin){
+std::pair<int,std::unique_ptr<double[]>> PreSelector::generateBins(const float spacingFactor, const double firstBin, const double secondBin){
 
     const double limitEdge = 1500.0f;
     const double lastBinEdge = 5000.0f;
@@ -412,18 +410,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   const Int_t ZPtBins = 20;
   const Float_t ZPtMax = 2000;
 
-  InitHVec<TH2F>(HDeltaRPtZ,"HDeltaRPtZ",
-                 NBinsDeltaR,0.,MaxDeltaR,
-                 ZPtBins,0.,ZPtMax);
-
-  InitHVec<TH2F>(HPtWPtZ,"HPtWPtZ",
-                 110,0.,1100.,
-                 ZPtBins,0.,ZPtMax);
-
-  InitHVec<TH2F>(HDeltaRMWZ,"HDeltaRMWZ",
-                 NBinsDeltaR,0.,MaxDeltaR,
-                 NBinsWZM,MinWZM,MaxWZM);
-
 
   HOverlap = new TH1F("HOverlap","Overlapping events."
                       " -1: l<3 0:None 1: NoOverlap",5,-1,5);
@@ -495,32 +481,6 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH1F>(HMetPhi,"HMetPhi",PhiBins,-1*MaxPhi,MaxPhi);
 
 #if !defined(CMSDATA)
-
-  const Double_t QuadTermBins[35] = {
-    0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.92, 0.94, 0.96, 0.98, 1,
-    1.02, 1.04, 1.06, 1.08, 1.1, 1.15, 1.2, 1.25, 1.3, 1.4,
-    1.6, 2, 2.5, 3, 4, 5, 10, 50, 99, 100.1,
-  };
-
-  InitHVec<TH2F>(HTrackQuadTerms,"HTrackQuadTerms",15,0.,15,34, QuadTermBins);
-
-  std::vector<std::string> prefill = {
-    "wzm_MetUnclUp","wzm_MetUnclDown",
-    "cFlips",
-    "MetPt_Up", "MetPt_Down" ,
-    "MetPhi_Up", "MetPhi_down",
-    "NuPz_up", "NuPz_down",
-    "a_up", "a_down",
-    "b_up", "b_down",
-    "c_up", "c_down",
-    "d_up", "d_down",
-    "k_up", "k_down",
-  };
-  for(unsigned int n = 0; n < HTrackQuadTerms.size(); ++n){
-    for(auto& ss: prefill){
-      HTrackQuadTerms[n]->Fill(ss.c_str(),100.,0.);
-    }
-  }
 
   InitHVec<TH1F>(HMetUnclUpPt,"HMetUnclUpPt",200,0.,MaxPt);
   InitHVec<TH1F>(HMetUnclDownPt,"HMetUnclDownPt",200,0.,MaxPt);
@@ -976,14 +936,6 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
   Float_t b_down = (k_down + a_down);
   Float_t c_down = k_down*(k_down + 4.*lep.Pt()*(MetUncl.PtDown));
 
-  if ( c < 0 ) {
-    QuadTerms.insert({ {"Fix", 1.} });
-  }
-
-  if ( c > 0 and  ( c_down < 0 or c_up < 0 ) ){
-    QuadTerms.insert({ {"cFlips", 5. } });
-  } 
-
   if ( c < 0 or c_down < 0 or c_up < 0 ) return GetNu4VFix(lep);
 
   Float_t d_up = lep.P()*TMath::Sqrt(c_up);
@@ -995,24 +947,6 @@ Nu4VObj PreSelector::GetNu4V(const ROOT::Math::PtEtaPhiMVector& lep){
   s.MetUnclUp = Get4V(NuPz_up,MetUncl.PtUp,MetUncl.PhiUp);
   s.MetUnclDown = Get4V(NuPz_down,MetUncl.PtDown,MetUncl.PhiDown);
 
-  QuadTerms.insert({
-      {"a_up", abs(a_up/a) },
-      {"k_up", abs(k_up/k) },
-      {"b_up", abs(b_up/b) },
-      {"c_up", abs(c_up/c) },
-      {"d_up", abs(d_up/d) },
-      {"NuPz_up", abs(NuPz_up/NuPz) },
-      {"MetPt_Up",  abs(s.MetUnclUp.Pt()/s.Met.Pt()) },
-      {"MetPhi_Up", abs(s.MetUnclUp.Phi()/s.Met.Phi()) },
-      {"a_down", abs(a_down/a) },
-      {"k_down", abs(k_down/k) },
-      {"b_down", abs(b_down/b) },
-      {"c_down", abs(c_down/c) },
-      {"d_down", abs(d_down/d) },
-      {"NuPz_down", abs(NuPz_down/NuPz)},
-      {"MetPt_Down" , abs(s.MetUnclDown.Pt()/s.Met.Pt()) },
-      {"MetPhi_down", abs(s.MetUnclDown.Pt()/s.Met.Pt()) },
-    });
 #endif
 
   return s;
@@ -1090,9 +1024,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
   Double_t l2l3dist = GetEtaPhiDistance(lep2.Eta(),lep2.Phi(),lep3.Eta(),lep3.Phi());
 
   // 2DHistos
-  HDeltaRPtZ[nh]->Fill(l1l2dist,zb.Pt());
-  HPtWPtZ[nh]->Fill(wb.Met.Pt(),zb.Pt());
-  HDeltaRMWZ[nh]->Fill(l1l2dist,(wb.Met+zb).M());
   HNLep[nh]->Fill(GoodMuon.size(),GoodElectron.size());
   HMassZWZ[nh]->Fill(PairZMass,(wb.Met+zb).M());
   HPtl1l2[nh]->Fill(lep1.Pt(),lep2.Pt());
@@ -1107,10 +1038,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
 #ifndef CMSDATA
 
   DefineSFs(nh);
-
-  for(auto const&[key,value] : QuadTerms){
-    HTrackQuadTerms[nh]->Fill(key.c_str(), value, 1.);
-  }
 
   HGenPartChgF[nh]->Fill(lz.charge[l1],GenPart_pdgId[lz.genPartIdx[l1]]);
   HGenPartChgF[nh]->Fill(lz.charge[l2],GenPart_pdgId[lz.genPartIdx[l2]]);
@@ -1351,8 +1278,6 @@ void PreSelector::FillCategory(const Int_t& crOffset, const Leptons& lz,const Le
     HMassWZ[HIdx[regionName + chStr + "KFactorQCD_Down"]]->Fill(wzm_Met,WKQCDDown*WCentral/WKQCDNom);
   }
 
-  HTrackQuadTerms[nh]->Fill("wzm_MetUnclUp",   abs(wzm_MetUnclUp/wzm_Met), 1.);
-  HTrackQuadTerms[nh]->Fill("wzm_MetUnclDown", abs(wzm_MetUnclDown/wzm_Met), 1.);
 
 
   HSFs[nh]->Fill("LHEPdf_Up",WLHEPdfUp,1.);
