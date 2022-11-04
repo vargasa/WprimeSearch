@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # RunImpacts.sh $MASS $CR $YEAR $CHANNEL $RMAXLIM $BRANCHNAME
 MASS=$1
 CR=$2
@@ -21,11 +22,13 @@ mkdir $COMBINELIMITDIR/datacards/${BRANCHNAME}/
 
 
 DCARDIR=$COMBINELIMITDIR/datacards/${BRANCHNAME}/
+
 i=$MASS
 j=$CR
 k=$YEAR
 l=$CHANNEL
 LABEL=${l}_HMassWZ_${j}_${k}_${i}
+
 xrdcp root://eosuser.cern.ch//eos/user/a/avargash/www/WprimeSearch/datacards/${BRANCHNAME}/DataCard_${LABEL}.txt $DCARDIR
 xrdcp root://eosuser.cern.ch//eos/user/a/avargash/www/WprimeSearch/datacards/${BRANCHNAME}/CombineFile_HMassWZ_${CR}_${YEAR}_${MASS}.root $DCARDIR
 DCARD=${DCARDIR}/DataCard_${LABEL}
@@ -42,3 +45,4 @@ for i in `ls *.pdf *png *json`;
 do
     xrdcp -vf $i root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/ImpactTest/$i
 done
+
