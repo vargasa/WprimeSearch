@@ -500,7 +500,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   InitHVec<TH1F>(HFakeString,"HFakeString",15,0,15);
 
-  prefill = {
+  std::vector<std::string> prefill = {
     "El.Prompt.Loose","El.Prompt.Medium","El.Prompt.Tight",
     "El.NonPrompt.Loose","El.NonPrompt.Medium","El.NonPrompt.Tight",
     "El.HFD.Loose","El.HFD.Medium","El.HFD.Tight",
