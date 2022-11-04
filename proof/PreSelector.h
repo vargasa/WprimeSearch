@@ -224,9 +224,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HMuonPF;
 
   std::vector<TH2F*> HMassZWZ;
-  std::vector<TH2F*> HDeltaRPtZ;
-  std::vector<TH2F*> HPtWPtZ;
-  std::vector<TH2F*> HDeltaRMWZ;
   std::vector<TH2F*> HPtl1l2;
   std::vector<TH2F*> HPtl1l3;
   std::vector<TH2F*> HZElId;
@@ -262,9 +259,6 @@ class PreSelector : public EventSelection {
   std::vector<TH1F*> HNuMetUnclUpPhiRatio;
   std::vector<TH1F*> HNuMetUnclDownPtRatio;
   std::vector<TH1F*> HNuMetUnclDownPhiRatio;
-
-  std::vector<TH2F*> HTrackQuadTerms;
-  std::unordered_map<std::string,Float_t> QuadTerms;
 
 #endif
 
@@ -368,7 +362,7 @@ class PreSelector : public EventSelection {
                      const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const float&,const float&,const float&,const float&) const;
   Float_t MassRecoW(const ROOT::Math::PtEtaPhiMVector&);
-  std::pair<int,std::unique_ptr<double[]>> generateBins(const float& spacingFactor, const double& firstBin, const double& secondBin);
+  std::pair<int,std::unique_ptr<double[]>> generateBins(const float spacingFactor, const double firstBin, const double secondBin);
 
   void FindLeadingLepton();
   void FillCategory(const Int_t& crOffset,
