@@ -11,12 +11,11 @@
 
 std::pair<int,std::unique_ptr<double[]>> PreSelector::generateBins(const float spacingFactor, const double firstBin, const double secondBin){
 
-    const double limitEdge = 1500.0f;
+    const double limitEdge = 1200.0f;
     const double lastBinEdge = 5000.0f;
     const double overflowBinEdge = 7500.0f;
     const int reserveSize = 30;
 
-    int nBins = 0;
     double leftEdge = firstBin;
     double rightEdge = secondBin;
 
@@ -35,10 +34,12 @@ std::pair<int,std::unique_ptr<double[]>> PreSelector::generateBins(const float s
     bins.push_back(overflowBinEdge);
 
     std::unique_ptr<double[]> binsArray(new double[bins.size()]);
+
+    size_t n = bins.size();
     
     move(bins.begin(), bins.end(), binsArray.get());
 
-    return std::make_pair(bins.size(), std::move(binsArray));
+    return std::make_pair(n, std::move(binsArray));
     
 }
 
@@ -640,7 +641,7 @@ void PreSelector::SlaveBegin(TTree *tree) {
 
   std::pair<int,std::unique_ptr<double[]>> binsArrayPair = generateBins(SPACING_FACTOR,FIRSTBIN_LEFTEDGE,FIRSTBIN_RIGHTEDGE);
 
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",binsArrayPair.first,binsArrayPair.second.get());
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",binsArrayPair.first-1,binsArrayPair.second.get());
 
 
 }
