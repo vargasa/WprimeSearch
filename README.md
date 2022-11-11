@@ -226,15 +226,24 @@ done
 ```cpp
 int PrintPulls(std::string label){
 
-  const char* ext = "png";
+  const char* ext = "pdf";
+  const float margin = 0.3;
   TFile* f1 = TFile::Open(Form("Plot%s.root",label.c_str()));
   TCanvas* nuisances = (TCanvas*)f1->Get("nuisances");
+  nuisances->SetBottomMargin(margin);
   TH1F* h = (TH1F*)nuisances->GetPrimitive("prefit_nuisancs");
   h->SetTitle(Form("%s [%s]",h->GetTitle(),label.c_str()));
+  //h->LabelsDeflate("X");
+  h->LabelsOption("v");
   nuisances->Print(Form("Plot%s_nuisances.%s",label.c_str(),ext));
+
+
   TCanvas* post_fit_errs = (TCanvas*)f1->Get("post_fit_errs");
   h = (TH1F*)post_fit_errs->GetPrimitive("errors_b");
+  post_fit_errs->SetBottomMargin(margin);
   h->SetTitle(Form("%s [%s]",h->GetTitle(),label.c_str()));
+  h->LabelsDeflate("X");
+  h->LabelsOption("v","X");
   post_fit_errs->Print(Form("Plot%s_post_fit_errs.%s",label.c_str(),ext));
 
   return 0;
@@ -242,66 +251,77 @@ int PrintPulls(std::string label){
 ```
 
 ```bash
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+FLAG=PosGenWv3
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+COMBINEFOLDER=/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
+ALLMASSP=600
 for i in $ALLMASSP; do
     for j in {CR1,CR2}; do
         for k in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}
-                #/DataCard_mumumu_HMassWZ_CR2_2018_4500.root
+                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
                 DCARD=${DCARDIR}/DataCard_${LABEL}.root
+                combineTool.py -M T2W -i ${DCARDIR}/DataCard_${LABEL}.txt -o ${DCARDIR}/DataCard_${LABEL}.root
                 combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
-                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --sortBy=impact -g PlotAsimov_${LABEL}.root --all
-                root -l -b -q PrintPulls.C\(\"Asimov_${LABEL}\"\)
+                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --skipFitS --sortBy=correlation -g PlotAsimov_${LABEL}.root --all
+                root -l -b -q $COMBINEFOLDER/PrintPulls.C\(\"Asimov_${LABEL}\"\)
+                convert -border 2 -density 200 -quality 100  PlotAsimov_eemu_${LABEL}_nuisances.pdf -trim PlotAsimov_eemu_${LABEL}_nuisances.png
+                convert -border 2 -density 200 -quality 100  PlotAsimov_eemu_${LABEL}_post_fit_errs.pdf -trim PlotAsimov_eemu_${LABEL}_post_fit_errs.png
             done
             montage -geometry +0+0 -tile 2x2 \
                 Plot*_HMassWZ_${j}_${k}_${i}_nuisances.png \
                 PlotAsimovMerged_${j}_${k}_${i}_nuisances.png
         done
     done
-  done
 done
 ```
 
 ### Pulls
 
 ```bash
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+$FLAG=PosGenWv3
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+COMBINEFOLDER=/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
+ALLMASSP=600
 for i in $ALLMASSP; do
     for k in {CR1,CR2}; do
         for j in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${k}_${j}_${i}
+                LABEL=${l}_HMassWZ_${k}_${j}_${i}_${FLAG}
                 DCARD=${DCARDIR}/DataCard_${LABEL}.root
                 file $DCARD
                 combineTool.py -M FitDiagnostics $DCARD -n $LABEL
-                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics${LABEL}.root --sortBy=impact -g Plot${LABEL}.root --all
-                root -l -b -q PrintPulls.C\(\"${LABEL}\"\)
+                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics${LABEL}.root --sortBy=correlation -g PlotPulls_${LABEL}.root --all
+                root -l -b -q $COMBINEFOLDER/PrintPulls.C\(\"Pulls_${LABEL}\"\)
+                convert -border 2 -density 200 -quality 100  PlotPulls_eemu_${LABEL}_nuisances.pdf -trim PlotPulls_eemu_${LABEL}_nuisances.png
+                convert -border 2 -density 200 -quality 100  PlotPulls_eemu_${LABEL}_post_fit_errs.pdf -trim PlotPulls_eemu_${LABEL}_post_fit_errs.png
+
             done
             montage -geometry +0+0 -tile 2x2 \
-                Plot*_HMassWZ_${k}_${j}_${i}_nuisances.png \
+                PlotPulls*_HMassWZ_${k}_${j}_${i}_nuisances.png \
                 PlotPullsMerged_${k}_${j}_${i}_nuisances.png
         done
     done
-  done
 done
 ```
 
 ### Impacts
 ```bash
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+FLAG=PosGenWv3
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+ALLMASSP=600
 for i in $ALLMASSP; do
     for j in {CR1,CR2}; do
         for k in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}
+                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
                 DCARD=${DCARDIR}/DataCard_${LABEL}.root
                 RLIM=50
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
                 combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
-                plotImpacts.py --label-size 0.05 --cms-label ${LABEL} -i Impacts_${LABEL}.json -o ImpactsPlot_${LABEL}_${RLIM}
-                convert -border 2 -density 200 -quality 100  ImpactsPlot_${LABEL}_${RLIM}.pdf -trim ImpactsPlot_${LABEL}_${RLIM}.png
+                plotImpacts.py --blind --per-page 50 --label-size 0.03 --cms-label ${LABEL} -i Impacts_${LABEL}.json -o ImpactsPlot_${LABEL}
+                convert -border 2 -density 200 -quality 100  ImpactsPlot_${LABEL}.pdf -trim ImpactsPlot_${LABEL}.png 
             done
             echo "Creating montage for ${j}_${k}"
             montage -geometry +0+0 -tile 2x2 \
@@ -319,7 +339,9 @@ done
 ### Goodness of Fit
 
 ```bash
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+FLAG=PosGenWv3
+ALLMASSP=600
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 ALGO="saturated"
 
 function processGOF {
@@ -356,12 +378,13 @@ for i in $ALLMASSP; do
     for j in {CR1,CR2}; do
         for k in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}
-                processGOF ${DCARDIR}DataCard_${LABEL}.root ${l}_${k}_${j}_${i} ${i}
+                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
+                combineTool.py -M T2W --channel-masks -o ${DCARDIR}DataCard_${LABEL}.root -i ${DCARDIR}DataCard_${LABEL}.txt
+                processGOF ${DCARDIR}DataCard_${LABEL}.root ${LABEL} ${i}
             done
             montage -geometry +1+1 -tile 2x2 \
-                GoF_*_${k}_${j}_${i}.png \
-                GoFMerged_${k}_${j}_${i}.png
+                GoF_*_${k}_${j}_${i}_${FLAG}.png \
+                GoFMerged_${k}_${j}_${i}_${FLAG}.png
         done
     done
 done
@@ -375,7 +398,8 @@ ALLMASSP="600 800 1000 \
   2000 2500 3000 3500 \
   4000 4500"
 
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+FLAG=PosGenWv3
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 for i in $ALLMASSP; do
   for j in {2016,2017,2018}; do
     echo -e "\n=============="$i"="$j"==============\n"

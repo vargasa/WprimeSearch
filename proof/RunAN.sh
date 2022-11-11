@@ -1,15 +1,15 @@
 #!/bin/bash
 BRANCHNAME=$1
-NCORES=2
+NCORES=1
 YEARP=$2 #2016->2018
 TYPEP=$3 #MC or DATA
 SAMPLEFILENAME=$4 # ULX.txt
 OutputLabel=$5
 NFSTART=${6:0} #FromFile
 NFEND=${7:-1} #ToFile
-SPACING_FACTOR=${7:-1.15}
-FIRSTBIN_LEFTEDGE=${8:-60.0}
-FIRSTBIN_RIGHTEDGE=${9:-70.0}
+SPACING_FACTOR=${8:-1.15}
+FIRSTBIN_LEFTEDGE=${9:-60.0}
+FIRSTBIN_RIGHTEDGE=${10:-70.0}
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
 scram project CMSSW CMSSW_12_2_1
