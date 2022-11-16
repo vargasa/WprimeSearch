@@ -11,7 +11,7 @@
 
 std::pair<int,std::unique_ptr<double[]>> PreSelector::generateBins(const float spacingFactor, const double firstBin, const double secondBin){
 
-    const double limitEdge = 1200.0f;
+    const double limitEdge = 1350.0f;
     const double lastBinEdge = 5000.0f;
     const double overflowBinEdge = 7500.0f;
     const int reserveSize = 30;
