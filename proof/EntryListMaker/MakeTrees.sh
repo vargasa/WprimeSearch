@@ -8,6 +8,9 @@ eval `scram runtime -sh`
 echo $CMSSW_BASE
 git clone https://github.com/vargasa/WprimeSearch.git Wprime_$1
 WprimeDir=$CMSSW_BASE/src/Wprime_$1/
+#sed -i 's/cmsxrootd.fnal.gov/xrootd-cms.infn.it/' $WprimeDir/proof/EntryListMaker/MakeEventIDTree.C
+#sed -i 's/cmsxrootd.fnal.gov/xrootd.unl.edu/' $WprimeDir/proof/EntryListMaker/MakeEventIDTree.C
+#sed -i 's/cmsxrootd.fnal.gov/cms-xrd-global.cern.ch/' $WprimeDir/proof/EntryListMaker/MakeEventIDTree.C
 OutputLabel="EntryListMaker_"$1"_"$2
 cd $WprimeDir/proof/EntryListMaker/
 export FILES=$WprimeDir/proof/files/data/$1/UL/$2.txt
@@ -18,5 +21,5 @@ root -l -b -q "MakeEventIDTree.C(\""$FILES"\","$NCORES")"
 cd $WprimeDir/proof/EntryListMaker/
 for i in `ls *.root`
 do
-    xrdcp -vf $i root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/$i
+    xrdcp -vf $i root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/$i
 done

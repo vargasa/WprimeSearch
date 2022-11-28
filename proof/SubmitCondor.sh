@@ -1,5 +1,5 @@
 #!/bin/bash
-#./SubmitCondor BRANCHNAME 2018 DATA ULEGamma.txt SPACING_FACTOR NFILESTART NFILEEND
+#./SubmitCondor BRANCHNAME 2018 DATA ULEGamma.txt SPACING_FACTOR LIMIT_EDGE NFILESTART NFILEEND
 BRANCHNAME=$1
 YEARP=$2
 TYPEP=$3
@@ -8,12 +8,13 @@ NCORES=1
 MEMORY=1024
 NSPLIT=10
 SPACING_FACTOR=${5:-1.15}
-NFSTART=${6:0}
-NFEND=${7:0}
+LIMIT_EDGE=${6:-1350.0}
+NFSTART=${7:0}
+NFEND=${8:0}
 OUTPUTLABEL="${BRANCHNAME}_${YEARP}_${TYPEP}_${SAMPLEFILENAME}_"
 
 SubmitSingle () {
-    OUTPUTLABEL="${BRANCHNAME}_${YEARP}_${TYPEP}_${SAMPLEFILENAME}_${SPACING_FACTOR}___"
+    OUTPUTLABEL="${BRANCHNAME}_${YEARP}_${TYPEP}_${SAMPLEFILENAME}_${SPACING_FACTOR}_${LIMIT_EDGE}___"
     NFSTART=$1
     NFEND=$2
     echo $OUTPUTLABEL
@@ -30,7 +31,7 @@ request_memory = $MEMORY
 Output = WprimeHistos_"$OutputLabel".root___\$(Cluster).stdout
 Error = WprimeHistos_"$OutputLabel".root___\$(Cluster).stderr
 Log = WprimeHistos_"$OutputLabel".root___\$(Cluster).log
-Arguments = $BRANCHNAME $YEARP $TYPEP $SAMPLEFILENAME $OutputLabel $NFSTART $NFEND $SPACING_FACTOR
+Arguments = $BRANCHNAME $YEARP $TYPEP $SAMPLEFILENAME $OutputLabel $NFSTART $NFEND $SPACING_FACTOR $LIMIT_EDGE
 Queue 1"
     echo "$jdlString" > /tmp/condor_job_$OutputLabel.jdl
     echo /tmp/condor_job_$OutputLabel.jdl
