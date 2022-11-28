@@ -8,8 +8,9 @@ OutputLabel=$5
 NFSTART=${6:0} #FromFile
 NFEND=${7:-1} #ToFile
 SPACING_FACTOR=${8:-1.15}
-FIRSTBIN_LEFTEDGE=${9:-60.0}
-FIRSTBIN_RIGHTEDGE=${10:-70.0}
+LIMIT_EDGE=${9:-1350.0}
+FIRSTBIN_LEFTEDGE=${10:-60.0}
+FIRSTBIN_RIGHTEDGE=${11:-70.0}
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
 scram project CMSSW CMSSW_12_2_1
@@ -19,7 +20,7 @@ echo  "CMSSW Dir: "$CMSSW_BASE
 git clone --branch $BRANCHNAME https://github.com/vargasa/WprimeSearch.git Wprime_$YEARP
 WprimeDir=$PWD/Wprime_$YEARP/
 echo "Analysis Dir: "$WprimeDir
-sed -i 's/cmsxrootd.fnal.gov/xrootd-cms.infn.it/' $WprimeDir/proof/Selector.C
+#sed -i 's/cmsxrootd.fnal.gov/xrootd-cms.infn.it/' $WprimeDir/proof/Selector.C
 #sed -i 's/cmsxrootd.fnal.gov/xrootd.unl.edu/' $WprimeDir/proof/Selector.C
 #sed -i 's/cmsxrootd.fnal.gov/cms-xrd-global.cern.ch/' $WprimeDir/proof/Selector.C
 cd $WprimeDir/proof
@@ -30,7 +31,7 @@ voms-proxy-info -all -file $X509_USER_PROXY
 
 cd $WprimeDir/proof/
 
-BINOPTIONS="#define SPACING_FACTOR ${SPACING_FACTOR}\n#define FIRSTBIN_LEFTEDGE ${FIRSTBIN_LEFTEDGE}\n#define FIRSTBIN_RIGHTEDGE ${FIRSTBIN_RIGHTEDGE}\n"
+BINOPTIONS="#define SPACING_FACTOR ${SPACING_FACTOR}\n#define FIRSTBIN_LEFTEDGE ${FIRSTBIN_LEFTEDGE}\n#define FIRSTBIN_RIGHTEDGE ${FIRSTBIN_RIGHTEDGE}\n#define LIMIT_EDGE ${LIMIT_EDGE}\n"
 echo $BINOPTIONS
 
 if [ "$TYPEP" =  "MC" ]; then
