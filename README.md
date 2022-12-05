@@ -170,21 +170,25 @@ scp CombineFile*.root  avargash@lxplus.cern.ch:/afs/cern.ch/user/a/avargash/eos/
 
 ### Combining Datacards
 
+
+
 ```bash
+FLAG=1p10b1600
+
 ALLMASSP="600 800 1000 \
   1200 1400 1600 1800 \
   2000 2500 3000 3500 \
   4000 4500"
 
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 for i in $ALLMASSP
 do
   for j in {SR1,CR1,CR2}; do
   echo -e "\n=================="$i"="$j"==================\n"
-    LABEL=${j}_${i}
-    Y16=${DCARDIR}DataCard_HMassWZ_${j}_2016_${i}
-    Y17=${DCARDIR}DataCard_HMassWZ_${j}_2017_${i}
-    Y18=${DCARDIR}DataCard_HMassWZ_${j}_2018_${i}
+    LABEL=${j}_${i}_${FLAG}
+    Y16=${DCARDIR}DataCard_HMassWZ_${j}_2016_${i}_${FLAG}
+    Y17=${DCARDIR}DataCard_HMassWZ_${j}_2017_${i}_${FLAG}
+    Y18=${DCARDIR}DataCard_HMassWZ_${j}_2018_${i}_${FLAG}
     combineCards.py Y16_${j}=${Y16}.txt Y17_${j}=${Y17}.txt Y18_${j}=${Y18}.txt >${DCARDIR}RunII_${LABEL}_Datacard.txt
     file ${Y16}.txt ${Y17}.txt ${Y18}.txt
     combineTool.py -M T2W -o ${Y16}.root -i ${Y16}.txt
@@ -199,23 +203,26 @@ done
 
 ### Workspace from Datacards (per channel
 
-```
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
-for i in $ALLMASSP; do
-    for j in {CR1,CR2}; do
-        for l in {2016,2017,2018}; do
-            for k in {eee,eemu,mumue,mumumu}; do
-                LABEL=${k}_HMassWZ_${j}_${l}_${i}
-                DCARD=${DCARDIR}DataCard_${LABEL}
-                file ${DCARD}.txt
-                combineTool.py -M T2W -o ${DCARD}.root -i ${DCARD}.txt
-                file ${DCARD}.root
-            done
-        done
+```bash
+FLAG=1p10b1600
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+ALLMASSP="600 800 1000 \
+  1200 1400 1600 1800 \
+  2000 2500 3000 3500 \
+  4000 4500"
+for MASS in $ALLMASSP; do
+  for CR in {CR1,CR2}; do
+    for YEAR in {2016,2017,2018}; do
+      for CH in {eee,eemu,mumue,mumumu}; do
+        LABEL=${CH}_HMassWZ_${CR}_${YEAR}_${MASS}_${FLAG}
+        DCARD=${DCARDIR}DataCard_${LABEL}
+        file ${DCARD}.txt
+        combineTool.py -M T2W -o ${DCARD}.root -i ${DCARD}.txt
+        file ${DCARD}.root
+      done
     done
   done
 done
-
 ```
 
 
@@ -251,142 +258,138 @@ int PrintPulls(std::string label){
 ```
 
 ```bash
-FLAG=PosGenWv3
+FLAG=1p10b1600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 COMBINEFOLDER=/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
 ALLMASSP=600
-for i in $ALLMASSP; do
-    for j in {CR1,CR2}; do
-        for k in {2016,2017,2018}; do
-            for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
-                DCARD=${DCARDIR}/DataCard_${LABEL}.root
-                combineTool.py -M T2W -i ${DCARDIR}/DataCard_${LABEL}.txt -o ${DCARDIR}/DataCard_${LABEL}.root
-                combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
-                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --skipFitS --sortBy=correlation -g PlotAsimov_${LABEL}.root --all
-                root -l -b -q $COMBINEFOLDER/PrintPulls.C\(\"Asimov_${LABEL}\"\)
-                convert -border 2 -density 200 -quality 100  PlotAsimov_eemu_${LABEL}_nuisances.pdf -trim PlotAsimov_eemu_${LABEL}_nuisances.png
-                convert -border 2 -density 200 -quality 100  PlotAsimov_eemu_${LABEL}_post_fit_errs.pdf -trim PlotAsimov_eemu_${LABEL}_post_fit_errs.png
-            done
-            montage -geometry +0+0 -tile 2x2 \
-                Plot*_HMassWZ_${j}_${k}_${i}_nuisances.png \
-                PlotAsimovMerged_${j}_${k}_${i}_nuisances.png
-        done
+for MASS in $ALLMASSP; do
+  for CR in {CR1,CR2}; do
+    for YEAR in {2016,2017,2018}; do
+      for CH in {eee,eemu,mumue,mumumu}; do
+        LABEL=${CH}_HMassWZ_${CR}_${YEAR}_${MASS}_${FLAG}
+        DCARD=${DCARDIR}/DataCard_${LABEL}.root
+        #combineTool.py -M T2W -i ${DCARDIR}/DataCard_${LABEL}.txt -o ${DCARDIR}/DataCard_${LABEL}.root
+        combineTool.py -M FitDiagnostics -t -1 --saveToys $DCARD -n Asimov.${LABEL}
+        python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnosticsAsimov.${LABEL}.root --sortBy=correlation -g PlotAsimov_${LABEL}.root --all
+        root -l -b -q $COMBINEFOLDER/PrintPulls.C\(\"Asimov_${LABEL}\"\)
+        convert -border 2 -density 200 -quality 100  PlotAsimov_${LABEL}_nuisances.pdf -trim PlotAsimov_${LABEL}_nuisances.png
+        convert -border 2 -density 200 -quality 100  PlotAsimov_${LABEL}_post_fit_errs.pdf -trim PlotAsimov_${LABEL}_post_fit_errs.png
+      done
+      montage -geometry +0+0 -tile 2x2 \
+      PlotAsimov*_${LABEL}_nuisances.png \
+      PlotAsimovMerged_${LABEL}_nuisances.png
     done
+  done
 done
 ```
 
 ### Pulls
 
 ```bash
-$FLAG=PosGenWv3
+FLAG=1p10b1600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 COMBINEFOLDER=/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
 ALLMASSP=600
-for i in $ALLMASSP; do
-    for k in {CR1,CR2}; do
-        for j in {2016,2017,2018}; do
-            for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${k}_${j}_${i}_${FLAG}
-                DCARD=${DCARDIR}/DataCard_${LABEL}.root
-                file $DCARD
-                combineTool.py -M FitDiagnostics $DCARD -n $LABEL
-                python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics${LABEL}.root --sortBy=correlation -g PlotPulls_${LABEL}.root --all
-                root -l -b -q $COMBINEFOLDER/PrintPulls.C\(\"Pulls_${LABEL}\"\)
-                convert -border 2 -density 200 -quality 100  PlotPulls_eemu_${LABEL}_nuisances.pdf -trim PlotPulls_eemu_${LABEL}_nuisances.png
-                convert -border 2 -density 200 -quality 100  PlotPulls_eemu_${LABEL}_post_fit_errs.pdf -trim PlotPulls_eemu_${LABEL}_post_fit_errs.png
-
-            done
-            montage -geometry +0+0 -tile 2x2 \
-                PlotPulls*_HMassWZ_${k}_${j}_${i}_nuisances.png \
-                PlotPullsMerged_${k}_${j}_${i}_nuisances.png
-        done
-    done
-done
-```
-
-### Impacts
-```bash
-FLAG=PosGenWv3
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
-ALLMASSP=600
-for i in $ALLMASSP; do
-    for j in {CR1,CR2}; do
-        for k in {2016,2017,2018}; do
-            for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
-                DCARD=${DCARDIR}/DataCard_${LABEL}.root
-                RLIM=50
-                combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
-                combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
-                combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
-                plotImpacts.py --blind --per-page 50 --label-size 0.03 --cms-label ${LABEL} -i Impacts_${LABEL}.json -o ImpactsPlot_${LABEL}
-                convert -border 2 -density 200 -quality 100  ImpactsPlot_${LABEL}.pdf -trim ImpactsPlot_${LABEL}.png 
-            done
-            echo "Creating montage for ${j}_${k}"
-            montage -geometry +0+0 -tile 2x2 \
-                ImpactsPlot_*_HMassWZ_${j}_${k}_${i}_${RLIM}.png \
-                ImpactsPlotMerged_${j}_${k}_${i}_${RLIM}.png
-        done
+for MASS in $ALLMASSP; do
+  for CR in {CR1,CR2}; do
+    for YEAR in {2016,2017,2018}; do
+      for CH in {eee,eemu,mumue,mumumu}; do
+        LABEL=${CH}_HMassWZ_${CR}_${YEAR}_${MASS}_${FLAG}
+        DCARD=${DCARDIR}/DataCard_${LABEL}.root
+        file $DCARD
+        combineTool.py -M FitDiagnostics $DCARD -n $LABEL
+        python $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics${LABEL}.root --sortBy=correlation -g PlotPulls_${LABEL}.root --all
+        root -l -b -q $COMBINEFOLDER/PrintPulls.C\(\"Pulls_${LABEL}\"\)
+        convert -border 2 -density 200 -quality 100  PlotPulls_${LABEL}_nuisances.pdf -trim PlotPulls_${LABEL}_nuisances.png
+        convert -border 2 -density 200 -quality 100  PlotPulls_${LABEL}_post_fit_errs.pdf -trim PlotPulls_${LABEL}_post_fit_errs.png
+      done
+      montage -geometry +0+0 -tile 2x2 \
+      PlotPulls*_${LABEL}_nuisances.png \
+      PlotPullsMerged_${LABEL}_nuisances.png
     done
   done
 done
 ```
 
-
-
+### Impacts
+```bash
+FLAG=1p10b1600
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+ALLMASSP=600
+for i in $ALLMASSP; do
+  for j in {CR1,CR2}; do
+    for k in {2016,2017,2018}; do
+      for l in {eee,eemu,mumue,mumumu}; do
+        LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
+        DCARD=${DCARDIR}/DataCard_${LABEL}.root
+        RLIM=50
+        combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --doInitialFit --robustFit 1
+        combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. --robustFit 1 --doFits --parallel 8
+        combineTool.py -n ${j}_${k} -M Impacts -d $DCARD -m $i --rMin -${RLIM}. --rMax ${RLIM}. -o Impacts_${LABEL}.json
+        plotImpacts.py --blind --per-page 50 --label-size 0.03 --cms-label ${LABEL} -i Impacts_${LABEL}.json -o ImpactsPlot_${LABEL}
+        convert -border 2 -density 200 -quality 100  ImpactsPlot_${LABEL}.pdf -trim ImpactsPlot_${LABEL}.png 
+      done
+      echo "Creating montage for ${j}_${k}"
+      montage -geometry +0+0 -tile 2x2 \
+        ImpactsPlot_*_HMassWZ_${j}_${k}_${i}_${RLIM}.png \
+        ImpactsPlotMerged_${j}_${k}_${i}_${RLIM}.png
+      done
+    done
+  done
+done
+```
 
 ### Goodness of Fit
 
 ```bash
-FLAG=PosGenWv3
+FLAG=1p10b1600
 ALLMASSP=600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 ALGO="saturated"
 
 function processGOF {
-    WSPACE=$1
-    file $WSPACE
-    LABEL=$2
-    MASS=$3
-    NTOYS=1000
-    NCORES=10
-    NTOYS=$((NTOYS / NCORES)) # 1000 toys 10 cores
-    RSEED=12345
-    echo -e "\n=======GOODNESS OF FIT==${LABEL}=======\n"
-    echo "Processing GOF for ${WSPACE} ${LABEL} ${MASS}"
-    ALGO="saturated"
-    file $WSPACE
-    combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $i -d ${WSPACE} -n .${ALGO}.${LABEL} \
-        --plots --cminDefaultMinimizerStrategy 0
-    combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $i \
-        -d ${WSPACE} \
-        -n .${ALGO}.toys.${LABEL} --saveToys --toysFreq \
-        -t ${NTOYS} -s ${RSEED}:$((RSEED+NCORES-1)):1 --parallel $NCORES --verbose 0 \
-        --cminDefaultMinimizerStrategy 0
-    combineTool.py -M CollectGoodnessOfFit \
-        --input higgsCombine.${ALGO}.${LABEL}.GoodnessOfFit.mH${i}.root \
-        higgsCombine.saturated.toys.${LABEL}.GoodnessOfFit.mH${MASS}.*.root \
-        -o saturated.${LABEL}.json
-    python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py \
-        --x-title "Test statistic" --y-title "nToys" --title-left $LABEL\
-        --bins 80 --statistic ${ALGO} --mass ${MASS}.0 \
-        --output GoF_${LABEL} ${ALGO}.${LABEL}.json --range 0 80
+  WSPACE=$1
+  file $WSPACE
+  LABEL=$2
+  MASS=$3
+  NTOYS=1000
+  NCORES=10
+  NTOYS=$((NTOYS / NCORES)) # 1000 toys 10 cores
+  RSEED=12345
+  echo -e "\n=======GOODNESS OF FIT==${LABEL}=======\n"
+  echo "Processing GOF for ${WSPACE} ${LABEL} ${MASS}"
+  ALGO="saturated"
+  file $WSPACE
+  combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $MASS -d ${WSPACE} -n .${ALGO}.${LABEL} \
+    --plots --cminDefaultMinimizerStrategy 0
+  combineTool.py -M GoodnessOfFit --algorithm $ALGO -m $MASS \
+    -d ${WSPACE} \
+    -n .${ALGO}.toys.${LABEL} --saveToys --toysFreq \
+    -t ${NTOYS} -s ${RSEED}:$((RSEED+NCORES-1)):1 --parallel $NCORES --verbose 0 \
+    --cminDefaultMinimizerStrategy 0
+  combineTool.py -M CollectGoodnessOfFit \
+    --input higgsCombine.${ALGO}.${LABEL}.GoodnessOfFit.mH${MASS}.root \
+    higgsCombine.saturated.toys.${LABEL}.GoodnessOfFit.mH${MASS}.*.root \
+    -o saturated.${LABEL}.json
+  python $CMSSW_BASE/src/CombineHarvester/CombineTools/scripts/plotGof.py \
+    --x-title "Test statistic" --y-title "nToys" --title-left $LABEL\
+    --bins 80 --statistic ${ALGO} --mass ${MASS}.0 \
+    --output GoF_${LABEL} ${ALGO}.${LABEL}.json --range 0 80
 }
 
-for i in $ALLMASSP; do
-    for j in {CR1,CR2}; do
-        for k in {2016,2017,2018}; do
-            for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
-                combineTool.py -M T2W --channel-masks -o ${DCARDIR}DataCard_${LABEL}.root -i ${DCARDIR}DataCard_${LABEL}.txt
-                processGOF ${DCARDIR}DataCard_${LABEL}.root ${LABEL} ${i}
-            done
-            montage -geometry +1+1 -tile 2x2 \
-                GoF_*_${k}_${j}_${i}_${FLAG}.png \
-                GoFMerged_${k}_${j}_${i}_${FLAG}.png
-        done
+for MASS in $ALLMASSP; do
+  for CR in {CR1,CR2}; do
+    for YEAR in {2016,2017,2018}; do
+      for CH in {eee,eemu,mumue,mumumu}; do
+        LABEL=${CH}_HMassWZ_${CR}_${YEAR}_${MASS}_${FLAG}
+        combineTool.py -M T2W --channel-masks -o ${DCARDIR}DataCard_${LABEL}.root -i ${DCARDIR}DataCard_${LABEL}.txt
+        processGOF ${DCARDIR}DataCard_${LABEL}.root ${LABEL} ${MASS}
+      done   
+      montage -geometry +1+1 -tile 2x2 \
+        GoF_*_${LABEL}.png \
+        GoFMerged_${LABEL}.png
     done
+  done
 done
 ```
 
@@ -425,12 +428,14 @@ done
 ### PostFit plots
 
 ```bash
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/
+FLAG=1p10b1600
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+ALLMASSP=600
 for i in $ALLMASSP; do
     for j in {CR1,CR2}; do
         for k in {2016,2017,2018}; do
             for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}
+                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
                 DCARD=${DCARDIR}/DataCard_${LABEL}
                 combine -M FitDiagnostics $DCARD.root -n ${LABEL} \
                     --expectSignal 0 --minos=all \
