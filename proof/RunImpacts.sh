@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# RunImpacts.sh $MASS $CR $YEAR $CHANNEL $RMAXLIM $BRANCHNAME
+# RunImpacts.sh $MASS $CR $YEAR $CHANNEL $RMAXLIM $FLAG
 MASS=$1
 CR=$2
 YEAR=$3
 CHANNEL=$4
 RMAXLIM=$5
-BRANCHNAME=$6
+FLAG=$6
 xrdcp -vf root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/CMSSW_10_2_13_Combine.tgz ./
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 tar -xf CMSSW_10_2_13_Combine.tgz
@@ -18,19 +18,15 @@ COMBINELIMITDIR=$CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/
 cd $COMBINELIMITDIR
 
 mkdir $COMBINELIMITDIR/datacards
-mkdir $COMBINELIMITDIR/datacards/${BRANCHNAME}/
+mkdir $COMBINELIMITDIR/datacards/${FLAG}/
 
 
-DCARDIR=$COMBINELIMITDIR/datacards/${BRANCHNAME}/
+DCARDIR=$COMBINELIMITDIR/datacards/${FLAG}/
 
-i=$MASS
-j=$CR
-k=$YEAR
-l=$CHANNEL
-LABEL=${l}_HMassWZ_${j}_${k}_${i}
+LABEL=${CHANNEL}_HMassWZ_${CR}_${YEAR}_${MASS}_
 
-xrdcp root://eosuser.cern.ch//eos/user/a/avargash/www/WprimeSearch/datacards/${BRANCHNAME}/DataCard_${LABEL}.txt $DCARDIR
-xrdcp root://eosuser.cern.ch//eos/user/a/avargash/www/WprimeSearch/datacards/${BRANCHNAME}/CombineFile_HMassWZ_${CR}_${YEAR}_${MASS}.root $DCARDIR
+xrdcp root://eosuser.cern.ch//eos/user/a/avargash/www/WprimeSearch/datacards/${FLAG}/DataCard_${LABEL}.txt $DCARDIR
+xrdcp root://eosuser.cern.ch//eos/user/a/avargash/www/WprimeSearch/datacards/${FLAG}/CombineFile_HMassWZ_${CR}_${YEAR}_${MASS}.root $DCARDIR
 DCARD=${DCARDIR}/DataCard_${LABEL}
 combineTool.py -M T2W -o ${DCARD}.root -i ${DCARD}.txt
 DCARD=${DCARDIR}/DataCard_${LABEL}.root

@@ -33,7 +33,6 @@ Queue 1"
 }
 
 BRANCHNAME="16Bins"
-
 for RMAXLIM in `seq -f "%.2f" 90. 10. 110.0`; do
     for CHANNEL in {eee,eemu,mumue,mumumu}; do
         for YEAR in {2016,2017,2018}; do
