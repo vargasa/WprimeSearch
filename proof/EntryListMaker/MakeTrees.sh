@@ -13,7 +13,7 @@ git clone --branch $BRANCHNAME https://github.com/vargasa/WprimeSearch.git Wprim
 WprimeDir=$CMSSW_BASE/src/Wprime_$YEAR/
 #sed -i 's/cmsxrootd.fnal.gov/xrootd-cms.infn.it/' $WprimeDir/proof/EntryListMaker/MakeEventIDTree.C
 #sed -i 's/cmsxrootd.fnal.gov/xrootd.unl.edu/' $WprimeDir/proof/EntryListMaker/MakeEventIDTree.C
-sed -i 's/cmsxrootd.fnal.gov/cms-xrd-global.cern.ch/' $WprimeDir/proof/EntryListMaker/MakeEventIDTree.C
+#sed -i 's/cmsxrootd.fnal.gov/cms-xrd-global.cern.ch/' $WprimeDir/proof/EntryListMaker/MakeEventIDTree.C
 OutputLabel="EntryListMaker_"$YEAR"_"$SAMPLE
 cd $WprimeDir/proof/EntryListMaker/
 export FILES=$WprimeDir/proof/files/data/$YEAR/UL/$SAMPLE.txt
