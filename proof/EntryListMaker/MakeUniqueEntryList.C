@@ -49,8 +49,8 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   // Order taken 2016/2017 SingleElectron -> SingleMuon -> SinglePhoton
   // Takes sizeof(tree) memory PER worker
   // As it is: Works for SingleMuon and Commented: SinglePhoton
-  TFile *f1 = TFile::Open("EventIDTree.root","READ");
-  TFile *f2 = TFile::Open("EntryLists.root","READ");
+  TFile *f1 = TFile::Open("root://cmseos.fnal.gov///store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/EventIDTree.root","READ");
+  TFile *f2 = TFile::Open("root://cmseos.fnal.gov///store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/EntryLists.root","READ");
 
   TTree *EventTree = nullptr;
   TTree *EventTree2 = nullptr;
