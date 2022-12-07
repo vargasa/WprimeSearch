@@ -26,7 +26,8 @@ Int_t MakeEventIDTree(std::string file = "", Int_t fWorkers = 2){
   while(std::getline(infile, line)){
     if(    line.find("1FC6B7E7-1051-5947-8044-B6EAE3CB0721") != std::string::npos
         or line.find("B3137030-E3B2-9E4A-A365-87447A16A207") != std::string::npos
-        or line.find("0C2EC37F-D444-D04E-82FF-4F2B0766E9B8") != std::string::npos ) {
+        or line.find("0C2EC37F-D444-D04E-82FF-4F2B0766E9B8") != std::string::npos 
+        or line.find("D3D4F6A0-0674-AC40-8821-38A3B09862EE") != std::string::npos) {
         line = Form("root://cms-xrd-global.cern.ch//%s",line.c_str());
     } else {
       line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());

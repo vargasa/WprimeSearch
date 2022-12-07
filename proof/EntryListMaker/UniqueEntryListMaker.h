@@ -21,8 +21,10 @@ class UniqueEntryListMaker : public TSelector {
 
   TEntryList *EntryList;
 
+  std::string EventIDTreePath;
+  TFile* fEventIDTree;
   Long64_t EventID;
-  TTree *EventIndexTree;
+  
   std::unordered_set<Long64_t> EventIndex;
   void AddTreeToEventIndex(std::string_view treeName);
 
@@ -31,7 +33,7 @@ class UniqueEntryListMaker : public TSelector {
 
  public :
 
-  TString SampleName;
+  std::string SampleName;
 
   UniqueEntryListMaker(TTree * = 0);
   ~UniqueEntryListMaker() { }

@@ -22,20 +22,19 @@ Bool_t UniqueEntryListMaker::Notify() {
 
 void UniqueEntryListMaker::Begin(TTree *tree) {
 
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+  }
+
   if (fInput->FindObject("SampleName")) {
     // Lesson: TString can't be in TCollection
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
     SampleName = p->GetTitle();
   }
-  if (fInput){
-    EntryList = new TEntryList("EntryList","Entry Number");
-    fInput->Add(EntryList);
-  }
 
-  if (fInput->FindObject("Year")) {
-    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
-    Year = p->GetVal();
-  }
+  EntryList = new TEntryList("EntryList","Entry Number");
+  fInput->Add(EntryList);
 
   std::clog << "SampleName: " << SampleName << std::endl;
   std::clog << "EntryList: " << EntryList << std::endl;
@@ -46,9 +45,21 @@ void UniqueEntryListMaker::SlaveBegin(TTree *tree) {
   hlog = new TH1D("hlog","hlog",100,0.,100.);
   fOutput->Add(hlog);
 
+  if (fInput->FindObject("Year")) {
+    TParameter<Int_t> *p = dynamic_cast<TParameter<Int_t>*>(fInput->FindObject("Year"));
+    Year = p->GetVal();
+  }
+
   if (fInput->FindObject("SampleName")) {
     TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("SampleName"));
     SampleName = p->GetTitle();
+  }
+
+  if (fInput->FindObject("EventIDTreePath")) {
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("EventIDTreePath"));
+    EventIDTreePath = p->GetTitle();
+    fEventIDTree = TFile::Open(EventIDTreePath.c_str(),"READ");
+    assert(fEventIDTree != nullptr);
   }
 
   if((EntryList = (TEntryList*) fInput->FindObject("EntryList")))
@@ -57,22 +68,39 @@ void UniqueEntryListMaker::SlaveBegin(TTree *tree) {
   if(EntryList)
     fOutput->Add(EntryList);
 
-  if (fInput->FindObject("EventIndexTree1"))
-    AddTreeToEventIndex("EventIndexTree1");
-  if (fInput->FindObject("EventIndexTree2"))
-    AddTreeToEventIndex("EventIndexTree2");
+  assert( Year == 2016 or Year == 2017 or Year == 2018);
+
+  assert( SampleName.find("ULSingleElectron") != std::string::npos or
+          SampleName.find("ULSingleMuon") != std::string::npos or
+          SampleName.find("ULEGamma") != std::string::npos );
+
+  if (Year == 2016 or Year == 2017) {
+    AddTreeToEventIndex(Form("ULSinglePhoton_%d/eTree;1",Year));
+    if (SampleName.find("ULSingleMuon") != std::string::npos){
+      AddTreeToEventIndex(Form("ULSingleElectron_%d/eTree;1",Year));
+    }
+  } else if (Year == 2018) {
+    AddTreeToEventIndex(Form("ULSingleMuon_%d/eTree;1",Year));
+    assert(SampleName.find("ULEGamma") != std::string::npos);
+  }
 
 }
 
 void UniqueEntryListMaker::AddTreeToEventIndex(std::string_view treeName){
-  EventIndexTree = dynamic_cast<TTree *>(fInput->FindObject(treeName.data()));
+
+
+  std::clog << "Adding TTree to main EventIndex : " << treeName.data() << '\t' << fEventIDTree->Get(treeName.data()) << "\n";
+
+  TTree* EventIndexTree = dynamic_cast<TTree*>(fEventIDTree->Get(treeName.data()));
+  assert(EventIndexTree != nullptr);
   TTreeReader fReader1(EventIndexTree);
   TTreeReaderValue<Long64_t> EvID(fReader1,"EventID");
 
   while(fReader1.Next()){
     hlog->Fill(treeName.data(),1.);
-    if (!(EventIndex.insert(*EvID).second))
-      std::clog << Form("\tDuplicated EvID: %s %lld\n",treeName.data(),*EvID) ;
+    EventIndex.insert(*EvID);
+    //if (!(EventIndex.insert(*EvID).second))
+    //  std::clog << Form("\tDuplicated EvID: %s %lld\n",treeName.data(),*EvID) ;
   }
 }
 Long64_t UniqueEntryListMaker::GetEventIndex(const UInt_t& run,const ULong64_t& event) {
@@ -87,10 +115,11 @@ Bool_t UniqueEntryListMaker::Process(Long64_t entry) {
 
    EventID = GetEventIndex(*run,*event);
    if(EventIndex.find(EventID) == EventIndex.end ()) {
-     hlog->Fill(Form("UniqueEvent_%s",SampleName.Data()),1.);
+     hlog->Fill(Form("UniqueEvent_%s",SampleName.c_str()),1.);
      EntryList->Enter(entry);
    } else {
-     hlog->Fill(Form("DuplicatedEvent_%s",SampleName.Data()),1.);
+     hlog->Fill(Form("DuplicatedEvent_%s",SampleName.c_str()),1.);
+     std::clog << Form("\tDuplicated EvID: %lld\n",EventID);
    }
 
    return kTRUE;
@@ -102,13 +131,13 @@ void UniqueEntryListMaker::Terminate() {
   gPad->SetLogy();
   hlog->LabelsDeflate();
   hlog->Draw("HIST TEXT45");
-  ch->Print(Form("UniqueEntryListMaker_%s_%d_hlog.png",SampleName.Data(),Year));
+  ch->Print(Form("UniqueEntryListMaker_%s_%d_hlog.png",SampleName.c_str(),Year));
 
   EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
-  std::unique_ptr<TFile> fEntryList(TFile::Open("EntryLists_Unique.root","UPDATE"));
-  fEntryList->mkdir(Form("%s_%d",SampleName.Data(),Year));
-  fEntryList->cd(Form("%s_%d",SampleName.Data(),Year));
-  hlog->SetName(Form("hlog_%s_%d",SampleName.Data(),Year));
+  std::unique_ptr<TFile> fEntryList(TFile::Open(Form("EntryListsUnique_%d_%s.root",Year,SampleName.c_str()),"UPDATE"));
+  fEntryList->mkdir(Form("%s_%d",SampleName.c_str(),Year));
+  fEntryList->cd(Form("%s_%d",SampleName.c_str(),Year));
+  hlog->SetName(Form("hlog_%s_%d",SampleName.c_str(),Year));
   hlog->Write();
   EntryList->Write();
   fEntryList->Close();

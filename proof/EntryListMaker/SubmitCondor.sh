@@ -2,7 +2,7 @@
 YEAR=$1
 SAMPLE=$2
 BRANCHNAME=$3
-MEMORY=2048
+MEMORY=4000
 export NCORES=3
 export jdlString="universe = vanilla
 Executable = MakeTrees.sh
