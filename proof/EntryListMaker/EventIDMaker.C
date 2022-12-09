@@ -32,6 +32,13 @@ void EventIDMaker::Begin(TTree *tree) {
     Year = p->GetVal();
   }
 
+  if (fInput->FindObject("OutputLabel")) {
+    // Lesson: TString can't be in TCollection
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("OutputLabel"));
+    OutputLabel = p->GetTitle();
+  }
+  assert(OutputLabel.size()>0);
+
   std::clog << "EventIDMaker::Begin SampleName:" << SampleName
             << "Year " << Year;
 
@@ -87,8 +94,6 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
     return kFALSE;
   }
 
-
-
   if(IsMissingBranch) hlog->FillS("MissingBranch");
 
   if (!MinLeptonsTest()){
@@ -120,28 +125,23 @@ Bool_t EventIDMaker::Process(Long64_t entry) {
   return kTRUE;
 }
 
+
+
 void EventIDMaker::Terminate() {
 
-  std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
-  gPad->SetLogy();
-  hlog->LabelsDeflate();
-  hlog->Draw("HIST TEXT45");
-  ch->Print(Form("EventIDMaker_hlog_%s_%d.png",SampleName.Data(),Year));
+
+  assert(OutputLabel.size()>0);
 
   std::string dirName = Form("%s_%d",SampleName.Data(),Year);
-  std::unique_ptr<TFile> fEventIDTree(TFile::Open(Form("EventIDTree_%d_%s.root",Year,SampleName.Data()),"UPDATE"));
+  std::unique_ptr<TFile> fEventIDTree(TFile::Open(Form("EventIDTree_%s.root",OutputLabel.c_str()),"UPDATE"));
   fEventIDTree->mkdir(dirName.c_str());
   fEventIDTree->cd(dirName.c_str());
   eTree = dynamic_cast<TTree*>(fOutput->FindObject("eTree"));
   eTree->Write("eTree");
-  fEventIDTree->Close();
-
-  std::unique_ptr<TFile> fEntryList(TFile::Open(Form("EntryLists_%d_%s.root",Year,SampleName.Data()),"UPDATE"));
-  fEntryList->mkdir(dirName.c_str());
-  fEntryList->cd(dirName.c_str());
+  EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
   EntryList->Write("EntryList");
   hlog->SetName(Form("hlog_%s_%d",SampleName.Data(),Year));
   hlog->Write();
-  fEntryList->Close();
+  fEventIDTree->Close();
 
 }

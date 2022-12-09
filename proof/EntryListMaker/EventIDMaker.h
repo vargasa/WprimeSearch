@@ -26,6 +26,7 @@ class EventIDMaker : public EventSelection {
   std::unordered_set<Long64_t> EventIndex;
 
   TH1D *hlog;
+  std::string OutputLabel;
 
  public :
 

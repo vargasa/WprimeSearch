@@ -30,8 +30,13 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   std::string line;
   while(std::getline(infile, line)){
     line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
-    std::cout << "Chaining " << line << std::endl;
-    fChain->AddFile(line.c_str());
+    std::cout << "Chaining " << line << "\t";
+    int ans = fChain->AddFile(line.c_str());
+    if(ans == 1){
+      std::cout << "[Ok]\n";
+    } else {
+      std::cout << "[Error]\n";
+    }
   }
   sample = file.substr(file.rfind("/")+1);
   sample.resize(sample.size()-4);
@@ -45,9 +50,9 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
 
   TProof *fProof = TProof::Open(Form("workers=%d",fWorkers));
 
-  std::string EventIDTreePath = "root://cmseos.fnal.gov///store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/EventIDTree.root";
+  std::string EventIDTreePath = "root://cmseos.fnal.gov///store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/UnifiedEventIDTreeEntryLists.root";
   
-  TFile *f2 = TFile::Open("root://cmseos.fnal.gov///store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/EntryLists.root","READ");
+  TFile *f2 = TFile::Open("root://cmseos.fnal.gov///store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/UnifiedEventIDTreeEntryLists.root","READ");
 
   TEntryList *l2 = nullptr;
   TEntryList *l3 = nullptr;
