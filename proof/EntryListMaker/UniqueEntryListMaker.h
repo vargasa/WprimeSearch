@@ -29,6 +29,7 @@ class UniqueEntryListMaker : public TSelector {
   void AddTreeToEventIndex(std::string_view treeName);
 
   int Year;
+  std::string OutputLabel;
   TH1D *hlog;
 
  public :

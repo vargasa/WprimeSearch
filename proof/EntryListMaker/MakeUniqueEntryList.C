@@ -4,7 +4,7 @@
 #include <fstream>
 #include "../IsData.h"
 
-Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
+Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2, Int_t nfstart = 0, Int_t nfend = -1){
 
   Int_t year;
 
@@ -28,15 +28,20 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
 
   std::ifstream infile(file);
   std::string line;
+  UInt_t counter = 0;
   while(std::getline(infile, line)){
-    line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
-    std::cout << "Chaining " << line << "\t";
-    int ans = fChain->AddFile(line.c_str());
-    if(ans == 1){
-      std::cout << "[Ok]\n";
-    } else {
-      std::cout << "[Error]\n";
+    if (counter > nfend) break;
+    if( nfend == -1 or (counter >= nfstart and counter <= nfend) ) {
+      line = Form("root://cmsxrootd.fnal.gov/%s",line.c_str());
+      std::cout << "Chaining " << line << "\t";
+      int ans = fChain->AddFile(line.c_str());
+      if(ans == 1){
+        std::cout << "[Ok]\n";
+      } else {
+        std::cout << "[Error]\n";
+      }
     }
+    ++counter;
   }
   sample = file.substr(file.rfind("/")+1);
   sample.resize(sample.size()-4);
@@ -76,6 +81,7 @@ Int_t MakeUniqueEntryList(std::string file = "", Int_t fWorkers = 2){
   fProof->SetParameter("SampleName",sample.c_str());
   fProof->SetParameter("Year", year);
   fProof->SetParameter("EventIDTreePath",EventIDTreePath.c_str());
+  fProof->SetParameter("OutputLabel",Form("%d_%s_%d_%d",year,sample.c_str(),nfstart,nfend));
 
   fChain->SetProof();
   fChain->Process("UniqueEntryListMaker.C+g");

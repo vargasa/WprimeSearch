@@ -38,6 +38,14 @@ void UniqueEntryListMaker::Begin(TTree *tree) {
 
   std::clog << "SampleName: " << SampleName << std::endl;
   std::clog << "EntryList: " << EntryList << std::endl;
+
+  if (fInput->FindObject("OutputLabel")) {
+    // Lesson: TString can't be in TCollection
+    TNamed *p = dynamic_cast<TNamed *>(fInput->FindObject("OutputLabel"));
+    OutputLabel = p->GetTitle();
+  }
+  assert(OutputLabel.size()>0);
+
 }
 
 void UniqueEntryListMaker::SlaveBegin(TTree *tree) {
@@ -127,14 +135,8 @@ Bool_t UniqueEntryListMaker::Process(Long64_t entry) {
 
 void UniqueEntryListMaker::Terminate() {
 
-  std::unique_ptr<TCanvas> ch(new TCanvas("ch","ch",1200,800));
-  gPad->SetLogy();
-  hlog->LabelsDeflate();
-  hlog->Draw("HIST TEXT45");
-  ch->Print(Form("UniqueEntryListMaker_%s_%d_hlog.png",SampleName.c_str(),Year));
-
   EntryList = dynamic_cast<TEntryList*>(fOutput->FindObject("EntryList"));
-  std::unique_ptr<TFile> fEntryList(TFile::Open(Form("EntryListsUnique_%d_%s.root",Year,SampleName.c_str()),"UPDATE"));
+  std::unique_ptr<TFile> fEntryList(TFile::Open(Form("EntryListsUnique_%s.root",OutputLabel.c_str()),"UPDATE"));
   fEntryList->mkdir(Form("%s_%d",SampleName.c_str(),Year));
   fEntryList->cd(Form("%s_%d",SampleName.c_str(),Year));
   hlog->SetName(Form("hlog_%s_%d",SampleName.c_str(),Year));
