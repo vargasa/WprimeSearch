@@ -172,31 +172,62 @@ scp CombineFile*.root  avargash@lxplus.cern.ch:/afs/cern.ch/user/a/avargash/eos/
 
 
 
+#### Compute Exclusion Limits
+
 ```bash
-FLAG=1p10b1600
-
-ALLMASSP="600 800 1000 \
-  1200 1400 1600 1800 \
-  2000 2500 3000 3500 \
-  4000 4500"
-
-DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
-for i in $ALLMASSP
+FLAG="OnlyGT36"
+for MASS in 600 800 1000 1200 \
+    1400 1600 1800 2000 2500 \
+    3000 3500 4000 4500
 do
-  for j in {SR1,CR1,CR2}; do
-  echo -e "\n=================="$i"="$j"==================\n"
-    LABEL=${j}_${i}_${FLAG}
-    Y16=${DCARDIR}DataCard_HMassWZ_${j}_2016_${i}_${FLAG}
-    Y17=${DCARDIR}DataCard_HMassWZ_${j}_2017_${i}_${FLAG}
-    Y18=${DCARDIR}DataCard_HMassWZ_${j}_2018_${i}_${FLAG}
-    combineCards.py Y16_${j}=${Y16}.txt Y17_${j}=${Y17}.txt Y18_${j}=${Y18}.txt >${DCARDIR}RunII_${LABEL}_Datacard.txt
-    file ${Y16}.txt ${Y17}.txt ${Y18}.txt
-    combineTool.py -M T2W -o ${Y16}.root -i ${Y16}.txt
-    combineTool.py -M T2W -o ${Y17}.root -i ${Y17}.txt
-    combineTool.py -M T2W -o ${Y18}.root -i ${Y18}.txt
-    file ${Y16}.root ${Y17}.root ${Y18}.root
-    combineTool.py -M T2W -o ${DCARDIR}RunII_${LABEL}_Datacard.root -i ${DCARDIR}RunII_${LABEL}_Datacard.txt
-  done
+    DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}
+    Y16_eee=DataCard_eee_HMassWZ_SR1_2016_${MASS}_${FLAG}.txt
+    Y17_eee=DataCard_eee_HMassWZ_SR1_2017_${MASS}_${FLAG}.txt
+    Y18_eee=DataCard_eee_HMassWZ_SR1_2018_${MASS}_${FLAG}.txt
+    Y16_eemu=DataCard_eemu_HMassWZ_SR1_2016_${MASS}_${FLAG}.txt
+    Y17_eemu=DataCard_eemu_HMassWZ_SR1_2017_${MASS}_${FLAG}.txt
+    Y18_eemu=DataCard_eemu_HMassWZ_SR1_2018_${MASS}_${FLAG}.txt
+    Y16_mumue=DataCard_mumue_HMassWZ_SR1_2016_${MASS}_${FLAG}.txt
+    Y17_mumue=DataCard_mumue_HMassWZ_SR1_2017_${MASS}_${FLAG}.txt
+    Y18_mumue=DataCard_mumue_HMassWZ_SR1_2018_${MASS}_${FLAG}.txt
+    Y16_mumumu=DataCard_mumumu_HMassWZ_SR1_2016_${MASS}_${FLAG}.txt
+    Y17_mumumu=DataCard_mumumu_HMassWZ_SR1_2017_${MASS}_${FLAG}.txt
+    Y18_mumumu=DataCard_mumumu_HMassWZ_SR1_2018_${MASS}_${FLAG}.txt
+    combineCards.py Y16_eee=${DCARDIR}/${Y16_eee} Y17_eee=${DCARDIR}/${Y17_eee} Y18_eee=${DCARDIR}/${Y18_eee} \
+        Y16_eemu=${DCARDIR}/${Y16_eemu} Y17_eemu=${DCARDIR}/${Y17_eemu} Y18_eemu=${DCARDIR}/${Y18_eemu} \
+        Y16_mumue=${DCARDIR}/${Y16_mumue} Y17_mumue=${DCARDIR}/${Y17_mumue} Y18_mumue=${DCARDIR}/${Y18_mumue} \
+        Y16_mumumu=${DCARDIR}/${Y16_mumumu} Y17_mumumu=${DCARDIR}/${Y17_mumumu} Y18_mumumu=${DCARDIR}/${Y18_mumumu} \
+        > ${DCARDIR}/RunII_HMassWZ_SR1_${MASS}_${FLAG}.txt
+    combine -m $MASS -n ".${MASS}_${FLAG}" -M AsymptoticLimits -d ${DCARDIR}/RunII_HMassWZ_SR1_${MASS}_${FLAG}.txt
+done
+```
+
+# Combine datacards for CR2
+
+```bash
+FLAG="OnlyGT36"
+for i in 600 800 1000 1200 \
+    1400 1600 1800 2000 2500 \
+    3000 3500 4000 4500
+do
+    DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+    Y16_eee=DataCard_eee_HMassWZ_CR2_2016_${i}_${FLAG}.txt
+    Y17_eee=DataCard_eee_HMassWZ_CR2_2017_${i}_${FLAG}.txt
+    Y18_eee=DataCard_eee_HMassWZ_CR2_2018_${i}_${FLAG}.txt
+    Y16_eemu=DataCard_eemu_HMassWZ_CR2_2016_${i}_${FLAG}.txt
+    Y17_eemu=DataCard_eemu_HMassWZ_CR2_2017_${i}_${FLAG}.txt
+    Y18_eemu=DataCard_eemu_HMassWZ_CR2_2018_${i}_${FLAG}.txt
+    Y16_mumue=DataCard_mumue_HMassWZ_CR2_2016_${i}_${FLAG}.txt
+    Y17_mumue=DataCard_mumue_HMassWZ_CR2_2017_${i}_${FLAG}.txt
+    Y18_mumue=DataCard_mumue_HMassWZ_CR2_2018_${i}_${FLAG}.txt
+    Y16_mumumu=DataCard_mumumu_HMassWZ_CR2_2016_${i}_${FLAG}.txt
+    Y17_mumumu=DataCard_mumumu_HMassWZ_CR2_2017_${i}_${FLAG}.txt
+    Y18_mumumu=DataCard_mumumu_HMassWZ_CR2_2018_${i}_${FLAG}.txt
+    combineCards.py Y16_eee=${DCARDIR}/${Y16_eee} Y17_eee=${DCARDIR}/${Y17_eee} Y18_eee=${DCARDIR}/${Y18_eee} \
+        Y16_eemu=${DCARDIR}/${Y16_eemu} Y17_eemu=${DCARDIR}/${Y17_eemu} Y18_eemu=${DCARDIR}/${Y18_eemu} \
+        Y16_mumue=${DCARDIR}/${Y16_mumue} Y17_mumue=${DCARDIR}/${Y17_mumue} Y18_mumue=${DCARDIR}/${Y18_mumue} \
+        Y16_mumumu=${DCARDIR}/${Y16_mumumu} Y17_mumumu=${DCARDIR}/${Y17_mumumu} Y18_mumumu=${DCARDIR}/${Y18_mumumu} \
+        > ${DCARDIR}/RunII_HMassWZ_CR2_${i}_${FLAG}.txt
 done
 ```
 
@@ -204,7 +235,7 @@ done
 ### Workspace from Datacards (per channel
 
 ```bash
-FLAG=1p10b1600
+FLAG=OnlyGT36
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 ALLMASSP="600 800 1000 \
   1200 1400 1600 1800 \
@@ -252,13 +283,13 @@ int PrintPulls(std::string label){
   h->LabelsDeflate("X");
   h->LabelsOption("v","X");
   post_fit_errs->Print(Form("Plot%s_post_fit_errs.%s",label.c_str(),ext));
-
+  post_fit_errs->Print(Form("Plot%s_post_fit_errs.png",label.c_str()));
   return 0;
 }
 ```
 
 ```bash
-FLAG=1p10b1600
+FLAG=OnlyGT36
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 COMBINEFOLDER=/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
 ALLMASSP=600
@@ -286,7 +317,7 @@ done
 ### Pulls
 
 ```bash
-FLAG=1p10b1600
+FLAG=OnlyGT36
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 COMBINEFOLDER=/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/
 ALLMASSP=600
@@ -313,7 +344,7 @@ done
 
 ### Impacts
 ```bash
-FLAG=1p10b1600
+FLAG=OnlyGT36
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 ALLMASSP=600
 for i in $ALLMASSP; do
@@ -342,7 +373,7 @@ done
 ### Goodness of Fit
 
 ```bash
-FLAG=1p10b1600
+FLAG=OnlyGT36
 ALLMASSP=600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 ALGO="saturated"
@@ -395,35 +426,96 @@ done
 
 ### Signal Injection tests
 
+
+#### Masked workspace
+
 ```bash
-ALLMASSP="600 800 1000 \
-  1200 1400 1600 1800 \
-  2000 2500 3000 3500 \
-  4000 4500"
-
-FLAG=PosGenWv3
+# Datacard store
+FLAG="OnlyGT36"
+MASS=1400
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
-for i in $ALLMASSP; do
-  for j in {2016,2017,2018}; do
-    echo -e "\n=============="$i"="$j"==============\n"
-    LABEL=${j}_${i}
-    CR1=${DCARDIR}DataCard_HMassWZ_CR1_${LABEL}
-    CR2=${DCARDIR}DataCard_HMassWZ_CR2_${LABEL}
-    SR1=${DCARDIR}DataCard_HMassWZ_SR1_${LABEL}
-    ALL=${DCARDIR}CombinedRegionsDatacard_${LABEL}
-    file ${SR1}.txt ${CR1}.txt ${CR2}.txt
-    combineCards.py SR1_${LABEL}=${SR1}.txt CR1_${LABEL}=${CR1}.txt CR2_${LABEL}=${CR2}.txt >${ALL}.txt
-    file $ALL.txt
-    combineTool.py -M T2W --channel-masks -o ${ALL}.root -i ${ALL}.txt
-    file $ALL.root
-    combine -d ${ALL}.root -M FitDiagnostics --saveShapes \
-      --saveWithUncertainties -n $LABEL -t 50 \
-      --setParameters \
-      mask_SR1_${LABEL}_mumumu=1,mask_SR1_${LABEL}_mumue=1,mask_SR1_${LABEL}_eemu=1,mask_SR1_${LABEL}_eee=1
-  done
-done
-
+PREVDIR=`pwd`
+cd ${DCARDIR}
+CR2=RunII_HMassWZ_CR2_${MASS}_${FLAG}
+file ${CR2}.txt
+SR1=RunII_HMassWZ_SR1_${MASS}_${FLAG}
+file ${SR1}.txt
+CFILE=CombinedCR2SR1_RunII_${MASS}_${FLAG}
+combineCards.py SR1_RunII_${MASS}=${SR1}.txt CR2_RunII_${MASS}=${CR2}.txt>${CFILE}.txt
+file ${CFILE}.txt
+cd $PREVDIR
+CFILE=${DCARDIR}/${CFILE}
+combineTool.py -M T2W --channel-masks -o ${CFILE}.root -i ${CFILE}.txt
+file ${CFILE}.root
+combineTool.py -d ${CFILE}.root -M FitDiagnostics --saveShapes --saveWithUncertainties \
+    -n RunII_${MASS} --setParameters mask_SR1_RunII_${MASS}_Y16_eee=1,mask_SR1_RunII_${MASS}_Y17_eee=1,mask_SR1_RunII_${MASS}_Y18_eee=1,mask_SR1_RunII_${MASS}_Y16_eemu=1,mask_SR1_RunII_${MASS}_Y17_eemu=1,mask_SR1_RunII_${MASS}_Y18_eemu=1,mask_SR1_RunII_${MASS}_Y16_mumue=1,mask_SR1_RunII_${MASS}_Y17_mumue=1,mask_SR1_RunII_${MASS}_Y18_mumue=1,mask_SR1_RunII_${MASS}_Y16_mumumu=1,mask_SR1_RunII_${MASS}_Y17_mumumu=1,mask_SR1_RunII_${MASS}_Y18_mumumu=1
+file fitDiagnosticsRunII_${MASS}.root
 ```
+
+#### M = 600
+
+```bash
+MASS=600
+FLAG="OnlyGT36"
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+for EXPECTEDSIGNAL in {0.0,0.0251799,0.0346679,0.0493158}; do
+    SR1=RunII_HMassWZ_SR1_${MASS}_${FLAG}
+    wget -O importPars.py https://raw.githubusercontent.com/lcorcodilos/2DAlphabet/bstar/importPars.py
+    python importPars.py ${DCARDIR}/${SR1}.txt fitDiagnosticsRunII_${MASS}.root
+    combineTool.py  -M GenerateOnly -d morphedWorkspace.root \
+        -n RunII_${MASS}_${EXPECTEDSIGNAL} -m ${MASS} --saveToys --toysFrequentist --bypassFrequentistFit \
+        --expectSignal ${EXPECTEDSIGNAL} -t 1000 -s 1234 \
+        --cminDefaultMinimizerStrategy 0
+    combineTool.py  -M FitDiagnostics -d morphedWorkspace.root \
+        -n RunII_${MASS}_${EXPECTEDSIGNAL} \
+        --toysFile higgsCombineRunII_${MASS}_${EXPECTEDSIGNAL}.GenerateOnly.mH${MASS}.1234.root -t 1000 \
+        --rMin -100 --rMax 100 --expectSignal ${EXPECTEDSIGNAL}
+done
+```
+
+#### M = 1000
+
+```bash
+FLAG="OnlyGT36"
+MASS=1000
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+for EXPECTEDSIGNAL in {0.0, 0.0597894, 0.0854492, 0.1229156}; do
+    SR1=RunII_HMassWZ_SR1_${MASS}_${FLAG}
+    wget -O importPars.py https://raw.githubusercontent.com/lcorcodilos/2DAlphabet/bstar/importPars.py
+    python importPars.py ${DCARDIR}/${SR1}.txt fitDiagnosticsRunII_${MASS}.root
+    combineTool.py  -M GenerateOnly -d morphedWorkspace.root \
+        -n RunII_${MASS}_${EXPECTEDSIGNAL} -m ${MASS} --saveToys --toysFrequentist --bypassFrequentistFit \
+        --expectSignal ${EXPECTEDSIGNAL} -t 1000 -s 1234 \
+        --cminDefaultMinimizerStrategy 0
+    combineTool.py  -M FitDiagnostics -d morphedWorkspace.root \
+        -n RunII_${MASS}_${EXPECTEDSIGNAL} \
+        --toysFile higgsCombineRunII_${MASS}_${EXPECTEDSIGNAL}.GenerateOnly.mH${MASS}.1234.root -t 1000 \
+        --rMin -100 --rMax 100 --expectSignal ${EXPECTEDSIGNAL}
+done
+```
+
+#### M = 1400
+
+```bash
+MASS=1400
+FLAG="OnlyGT36"
+DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
+for EXPECTEDSIGNAL in {0.0,0.1413164,0.2041015,0.2976606}; do
+    SR1=RunII_HMassWZ_SR1_${MASS}_${FLAG}
+    wget -O importPars.py https://raw.githubusercontent.com/lcorcodilos/2DAlphabet/bstar/importPars.py
+    python importPars.py ${DCARDIR}/${SR1}.txt fitDiagnosticsRunII_${MASS}.root
+    combineTool.py  -M GenerateOnly -d morphedWorkspace.root \
+        -n RunII_${MASS}_${EXPECTEDSIGNAL} -m ${MASS} --saveToys --toysFrequentist --bypassFrequentistFit \
+        --expectSignal ${EXPECTEDSIGNAL} -t 1000 -s 1234 \
+        --cminDefaultMinimizerStrategy 0
+    combineTool.py  -M FitDiagnostics -d morphedWorkspace.root \
+        -n RunII_${MASS}_${EXPECTEDSIGNAL} \
+        --toysFile higgsCombineRunII_${MASS}_${EXPECTEDSIGNAL}.GenerateOnly.mH${MASS}.1234.root -t 1000 \
+        --rMin -100 --rMax 100 --expectSignal ${EXPECTEDSIGNAL}
+done
+```
+
+
 
 ### PostFit plots
 
@@ -432,20 +524,20 @@ FLAG=1p10b1600
 DCARDIR=/afs/cern.ch/user/a/avargash/eos/www/WprimeSearch/datacards/${FLAG}/
 ALLMASSP=600
 for i in $ALLMASSP; do
-    for j in {CR1,CR2}; do
-        for k in {2016,2017,2018}; do
-            for l in {eee,eemu,mumue,mumumu}; do
-                LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
-                DCARD=${DCARDIR}/DataCard_${LABEL}
-                combine -M FitDiagnostics $DCARD.root -n ${LABEL} \
-                    --expectSignal 0 --minos=all \
-                    --cminDefaultMinimizerStrategy 0 --forceRecreateNLL
-                PostFitShapesFromWorkspace -w ${DCARD}.root -d ${DCARD}.txt \
-                    -f fitDiagnostics${LABEL}.root:fit_b --postfit \
-                    --sampling --samples 300 -o PostFit_${LABEL}.root
-            done
-        done
+  for j in {CR1,CR2}; do
+    for k in {2016,2017,2018}; do
+      for l in {eee,eemu,mumue,mumumu}; do
+        LABEL=${l}_HMassWZ_${j}_${k}_${i}_${FLAG}
+        DCARD=${DCARDIR}/DataCard_${LABEL}
+        combine -M FitDiagnostics $DCARD.root -n ${LABEL} \
+            --expectSignal 0 --minos=all \
+            --cminDefaultMinimizerStrategy 0 --forceRecreateNLL
+        PostFitShapesFromWorkspace -w ${DCARD}.root -d ${DCARD}.txt \
+            -f fitDiagnostics${LABEL}.root:fit_b --postfit \
+            --sampling --samples 300 -o PostFit_${LABEL}.root
+      done
     done
+  done
 done
 
 #### Locally
@@ -454,7 +546,7 @@ scp avargash@lxplus.cern.ch:/afs/cern.ch/user/a/avargash/eos/Combine/CMSSW_10_2_
 
 #### Run printPostfitPlots
 
-root -l -b -q Stack.C\(\"WprimeHistos_PosGenWv3.root\"\)
+root -l -b -q Stack.C\(\"WprimeHistos_1p10b1600.root\"\)
 cd plots/PostFit/
 
 ALLMASSP=600
