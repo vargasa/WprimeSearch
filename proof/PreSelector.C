@@ -638,10 +638,12 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HSFs,"HSFs",45,0.,45.,60,0.,6.);
 #endif
 
-  std::pair<int,std::unique_ptr<double[]>> binsArrayPair = generateBins(SPACING_FACTOR,FIRSTBIN_LEFTEDGE,FIRSTBIN_RIGHTEDGE,LIMIT_EDGE);
+  const Double_t wzbins[28] = {
+    60,80,100,125,150,175,205,235,265,300,335,370,410,450,490,540,590,650,720,790,890,1000,
+    1190,1340,1500,2000,5000,7500
+  };
 
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",binsArrayPair.first-1,binsArrayPair.second.get());
-
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",27,wzbins);
 
 }
 
