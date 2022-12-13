@@ -1,5 +1,4 @@
 #!/bin/bash
-
 OUTPUTFOLDER="/uscms/home/avargash/store/WprimeSearchCondorOutput/"
 YEARP=$1
 TYPEP=$2

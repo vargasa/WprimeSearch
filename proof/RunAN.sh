@@ -40,7 +40,7 @@ if [ "$TYPEP" =  "MC" ]; then
     echo -e "#define Y"$YEARP"\n#define ULSAMPLE\n${BINOPTIONS}" > IsData.h # Make sure CMSDATA is undefined
 elif [ "$TYPEP" = "DATA" ]; then
     export SAMPLEFILE=$WprimeDir/proof/files/data/$YEARP/UL/$SAMPLEFILENAME
-    export ENTRYLISTFILE="root://cmseos.fnal.gov//store/user/avargash/WprimeSearch/proof/EntryListMaker/EntryLists_Unique.root"
+    export ENTRYLISTFILE="root://cmseos.fnal.gov//store/user/avargash/WprimeSearchCondorOutput/EntryListMaker/EntryListsUnique.root"
     echo -e "#define Y"$YEARP"\n#define CMSDATA\n#define ULSAMPLE\n${BINOPTIONS}" > IsData.h
 fi
 ROOTCommand="\""$OutputLabel"\",\""$SAMPLEFILE"\","$NCORES",\""$ENTRYLISTFILE"\",$NFSTART,$NFEND";
