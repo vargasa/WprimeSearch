@@ -638,14 +638,11 @@ void PreSelector::SlaveBegin(TTree *tree) {
   InitHVec<TH2F>(HSFs,"HSFs",45,0.,45.,60,0.,6.);
 #endif
 
-  const Double_t wzbins[23] = {
-    150,200,250,300,350,400,
-    450,500,550,600,650,700,
-    750,800,850,900,950,1010,
-    1080,1160,1280,1480,5000
+  const Double_t wzbins[19] = {
+    0,60,110,168,234,309,394,489,595,712,841,983,1139,1309,1494,1695,1913,4913,6000
   };
 
-  InitHVec<TH1F>(HMassWZ,"HMassWZ",22,wzbins);
+  InitHVec<TH1F>(HMassWZ,"HMassWZ",18,wzbins);
 
 }
 
