@@ -175,7 +175,7 @@ scp CombineFile*.root  avargash@lxplus.cern.ch:/afs/cern.ch/user/a/avargash/eos/
 #### Compute Exclusion Limits
 
 ```bash
-FLAG=RollbackBins
+FLAG=Bin30BG100X
 for MASS in 600 800 1000 1200 \
     1400 1600 1800 2000 2500 \
     3000 3500 4000 4500

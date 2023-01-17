@@ -1,10 +1,14 @@
 
-//std::string label = "OnlyGT36BG10X"
+std::string label = "Bin30BG100X"
+
+// #RMASS["600"]="0.0 0.0251140 0.0351562 0.0497302"
+// #RMASS["1000"]="0.0 0.0734134 0.1040039 0.1479476"
+// RMASS["1400"]="0.0 0.1249845 0.1811523 0.2670799"
 
 std::map<int,std::vector<float>> rMap = { 
-    {600,  {0.0, 0.0251799, 0.0346679, 0.0493158}},
-    {1000, {0.0, 0.0597894, 0.0854492, 0.1229156}},
-    {1400, {0.0, 0.1413164, 0.2041015, 0.2976606}},
+    {600,  {0.0, 0.0251140, 0.0351562, 0.0497302}},
+    {1000, {0.0, 0.0734134, 0.1040039, 0.1479476}},
+    {1400, {0.0, 0.1249845, 0.1811523, 0.2670799}},
 };
 
 std::vector<std::string> rLabels = {"r = 0.", "lower edge 68% band", "expected limit", "upper edge 68% band"};
@@ -44,6 +48,8 @@ for(const auto&[ mass, rVec ] : rMap){
         }
 
         TCanvas* c1 = new TCanvas("c1","c1",800,800);
+        c1->SetMargin(0.12,0.12,0.12,0.12);
+        c1->SetTicks(1,1);
 
         TF1* gaussFit = new TF1("gaussFit", "[0]*exp(-0.5*((x-[1])/[2])^2)", -2.,2.);
         gaussFit->SetParameter(0, h_bias->GetMaximum());
@@ -72,6 +78,20 @@ for(const auto&[ mass, rVec ] : rMap){
         listOfLines->Add(myt);
         h_bias->Draw("E");
         c1->Update();
+
+        auto cmsLabel = new TPaveText(0.17,0.81,0.35,0.86,"NDC");
+        cmsLabel->SetFillColor(0);
+        cmsLabel->SetBorderSize(0);
+        cmsLabel->AddText("CMS");
+        cmsLabel->SetTextAlign(12);
+        cmsLabel->Draw(); 
+
+        auto cmsPreliminary = new TPaveText(0.17,0.78,0.35,0.81,"NDC");
+        cmsPreliminary->SetFillColor(0);
+        cmsPreliminary->SetBorderSize(0);
+        cmsPreliminary->AddText("Preliminary");
+        cmsPreliminary->SetTextAlign(12);
+        cmsPreliminary->Draw();
 
         c1->SaveAs(Form("bias_%d_%d_%s.pdf", mass, i, label.c_str()));
         ++i;
